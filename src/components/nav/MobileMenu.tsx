@@ -3,9 +3,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import { MobileNavItem } from "./NavItem";
 import {
   LayoutDashboard,
-  Wrench, // Replacing "Tools" with "Wrench" which is a valid icon
+  Wrench,
   BrainCircuit,
   Settings,
   LogIn,
@@ -24,34 +25,39 @@ export const MobileMenu = ({ isOpen }: MobileMenuProps) => {
   return (
     <div className="md:hidden bg-white dark:bg-gray-950 w-full border-b border-gray-100 dark:border-gray-800">
       <div className="flex flex-col p-4 space-y-2">
-        <Link to="/" className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 px-3 py-2 rounded-md flex items-center">
-          <LayoutDashboard size={18} className="mr-2" />
-          <span>{t('mobileMenu.dashboard')}</span>
-        </Link>
+        <MobileNavItem 
+          to="/" 
+          icon={<LayoutDashboard size={18} />} 
+          label={t('mobileMenu.dashboard')} 
+        />
         
-        <Link to="#" className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 px-3 py-2 rounded-md flex items-center">
-          <Wrench size={18} className="mr-2" />
-          <span>{t('mobileMenu.tools')}</span>
-        </Link>
+        <MobileNavItem 
+          to="#" 
+          icon={<Wrench size={18} />} 
+          label={t('mobileMenu.tools')} 
+        />
         
-        <Link to="/ai" className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 px-3 py-2 rounded-md flex items-center">
-          <BrainCircuit size={18} className="mr-2" />
-          <span>{t('mobileMenu.aiAssistant')}</span>
-        </Link>
+        <MobileNavItem 
+          to="/ai" 
+          icon={<BrainCircuit size={18} />} 
+          label={t('mobileMenu.aiAssistant')} 
+        />
         
-        <Link to="/settings" className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 px-3 py-2 rounded-md flex items-center">
-          <Settings size={18} className="mr-2" />
-          <span>{t('mobileMenu.settings')}</span>
-        </Link>
+        <MobileNavItem 
+          to="/settings" 
+          icon={<Settings size={18} />} 
+          label={t('mobileMenu.settings')} 
+        />
         
-        <Link to="/help-center" className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 px-3 py-2 rounded-md flex items-center">
-          <HelpCircle size={18} className="mr-2" />
-          <span>{t('mobileMenu.helpCenter')}</span>
-        </Link>
+        <MobileNavItem 
+          to="/help-center" 
+          icon={<HelpCircle size={18} />} 
+          label={t('mobileMenu.helpCenter')} 
+        />
         
         <div className="pt-2 border-t border-gray-100 dark:border-gray-800 mt-2">
           <Button className="w-full">
-            <LogIn size={18} className="mr-2" />
+            <LogIn size={18} className="mr-2 rtl:ml-2 rtl:mr-0" />
             <span>{t('mobileMenu.login')}</span>
           </Button>
         </div>

@@ -5,7 +5,7 @@ import { NavDropdown } from "./NavDropdown";
 import { useTranslation } from "react-i18next";
 import { 
   LayoutDashboard,
-  Wrench, // Replacing "Tools" with "Wrench" which is a valid icon in lucide-react
+  Wrench,
   BrainCircuit,
   Settings,
   HelpCircle
@@ -16,7 +16,11 @@ export const DesktopNav = () => {
   
   return (
     <nav className="hidden md:flex items-center space-x-4 rtl:space-x-reverse">
-      <NavItem to="/" icon={<LayoutDashboard size={16} />} label={t('header.dashboard')} />
+      <NavItem 
+        to="/" 
+        icon={<LayoutDashboard size={16} />} 
+        label={t('header.dashboard')} 
+      />
       
       <NavDropdown 
         label={t('header.tools')}
@@ -28,11 +32,23 @@ export const DesktopNav = () => {
         ]}
       />
       
-      <NavItem to="/ai" icon={<BrainCircuit size={16} />} label={t('header.aiAssistant')} />
+      <NavItem 
+        to="/ai" 
+        icon={<BrainCircuit size={16} />} 
+        label={t('header.aiAssistant')} 
+      />
       
-      <NavItem to="/settings" icon={<Settings size={16} />} label={t('header.settings')} />
+      <NavItem 
+        to="/settings" 
+        icon={<Settings size={16} />} 
+        label={t('header.settings')} 
+      />
       
-      <NavItem to="/help-center" icon={<HelpCircle size={16} />} label={t('header.helpCenter')} />
+      <NavItem 
+        to="/help-center" 
+        icon={<HelpCircle size={16} />} 
+        label={t('header.helpCenter')} 
+      />
     </nav>
   );
 };
