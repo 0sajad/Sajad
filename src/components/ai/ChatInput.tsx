@@ -46,6 +46,14 @@ export const ChatInput = ({
     }
   }, [isProcessing]);
   
+  // تغيير نص placeholder بناءً على اللغة
+  const getPlaceholder = () => {
+    if (isRTL) {
+      return t('ai.writeSomething', "اكتب رسالتك هنا...");
+    }
+    return t('ai.writeSomething', "Write your message here...");
+  };
+  
   return (
     <div 
       className="flex gap-2 items-center pb-1" 
@@ -77,7 +85,7 @@ export const ChatInput = ({
       </Button>
       
       <Input
-        placeholder={isRTL ? "اكتب رسالتك هنا..." : "Write your message here..."}
+        placeholder={getPlaceholder()}
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyPress={handleKeyPress}

@@ -49,15 +49,19 @@ i18n
       }
     },
     lng: localStorage.getItem('language') || 'ar', // اللغة الافتراضية
-    fallbackLng: 'ar',
-    debug: false, // تعطيل وضع التصحيح في الإنتاج لتحسين الأداء
+    fallbackLng: {
+      'ar-iq': ['ar'],
+      'default': ['ar']
+    },
+    debug: process.env.NODE_ENV === 'development',
     ns: ['common', 'license', 'access'],
     defaultNS: 'common',
     interpolation: {
-      escapeValue: false // عدم هروب من HTML
+      escapeValue: false
     },
     react: {
-      useSuspense: false
+      useSuspense: false,
+      transKeepBasicHtmlNodesFor: ['br', 'strong', 'i', 'p', 'span']
     },
     missingKeyHandler: (lng, ns, key) => {
       if (process.env.NODE_ENV === 'development') {
@@ -69,15 +73,15 @@ i18n
       caches: ['localStorage'],
       lookupLocalStorage: 'language'
     },
-    load: 'languageOnly', // تحسين الأداء عن طريق تحميل رمز اللغة فقط
-    returnEmptyString: false, // منع إرجاع سلاسل فارغة للمفاتيح المفقودة
+    load: 'languageOnly',
+    returnEmptyString: false,
     keySeparator: '.',
     pluralSeparator: '_',
     contextSeparator: '_',
-    saveMissing: false
+    saveMissing: process.env.NODE_ENV === 'development'
   });
 
-// تأكد من تطبيق اتجاه اللغة الصحيح عند تغيير اللغة
+// تطبيق اتجاه اللغة الصحيح عند تغيير اللغة
 i18n.on('languageChanged', (lng) => {
   const isRTL = lng === "ar" || lng === "ar-iq";
   document.documentElement.setAttribute("lang", lng);
@@ -91,6 +95,20 @@ i18n.on('languageChanged', (lng) => {
   } else {
     document.body.classList.remove('rtl-active');
   }
+  
+  // تحديث اتجاه العناصر المطلقة
+  const rtlElements = document.querySelectorAll('[data-rtl-aware]');
+  rtlElements.forEach((el) => {
+    const element = el as HTMLElement;
+    if (element.style.left) element.style.left = '';
+    if (element.style.right) element.style.right = '';
+    
+    if (isRTL) {
+      element.style.right = element.dataset.rtlPosition || '0';
+    } else {
+      element.style.left = element.dataset.ltrPosition || '0';
+    }
+  });
 });
 
 // تهيئة اتجاه اللغة عند بدء التشغيل
