@@ -31,7 +31,7 @@ export function Header() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md transition-all duration-300 ${
-        isScrolled ? "py-3 bg-white/90 shadow-sm" : "py-5 bg-transparent"
+        isScrolled ? "py-3 bg-white/90 shadow-sm dark:bg-gray-900/90" : "py-5 bg-transparent"
       }`}
     >
       <div className="container mx-auto px-6 flex items-center justify-between">
@@ -57,7 +57,7 @@ export function Header() {
               icon={<BrainCircuit size={18} />} 
               highlight
             />
-            <NavItem to="/#settings" label="الإعدادات" icon={<Settings size={18} />} />
+            <NavItem to="/settings" label="الإعدادات" icon={<Settings size={18} />} />
           </nav>
         </div>
         
@@ -83,12 +83,12 @@ export function Header() {
       
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden py-4 px-6 bg-white shadow-md">
+        <div className="md:hidden py-4 px-6 bg-white shadow-md dark:bg-gray-900 dark:border-gray-800 dark:border-b">
           <nav className="flex flex-col space-y-4">
             <MobileNavItem to="/#dashboard" label="لوحة التحكم" icon={<Activity size={18} />} />
             <MobileNavItem to="/#tools" label="الأدوات" icon={<Network size={18} />} />
             <MobileNavItem to="/ai" label="الذكاء الاصطناعي" icon={<BrainCircuit size={18} />} highlight />
-            <MobileNavItem to="/#settings" label="الإعدادات" icon={<Settings size={18} />} />
+            <MobileNavItem to="/settings" label="الإعدادات" icon={<Settings size={18} />} />
             <div className="pt-2">
               <Button size="sm" className="w-full">
                 تسجيل دخول
