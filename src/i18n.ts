@@ -6,6 +6,10 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 // استيراد ملفات الترجمة
 import arCommon from './locales/ar/common.json';
 import enCommon from './locales/en/common.json';
+import arIqCommon from './locales/ar-iq/common.json';
+import jaCommon from './locales/ja/common.json';
+import zhCommon from './locales/zh/common.json';
+import frCommon from './locales/fr/common.json';
 
 // تهيئة i18next
 i18n
@@ -18,9 +22,21 @@ i18n
       },
       en: {
         common: enCommon
+      },
+      'ar-iq': {
+        common: arIqCommon
+      },
+      ja: {
+        common: jaCommon
+      },
+      zh: {
+        common: zhCommon
+      },
+      fr: {
+        common: frCommon
       }
     },
-    lng: 'ar', // اللغة الافتراضية
+    lng: localStorage.getItem('language') || 'ar', // اللغة الافتراضية
     fallbackLng: 'ar',
     debug: false,
     ns: ['common'],

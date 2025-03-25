@@ -15,15 +15,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 interface HeaderProps {
-  currentLanguage?: "ar" | "en";
-  onLanguageChange?: (language: "ar" | "en") => void;
+  onLanguageChange?: (language: string) => void;
 }
 
 export function Header({ onLanguageChange }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t, i18n } = useTranslation();
-  const currentLanguage = i18n.language as "ar" | "en";
+  const currentLanguage = i18n.language;
   
   useEffect(() => {
     const handleScroll = () => {
@@ -34,13 +33,15 @@ export function Header({ onLanguageChange }: HeaderProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
   
-  const handleLanguageChange = (language: "ar" | "en") => {
+  const handleLanguageChange = (language: string) => {
     i18n.changeLanguage(language);
     
     // تحديث اتجاه الصفحة بناءً على اللغة
-    const dir = language === "ar" ? "rtl" : "ltr";
+    const isRTL = language === "ar" || language === "ar-iq";
+    const dir = isRTL ? "rtl" : "ltr";
     document.documentElement.setAttribute("dir", dir);
     document.documentElement.setAttribute("lang", language);
+    localStorage.setItem("language", language);
 
     if (onLanguageChange) {
       onLanguageChange(language);
@@ -77,10 +78,34 @@ export function Header({ onLanguageChange }: HeaderProps) {
                 العربية
               </DropdownMenuItem>
               <DropdownMenuItem 
+                className={currentLanguage === "ar-iq" ? "bg-gray-100" : ""}
+                onClick={() => handleLanguageChange("ar-iq")}
+              >
+                العراقية
+              </DropdownMenuItem>
+              <DropdownMenuItem 
                 className={currentLanguage === "en" ? "bg-gray-100" : ""}
                 onClick={() => handleLanguageChange("en")}
               >
                 English
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                className={currentLanguage === "ja" ? "bg-gray-100" : ""}
+                onClick={() => handleLanguageChange("ja")}
+              >
+                日本語
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                className={currentLanguage === "zh" ? "bg-gray-100" : ""}
+                onClick={() => handleLanguageChange("zh")}
+              >
+                中文
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                className={currentLanguage === "fr" ? "bg-gray-100" : ""}
+                onClick={() => handleLanguageChange("fr")}
+              >
+                Français
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
