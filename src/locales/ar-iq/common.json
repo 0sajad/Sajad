@@ -197,5 +197,29 @@
     "licenses": "التراخيص والمدفوعات"
   },
   "direction": "rtl",
-  "language": "ar-iq"
+  "language": "ar-iq",
+  "ai": {
+    "chat": "المحادثة",
+    "files": "رفع الملفات",
+    "tools": "الأدوات المتقدمة",
+    "processing": "شغال...",
+    "stopListening": "وكف الاستماع",
+    "startListening": "ابدأ الاستماع",
+    "uploadFiles": "رفع ملفات",
+    "messageInput": "حقل الرسالة",
+    "sendMessage": "دز الرسالة",
+    "writeSomething": "اكتب شي هنا..."
+  },
+  "aiAssistant": {
+    "features": {
+      "webDevelopment": "تطوير الويب",
+      "security": "الأمان المتقدم",
+      "selfImproving": "التحسين الذاتي",
+      "database": "قواعد البيانات"
+    },
+    "bubbleMessages": {
+      "newTools": "أدوات يديدة متوفرة!",
+      "help": "تريد مساعدة؟"
+    }
+  }
 }

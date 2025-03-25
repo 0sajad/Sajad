@@ -19,7 +19,8 @@
     "features": {
       "webDevelopment": "تطوير الويب",
       "security": "الأمان المتقدم",
-      "selfImproving": "التحسين الذاتي"
+      "selfImproving": "التحسين الذاتي",
+      "database": "قواعد البيانات"
     },
     "continuousLearning": "التعلم المستمر",
     "learningDesc": "يتعلم المساعد باستمرار من التفاعلات السابقة لتحسين الأداء",
@@ -31,7 +32,8 @@
     "selfDevelpmentDesc": "يطور نفسه باستمرار ويتعلم تقنيات جديدة دون تدخل بشري",
     "writeSomething": "اكتب رسالتك هنا...",
     "bubbleMessages": {
-      "newTools": "أدوات جديدة متاحة!"
+      "newTools": "أدوات جديدة متاحة!",
+      "help": "هل تحتاج مساعدة؟"
     },
     "stopListening": "إيقاف الاستماع",
     "startListening": "بدء الاستماع",
@@ -129,6 +131,7 @@
     "startListening": "بدء الاستماع",
     "uploadFiles": "رفع الملفات",
     "messageInput": "حقل إدخال الرسالة",
-    "sendMessage": "إرسال الرسالة"
+    "sendMessage": "إرسال الرسالة",
+    "writeSomething": "اكتب رسالتك هنا..."
   }
 }
