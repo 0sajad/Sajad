@@ -20,14 +20,22 @@ export const ChatMessagesArea = ({ messages, isProcessing }: ChatMessagesAreaPro
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { i18n } = useTranslation();
   const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Scroll to bottom when messages change or when processing status changes
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages, isProcessing]);
 
   return (
-    <ScrollArea className="flex-1 p-4" dir={isRTL ? "rtl" : "ltr"}>
-      <div className="space-y-4">
+    <ScrollArea 
+      className="flex-1 p-4" 
+      dir={isRTL ? "rtl" : "ltr"}
+      ref={scrollAreaRef}
+    >
+      <div className="space-y-4" aria-live="polite">
         {messages.map((msg, index) => (
           <ChatMessage
             key={index}
@@ -36,6 +44,11 @@ export const ChatMessagesArea = ({ messages, isProcessing }: ChatMessagesAreaPro
             timestamp={msg.timestamp}
           />
         ))}
+        {messages.length === 0 && (
+          <div className="text-center text-muted-foreground p-4">
+            {isRTL ? "ابدأ محادثة جديدة..." : "Start a new conversation..."}
+          </div>
+        )}
         <div ref={messagesEndRef} />
         {isProcessing && <TypingIndicator />}
       </div>

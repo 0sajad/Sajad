@@ -61,7 +61,13 @@ i18n
     },
     missingKeyHandler: (lng, ns, key) => {
       console.warn(`Missing translation key: ${key} in namespace: ${ns} for language: ${lng}`);
-    }
+    },
+    detection: {
+      order: ['localStorage', 'navigator'],
+      caches: ['localStorage']
+    },
+    load: 'languageOnly', // Improve performance by loading only the language code (e.g., 'en' instead of 'en-US')
+    returnEmptyString: false // Prevent returning empty strings for missing keys
   });
 
 // تأكد من تطبيق اتجاه اللغة الصحيح عند تغيير اللغة
@@ -69,7 +75,15 @@ i18n.on('languageChanged', (lng) => {
   const isRTL = lng === "ar" || lng === "ar-iq";
   document.documentElement.setAttribute("lang", lng);
   document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
+  document.documentElement.style.textAlign = isRTL ? "right" : "left";
   localStorage.setItem('language', lng);
 });
+
+// تهيئة اتجاه اللغة عند بدء التشغيل
+const currentLng = i18n.language;
+const isRTL = currentLng === "ar" || currentLng === "ar-iq";
+document.documentElement.setAttribute("lang", currentLng);
+document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
+document.documentElement.style.textAlign = isRTL ? "right" : "left";
 
 export default i18n;
