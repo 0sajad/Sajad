@@ -1,0 +1,11 @@
+
+{
+  "title": "セキュリティステータス",
+  "subtitle": "ネットワーク保護指標",
+  "firewall": "ファイアウォール",
+  "firewallStatus": "完全に動作中",
+  "intrusionDetection": "侵入検知",
+  "intrusionStatus": "アクティブ - 脅威なし",
+  "vpnStatus": "VPNステータス",
+  "vpnStatusValue": "接続済み - 安全"
+}

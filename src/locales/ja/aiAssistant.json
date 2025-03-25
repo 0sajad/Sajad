@@ -1,0 +1,13 @@
+
+{
+  "features": {
+    "webDevelopment": "ウェブ開発",
+    "security": "高度なセキュリティ",
+    "selfImproving": "自己改善",
+    "database": "データベース"
+  },
+  "bubbleMessages": {
+    "newTools": "新しいツールが利用可能です！",
+    "help": "ヘルプが必要ですか？"
+  }
+}

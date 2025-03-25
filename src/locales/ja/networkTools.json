@@ -1,0 +1,20 @@
+
+{
+  "title": "ネットワークツール",
+  "qualityMonitoring": "ネットワーク品質監視",
+  "signalStrength": "信号強度",
+  "internetSpeed": "インターネット速度",
+  "download": "ダウンロード",
+  "upload": "アップロード",
+  "ping": "Ping",
+  "networkManagement": "通信ネットワーク管理",
+  "faultMonitoring": "障害監視",
+  "deviceManagement": "デバイス管理",
+  "simulationSystems": "シミュレーションシステム",
+  "testEnvironment": "テスト環境",
+  "dataTransmission": "データ送信シミュレーション",
+  "aiChatbot": "AIチャットボット",
+  "networkTroubleshooting": "ネットワークトラブルシューティング",
+  "performanceTips": "パフォーマンス向上のヒント",
+  "autoSupport": "自動サポート"
+}
