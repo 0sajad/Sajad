@@ -16,7 +16,8 @@
     "title": "مساعد الذكاء الاصطناعي المتطور",
     "processing": "معالجة...",
     "features": {
-      "webDevelopment": "تطوير الويب"
+      "webDevelopment": "تطوير الويب",
+      "security": "الأمان المتقدم"
     },
     "continuousLearning": "التعلم المستمر",
     "learningDesc": "يتعلم المساعد باستمرار من التفاعلات السابقة لتحسين الأداء",
@@ -25,7 +26,37 @@
     "multiLanguage": "دعم متعدد اللغات",
     "multiLanguageDesc": "يدعم جميع لغات البرمجة والتواصل بلغات متعددة",
     "selfDevelpment": "التطوير الذاتي",
-    "selfDevelpmentDesc": "يطور نفسه باستمرار ويتعلم تقنيات جديدة دون تدخل بشري"
+    "selfDevelpmentDesc": "يطور نفسه باستمرار ويتعلم تقنيات جديدة دون تدخل بشري",
+    "writeSomething": "اكتب رسالتك هنا..."
+  },
+  "networkTools": {
+    "title": "أدوات الشبكة",
+    "qualityMonitoring": "مراقبة جودة الشبكة",
+    "signalStrength": "قوة الإشارة",
+    "internetSpeed": "سرعة الإنترنت",
+    "download": "تنزيل",
+    "upload": "رفع",
+    "ping": "زمن الاستجابة",
+    "networkManagement": "إدارة شبكات الاتصالات",
+    "faultMonitoring": "مراقبة الأعطال",
+    "deviceManagement": "إدارة الأجهزة",
+    "simulationSystems": "أنظمة المحاكاة",
+    "testEnvironment": "بيئة اختبار",
+    "dataTransmission": "محاكاة نقل البيانات",
+    "aiChatbot": "روبوت دردشة ذكي",
+    "networkTroubleshooting": "استكشاف مشاكل الشبكة وإصلاحها",
+    "performanceTips": "نصائح تحسين الأداء",
+    "autoSupport": "دعم فني تلقائي"
+  },
+  "securityStatus": {
+    "title": "حالة الأمان",
+    "subtitle": "مؤشرات حماية الشبكة",
+    "firewall": "جدار الحماية",
+    "firewallStatus": "يعمل بشكل كامل",
+    "intrusionDetection": "كشف التطفل",
+    "intrusionStatus": "نشط - لا توجد تهديدات",
+    "vpnStatus": "حالة الـ VPN",
+    "vpnStatusValue": "متصل - آمن"
   },
   "footer": {
     "description": "نظام مراقبة وتحليل شبكات احترافي مع قدرات ذكاء اصطناعي متقدمة",

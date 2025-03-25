@@ -6,6 +6,7 @@ import { FileInputHandler } from "./FileInputHandler";
 import { ToolSelector } from "./ToolSelector";
 import { ActiveToolsList } from "./ActiveToolsList";
 import { ChatInput } from "./ChatInput";
+import { useTranslation } from "react-i18next";
 
 type Message = {
   role: string;
@@ -18,6 +19,9 @@ interface AIChatProps {
 }
 
 export const AIChat = ({ initialMessages = [] }: AIChatProps) => {
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
+  
   const {
     messages,
     input,
@@ -33,7 +37,7 @@ export const AIChat = ({ initialMessages = [] }: AIChatProps) => {
   } = useAIChat(initialMessages);
 
   return (
-    <div className="flex flex-col h-[500px]">
+    <div className="flex flex-col h-[500px]" dir={isRTL ? "rtl" : "ltr"}>
       <FileInputHandler onFileChange={handleFileUpload}>
         {(triggerFileUpload) => (
           <>

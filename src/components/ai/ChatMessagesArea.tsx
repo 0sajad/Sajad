@@ -3,6 +3,7 @@ import React, { useRef, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChatMessage } from "./ChatMessage";
 import { TypingIndicator } from "./TypingIndicator";
+import { useTranslation } from "react-i18next";
 
 type Message = {
   role: string;
@@ -17,13 +18,15 @@ interface ChatMessagesAreaProps {
 
 export const ChatMessagesArea = ({ messages, isProcessing }: ChatMessagesAreaProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isProcessing]);
 
   return (
-    <ScrollArea className="flex-1 p-4">
+    <ScrollArea className="flex-1 p-4" dir={isRTL ? "rtl" : "ltr"}>
       <div className="space-y-4">
         {messages.map((msg, index) => (
           <ChatMessage

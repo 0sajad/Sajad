@@ -3,16 +3,22 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 
 export const TypingIndicator = () => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
   
   return (
-    <div className={`flex ${isRTL ? "justify-end" : "justify-start"} mb-4`}>
-      <div className="max-w-[80%] p-3 rounded-lg bg-gray-100 dark:bg-gray-800 shadow-sm">
-        <div className={`flex ${isRTL ? "space-x-reverse" : "space-x-2"}`}>
-          <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: "0ms" }}></div>
-          <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: "150ms" }}></div>
-          <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: "300ms" }}></div>
+    <div 
+      className="flex w-full gap-2 justify-start" 
+      dir={isRTL ? "rtl" : "ltr"}
+    >
+      <div className="max-w-[80%] rounded-lg p-3 bg-muted text-muted-foreground">
+        <div className="flex items-center gap-1">
+          <span>{t("aiAssistant.processing", "معالجة...")}</span>
+          <span className="flex">
+            <span className="animate-bounce mr-0.5 ml-0.5">.</span>
+            <span className="animate-bounce animation-delay-200 mr-0.5 ml-0.5">.</span>
+            <span className="animate-bounce animation-delay-400 mr-0.5 ml-0.5">.</span>
+          </span>
         </div>
       </div>
     </div>

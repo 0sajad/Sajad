@@ -1,34 +1,52 @@
 
 import React from "react";
+import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import { format } from "date-fns";
+import { ar } from "date-fns/locale";
 
-type MessageProps = {
+interface ChatMessageProps {
   role: string;
   content: string;
   timestamp?: Date;
-};
+}
 
-export const ChatMessage = ({ role, content, timestamp }: MessageProps) => {
+export const ChatMessage = ({ role, content, timestamp }: ChatMessageProps) => {
   const { i18n } = useTranslation();
   const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
-
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString(isRTL ? 'ar-SA' : undefined, { hour: '2-digit', minute: '2-digit' });
-  };
+  const isUser = role === "user";
+  
+  const messageTime = timestamp 
+    ? format(
+        timestamp, 
+        "p", 
+        { locale: isRTL ? ar : undefined }
+      ) 
+    : "";
 
   return (
-    <div className={`flex ${role === "user" ? "justify-end" : "justify-start"} mb-4`}>
-      <div 
-        className={`max-w-[80%] p-3 rounded-lg shadow-sm ${
-          role === "user" 
-            ? "bg-octaBlue-600 text-white" 
-            : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
-        }`}
+    <div
+      className={cn(
+        "flex w-full gap-2",
+        isUser ? "justify-end" : "justify-start"
+      )}
+      dir={isRTL ? "rtl" : "ltr"}
+    >
+      <div
+        className={cn(
+          "max-w-[80%] rounded-lg p-3",
+          isUser
+            ? "bg-primary text-primary-foreground"
+            : "bg-muted text-muted-foreground"
+        )}
       >
-        <div className="mb-1 whitespace-pre-wrap">{content}</div>
+        <p className="whitespace-pre-wrap break-words">{content}</p>
         {timestamp && (
-          <div className={`text-xs opacity-70 ${isRTL ? "text-left" : "text-right"}`}>
-            {formatTime(timestamp)}
+          <div className={cn(
+            "mt-1 text-xs opacity-70 text-right",
+            isRTL && "text-left"
+          )}>
+            {messageTime}
           </div>
         )}
       </div>
