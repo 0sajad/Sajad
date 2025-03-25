@@ -1,17 +1,34 @@
-
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { NetworkDashboard } from "@/components/NetworkDashboard";
 import { AnimatedCards } from "@/components/AnimatedCards";
 import { Footer } from "@/components/Footer";
 import { GlassCard } from "@/components/ui/glass-card";
-import { ArrowDown, BrainCircuit, Layers, Shield } from "lucide-react";
+import { AIAssistant } from "@/components/AIAssistant";
+import { 
+  ArrowDown, 
+  BrainCircuit, 
+  Layers, 
+  Shield,
+  ArrowRight,
+  Code,
+  FileCode,
+  Cpu
+} from "lucide-react";
 
 const Index = () => {
   const [loaded, setLoaded] = useState(false);
+  const [showAIAssistant, setShowAIAssistant] = useState(false);
 
   useEffect(() => {
     setLoaded(true);
+    
+    const timeout = setTimeout(() => {
+      setShowAIAssistant(true);
+    }, 5000);
+    
+    return () => clearTimeout(timeout);
   }, []);
 
   return (
@@ -38,10 +55,13 @@ const Index = () => {
             Advanced network monitoring, analysis, and optimization with AI-powered intelligence.
           </p>
           
-          <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
-            <button className="action-button flex items-center">
-              <span>Start Monitoring</span>
-            </button>
+          <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 rtl:space-x-reverse">
+            <Link to="/ai">
+              <button className="action-button flex items-center">
+                <BrainCircuit className="mr-2" size={18} />
+                <span>AI Assistant</span>
+              </button>
+            </Link>
             <button className="secondary-button flex items-center">
               <span>Learn More</span>
             </button>
@@ -74,53 +94,71 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <GlassCard className="p-8 animate-fade-in">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <GlassCard className="p-8 animate-fade-in md:col-span-2">
               <div className="p-4 rounded-xl bg-purple-50 inline-block mb-6">
                 <BrainCircuit size={28} className="text-purple-600" />
               </div>
-              <h3 className="text-2xl font-bold mb-4">Network Analysis</h3>
+              <h3 className="text-2xl font-bold mb-4">Self-Improving AI System</h3>
               <p className="text-muted-foreground mb-6">
-                Our AI continuously analyzes network patterns to identify abnormalities, predict failures, and optimize performance automatically.
+                Our AI continuously analyzes network patterns, learns from them, and improves itself automatically to provide the best network management experience.
               </p>
-              <ul className="space-y-2">
-                <li className="flex items-center">
-                  <span className="w-2 h-2 rounded-full bg-green-500 mr-2"></span>
-                  <span>Abnormal usage detection</span>
-                </li>
-                <li className="flex items-center">
-                  <span className="w-2 h-2 rounded-full bg-green-500 mr-2"></span>
-                  <span>Proactive error prediction</span>
-                </li>
-                <li className="flex items-center">
-                  <span className="w-2 h-2 rounded-full bg-green-500 mr-2"></span>
-                  <span>Automatic network adjustments</span>
-                </li>
-              </ul>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div className="flex items-start">
+                  <div className="p-2 rounded-full bg-green-50 mt-1 mr-3">
+                    <Code size={16} className="text-green-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-sm">Multi-language Support</h4>
+                    <p className="text-xs text-muted-foreground">Supports all programming languages</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start">
+                  <div className="p-2 rounded-full bg-blue-50 mt-1 mr-3">
+                    <FileCode size={16} className="text-blue-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-sm">File Handling</h4>
+                    <p className="text-xs text-muted-foreground">Processes all types of files and media</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start">
+                  <div className="p-2 rounded-full bg-amber-50 mt-1 mr-3">
+                    <Cpu size={16} className="text-amber-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-sm">Autonomous Development</h4>
+                    <p className="text-xs text-muted-foreground">Develops new tools without intervention</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start">
+                  <div className="p-2 rounded-full bg-purple-50 mt-1 mr-3">
+                    <BrainCircuit size={16} className="text-purple-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-sm">Advanced Learning</h4>
+                    <p className="text-xs text-muted-foreground">Continuous learning from interactions</p>
+                  </div>
+                </div>
+              </div>
+              
+              <Link to="/ai" className="inline-flex items-center text-octaBlue-600 hover:text-octaBlue-700 font-medium transition-colors">
+                <span>Explore AI Assistant</span>
+                <ArrowRight size={16} className="ml-2" />
+              </Link>
             </GlassCard>
             
-            <GlassCard className="p-8 animate-fade-in" style={{ animationDelay: '100ms' }}>
-              <div className="p-4 rounded-xl bg-amber-50 inline-block mb-6">
-                <Shield size={28} className="text-amber-600" />
+            <GlassCard className="p-0 overflow-hidden animate-fade-in" style={{ animationDelay: '100ms' }}>
+              <div className="p-4 border-b border-gray-100">
+                <h3 className="panel-heading">AI Assistant Preview</h3>
               </div>
-              <h3 className="text-2xl font-bold mb-4">Predictive Security</h3>
-              <p className="text-muted-foreground mb-6">
-                Advanced threat detection and prevention powered by machine learning algorithms that learn and adapt to evolving security threats.
-              </p>
-              <ul className="space-y-2">
-                <li className="flex items-center">
-                  <span className="w-2 h-2 rounded-full bg-green-500 mr-2"></span>
-                  <span>Zero-day threat detection</span>
-                </li>
-                <li className="flex items-center">
-                  <span className="w-2 h-2 rounded-full bg-green-500 mr-2"></span>
-                  <span>Behavioral analysis</span>
-                </li>
-                <li className="flex items-center">
-                  <span className="w-2 h-2 rounded-full bg-green-500 mr-2"></span>
-                  <span>Automated security responses</span>
-                </li>
-              </ul>
+              <div className="p-4">
+                <AIAssistant />
+              </div>
             </GlassCard>
           </div>
         </div>
@@ -220,6 +258,14 @@ const Index = () => {
       </section>
       
       <Footer />
+      
+      {/* Floating AI Assistant */}
+      {showAIAssistant && (
+        <AIAssistant 
+          minimized={true} 
+          onMaximize={() => window.location.href = '/ai'} 
+        />
+      )}
     </div>
   );
 };
