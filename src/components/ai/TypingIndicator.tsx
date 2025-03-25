@@ -13,7 +13,7 @@ export const TypingIndicator = () => {
     >
       <div className="max-w-[80%] rounded-lg p-3 bg-muted text-muted-foreground">
         <div className="flex items-center gap-1">
-          <span>{t("aiAssistant.processing", "معالجة...")}</span>
+          <span>{isRTL ? "جاري المعالجة..." : "Processing..."}</span>
           <span className="flex">
             <span className="animate-bounce mr-0.5 ml-0.5">.</span>
             <span className="animate-bounce animation-delay-200 mr-0.5 ml-0.5">.</span>
