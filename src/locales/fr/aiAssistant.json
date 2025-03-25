@@ -1,0 +1,13 @@
+
+{
+  "features": {
+    "webDevelopment": "Développement web",
+    "security": "Sécurité avancée",
+    "selfImproving": "Auto-amélioration",
+    "database": "Bases de données"
+  },
+  "bubbleMessages": {
+    "newTools": "Nouveaux outils disponibles !",
+    "help": "Besoin d'aide ?"
+  }
+}

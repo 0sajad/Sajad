@@ -46,6 +46,17 @@ import jaHelpCenter from './locales/ja/helpCenter.json';
 import jaAi from './locales/ja/ai.json';
 import jaAiAssistant from './locales/ja/aiAssistant.json';
 import jaConfig from './locales/ja/config.json';
+import jaCommonExtra from './locales/ja/common.json';
+
+// استيراد ملفات الفرنسية المقسمة
+import frAi from './locales/fr/ai.json';
+import frAiAssistant from './locales/fr/aiAssistant.json';
+import frConfig from './locales/fr/config.json';
+
+// استيراد ملفات الصينية المقسمة
+import zhAi from './locales/zh/ai.json';
+import zhAiAssistant from './locales/zh/aiAssistant.json';
+import zhConfig from './locales/zh/config.json';
 
 // دمج ملفات ar-iq في كائن واحد
 const arIqCommon = {
@@ -78,7 +89,24 @@ const jaCommon = {
   helpCenter: jaHelpCenter,
   ai: jaAi,
   aiAssistant: jaAiAssistant,
-  ...jaConfig
+  ...jaConfig,
+  ...jaCommonExtra
+};
+
+// دمج ملفات الفرنسية في كائن واحد
+const frCombined = {
+  ...frCommon,
+  ai: frAi,
+  aiAssistant: frAiAssistant,
+  ...frConfig
+};
+
+// دمج ملفات الصينية في كائن واحد
+const zhCombined = {
+  ...zhCommon,
+  ai: zhAi,
+  aiAssistant: zhAiAssistant,
+  ...zhConfig
 };
 
 // تهيئة i18next
@@ -104,10 +132,10 @@ i18n
         common: jaCommon
       },
       zh: {
-        common: zhCommon
+        common: zhCombined
       },
       fr: {
-        common: frCommon
+        common: frCombined
       }
     },
     lng: localStorage.getItem('language') || 'ar', // اللغة الافتراضية

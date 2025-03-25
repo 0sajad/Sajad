@@ -1,0 +1,14 @@
+
+{
+  "chat": "聊天",
+  "files": "上传文件",
+  "tools": "高级工具",
+  "processing": "处理中...",
+  "stopListening": "停止监听",
+  "startListening": "开始监听",
+  "uploadFiles": "上传文件",
+  "messageInput": "消息输入框",
+  "sendMessage": "发送消息",
+  "writeSomething": "在这里输入...",
+  "chatPlaceholder": "请输入您的问题..."
+}

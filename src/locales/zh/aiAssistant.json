@@ -1,0 +1,13 @@
+
+{
+  "features": {
+    "webDevelopment": "网页开发",
+    "security": "高级安全",
+    "selfImproving": "自我完善",
+    "database": "数据库"
+  },
+  "bubbleMessages": {
+    "newTools": "新工具可用！",
+    "help": "需要帮助吗？"
+  }
+}

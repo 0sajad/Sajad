@@ -1,0 +1,14 @@
+
+{
+  "chat": "Discussion",
+  "files": "Télécharger des fichiers",
+  "tools": "Outils avancés",
+  "processing": "Traitement...",
+  "stopListening": "Arrêter l'écoute",
+  "startListening": "Commencer l'écoute",
+  "uploadFiles": "Télécharger des fichiers",
+  "messageInput": "Champ de message",
+  "sendMessage": "Envoyer le message",
+  "writeSomething": "Écrivez quelque chose ici...",
+  "chatPlaceholder": "Posez votre question..."
+}
