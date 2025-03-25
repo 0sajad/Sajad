@@ -2,31 +2,46 @@
 import React from "react";
 import { NavItem } from "./NavItem";
 import { NavDropdown } from "./NavDropdown";
-import { Activity, Network, Search, Radio, BrainCircuit, Settings } from "lucide-react";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
+import { 
+  LayoutDashboard,
+  Tools,
+  Zap,
+  BrainCircuit,
+  Settings,
+  HelpCircle
+} from "lucide-react";
 
-export function DesktopNav() {
+export const DesktopNav = () => {
   const { t } = useTranslation();
   
   return (
-    <nav className="hidden md:flex items-center space-x-8 rtl:space-x-reverse">
-      <NavItem to="/#dashboard" label={t('header.dashboard')} icon={<Activity size={18} />} />
+    <nav className="hidden md:flex items-center space-x-4 rtl:space-x-reverse">
+      <NavItem to="/" icon={<LayoutDashboard size={16} />}>
+        {t('header.dashboard')}
+      </NavItem>
+      
       <NavDropdown 
-        label={t('header.tools')} 
-        icon={<Network size={18} />}
+        trigger={t('header.tools')}
+        icon={<Tools size={16} />}
         items={[
-          { to: "/#tools", label: t('header.networkScanner'), icon: <Search size={16} /> },
-          { to: "/#tools", label: t('header.wifiAnalyzer'), icon: <Radio size={16} /> },
-          { to: "/#tools", label: t('header.trafficAnalyzer'), icon: <Activity size={16} /> },
+          { label: t('header.networkScanner'), href: '/fiber-optic' },
+          { label: t('header.wifiAnalyzer'), href: '#' },
+          { label: t('header.trafficAnalyzer'), href: '#' },
         ]}
       />
-      <NavItem 
-        to="/ai" 
-        label={t('header.aiAssistant')} 
-        icon={<BrainCircuit size={18} />} 
-        highlight
-      />
-      <NavItem to="/settings" label={t('header.settings')} icon={<Settings size={18} />} />
+      
+      <NavItem to="/ai" icon={<BrainCircuit size={16} />}>
+        {t('header.aiAssistant')}
+      </NavItem>
+      
+      <NavItem to="/settings" icon={<Settings size={16} />}>
+        {t('header.settings')}
+      </NavItem>
+      
+      <NavItem to="/help-center" icon={<HelpCircle size={16} />}>
+        {t('header.helpCenter')}
+      </NavItem>
     </nav>
   );
-}
+};

@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import AI from "./pages/AI";
 import Settings from "./pages/Settings";
 import FiberOptic from "./pages/FiberOptic";
+import HelpCenter from "./pages/HelpCenter";
 
 // Create a new QueryClient instance outside of the component
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => {
             <Route path="/ai" element={<AI />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/fiber-optic" element={<FiberOptic />} />
+            <Route path="/help-center" element={<HelpCenter />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
