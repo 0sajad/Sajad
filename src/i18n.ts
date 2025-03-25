@@ -50,7 +50,7 @@ i18n
     },
     lng: localStorage.getItem('language') || 'ar', // اللغة الافتراضية
     fallbackLng: 'ar',
-    debug: process.env.NODE_ENV === 'development',
+    debug: false, // تعطيل وضع التصحيح في الإنتاج لتحسين الأداء
     ns: ['common', 'license', 'access'],
     defaultNS: 'common',
     interpolation: {
@@ -60,14 +60,21 @@ i18n
       useSuspense: false
     },
     missingKeyHandler: (lng, ns, key) => {
-      console.warn(`Missing translation key: ${key} in namespace: ${ns} for language: ${lng}`);
+      if (process.env.NODE_ENV === 'development') {
+        console.warn(`Missing translation key: ${key} in namespace: ${ns} for language: ${lng}`);
+      }
     },
     detection: {
-      order: ['localStorage', 'navigator'],
-      caches: ['localStorage']
+      order: ['localStorage', 'navigator', 'htmlTag'],
+      caches: ['localStorage'],
+      lookupLocalStorage: 'language'
     },
-    load: 'languageOnly', // Improve performance by loading only the language code (e.g., 'en' instead of 'en-US')
-    returnEmptyString: false // Prevent returning empty strings for missing keys
+    load: 'languageOnly', // تحسين الأداء عن طريق تحميل رمز اللغة فقط
+    returnEmptyString: false, // منع إرجاع سلاسل فارغة للمفاتيح المفقودة
+    keySeparator: '.',
+    pluralSeparator: '_',
+    contextSeparator: '_',
+    saveMissing: false
   });
 
 // تأكد من تطبيق اتجاه اللغة الصحيح عند تغيير اللغة
@@ -77,6 +84,13 @@ i18n.on('languageChanged', (lng) => {
   document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
   document.documentElement.style.textAlign = isRTL ? "right" : "left";
   localStorage.setItem('language', lng);
+  
+  // تطبيق أنماط CSS إضافية للغات RTL
+  if (isRTL) {
+    document.body.classList.add('rtl-active');
+  } else {
+    document.body.classList.remove('rtl-active');
+  }
 });
 
 // تهيئة اتجاه اللغة عند بدء التشغيل
@@ -85,5 +99,10 @@ const isRTL = currentLng === "ar" || currentLng === "ar-iq";
 document.documentElement.setAttribute("lang", currentLng);
 document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
 document.documentElement.style.textAlign = isRTL ? "right" : "left";
+
+// تطبيق أنماط CSS إضافية للغات RTL عند بدء التشغيل
+if (isRTL) {
+  document.body.classList.add('rtl-active');
+}
 
 export default i18n;

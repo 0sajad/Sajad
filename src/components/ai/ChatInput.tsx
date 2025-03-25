@@ -33,11 +33,13 @@ export const ChatInput = ({
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSendMessage();
+      if (!isProcessing && (input.trim() || hasContent)) {
+        handleSendMessage();
+      }
     }
   };
   
-  // Focus the input field when component mounts
+  // تركيز حقل الإدخال عند تحميل المكون أو بعد معالجة الرسالة
   useEffect(() => {
     if (inputRef.current && !isProcessing) {
       inputRef.current.focus();
@@ -46,17 +48,18 @@ export const ChatInput = ({
   
   return (
     <div 
-      className="flex gap-2" 
+      className="flex gap-2 items-center pb-1" 
       dir={isRTL ? "rtl" : "ltr"}
     >
       <Button 
         variant="outline" 
         size="icon"
         onClick={handleVoiceInput}
-        className={isListening ? 'bg-red-100 text-red-600' : ''}
-        title={isListening ? t('ai.stopListening', "إيقاف الاستماع") : t('ai.startListening', "بدء الاستماع")}
-        aria-label={isListening ? t('ai.stopListening', "إيقاف الاستماع") : t('ai.startListening', "بدء الاستماع")}
+        className={`${isListening ? 'bg-red-100 text-red-600 hover:bg-red-200' : ''} transition-colors`}
+        title={isListening ? t('ai.stopListening') : t('ai.startListening')}
+        aria-label={isListening ? t('ai.stopListening') : t('ai.startListening')}
         type="button"
+        disabled={isProcessing}
       >
         <Mic size={18} />
       </Button>
@@ -65,9 +68,10 @@ export const ChatInput = ({
         variant="outline" 
         size="icon"
         onClick={handleFileUpload}
-        title={t('ai.uploadFiles', "رفع الملفات")}
-        aria-label={t('ai.uploadFiles', "رفع الملفات")}
+        title={t('ai.uploadFiles')}
+        aria-label={t('ai.uploadFiles')}
         type="button"
+        disabled={isProcessing}
       >
         <FileUp size={18} />
       </Button>
@@ -80,18 +84,21 @@ export const ChatInput = ({
         className="flex-1"
         ref={inputRef}
         dir="auto"
-        aria-label={t('ai.messageInput', "حقل إدخال الرسالة")}
+        aria-label={t('ai.messageInput')}
+        disabled={isProcessing}
+        autoComplete="off"
       />
       
       <Button 
         onClick={handleSendMessage} 
         size="icon"
-        disabled={isProcessing || !hasContent}
-        title={t('ai.sendMessage', "إرسال الرسالة")}
-        aria-label={t('ai.sendMessage', "إرسال الرسالة")}
+        disabled={isProcessing || (!hasContent && !input.trim())}
+        title={t('ai.sendMessage')}
+        aria-label={t('ai.sendMessage')}
         type="button"
+        className="transition-all"
       >
-        <Send size={18} />
+        <Send size={18} className={isProcessing ? "opacity-50" : ""} />
       </Button>
     </div>
   );

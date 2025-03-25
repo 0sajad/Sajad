@@ -15,9 +15,11 @@
   "aiAssistant": {
     "title": "مساعد الذكاء الاصطناعي المتطور",
     "processing": "معالجة...",
+    "ready": "جاهز للمساعدة",
     "features": {
       "webDevelopment": "تطوير الويب",
-      "security": "الأمان المتقدم"
+      "security": "الأمان المتقدم",
+      "selfImproving": "التحسين الذاتي"
     },
     "continuousLearning": "التعلم المستمر",
     "learningDesc": "يتعلم المساعد باستمرار من التفاعلات السابقة لتحسين الأداء",
@@ -27,7 +29,15 @@
     "multiLanguageDesc": "يدعم جميع لغات البرمجة والتواصل بلغات متعددة",
     "selfDevelpment": "التطوير الذاتي",
     "selfDevelpmentDesc": "يطور نفسه باستمرار ويتعلم تقنيات جديدة دون تدخل بشري",
-    "writeSomething": "اكتب رسالتك هنا..."
+    "writeSomething": "اكتب رسالتك هنا...",
+    "bubbleMessages": {
+      "newTools": "أدوات جديدة متاحة!"
+    },
+    "stopListening": "إيقاف الاستماع",
+    "startListening": "بدء الاستماع",
+    "uploadFiles": "رفع الملفات",
+    "messageInput": "حقل إدخال الرسالة",
+    "sendMessage": "إرسال الرسالة"
   },
   "networkTools": {
     "title": "أدوات الشبكة",
@@ -58,6 +68,36 @@
     "vpnStatus": "حالة الـ VPN",
     "vpnStatusValue": "متصل - آمن"
   },
+  "settings": {
+    "title": "إعدادات النظام",
+    "description": "تخصيص وتكوين النظام حسب احتياجاتك",
+    "generalSettings": "الإعدادات العامة",
+    "displayOptions": "خيارات العرض",
+    "supported": "مدعوم",
+    "animations": "الرسوم المتحركة",
+    "customizable": "قابل للتخصيص",
+    "updates": "التحديثات",
+    "automatic": "تلقائي",
+    "languageRegion": "اللغة والمنطقة",
+    "languages": "متعدد اللغات",
+    "uiSettings": "إعدادات واجهة المستخدم",
+    "elementDensity": "كثافة العناصر",
+    "adjustable": "قابل للتعديل",
+    "theme": "السمة",
+    "lightDark": "فاتح/داكن",
+    "uiScale": "حجم الواجهة",
+    "scale": "قابل للتغيير",
+    "toolbars": "أشرطة الأدوات",
+    "networkSettings": "إعدادات الشبكة",
+    "connection": "الاتصال",
+    "advanced": "متقدم",
+    "proxySupport": "دعم البروكسي",
+    "httpSocks": "HTTP/SOCKS",
+    "connectionLimits": "حدود الاتصال",
+    "configurable": "قابل للتكوين",
+    "networkScanner": "ماسح الشبكة",
+    "proFeature": "ميزة احترافية"
+  },
   "footer": {
     "description": "نظام مراقبة وتحليل شبكات احترافي مع قدرات ذكاء اصطناعي متقدمة",
     "product": "المنتج",
@@ -79,5 +119,16 @@
     "privacy": "الخصوصية",
     "cookies": "ملفات الكوكيز",
     "copyright": "© 2023 OCTA-GRAM. كل الحقوق محفوظة"
+  },
+  "ai": {
+    "chat": "المحادثة",
+    "files": "رفع الملفات",
+    "tools": "الأدوات المتقدمة",
+    "processing": "جاري المعالجة...",
+    "stopListening": "إيقاف الاستماع",
+    "startListening": "بدء الاستماع",
+    "uploadFiles": "رفع الملفات",
+    "messageInput": "حقل إدخال الرسالة",
+    "sendMessage": "إرسال الرسالة"
   }
 }
