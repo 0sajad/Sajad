@@ -11,5 +11,42 @@
     "helpCenter": "مركز المساعدة",
     "license": "الترخيص",
     "login": "تسجيل الدخول"
+  },
+  "aiAssistant": {
+    "title": "مساعد الذكاء الاصطناعي المتطور",
+    "processing": "معالجة...",
+    "features": {
+      "webDevelopment": "تطوير الويب"
+    },
+    "continuousLearning": "التعلم المستمر",
+    "learningDesc": "يتعلم المساعد باستمرار من التفاعلات السابقة لتحسين الأداء",
+    "security": "الأمان المتقدم",
+    "securityDesc": "حماية قوية للشبكات والاتصالات مع تحليل متطور للتهديدات",
+    "multiLanguage": "دعم متعدد اللغات",
+    "multiLanguageDesc": "يدعم جميع لغات البرمجة والتواصل بلغات متعددة",
+    "selfDevelpment": "التطوير الذاتي",
+    "selfDevelpmentDesc": "يطور نفسه باستمرار ويتعلم تقنيات جديدة دون تدخل بشري"
+  },
+  "footer": {
+    "description": "نظام مراقبة وتحليل شبكات احترافي مع قدرات ذكاء اصطناعي متقدمة",
+    "product": "المنتج",
+    "features": "المميزات",
+    "pricing": "الأسعار",
+    "faq": "الأسئلة الشائعة",
+    "resources": "الموارد",
+    "documentation": "التوثيق",
+    "tutorials": "الدروس",
+    "support": "الدعم",
+    "languages": "اللغات",
+    "english": "الإنكليزية",
+    "arabic": "العربية",
+    "iraqi": "العراقية",
+    "japanese": "اليابانية",
+    "chinese": "الصينية",
+    "french": "الفرنسية",
+    "terms": "الشروط",
+    "privacy": "الخصوصية",
+    "cookies": "ملفات الكوكيز",
+    "copyright": "© 2023 OCTA-GRAM. كل الحقوق محفوظة"
   }
 }

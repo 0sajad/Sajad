@@ -13,6 +13,7 @@ export const Network = (props: React.SVGProps<SVGSVGElement>) => (
     strokeLinecap="round" 
     strokeLinejoin="round" 
     className="network-icon"
+    aria-hidden="true"
     {...props}
   >
     <rect x="16" y="16" width="6" height="6" rx="1" />

@@ -9,8 +9,11 @@ type MessageProps = {
 };
 
 export const ChatMessage = ({ role, content, timestamp }: MessageProps) => {
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
+
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString(isRTL ? 'ar-SA' : undefined, { hour: '2-digit', minute: '2-digit' });
   };
 
   return (
@@ -24,7 +27,7 @@ export const ChatMessage = ({ role, content, timestamp }: MessageProps) => {
       >
         <div className="mb-1 whitespace-pre-wrap">{content}</div>
         {timestamp && (
-          <div className="text-xs opacity-70 text-right">
+          <div className={`text-xs opacity-70 ${isRTL ? "text-left" : "text-right"}`}>
             {formatTime(timestamp)}
           </div>
         )}
