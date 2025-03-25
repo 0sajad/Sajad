@@ -11,9 +11,11 @@ export function FloatingAIAssistant({ show, onMaximize }: FloatingAIAssistantPro
   if (!show) return null;
   
   return (
-    <AIAssistant 
-      minimized={true} 
-      onMaximize={onMaximize} 
-    />
+    <div className="fixed bottom-6 right-6 z-50 shadow-lg rounded-full">
+      <AIAssistant 
+        minimized={true} 
+        onMaximize={onMaximize} 
+      />
+    </div>
   );
 }

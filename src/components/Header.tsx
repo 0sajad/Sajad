@@ -2,12 +2,23 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ModeToggle } from "./ModeToggle";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DesktopNav } from "./nav/DesktopNav";
 import { MobileMenu } from "./nav/MobileMenu";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
-export function Header() {
+interface HeaderProps {
+  currentLanguage?: "ar" | "en";
+  onLanguageChange?: (language: "ar" | "en") => void;
+}
+
+export function Header({ currentLanguage = "ar", onLanguageChange }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
@@ -19,6 +30,12 @@ export function Header() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+  
+  const handleLanguageChange = (language: "ar" | "en") => {
+    if (onLanguageChange) {
+      onLanguageChange(language);
+    }
+  };
   
   return (
     <header
@@ -36,13 +53,35 @@ export function Header() {
         </div>
         
         <div className="flex items-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="mr-2">
+                <Globe size={20} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem 
+                className={currentLanguage === "ar" ? "bg-gray-100" : ""}
+                onClick={() => handleLanguageChange("ar")}
+              >
+                العربية
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                className={currentLanguage === "en" ? "bg-gray-100" : ""}
+                onClick={() => handleLanguageChange("en")}
+              >
+                English
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
           <div className="mr-4">
             <ModeToggle />
           </div>
           
           <div className="hidden md:block">
             <Button size="sm">
-              تسجيل دخول
+              {currentLanguage === "ar" ? "تسجيل دخول" : "Login"}
             </Button>
           </div>
           
