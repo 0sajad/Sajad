@@ -34,6 +34,9 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        tajawal: ['Tajawal', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
