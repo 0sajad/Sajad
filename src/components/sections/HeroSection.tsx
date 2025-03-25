@@ -2,8 +2,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowDown, BrainCircuit } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 export function HeroSection() {
+  const { t } = useTranslation();
+  
   return (
     <section className="min-h-screen flex flex-col items-center justify-center relative px-6 overflow-hidden">
       <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
@@ -13,26 +16,26 @@ export function HeroSection() {
       <div className="text-center max-w-3xl mx-auto animate-fade-in">
         <div className="inline-flex items-center px-3 py-1 rounded-full bg-octaBlue-50 text-octaBlue-600 text-sm font-medium mb-6">
           <span className="flex h-2 w-2 rounded-full bg-octaBlue-600 mr-2 animate-pulse"></span>
-          Professional Network Analysis System
+          {t('hero.badge')}
         </div>
         
         <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
-          OCTA-GRAM
+          {t('hero.title')}
         </h1>
         
         <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed">
-          Advanced network monitoring, analysis, and optimization with AI-powered intelligence.
+          {t('hero.description')}
         </p>
         
         <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 rtl:space-x-reverse">
           <Link to="/ai">
             <button className="action-button flex items-center">
               <BrainCircuit className="mr-2" size={18} />
-              <span>AI Assistant</span>
+              <span>{t('hero.aiAssistant')}</span>
             </button>
           </Link>
           <button className="secondary-button flex items-center">
-            <span>Learn More</span>
+            <span>{t('hero.learnMore')}</span>
           </button>
         </div>
       </div>

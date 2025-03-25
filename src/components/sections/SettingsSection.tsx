@@ -1,81 +1,84 @@
 
 import React from "react";
 import { GlassCard } from "@/components/ui/glass-card";
+import { useTranslation } from 'react-i18next';
 
 export function SettingsSection() {
+  const { t } = useTranslation();
+  
   return (
     <section id="settings" className="py-16 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-12 animate-fade-in">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Extensive Customization</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">{t('settings.title')}</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Configure every aspect of OCTA-GRAM to meet your specific network management needs.
+            {t('settings.description')}
           </p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <GlassCard className="p-6 animate-fade-in">
-            <h3 className="text-xl font-semibold mb-4">General Settings</h3>
+            <h3 className="text-xl font-semibold mb-4">{t('settings.generalSettings')}</h3>
             <ul className="space-y-3">
               <li className="flex items-center justify-between">
-                <span className="text-sm">Display Options</span>
-                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">4K Support</span>
+                <span className="text-sm">{t('settings.displayOptions')}</span>
+                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">{t('settings.supported')}</span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-sm">Animations</span>
-                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">Customizable</span>
+                <span className="text-sm">{t('settings.animations')}</span>
+                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">{t('settings.customizable')}</span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-sm">Updates</span>
-                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">Automatic</span>
+                <span className="text-sm">{t('settings.updates')}</span>
+                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">{t('settings.automatic')}</span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-sm">Language & Region</span>
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">7 Languages</span>
+                <span className="text-sm">{t('settings.languageRegion')}</span>
+                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">{t('settings.languages')}</span>
               </li>
             </ul>
           </GlassCard>
           
           <GlassCard className="p-6 animate-fade-in" style={{ animationDelay: '100ms' }}>
-            <h3 className="text-xl font-semibold mb-4">UI Settings</h3>
+            <h3 className="text-xl font-semibold mb-4">{t('settings.uiSettings')}</h3>
             <ul className="space-y-3">
               <li className="flex items-center justify-between">
-                <span className="text-sm">Element Density</span>
-                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">Adjustable</span>
+                <span className="text-sm">{t('settings.elementDensity')}</span>
+                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">{t('settings.adjustable')}</span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-sm">Theme</span>
-                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">Light/Dark</span>
+                <span className="text-sm">{t('settings.theme')}</span>
+                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">{t('settings.lightDark')}</span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-sm">UI Scale</span>
-                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">50-200%</span>
+                <span className="text-sm">{t('settings.uiScale')}</span>
+                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">{t('settings.scale')}</span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-sm">Toolbars</span>
-                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">Customizable</span>
+                <span className="text-sm">{t('settings.toolbars')}</span>
+                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">{t('settings.customizable')}</span>
               </li>
             </ul>
           </GlassCard>
           
           <GlassCard className="p-6 animate-fade-in" style={{ animationDelay: '200ms' }}>
-            <h3 className="text-xl font-semibold mb-4">Network Settings</h3>
+            <h3 className="text-xl font-semibold mb-4">{t('settings.networkSettings')}</h3>
             <ul className="space-y-3">
               <li className="flex items-center justify-between">
-                <span className="text-sm">Connection</span>
-                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">Advanced</span>
+                <span className="text-sm">{t('settings.connection')}</span>
+                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">{t('settings.advanced')}</span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-sm">Proxy Support</span>
-                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">HTTP/SOCKS</span>
+                <span className="text-sm">{t('settings.proxySupport')}</span>
+                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">{t('settings.httpSocks')}</span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-sm">Connection Limits</span>
-                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">Configurable</span>
+                <span className="text-sm">{t('settings.connectionLimits')}</span>
+                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">{t('settings.configurable')}</span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-sm">Network Scanner</span>
-                <span className="text-xs bg-octaBlue-100 text-octaBlue-700 px-2 py-0.5 rounded">Pro Feature</span>
+                <span className="text-sm">{t('settings.networkScanner')}</span>
+                <span className="text-xs bg-octaBlue-100 text-octaBlue-700 px-2 py-0.5 rounded">{t('settings.proFeature')}</span>
               </li>
             </ul>
           </GlassCard>

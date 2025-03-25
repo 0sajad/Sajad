@@ -10,11 +10,12 @@ import { SettingsSection } from "@/components/sections/SettingsSection";
 import { CTASection } from "@/components/sections/CTASection";
 import { FloatingAIAssistant } from "@/components/FloatingAIAssistant";
 import { toast } from "@/components/ui/use-toast";
+import { useTranslation } from 'react-i18next';
 
 const Index = () => {
   const [loaded, setLoaded] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
-  const [language, setLanguage] = useState<"ar" | "en">("ar");
+  const { i18n, t } = useTranslation();
 
   useEffect(() => {
     setLoaded(true);
@@ -22,14 +23,9 @@ const Index = () => {
     // التحقق من اللغة المحفوظة أو استخدام لغة المتصفح
     const savedLanguage = localStorage.getItem("language");
     if (savedLanguage === "en" || savedLanguage === "ar") {
-      setLanguage(savedLanguage);
+      i18n.changeLanguage(savedLanguage);
       document.documentElement.setAttribute("lang", savedLanguage);
       document.documentElement.setAttribute("dir", savedLanguage === "ar" ? "rtl" : "ltr");
-      
-      toast({
-        title: savedLanguage === "ar" ? "تم تحميل إعدادات اللغة" : "Language settings loaded",
-        description: savedLanguage === "ar" ? "تم تطبيق اللغة العربية" : "English language applied"
-      });
     }
     
     const timeout = setTimeout(() => {
@@ -37,13 +33,10 @@ const Index = () => {
     }, 5000);
     
     return () => clearTimeout(timeout);
-  }, []);
+  }, [i18n]);
 
   const handleLanguageChange = (newLanguage: "ar" | "en") => {
-    setLanguage(newLanguage);
     localStorage.setItem("language", newLanguage);
-    document.documentElement.setAttribute("lang", newLanguage);
-    document.documentElement.setAttribute("dir", newLanguage === "ar" ? "rtl" : "ltr");
     
     toast({
       title: newLanguage === "ar" ? "تم تغيير اللغة" : "Language Changed",
@@ -53,7 +46,7 @@ const Index = () => {
 
   return (
     <div className={`min-h-screen w-full transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'}`}>
-      <Header currentLanguage={language} onLanguageChange={handleLanguageChange} />
+      <Header onLanguageChange={handleLanguageChange} />
       
       {/* Hero Section */}
       <HeroSection />

@@ -1,8 +1,19 @@
 
 import React from "react";
-import { cn } from "@/lib/utils";
+import { useTranslation } from 'react-i18next';
 
 export function Footer() {
+  const { t, i18n } = useTranslation();
+  
+  const handleLanguageChange = (language: "ar" | "en" | "fr") => {
+    i18n.changeLanguage(language);
+    
+    // تحديث اتجاه الصفحة بناءً على اللغة
+    const dir = language === "ar" ? "rtl" : "ltr";
+    document.documentElement.setAttribute("dir", dir);
+    document.documentElement.setAttribute("lang", language);
+  };
+
   return (
     <footer className="bg-white border-t border-gray-100 py-12">
       <div className="max-w-7xl mx-auto px-6">
@@ -12,35 +23,55 @@ export function Footer() {
               OCTA-GRAM
             </span>
             <p className="mt-2 text-sm text-muted-foreground max-w-sm">
-              Professional network monitoring and analysis system with advanced AI capabilities.
+              {t('footer.description')}
             </p>
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-16">
             <div>
-              <h4 className="font-medium mb-4">Product</h4>
+              <h4 className="font-medium mb-4">{t('footer.product')}</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Features</a></li>
-                <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</a></li>
-                <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">FAQ</a></li>
+                <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('footer.features')}</a></li>
+                <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('footer.pricing')}</a></li>
+                <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('footer.faq')}</a></li>
               </ul>
             </div>
             
             <div>
-              <h4 className="font-medium mb-4">Resources</h4>
+              <h4 className="font-medium mb-4">{t('footer.resources')}</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Documentation</a></li>
-                <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Tutorials</a></li>
-                <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Support</a></li>
+                <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('footer.documentation')}</a></li>
+                <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('footer.tutorials')}</a></li>
+                <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('footer.support')}</a></li>
               </ul>
             </div>
             
             <div>
-              <h4 className="font-medium mb-4">Languages</h4>
+              <h4 className="font-medium mb-4">{t('footer.languages')}</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">English</a></li>
-                <li><a href="#" className="text-sm text-foreground font-medium transition-colors">العربية</a></li>
-                <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Français</a></li>
+                <li>
+                  <button 
+                    onClick={() => handleLanguageChange('en')}
+                    className={`text-sm ${i18n.language === 'en' ? 'text-foreground font-medium' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
+                  >
+                    {t('footer.english')}
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => handleLanguageChange('ar')}
+                    className={`text-sm ${i18n.language === 'ar' ? 'text-foreground font-medium' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
+                  >
+                    {t('footer.arabic')}
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {t('footer.french')}
+                  </button>
+                </li>
               </ul>
             </div>
           </div>
@@ -48,14 +79,14 @@ export function Footer() {
         
         <div className="mt-12 pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-muted-foreground">
-            &copy; 2023 OCTA-GRAM. All rights reserved.
+            {t('footer.copyright')}
           </p>
           
           <div className="mt-4 md:mt-0">
             <ul className="flex space-x-6">
-              <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Terms</a></li>
-              <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Privacy</a></li>
-              <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Cookies</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('footer.terms')}</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('footer.privacy')}</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('footer.cookies')}</a></li>
             </ul>
           </div>
         </div>

@@ -6,6 +6,7 @@ import { Menu, X, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DesktopNav } from "./nav/DesktopNav";
 import { MobileMenu } from "./nav/MobileMenu";
+import { useTranslation } from 'react-i18next';
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -18,9 +19,11 @@ interface HeaderProps {
   onLanguageChange?: (language: "ar" | "en") => void;
 }
 
-export function Header({ currentLanguage = "ar", onLanguageChange }: HeaderProps) {
+export function Header({ onLanguageChange }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language as "ar" | "en";
   
   useEffect(() => {
     const handleScroll = () => {
@@ -32,6 +35,13 @@ export function Header({ currentLanguage = "ar", onLanguageChange }: HeaderProps
   }, []);
   
   const handleLanguageChange = (language: "ar" | "en") => {
+    i18n.changeLanguage(language);
+    
+    // تحديث اتجاه الصفحة بناءً على اللغة
+    const dir = language === "ar" ? "rtl" : "ltr";
+    document.documentElement.setAttribute("dir", dir);
+    document.documentElement.setAttribute("lang", language);
+
     if (onLanguageChange) {
       onLanguageChange(language);
     }
@@ -81,7 +91,7 @@ export function Header({ currentLanguage = "ar", onLanguageChange }: HeaderProps
           
           <div className="hidden md:block">
             <Button size="sm">
-              {currentLanguage === "ar" ? "تسجيل دخول" : "Login"}
+              {t('header.login')}
             </Button>
           </div>
           
