@@ -15,7 +15,7 @@ export function FloatingAIAssistant({ show, onMaximize }: FloatingAIAssistantPro
   const [showSpeechBubble, setShowSpeechBubble] = useState(false);
   const [messageIndex, setMessageIndex] = useState(0);
   
-  // رسائل تلقائية يظهرها المساعد
+  // رسائل تلقائية يظهرها المساعد (مع استخدام الترجمة)
   const messages = [
     'aiAssistant.bubbleMessages.help',
     'aiAssistant.bubbleMessages.newTools',
@@ -60,7 +60,7 @@ export function FloatingAIAssistant({ show, onMaximize }: FloatingAIAssistantPro
           <div className="absolute bottom-[-8px] right-4 rtl:right-auto rtl:left-4 w-4 h-4 bg-white dark:bg-gray-800 transform rotate-45"></div>
           <div className="flex items-start gap-2">
             <MessageSquare size={16} className="text-octaBlue-600 mt-0.5" />
-            <p className="text-sm">{t(messages[messageIndex], "هل تحتاج إلى مساعدة؟")}</p>
+            <p className="text-sm">{t(messages[messageIndex])}</p>
           </div>
           <button 
             className="absolute top-1 right-1 rtl:right-auto rtl:left-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"

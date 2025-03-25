@@ -55,7 +55,7 @@ export function AIAssistant({ minimized = false, onMaximize }: AIAssistantProps)
   if (minimized) {
     return (
       <div 
-        className="fixed bottom-4 right-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full p-3 text-white cursor-pointer shadow-lg hover:shadow-xl transition-all z-50"
+        className="fixed bottom-4 right-4 rtl:right-auto rtl:left-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full p-3 text-white cursor-pointer shadow-lg hover:shadow-xl transition-all z-50"
         onClick={onMaximize}
       >
         <BrainCircuit size={24} className="animate-pulse" />
@@ -66,26 +66,26 @@ export function AIAssistant({ minimized = false, onMaximize }: AIAssistantProps)
   const currentStatusText = () => {
     switch (status) {
       case "learning":
-        return t('aiAssistant.learning', "جاري التعلم...");
+        return t('aiAssistant.learning');
       case "processing":
-        return t('aiAssistant.processing', "معالجة البيانات...");
+        return t('aiAssistant.processing');
       case "protecting":
-        return t('aiAssistant.protecting', "حماية النظام...");
+        return t('aiAssistant.protecting');
       default:
-        return t('aiAssistant.ready', "جاهز للمساعدة");
+        return t('aiAssistant.ready');
     }
   };
   
   const StatusIcon = () => {
     switch (status) {
       case "learning":
-        return <Zap size={16} className="text-amber-500 ml-0 mr-1 rtl:ml-1 rtl:mr-0 animate-pulse" />;
+        return <Zap size={16} className="text-amber-500 mr-1 rtl:mr-0 rtl:ml-1 animate-pulse" />;
       case "processing":
-        return <RefreshCcw size={16} className="text-blue-500 ml-0 mr-1 rtl:ml-1 rtl:mr-0 animate-spin" />;
+        return <RefreshCcw size={16} className="text-blue-500 mr-1 rtl:mr-0 rtl:ml-1 animate-spin" />;
       case "protecting":
-        return <Shield size={16} className="text-red-500 ml-0 mr-1 rtl:ml-1 rtl:mr-0 animate-pulse" />;
+        return <Shield size={16} className="text-red-500 mr-1 rtl:mr-0 rtl:ml-1 animate-pulse" />;
       default:
-        return <Cpu size={16} className="text-green-500 ml-0 mr-1 rtl:ml-1 rtl:mr-0" />;
+        return <Cpu size={16} className="text-green-500 mr-1 rtl:mr-0 rtl:ml-1" />;
     }
   };
   
@@ -94,9 +94,9 @@ export function AIAssistant({ minimized = false, onMaximize }: AIAssistantProps)
     const FeatureIcon = feature.icon;
     return (
       <div className="flex items-center">
-        <FeatureIcon size={16} className={`${feature.color} ml-0 mr-1 rtl:ml-1 rtl:mr-0`} />
-        <span className="text-xs text-muted-foreground font-tajawal">
-          {t(`aiAssistant.features.${feature.id}`, `تطوير ${feature.id}`)}
+        <FeatureIcon size={16} className={`${feature.color} mr-1 rtl:mr-0 rtl:ml-1`} />
+        <span className="text-xs text-muted-foreground">
+          {t(`aiAssistant.features.${feature.id}`)}
         </span>
       </div>
     );
@@ -106,8 +106,8 @@ export function AIAssistant({ minimized = false, onMaximize }: AIAssistantProps)
     <GlassCard className="p-0 overflow-hidden">
       <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-3">
         <div className="flex items-center">
-          <BrainCircuit size={20} className="ml-0 mr-2 rtl:ml-2 rtl:mr-0" />
-          <h3 className="font-medium text-sm font-tajawal">{t('aiAssistant.title', "مساعد OCTA-GRAM الذكي")}</h3>
+          <BrainCircuit size={20} className="mr-2 rtl:mr-0 rtl:ml-2" />
+          <h3 className="font-medium text-sm">{t('aiAssistant.title')}</h3>
         </div>
       </div>
       
@@ -115,7 +115,7 @@ export function AIAssistant({ minimized = false, onMaximize }: AIAssistantProps)
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center">
             <StatusIcon />
-            <span className="text-xs text-muted-foreground font-tajawal">{currentStatusText()}</span>
+            <span className="text-xs text-muted-foreground">{currentStatusText()}</span>
           </div>
           <div className="text-xs text-muted-foreground">{progress}%</div>
         </div>
@@ -139,34 +139,34 @@ export function AIAssistant({ minimized = false, onMaximize }: AIAssistantProps)
         <div className="grid grid-cols-2 gap-2">
           <div className="flex-1 rounded-md bg-gray-50 p-2">
             <div className="flex items-center mb-1">
-              <Server size={12} className="text-octaBlue-600 ml-0 mr-1 rtl:ml-1 rtl:mr-0" />
-              <span className="text-xs font-medium font-tajawal">{t('aiAssistant.continuousLearning', "التعلم المستمر")}</span>
+              <Server size={12} className="text-octaBlue-600 mr-1 rtl:mr-0 rtl:ml-1" />
+              <span className="text-xs font-medium">{t('aiAssistant.continuousLearning')}</span>
             </div>
-            <p className="text-xs text-muted-foreground font-tajawal">{t('aiAssistant.learningDesc', "يتعلم باستمرار من البيانات الجديدة")}</p>
+            <p className="text-xs text-muted-foreground">{t('aiAssistant.learningDesc')}</p>
           </div>
           
           <div className="flex-1 rounded-md bg-gray-50 p-2">
             <div className="flex items-center mb-1">
-              <Shield size={12} className="text-red-500 ml-0 mr-1 rtl:ml-1 rtl:mr-0" />
-              <span className="text-xs font-medium font-tajawal">{t('aiAssistant.security', "الحماية والأمان")}</span>
+              <Shield size={12} className="text-red-500 mr-1 rtl:mr-0 rtl:ml-1" />
+              <span className="text-xs font-medium">{t('aiAssistant.security')}</span>
             </div>
-            <p className="text-xs text-muted-foreground font-tajawal">{t('aiAssistant.securityDesc', "يحمي النظام من التهديدات")}</p>
+            <p className="text-xs text-muted-foreground">{t('aiAssistant.securityDesc')}</p>
           </div>
           
           <div className="flex-1 rounded-md bg-gray-50 p-2">
             <div className="flex items-center mb-1">
-              <Globe size={12} className="text-green-600 ml-0 mr-1 rtl:ml-1 rtl:mr-0" />
-              <span className="text-xs font-medium font-tajawal">{t('aiAssistant.multiLanguage', "دعم جميع اللغات")}</span>
+              <Globe size={12} className="text-green-600 mr-1 rtl:mr-0 rtl:ml-1" />
+              <span className="text-xs font-medium">{t('aiAssistant.multiLanguage')}</span>
             </div>
-            <p className="text-xs text-muted-foreground font-tajawal">{t('aiAssistant.multiLanguageDesc', "يتحدث ويفهم جميع لغات العالم")}</p>
+            <p className="text-xs text-muted-foreground">{t('aiAssistant.multiLanguageDesc')}</p>
           </div>
           
           <div className="flex-1 rounded-md bg-gray-50 p-2">
             <div className="flex items-center mb-1">
-              <Zap size={12} className="text-amber-500 ml-0 mr-1 rtl:ml-1 rtl:mr-0" />
-              <span className="text-xs font-medium font-tajawal">{t('aiAssistant.selfDevelpment', "التطوير الذاتي")}</span>
+              <Zap size={12} className="text-amber-500 mr-1 rtl:mr-0 rtl:ml-1" />
+              <span className="text-xs font-medium">{t('aiAssistant.selfDevelpment')}</span>
             </div>
-            <p className="text-xs text-muted-foreground font-tajawal">{t('aiAssistant.selfDevelpmentDesc', "يطور نفسه ويضيف أدوات جديدة")}</p>
+            <p className="text-xs text-muted-foreground">{t('aiAssistant.selfDevelpmentDesc')}</p>
           </div>
         </div>
       </div>

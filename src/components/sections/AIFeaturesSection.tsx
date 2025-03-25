@@ -37,7 +37,7 @@ export function AIFeaturesSection() {
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
               <div className="flex items-start">
-                <div className="p-2 rounded-full bg-green-50 mt-1 mr-3">
+                <div className="p-2 rounded-full bg-green-50 mt-1 mr-3 rtl:mr-0 rtl:ml-3">
                   <Code size={16} className="text-green-600" />
                 </div>
                 <div>
@@ -47,7 +47,7 @@ export function AIFeaturesSection() {
               </div>
               
               <div className="flex items-start">
-                <div className="p-2 rounded-full bg-blue-50 mt-1 mr-3">
+                <div className="p-2 rounded-full bg-blue-50 mt-1 mr-3 rtl:mr-0 rtl:ml-3">
                   <FileCode size={16} className="text-blue-600" />
                 </div>
                 <div>
@@ -57,7 +57,7 @@ export function AIFeaturesSection() {
               </div>
               
               <div className="flex items-start">
-                <div className="p-2 rounded-full bg-amber-50 mt-1 mr-3">
+                <div className="p-2 rounded-full bg-amber-50 mt-1 mr-3 rtl:mr-0 rtl:ml-3">
                   <Cpu size={16} className="text-amber-600" />
                 </div>
                 <div>
@@ -67,7 +67,7 @@ export function AIFeaturesSection() {
               </div>
               
               <div className="flex items-start">
-                <div className="p-2 rounded-full bg-purple-50 mt-1 mr-3">
+                <div className="p-2 rounded-full bg-purple-50 mt-1 mr-3 rtl:mr-0 rtl:ml-3">
                   <BrainCircuit size={16} className="text-purple-600" />
                 </div>
                 <div>
@@ -79,7 +79,7 @@ export function AIFeaturesSection() {
             
             <Link to="/ai" className="inline-flex items-center text-octaBlue-600 hover:text-octaBlue-700 font-medium transition-colors">
               <span>{t('aiFeatures.exploreAI')}</span>
-              <ArrowRight size={16} className="ml-2" />
+              <ArrowRight size={16} className="ml-2 rtl:ml-0 rtl:mr-2 rtl:rotate-180" />
             </Link>
           </GlassCard>
           

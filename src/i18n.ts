@@ -58,7 +58,18 @@ i18n
     },
     react: {
       useSuspense: false
+    },
+    missingKeyHandler: (lng, ns, key) => {
+      console.warn(`Missing translation key: ${key} in namespace: ${ns} for language: ${lng}`);
     }
   });
+
+// تأكد من تطبيق اتجاه اللغة الصحيح عند تغيير اللغة
+i18n.on('languageChanged', (lng) => {
+  const isRTL = lng === "ar" || lng === "ar-iq";
+  document.documentElement.setAttribute("lang", lng);
+  document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
+  localStorage.setItem('language', lng);
+});
 
 export default i18n;
