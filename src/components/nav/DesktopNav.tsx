@@ -8,7 +8,8 @@ import {
   Wrench,
   BrainCircuit,
   Settings,
-  HelpCircle
+  HelpCircle,
+  Shield
 } from "lucide-react";
 
 export const DesktopNav = () => {
@@ -48,6 +49,12 @@ export const DesktopNav = () => {
         to="/help-center" 
         icon={<HelpCircle size={16} />} 
         label={t('header.helpCenter')} 
+      />
+      
+      <NavItem 
+        to="/license" 
+        icon={<Shield size={16} />} 
+        label={t('header.license')} 
       />
     </nav>
   );

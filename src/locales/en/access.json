@@ -1,0 +1,12 @@
+
+{
+  "verification": "Access Verification",
+  "enterAccessKey": "Enter Access Key",
+  "authenticate": "Authenticate",
+  "authenticating": "Authenticating...",
+  "developerMode": "Developer Mode",
+  "authSuccess": "Authentication Successful",
+  "authFailed": "Authentication Failed",
+  "accessGranted": "Access has been granted successfully",
+  "invalidKey": "The access key you entered is invalid"
+}

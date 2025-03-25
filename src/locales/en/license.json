@@ -1,0 +1,17 @@
+
+{
+  "verification": "License Verification",
+  "enterKeyToActivate": "Enter your license key to activate the software",
+  "enterKeyHere": "Enter license key here",
+  "keyFormat": "License key format",
+  "clientVersion": "Client version",
+  "developerVersion": "Developer version",
+  "requiredMessage": "A valid license key is required to use this software",
+  "developerPermissions": "Developer version includes code modification permissions",
+  "verifyKey": "Verify Key",
+  "verifying": "Verifying...",
+  "verificationSuccess": "License Verified",
+  "verificationFailed": "Verification Failed",
+  "accessGranted": "Access has been granted successfully",
+  "invalidKey": "The license key you entered is invalid"
+}

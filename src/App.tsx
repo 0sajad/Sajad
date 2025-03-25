@@ -11,6 +11,8 @@ import AI from "./pages/AI";
 import Settings from "./pages/Settings";
 import FiberOptic from "./pages/FiberOptic";
 import HelpCenter from "./pages/HelpCenter";
+import LicenseVerification from "./pages/LicenseVerification";
+import AccessVerification from "./pages/AccessVerification";
 
 // Create a new QueryClient instance outside of the component
 const queryClient = new QueryClient();
@@ -28,6 +30,8 @@ const App = () => {
             <Route path="/settings" element={<Settings />} />
             <Route path="/fiber-optic" element={<FiberOptic />} />
             <Route path="/help-center" element={<HelpCenter />} />
+            <Route path="/license" element={<LicenseVerification />} />
+            <Route path="/access" element={<AccessVerification />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
