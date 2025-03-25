@@ -1,0 +1,11 @@
+
+{
+  "title": "حالة الأمان",
+  "subtitle": "مؤشرات حماية الشبكة",
+  "firewall": "جدار الحماية",
+  "firewallStatus": "يعمل كلش زين",
+  "intrusionDetection": "كشف التطفل",
+  "intrusionStatus": "نشط - مافي تهديدات",
+  "vpnStatus": "حالة الـ VPN",
+  "vpnStatusValue": "متصل - آمن"
+}

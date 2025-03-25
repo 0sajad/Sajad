@@ -1,0 +1,20 @@
+
+{
+  "title": "أدوات الشبكة",
+  "qualityMonitoring": "مراقبة جودة الشبكة",
+  "signalStrength": "قوة الإشارة",
+  "internetSpeed": "سرعة الإنترنت",
+  "download": "تنزيل",
+  "upload": "رفع",
+  "ping": "بينج",
+  "networkManagement": "إدارة شبكات الاتصالات",
+  "faultMonitoring": "مراقبة الأعطال",
+  "deviceManagement": "إدارة الأجهزة",
+  "simulationSystems": "أنظمة المحاكاة",
+  "testEnvironment": "بيئة اختبار",
+  "dataTransmission": "محاكاة نقل البيانات",
+  "aiChatbot": "روبوت دردشة ذكي",
+  "networkTroubleshooting": "استكشاف مشاكل الشبكة وإصلاحها",
+  "performanceTips": "نصائح تحسين الأداء",
+  "autoSupport": "دعم فني تلقائي"
+}
