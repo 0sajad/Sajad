@@ -50,7 +50,7 @@ i18n
     },
     lng: localStorage.getItem('language') || 'ar', // اللغة الافتراضية
     fallbackLng: 'ar',
-    debug: false,
+    debug: process.env.NODE_ENV === 'development',
     ns: ['common', 'license', 'access'],
     defaultNS: 'common',
     interpolation: {
