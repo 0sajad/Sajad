@@ -11,6 +11,14 @@ import jaCommon from './locales/ja/common.json';
 import zhCommon from './locales/zh/common.json';
 import frCommon from './locales/fr/common.json';
 
+// استيراد ملفات ترجمة التراخيص
+import enLicense from './locales/en/license.json';
+import arLicense from './locales/ar/license.json';
+
+// استيراد ملفات ترجمة الوصول
+import enAccess from './locales/en/access.json';
+import arAccess from './locales/ar/access.json';
+
 // تهيئة i18next
 i18n
   .use(LanguageDetector)
@@ -18,10 +26,14 @@ i18n
   .init({
     resources: {
       ar: {
-        common: arCommon
+        common: arCommon,
+        license: arLicense,
+        access: arAccess
       },
       en: {
-        common: enCommon
+        common: enCommon,
+        license: enLicense,
+        access: enAccess
       },
       'ar-iq': {
         common: arIqCommon
@@ -39,7 +51,7 @@ i18n
     lng: localStorage.getItem('language') || 'ar', // اللغة الافتراضية
     fallbackLng: 'ar',
     debug: false,
-    ns: ['common'],
+    ns: ['common', 'license', 'access'],
     defaultNS: 'common',
     interpolation: {
       escapeValue: false // عدم هروب من HTML

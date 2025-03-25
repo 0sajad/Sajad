@@ -1,19 +1,26 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Key, User, Code, Shield, Download, LockKeyhole } from "lucide-react";
+import { Key, Shield, Download, LockKeyhole } from "lucide-react";
 import { LicenseSelector } from "@/components/license/LicenseSelector";
 import { toast } from "@/components/ui/use-toast";
 
 const LicenseVerification = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation('license');
   const [licenseKey, setLicenseKey] = useState("");
   const [licenseType, setLicenseType] = useState<"client" | "developer">("client");
   const [isVerifying, setIsVerifying] = useState(false);
+  const [isRTL, setIsRTL] = useState(false);
+  
+  useEffect(() => {
+    // التحقق من اتجاه اللغة
+    const currentLang = i18n.language;
+    setIsRTL(currentLang === "ar" || currentLang === "ar-iq");
+  }, [i18n.language]);
   
   const handleVerify = () => {
     setIsVerifying(true);
@@ -24,18 +31,24 @@ const LicenseVerification = () => {
       
       if (licenseKey.length > 8) {
         toast({
-          title: t('license.verificationSuccess'),
-          description: t('license.accessGranted'),
+          title: t('verificationSuccess'),
+          description: t('accessGranted'),
           variant: "default",
         });
       } else {
         toast({
-          title: t('license.verificationFailed'),
-          description: t('license.invalidKey'),
+          title: t('verificationFailed'),
+          description: t('invalidKey'),
           variant: "destructive",
         });
       }
     }, 1500);
+  };
+  
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && licenseKey.length > 0) {
+      handleVerify();
+    }
   };
   
   return (
@@ -53,12 +66,12 @@ const LicenseVerification = () => {
           
           {/* عنوان الصفحة */}
           <h1 className="text-3xl font-bold text-center mb-4">
-            {t('license.verification')}
+            {t('verification')}
           </h1>
           
           {/* الوصف */}
           <p className="text-gray-600 dark:text-gray-300 text-center mb-8">
-            {t('license.enterKeyToActivate')}
+            {t('enterKeyToActivate')}
           </p>
           
           {/* حقل إدخال مفتاح الترخيص */}
@@ -68,15 +81,16 @@ const LicenseVerification = () => {
                 type="text"
                 value={licenseKey}
                 onChange={(e) => setLicenseKey(e.target.value)}
-                placeholder={t('license.enterKeyHere')}
-                className="pl-10 pr-4"
+                onKeyDown={handleKeyDown}
+                placeholder={t('enterKeyHere')}
+                className="pl-10 pr-4 rtl:pl-4 rtl:pr-10"
               />
-              <Key className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+              <Key className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-3 h-4 w-4 text-gray-500`} />
             </div>
             
             <div className="mt-2 text-sm text-blue-600 flex items-center">
-              <span className="mr-1">⚡</span>
-              {t('license.keyFormat')}: XXX-XXXX-XXXX-XXXX
+              <span className="mr-1 rtl:ml-1 rtl:mr-0">⚡</span>
+              {t('keyFormat')}: XXX-XXXX-XXXX-XXXX
             </div>
           </div>
           
@@ -90,11 +104,11 @@ const LicenseVerification = () => {
           
           {/* معلومات إضافية */}
           <div className="mb-8 text-center text-gray-600 dark:text-gray-300">
-            <p className="mb-4">{t('license.requiredMessage')}</p>
+            <p className="mb-4">{t('requiredMessage')}</p>
             
             <div className="flex items-center justify-center text-blue-600">
-              <Download className="w-4 h-4 mr-2" />
-              <span>{t('license.developerPermissions')}</span>
+              <Download className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
+              <span>{t('developerPermissions')}</span>
             </div>
           </div>
           
@@ -105,11 +119,11 @@ const LicenseVerification = () => {
             disabled={isVerifying || licenseKey.length === 0}
           >
             {isVerifying ? (
-              <span className="animate-pulse">{t('license.verifying')}</span>
+              <span className="animate-pulse">{t('verifying')}</span>
             ) : (
               <>
-                <LockKeyhole className="mr-2" />
-                {t('license.verifyKey')}
+                <LockKeyhole className="mr-2 rtl:ml-2 rtl:mr-0" />
+                {t('verifyKey')}
               </>
             )}
           </Button>
