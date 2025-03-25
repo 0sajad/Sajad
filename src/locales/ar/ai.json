@@ -1,0 +1,14 @@
+
+{
+  "chat": "المحادثة",
+  "files": "رفع الملفات",
+  "tools": "الأدوات المتقدمة",
+  "processing": "جاري المعالجة...",
+  "stopListening": "إيقاف الاستماع",
+  "startListening": "بدء الاستماع",
+  "uploadFiles": "رفع ملفات",
+  "messageInput": "حقل الرسالة",
+  "sendMessage": "إرسال الرسالة",
+  "writeSomething": "اكتب شيئًا هنا...",
+  "chatPlaceholder": "اطرح سؤالك..."
+}

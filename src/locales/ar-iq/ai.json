@@ -9,5 +9,6 @@
   "uploadFiles": "رفع ملفات",
   "messageInput": "حقل الرسالة",
   "sendMessage": "دز الرسالة",
-  "writeSomething": "اكتب شي هنا..."
+  "writeSomething": "اكتب شي هنا...",
+  "chatPlaceholder": "اكتب سؤالك هنا..."
 }

@@ -58,6 +58,12 @@ import zhAi from './locales/zh/ai.json';
 import zhAiAssistant from './locales/zh/aiAssistant.json';
 import zhConfig from './locales/zh/config.json';
 
+// استيراد ملفات العربية الإضافية
+import arAi from './locales/ar/ai.json';
+import arAiAssistant from './locales/ar/aiAssistant.json';
+import arConfig from './locales/ar/config.json';
+import arCta from './locales/ar/cta.json';
+
 // دمج ملفات ar-iq في كائن واحد
 const arIqCommon = {
   ...arIqHeader,
@@ -109,6 +115,15 @@ const zhCombined = {
   ...zhConfig
 };
 
+// دمج ملفات العربية في كائن واحد
+const arCombined = {
+  ...arCommon,
+  ai: arAi,
+  aiAssistant: arAiAssistant,
+  cta: arCta,
+  ...arConfig
+};
+
 // تهيئة i18next
 i18n
   .use(LanguageDetector)
@@ -116,7 +131,7 @@ i18n
   .init({
     resources: {
       ar: {
-        common: arCommon,
+        common: arCombined,
         license: arLicense,
         access: arAccess
       },
