@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard,
-  Tools,
+  Wrench, // Replacing "Tools" with "Wrench" which is a valid icon
   BrainCircuit,
   Settings,
   LogIn,
@@ -30,7 +30,7 @@ export const MobileMenu = ({ isOpen }: MobileMenuProps) => {
         </Link>
         
         <Link to="#" className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 px-3 py-2 rounded-md flex items-center">
-          <Tools size={18} className="mr-2" />
+          <Wrench size={18} className="mr-2" />
           <span>{t('mobileMenu.tools')}</span>
         </Link>
         

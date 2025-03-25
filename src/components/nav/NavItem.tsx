@@ -3,7 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
-interface NavItemProps {
+export interface NavItemProps {
   to: string;
   label: string;
   icon?: React.ReactNode;
