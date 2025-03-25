@@ -1,11 +1,13 @@
 
 import React, { useState, useRef, useEffect } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/components/ui/use-toast";
-import { Send, Mic, FileUp, Code, Image, BrainCircuit } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { ChatMessage } from "./ChatMessage";
+import { TypingIndicator } from "./TypingIndicator";
+import { ToolSelector } from "./ToolSelector";
+import { ActiveToolsList } from "./ActiveToolsList";
+import { ChatInput } from "./ChatInput";
 
 type Message = {
   role: string;
@@ -148,8 +150,8 @@ export const AIChat = ({ initialMessages = [] }: AIChatProps) => {
     }
   };
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const clearAllTools = () => {
+    setTools([]);
   };
 
   return (
@@ -165,144 +167,41 @@ export const AIChat = ({ initialMessages = [] }: AIChatProps) => {
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
           {messages.map((msg, index) => (
-            <div 
-              key={index} 
-              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-            >
-              <div 
-                className={`max-w-[80%] p-3 rounded-lg ${
-                  msg.role === "user" 
-                    ? "bg-octaBlue-600 text-white" 
-                    : "bg-gray-100 text-gray-800"
-                }`}
-              >
-                <div className="mb-1">{msg.content}</div>
-                {msg.timestamp && (
-                  <div className="text-xs opacity-70 text-right">
-                    {formatTime(msg.timestamp)}
-                  </div>
-                )}
-              </div>
-            </div>
+            <ChatMessage
+              key={index}
+              role={msg.role}
+              content={msg.content}
+              timestamp={msg.timestamp}
+            />
           ))}
           <div ref={messagesEndRef} />
-          {isProcessing && (
-            <div className="flex justify-start">
-              <div className="max-w-[80%] p-3 rounded-lg bg-gray-100">
-                <div className="flex space-x-2 rtl:space-x-reverse">
-                  <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: "0ms" }}></div>
-                  <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: "150ms" }}></div>
-                  <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: "300ms" }}></div>
-                </div>
-              </div>
-            </div>
-          )}
+          {isProcessing && <TypingIndicator />}
         </div>
       </ScrollArea>
       
-      {tools.length > 0 && (
-        <div className="px-4 py-2 bg-gray-50 flex flex-wrap gap-2">
-          {tools.map((tool, index) => (
-            <div key={index} className="bg-octaBlue-100 text-octaBlue-800 text-xs px-2 py-1 rounded-full flex items-center">
-              <span>{tool}</span>
-              <button className="ml-1 text-octaBlue-600" onClick={() => toggleTool(tool)}>×</button>
-            </div>
-          ))}
-          <button 
-            className="text-xs text-gray-500 ml-2"
-            onClick={() => setTools([])}
-          >
-            {t('ai.clearAll', "مسح الكل")}
-          </button>
-        </div>
-      )}
+      <ActiveToolsList
+        tools={tools}
+        toggleTool={toggleTool}
+        clearAllTools={clearAllTools}
+      />
       
       <div className="p-4 border-t border-gray-100">
-        <div className="flex flex-wrap gap-2 mb-3">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className={`text-xs ${tools.includes('تحليل الشبكة') ? 'bg-octaBlue-100' : ''}`}
-            onClick={() => toggleTool('تحليل الشبكة')}
-          >
-            <Network className="h-3 w-3 mr-1" />
-            {t('ai.tools.networkAnalysis', "تحليل الشبكة")}
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className={`text-xs ${tools.includes('تحرير الكود') ? 'bg-octaBlue-100' : ''}`}
-            onClick={() => toggleTool('تحرير الكود')}
-          >
-            <Code className="h-3 w-3 mr-1" />
-            {t('ai.tools.codeEdit', "تحرير الكود")}
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className={`text-xs ${tools.includes('إنشاء صورة') ? 'bg-octaBlue-100' : ''}`}
-            onClick={() => toggleTool('إنشاء صورة')}
-          >
-            <Image className="h-3 w-3 mr-1" />
-            {t('ai.tools.imageGen', "إنشاء صورة")}
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className={`text-xs ${tools.includes('تعلم آلي') ? 'bg-octaBlue-100' : ''}`}
-            onClick={() => toggleTool('تعلم آلي')}
-          >
-            <BrainCircuit className="h-3 w-3 mr-1" />
-            {t('ai.tools.machineLearning', "تعلم آلي")}
-          </Button>
-        </div>
+        <ToolSelector
+          tools={tools}
+          toggleTool={toggleTool}
+        />
         
-        <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            size="icon"
-            onClick={handleVoiceInput}
-            className={isListening ? 'bg-red-100 text-red-600' : ''}
-          >
-            <Mic size={18} />
-          </Button>
-          
-          <Button 
-            variant="outline" 
-            size="icon"
-            onClick={handleFileUpload}
-          >
-            <FileUp size={18} />
-          </Button>
-          
-          <Input
-            placeholder={t('ai.writeSomething', "اكتب رسالتك هنا...")}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-            className="flex-1"
-          />
-          
-          <Button 
-            onClick={handleSendMessage} 
-            size="icon"
-            disabled={isProcessing || (!input.trim() && tools.length === 0)}
-          >
-            <Send size={18} />
-          </Button>
-        </div>
+        <ChatInput
+          input={input}
+          setInput={setInput}
+          handleSendMessage={handleSendMessage}
+          handleVoiceInput={handleVoiceInput}
+          handleFileUpload={handleFileUpload}
+          isProcessing={isProcessing}
+          isListening={isListening}
+          hasContent={input.trim().length > 0 || tools.length > 0}
+        />
       </div>
     </div>
   );
 };
-
-// أيقونة الشبكة
-const Network = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <rect x="16" y="16" width="6" height="6" rx="1" />
-    <rect x="2" y="16" width="6" height="6" rx="1" />
-    <rect x="9" y="2" width="6" height="6" rx="1" />
-    <path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3" />
-    <path d="M12 12V8" />
-  </svg>
-);
