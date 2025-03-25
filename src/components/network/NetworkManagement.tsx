@@ -61,7 +61,7 @@ export const NetworkManagement = () => {
         ...device,
         status: Math.random() > 0.7 ? 'warning' : Math.random() > 0.4 ? 'online' : 'offline',
         lastSeen: Math.random() > 0.5 ? 'Now' : `${Math.floor(Math.random() * 30)} min ago`
-      }));
+      })) as Device[]; // Cast to ensure type safety
       setDevices(updatedDevices);
       setIsRefreshing(false);
     }, 1000);
