@@ -40,7 +40,7 @@ export function AIAssistant({ minimized = false, onMaximize }: AIAssistantProps)
   if (minimized) {
     return (
       <div 
-        className="fixed bottom-4 right-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full p-3 text-white cursor-pointer shadow-lg hover:shadow-xl transition-all"
+        className="fixed bottom-4 right-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full p-3 text-white cursor-pointer shadow-lg hover:shadow-xl transition-all z-50"
         onClick={onMaximize}
       >
         <BrainCircuit size={24} className="animate-pulse" />
@@ -52,8 +52,8 @@ export function AIAssistant({ minimized = false, onMaximize }: AIAssistantProps)
     <GlassCard className="p-0 overflow-hidden">
       <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-3">
         <div className="flex items-center">
-          <BrainCircuit size={20} className="mr-2" />
-          <h3 className="font-medium text-sm">مساعد OCTA-GRAM الذكي</h3>
+          <BrainCircuit size={20} className="ml-0 mr-2 rtl:ml-2 rtl:mr-0" />
+          <h3 className="font-medium text-sm font-tajawal">مساعد OCTA-GRAM الذكي</h3>
         </div>
       </div>
       
@@ -62,20 +62,20 @@ export function AIAssistant({ minimized = false, onMaximize }: AIAssistantProps)
           <div className="flex items-center">
             {status === "learning" && (
               <>
-                <Zap size={16} className="text-amber-500 mr-1 animate-pulse" />
-                <span className="text-xs text-muted-foreground">جاري التعلم...</span>
+                <Zap size={16} className="text-amber-500 ml-0 mr-1 rtl:ml-1 rtl:mr-0 animate-pulse" />
+                <span className="text-xs text-muted-foreground font-tajawal">جاري التعلم...</span>
               </>
             )}
             {status === "processing" && (
               <>
-                <RefreshCcw size={16} className="text-blue-500 mr-1 animate-spin" />
-                <span className="text-xs text-muted-foreground">معالجة البيانات...</span>
+                <RefreshCcw size={16} className="text-blue-500 ml-0 mr-1 rtl:ml-1 rtl:mr-0 animate-spin" />
+                <span className="text-xs text-muted-foreground font-tajawal">معالجة البيانات...</span>
               </>
             )}
             {status === "idle" && (
               <>
-                <Cpu size={16} className="text-green-500 mr-1" />
-                <span className="text-xs text-muted-foreground">جاهز للمساعدة</span>
+                <Cpu size={16} className="text-green-500 ml-0 mr-1 rtl:ml-1 rtl:mr-0" />
+                <span className="text-xs text-muted-foreground font-tajawal">جاهز للمساعدة</span>
               </>
             )}
           </div>
@@ -98,17 +98,17 @@ export function AIAssistant({ minimized = false, onMaximize }: AIAssistantProps)
         <div className="flex space-x-2 rtl:space-x-reverse">
           <div className="flex-1 rounded-md bg-gray-50 p-2">
             <div className="flex items-center mb-1">
-              <Server size={12} className="text-octaBlue-600 mr-1" />
-              <span className="text-xs font-medium">التعلم المستمر</span>
+              <Server size={12} className="text-octaBlue-600 ml-0 mr-1 rtl:ml-1 rtl:mr-0" />
+              <span className="text-xs font-medium font-tajawal">التعلم المستمر</span>
             </div>
-            <p className="text-xs text-muted-foreground">يتعلم باستمرار من البيانات الجديدة</p>
+            <p className="text-xs text-muted-foreground font-tajawal">يتعلم باستمرار من البيانات الجديدة</p>
           </div>
           <div className="flex-1 rounded-md bg-gray-50 p-2">
             <div className="flex items-center mb-1">
-              <Zap size={12} className="text-amber-500 mr-1" />
-              <span className="text-xs font-medium">تطوير تلقائي</span>
+              <Zap size={12} className="text-amber-500 ml-0 mr-1 rtl:ml-1 rtl:mr-0" />
+              <span className="text-xs font-medium font-tajawal">تطوير تلقائي</span>
             </div>
-            <p className="text-xs text-muted-foreground">يُطور نفسه ويضيف أدوات جديدة</p>
+            <p className="text-xs text-muted-foreground font-tajawal">يُطور نفسه ويضيف أدوات جديدة</p>
           </div>
         </div>
       </div>
