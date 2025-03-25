@@ -9,6 +9,7 @@ import { AIFeaturesSection } from "@/components/sections/AIFeaturesSection";
 import { SettingsSection } from "@/components/sections/SettingsSection";
 import { CTASection } from "@/components/sections/CTASection";
 import { FloatingAIAssistant } from "@/components/FloatingAIAssistant";
+import { toast } from "@/components/ui/use-toast";
 
 const Index = () => {
   const [loaded, setLoaded] = useState(false);
@@ -18,12 +19,17 @@ const Index = () => {
   useEffect(() => {
     setLoaded(true);
     
-    // Check saved language preference or use browser language
+    // التحقق من اللغة المحفوظة أو استخدام لغة المتصفح
     const savedLanguage = localStorage.getItem("language");
     if (savedLanguage === "en" || savedLanguage === "ar") {
       setLanguage(savedLanguage);
       document.documentElement.setAttribute("lang", savedLanguage);
       document.documentElement.setAttribute("dir", savedLanguage === "ar" ? "rtl" : "ltr");
+      
+      toast({
+        title: savedLanguage === "ar" ? "تم تحميل إعدادات اللغة" : "Language settings loaded",
+        description: savedLanguage === "ar" ? "تم تطبيق اللغة العربية" : "English language applied"
+      });
     }
     
     const timeout = setTimeout(() => {
@@ -38,6 +44,11 @@ const Index = () => {
     localStorage.setItem("language", newLanguage);
     document.documentElement.setAttribute("lang", newLanguage);
     document.documentElement.setAttribute("dir", newLanguage === "ar" ? "rtl" : "ltr");
+    
+    toast({
+      title: newLanguage === "ar" ? "تم تغيير اللغة" : "Language Changed",
+      description: newLanguage === "ar" ? "تم التحويل إلى اللغة العربية" : "Switched to English language"
+    });
   };
 
   return (
