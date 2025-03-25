@@ -17,8 +17,12 @@ import { AITools } from "@/components/ai/AITools";
 const AI = () => {
   const [loaded, setLoaded] = useState(false);
   const [activeTab, setActiveTab] = useState("chat");
-  const [messages, setMessages] = useState<{role: string, content: string}[]>([
-    {role: "assistant", content: "مرحباً! أنا مساعد OCTA-GRAM الذكي. كيف يمكنني مساعدتك في مجال الشبكات والاتصالات؟"}
+  const [messages, setMessages] = useState<{role: string, content: string, timestamp?: Date}[]>([
+    {
+      role: "assistant", 
+      content: "مرحباً! أنا مساعد OCTA-GRAM الذكي. كيف يمكنني مساعدتك في مجال الشبكات والاتصالات؟", 
+      timestamp: new Date()
+    }
   ]);
 
   useEffect(() => {
@@ -27,15 +31,18 @@ const AI = () => {
 
   const handleFileUpload = (files: FileList) => {
     // محاكاة معالجة الملف
+    const now = new Date();
     setMessages(prev => [...prev, {
       role: "user", 
-      content: `قمت برفع ملف: ${files[0].name}`
+      content: `قمت برفع ملف: ${files[0].name}`,
+      timestamp: now
     }]);
     
     setTimeout(() => {
       setMessages(prev => [...prev, {
         role: "assistant", 
-        content: `تم استلام الملف ${files[0].name} بنجاح وتحليل محتواه. هل ترغب في مزيد من المعالجة؟`
+        content: `تم استلام الملف ${files[0].name} بنجاح وتحليل محتواه. هل ترغب في مزيد من المعالجة؟`,
+        timestamp: new Date()
       }]);
     }, 2000);
   };
@@ -51,7 +58,7 @@ const AI = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-1">
               <GlassCard className="h-full p-0">
-                <div className="p-4 border-b border-gray-100">
+                <div className="p-4 border-b border-gray-100 dark:border-gray-800">
                   <h3 className="font-semibold text-lg">قدرات الذكاء الاصطناعي</h3>
                 </div>
                 <AIFeatures />
@@ -62,15 +69,15 @@ const AI = () => {
               <Tabs defaultValue="chat" className="w-full" onValueChange={setActiveTab}>
                 <TabsList className="w-full mb-4">
                   <TabsTrigger value="chat" className="flex-1">
-                    <MessageSquare className="mr-2 h-4 w-4" />
+                    <MessageSquare className="mr-2 rtl:ml-2 rtl:mr-0 h-4 w-4" />
                     المحادثة
                   </TabsTrigger>
                   <TabsTrigger value="files" className="flex-1">
-                    <Upload className="mr-2 h-4 w-4" />
+                    <Upload className="mr-2 rtl:ml-2 rtl:mr-0 h-4 w-4" />
                     رفع الملفات
                   </TabsTrigger>
                   <TabsTrigger value="tools" className="flex-1">
-                    <Code className="mr-2 h-4 w-4" />
+                    <Code className="mr-2 rtl:ml-2 rtl:mr-0 h-4 w-4" />
                     الأدوات المتقدمة
                   </TabsTrigger>
                 </TabsList>

@@ -14,15 +14,15 @@ export const ChatMessage = ({ role, content, timestamp }: MessageProps) => {
   };
 
   return (
-    <div className={`flex ${role === "user" ? "justify-end" : "justify-start"}`}>
+    <div className={`flex ${role === "user" ? "justify-end" : "justify-start"} mb-4`}>
       <div 
-        className={`max-w-[80%] p-3 rounded-lg ${
+        className={`max-w-[80%] p-3 rounded-lg shadow-sm ${
           role === "user" 
             ? "bg-octaBlue-600 text-white" 
-            : "bg-gray-100 text-gray-800"
+            : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
         }`}
       >
-        <div className="mb-1">{content}</div>
+        <div className="mb-1 whitespace-pre-wrap">{content}</div>
         {timestamp && (
           <div className="text-xs opacity-70 text-right">
             {formatTime(timestamp)}
