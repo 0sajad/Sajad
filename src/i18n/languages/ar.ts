@@ -8,6 +8,7 @@ import aiAssistant from '../../locales/ar/aiAssistant.json';
 import aiFeatures from '../../locales/ar/aiFeatures.json';
 import communicationTools from '../../locales/ar/communicationTools.json';
 import networkTools from '../../locales/ar/networkTools.json';
+import securityStatus from '../../locales/ar/securityStatus.json';
 
 export function loadArabicResources() {
   return {
@@ -19,6 +20,7 @@ export function loadArabicResources() {
     aiAssistant,
     aiFeatures,
     communicationTools,
-    networkTools
+    networkTools,
+    securityStatus
   };
 }

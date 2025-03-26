@@ -10,6 +10,7 @@ import helpCenter from '../../locales/en/helpCenter.json';
 import communicationTools from '../../locales/en/communicationTools.json';
 import networkTools from '../../locales/en/networkTools.json';
 import settings from '../../locales/en/settings.json';
+import securityStatus from '../../locales/en/securityStatus.json';
 
 export function loadEnglishResources() {
   return {
@@ -23,6 +24,7 @@ export function loadEnglishResources() {
     helpCenter,
     communicationTools,
     networkTools,
-    settings
+    settings,
+    securityStatus
   };
 }
