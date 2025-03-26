@@ -10,11 +10,10 @@ import { toast } from '@/components/ui/use-toast';
 // معرف فريد لتتبع تفاعلات المستخدم مع ميزات إمكانية الوصول
 const ACCESS_INTERACTION_KEY = 'a11y_interaction_version';
 
-// مكون الغلاف للتعامل مع التهيئة والتعافي من الأخطاء
+// مكون الغلاف للتعامل مع التهيئة
 const AppWrapper = () => {
   const [isKeyboardUser, setIsKeyboardUser] = useState(false);
   const [hasInitialized, setHasInitialized] = useState(false);
-  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     // التعامل مع إعداد إمكانية الوصول والتفضيلات
@@ -149,80 +148,8 @@ const AppWrapper = () => {
     }
   }, [hasInitialized]);
 
-  // معالج الأخطاء العامة للتطبيق
-  class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
-    constructor(props: { children: React.ReactNode }) {
-      super(props);
-      this.state = { hasError: false };
-    }
-
-    static getDerivedStateFromError() {
-      return { hasError: true };
-    }
-
-    componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-      console.error("خطأ في التطبيق:", error, errorInfo);
-      localStorage.setItem('app_error_log', JSON.stringify({
-        error: error.message,
-        stack: error.stack,
-        time: new Date().toISOString()
-      }));
-      setHasError(true);
-    }
-
-    render() {
-      if (this.state.hasError) {
-        return (
-          <div className="min-h-screen flex items-center justify-center bg-background text-foreground p-4">
-            <div className="max-w-md text-center">
-              <h1 className="text-2xl font-bold mb-4">عذراً، حدث خطأ ما</h1>
-              <p className="mb-6">واجهنا مشكلة أثناء تحميل التطبيق. يرجى المحاولة مرة أخرى.</p>
-              <button
-                className="bg-primary text-primary-foreground px-6 py-2 rounded-md hover:opacity-90 transition-opacity"
-                onClick={() => {
-                  this.setState({ hasError: false });
-                  setHasError(false);
-                  window.location.reload();
-                }}
-              >
-                إعادة تحميل التطبيق
-              </button>
-            </div>
-          </div>
-        );
-      }
-
-      return this.props.children;
-    }
-  }
-
-  // إذا حدث خطأ في التطبيق الرئيسي، عرض واجهة التعافي
-  if (hasError) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background text-foreground p-4">
-        <div className="max-w-md text-center">
-          <h1 className="text-2xl font-bold mb-4">حدث خطأ غير متوقع</h1>
-          <p className="mb-6">واجهنا مشكلة أثناء تشغيل التطبيق. يرجى إعادة تحميل الصفحة.</p>
-          <button
-            className="bg-primary text-primary-foreground px-6 py-2 rounded-md hover:opacity-90 transition-opacity"
-            onClick={() => {
-              setHasError(false);
-              window.location.reload();
-            }}
-          >
-            إعادة تحميل التطبيق
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // تغليف التطبيق بحدود الخطأ لمنع توقف التطبيق بالكامل عند حدوث أخطاء
-  return (
-    <ErrorBoundary>
-      <App />
-    </ErrorBoundary>
-  );
+  // نكتفي بعرض الـ App مباشرة دون شاشة تحميل إضافية
+  return <App />;
 };
 
 // إضافة أنواع عالمية للإعلانات
