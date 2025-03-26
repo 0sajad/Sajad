@@ -151,7 +151,7 @@ i18n.on('missingKey', (lng, ns, key) => {
     const defaultFallbacks = fallbackLngsObject['default'];
     if (Array.isArray(defaultFallbacks)) {
       for (let i = 0; i < defaultFallbacks.length; i++) {
-        const defaultFallbackLng = defaultFallbacks[i];
+        const defaultFallbackLng = defaultFallbacks[i] as string;
         if (i18n.exists(key, { lng: defaultFallbackLng, ns })) {
           return i18n.t(key, { lng: defaultFallbackLng, ns });
         }
