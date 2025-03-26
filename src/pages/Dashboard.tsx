@@ -30,7 +30,7 @@ const Dashboard = () => {
   }, []);
   
   const handleMaximizeAI = () => {
-    return window.location.href = '/ai';
+    window.location.href = '/ai';
   };
   
   return (
