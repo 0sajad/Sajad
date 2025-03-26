@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Code, User, Check, RefreshCw } from "lucide-react";
 import { useMode } from "@/context/ModeContext";
@@ -10,6 +10,8 @@ import {
   TooltipProvider,
   TooltipTrigger 
 } from "./ui/tooltip";
+import { toast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 export function ModeToggle() {
   const { 
@@ -19,9 +21,26 @@ export function ModeToggle() {
     applyConfiguration, 
     isSyncing 
   } = useMode();
+  const [isAnimating, setIsAnimating] = useState(false);
+  const { t } = useTranslation();
 
   const handleToggle = () => {
-    setMode(isDeveloperMode ? "client" : "developer");
+    setIsAnimating(true);
+    setTimeout(() => {
+      setMode(isDeveloperMode ? "client" : "developer");
+      
+      toast({
+        title: isDeveloperMode 
+          ? t('common.clientMode', "وضع العميل") 
+          : t('common.developerMode', "وضع المطور"),
+        description: isDeveloperMode 
+          ? t('common.clientModeEnabled', "تم تفعيل وضع العميل") 
+          : t('common.developerModeEnabled', "تم تفعيل وضع المطور"),
+        className: "toast-3d",
+      });
+      
+      setIsAnimating(false);
+    }, 300);
   };
 
   return (
@@ -32,8 +51,8 @@ export function ModeToggle() {
             <TooltipTrigger asChild>
               <Button 
                 size="sm" 
-                variant="gradient" 
-                className="h-[38px] shadow-lg shadow-green-500/20 hover:shadow-green-500/40 transform hover:translate-y-[-3px] transition-all duration-300"
+                variant="3d" 
+                className="h-[38px] transform hover:translate-y-[-3px] transition-all duration-300"
                 onClick={applyConfiguration}
                 disabled={isSyncing}
               >
@@ -48,7 +67,7 @@ export function ModeToggle() {
         )}
         
         <div 
-          onClick={handleToggle}
+          onClick={!isAnimating ? handleToggle : undefined}
           className={cn(
             "relative flex items-center w-[100px] h-[40px] rounded-full p-1 transition-colors duration-300 cursor-pointer shadow-xl hover:shadow-2xl transform hover:scale-105 border border-white/20 backdrop-blur-sm overflow-hidden",
             isDeveloperMode 
@@ -60,7 +79,8 @@ export function ModeToggle() {
           <div 
             className={cn(
               "absolute inset-y-1 w-[48px] bg-white dark:bg-gray-900 rounded-full shadow-md transform transition-transform duration-300",
-              isDeveloperMode ? "translate-x-[50px]" : "translate-x-0"
+              isDeveloperMode ? "translate-x-[50px]" : "translate-x-0",
+              isAnimating && "duration-300 ease-in-out"
             )}
           />
           

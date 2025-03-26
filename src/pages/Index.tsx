@@ -13,11 +13,13 @@ import { NetworkToolsSection } from "@/components/network/NetworkToolsSection";
 import { useTranslation } from 'react-i18next';
 import { useLanguageTransition } from "@/hooks/useLanguageTransition";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { showNotification } from "@/components/ui/notifications";
+import { Toaster } from "@/components/ui/sonner";
 
 const Index = () => {
   const [loaded, setLoaded] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const { isTransitioning } = useLanguageTransition();
 
   useEffect(() => {
@@ -43,6 +45,19 @@ const Index = () => {
       setShowAIAssistant(true);
     }, 5000);
     
+    // عرض إشعار ترحيبي
+    const welcomeTimeout = setTimeout(() => {
+      showNotification({
+        title: t('common.welcome', 'مرحبًا بك'),
+        description: t('common.welcomeMessage', 'مرحبًا بك في تطبيق OCTA-GRAM المميز!'),
+        type: 'info',
+        action: {
+          label: t('common.explore', 'استكشاف'),
+          onClick: () => console.log('Explore clicked')
+        }
+      });
+    }, 2000);
+    
     // الاستماع لحدث تغيير اللغة
     const handleLanguageFullChange = () => {
       // إعادة تطبيق الاتجاه
@@ -59,9 +74,10 @@ const Index = () => {
     
     return () => {
       clearTimeout(timeout);
+      clearTimeout(welcomeTimeout);
       document.removeEventListener('languageFullyChanged', handleLanguageFullChange);
     };
-  }, [i18n]);
+  }, [i18n, t]);
 
   return (
     <TooltipProvider>
@@ -96,6 +112,9 @@ const Index = () => {
           show={showAIAssistant} 
           onMaximize={() => window.location.href = '/ai'} 
         />
+        
+        {/* Toast notifications */}
+        <Toaster position="top-right" />
       </div>
     </TooltipProvider>
   );

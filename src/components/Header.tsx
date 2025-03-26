@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LanguageSwitcher } from "./nav/LanguageSwitcher";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { toast } from "@/hooks/use-toast";
 
 interface HeaderProps {
   onLanguageChange?: (language: string) => void;
@@ -18,6 +19,7 @@ interface HeaderProps {
 export function Header({ onLanguageChange }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLogoHovered, setIsLogoHovered] = useState(false);
   const { t } = useTranslation();
   
   useEffect(() => {
@@ -28,6 +30,14 @@ export function Header({ onLanguageChange }: HeaderProps) {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleLogoClick = () => {
+    toast({
+      title: t('common.welcome'),
+      description: t('common.welcomeMessage', "مرحبًا بك في OCTA-GRAM"),
+      className: "toast-3d",
+    });
+  };
   
   return (
     <TooltipProvider>
@@ -38,23 +48,35 @@ export function Header({ onLanguageChange }: HeaderProps) {
       >
         <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between">
           <div className="flex items-center">
-            <Link to="/" className="flex items-center mr-8 sm:mr-20 transform hover:scale-105 transition-transform shadow-lg hover:shadow-octaBlue-500/30">
+            <Link 
+              to="/" 
+              className="flex items-center mr-14 sm:mr-28 transform hover:scale-105 transition-transform shadow-lg hover:shadow-amber-500/30"
+              onMouseEnter={() => setIsLogoHovered(true)}
+              onMouseLeave={() => setIsLogoHovered(false)}
+              onClick={handleLogoClick}
+            >
               <div className="flex items-center">
-                <div className="bg-gradient-to-r from-orange-400 to-amber-500 text-white rounded-full p-2 shadow-xl mr-2 rtl:ml-2 rtl:mr-0">
-                  <LayoutGrid size={20} className="text-white" />
+                <div 
+                  className={`relative bg-gradient-to-r from-orange-400 to-amber-500 text-white rounded-full p-2.5 shadow-xl mr-3 rtl:ml-3 rtl:mr-0 transition-all duration-500 ${
+                    isLogoHovered ? 'scale-110 rotate-[360deg]' : ''
+                  }`}
+                >
+                  <LayoutGrid size={22} className="text-white" />
                 </div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-amber-600 bg-clip-text text-transparent">OCTA-</span>
-                <span className="text-2xl font-bold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">GRAM</span>
+                <div className="flex flex-col md:flex-row items-start md:items-center">
+                  <span className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-amber-600 bg-clip-text text-transparent mr-1">OCTA-</span>
+                  <span className="text-2xl font-bold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">GRAM</span>
+                </div>
               </div>
             </Link>
             
             <DesktopNav />
           </div>
           
-          <div className="flex items-center space-x-14 rtl:space-x-reverse">
-            <LanguageSwitcher className="transform hover:scale-110 transition-transform shadow-xl rounded-full" />
+          <div className="flex items-center space-x-6 rtl:space-x-reverse">
+            <LanguageSwitcher className="transform hover:scale-110 transition-transform shadow-xl rounded-full mx-3 rtl:mx-3" />
             
-            <div className="transform hover:scale-105 transition-transform mx-2 rtl:mx-2">
+            <div className="transform hover:scale-105 transition-transform mx-4 rtl:mx-4">
               <ModeToggle />
             </div>
             
