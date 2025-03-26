@@ -1,5 +1,30 @@
 
 {
+  "title": "AI助手",
+  "subtitle": "您的个人网络指南",
+  "description": "获取网络的即时帮助、建议和自动化功能",
+  "greeting": "您好！今天我能如何帮助您的网络？",
+  "placeholder": "关于您的网络，可以问我任何问题...",
+  "suggestions": {
+    "optimize": "如何优化我的Wi-Fi信号？",
+    "secure": "我的网络安全吗？",
+    "troubleshoot": "为什么我的互联网连接很慢？",
+    "device": "如何连接新设备？"
+  },
+  "responses": {
+    "analyzing": "正在分析您的网络...",
+    "optimizing": "正在寻找优化解决方案...",
+    "securing": "正在检查安全状态...",
+    "troubleshooting": "正在诊断连接问题..."
+  },
+  "settings": {
+    "voice": "语音交互",
+    "proactive": "主动协助",
+    "learning": "学习模式",
+    "privacy": "隐私模式"
+  },
+  "selfDevelopment": "自我发展",
+  "selfDevelopmentDesc": "AI助手不断从交互中学习，以提供更好的支持",
   "features": {
     "webDevelopment": "网页开发",
     "security": "高级安全",
@@ -14,6 +39,5 @@
   "securityDesc": "强大的网络和通信保护，具有先进的威胁分析功能",
   "multiLanguage": "多语言支持",
   "multiLanguageDesc": "支持所有编程语言和多种语言的交流",
-  "selfDevelopment": "自我发展",
   "selfDevelopmentDesc": "不断自我改进并学习新技术，无需人工干预"
 }

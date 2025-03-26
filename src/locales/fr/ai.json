@@ -1,14 +1,25 @@
 
 {
-  "chat": "Discussion",
-  "files": "Télécharger des fichiers",
-  "tools": "Outils avancés",
-  "processing": "Traitement...",
-  "stopListening": "Arrêter l'écoute",
-  "startListening": "Commencer l'écoute",
-  "uploadFiles": "Télécharger des fichiers",
-  "messageInput": "Champ de message",
-  "sendMessage": "Envoyer le message",
-  "writeSomething": "Écrivez quelque chose ici...",
+  "title": "Assistant IA de réseau",
+  "subtitle": "Votre compagnon intelligent de réseau",
+  "description": "Utilisation d'algorithmes d'IA avancés pour optimiser et sécuriser votre réseau",
+  "features": {
+    "analysis": "Analyse de réseau",
+    "optimization": "Optimisation des performances",
+    "security": "Renforcement de la sécurité",
+    "troubleshooting": "Dépannage automatisé"
+  },
+  "actions": {
+    "analyze": "Analyser le réseau",
+    "optimize": "Optimiser les performances",
+    "secure": "Renforcer la sécurité",
+    "troubleshoot": "Résoudre les problèmes"
+  },
+  "stats": {
+    "analyzed": "Réseaux analysés",
+    "optimized": "Améliorations de performance",
+    "secured": "Menaces de sécurité bloquées",
+    "fixed": "Problèmes résolus"
+  },
   "chatPlaceholder": "Posez votre question..."
 }

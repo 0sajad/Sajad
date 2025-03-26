@@ -13,10 +13,13 @@ export class TranslationKeyDetector implements Module {
   // تخزين المفاتيح المفقودة لكل لغة ومساحة أسماء
   private missingKeys: Record<string, Record<string, Set<string>>> = {};
   private keyCache: Record<string, boolean> = {}; // Cache for performance
+  private processedCount: number = 0;
+  private lastReportTime: number = Date.now();
   
   // Initialize the detector
   // تهيئة الكاشف
   init() {
+    this.lastReportTime = Date.now();
     return {
       type: 'postProcessor' as ModuleType,
       name: 'translationKeyDetector',
@@ -31,6 +34,8 @@ export class TranslationKeyDetector implements Module {
       return value;
     }
     
+    this.processedCount++;
+    
     // Generate cache key
     const cacheKey = `${options?.lng || 'unknown'}.${options?.ns || 'unknown'}.${key}`;
     
@@ -39,6 +44,14 @@ export class TranslationKeyDetector implements Module {
     if (value === key && options && options.lng && options.ns && !this.keyCache[cacheKey]) {
       this.addMissingKey(options.lng, options.ns, key);
       this.keyCache[cacheKey] = true;
+      
+      // Generate periodic reports if many keys are processed
+      const now = Date.now();
+      if (this.processedCount > 100 && (now - this.lastReportTime) > 30000) {
+        this.generatePeriodicReport();
+        this.processedCount = 0;
+        this.lastReportTime = now;
+      }
     }
     
     return value;
@@ -84,6 +97,23 @@ export class TranslationKeyDetector implements Module {
   resetMissingKeys() {
     this.missingKeys = {};
     this.keyCache = {};
+    this.processedCount = 0;
+    this.lastReportTime = Date.now();
+  }
+  
+  // Generate a periodic report
+  private generatePeriodicReport() {
+    const stats = this.getStatistics();
+    if (stats.total > 0) {
+      console.info(`===== Translation Key Status Report =====`);
+      console.info(`Total missing keys: ${stats.total}`);
+      
+      Object.keys(stats.byLanguage).forEach(lang => {
+        console.info(`Language ${lang}: ${stats.byLanguage[lang]} missing keys`);
+      });
+      
+      console.info(`======================================`);
+    }
   }
   
   // Generate a report on missing keys

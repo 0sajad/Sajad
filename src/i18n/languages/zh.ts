@@ -1,20 +1,22 @@
 
-// استيراد ملفات الصينية المقسمة
+// استيراد ملفات الصينية
 import zhCommon from '../../locales/zh/common.json';
+import zhConfig from '../../locales/zh/config.json';
 import zhAi from '../../locales/zh/ai.json';
 import zhAiAssistant from '../../locales/zh/aiAssistant.json';
-import zhConfig from '../../locales/zh/config.json';
+import zhCta from '../../locales/zh/cta.json';
 
 export function loadChineseResources() {
-  // دمج ملفات الصينية في كائن واحد
-  const zhCombined = {
-    ...zhCommon,
-    ai: zhAi,
-    aiAssistant: zhAiAssistant,
-    ...zhConfig
-  };
-
   return {
-    common: zhCombined
+    common: {
+      ...zhCommon,
+      ai: zhAi,
+      aiAssistant: zhAiAssistant,
+      cta: zhCta,
+      ...zhConfig
+    },
+    license: {},
+    access: {},
+    settings: {}
   };
 }

@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { GlassCard } from "../ui/glass-card";
 import { Progress } from "../ui/progress";
 import { useTranslation } from "react-i18next";
@@ -8,6 +8,7 @@ import { Button } from "../ui/button";
 import { RefreshCw, Wifi, Signal, Antenna } from "lucide-react";
 import { toast } from "../ui/use-toast";
 
+// Generate optimized data with limited data points for better performance
 const generateData = () => {
   return Array.from({ length: 24 }, (_, i) => ({
     time: `${i}:00`,
@@ -22,7 +23,8 @@ export const NetworkMonitoring = () => {
   const [data, setData] = useState(generateData());
   const [isRefreshing, setIsRefreshing] = useState(false);
   
-  const refreshData = () => {
+  // Memoize refresh function to prevent unnecessary re-renders
+  const refreshData = useCallback(() => {
     setIsRefreshing(true);
     toast({
       title: t('networkTools.qualityMonitoring'),
@@ -32,8 +34,17 @@ export const NetworkMonitoring = () => {
     setTimeout(() => {
       setData(generateData());
       setIsRefreshing(false);
+    }, 800);
+  }, [t]);
+  
+  // Auto refresh after mounting
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!isRefreshing) refreshData();
     }, 1000);
-  };
+    
+    return () => clearTimeout(timer);
+  }, [refreshData, isRefreshing]);
   
   return (
     <GlassCard className="p-0 overflow-hidden">
@@ -80,12 +91,12 @@ export const NetworkMonitoring = () => {
         
         <div className="h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
+            <LineChart data={data} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis dataKey="time" />
               <YAxis />
               <Tooltip />
-              <Line type="monotone" dataKey="wifi" stroke="#22c55e" name="WiFi" />
+              <Line type="monotone" dataKey="wifi" stroke="#22c55e" name="WiFi" activeDot={{ r: 8 }} />
               <Line type="monotone" dataKey="cellular" stroke="#3b82f6" name="4G/5G" />
               <Line type="monotone" dataKey="ethernet" stroke="#a855f7" name="Ethernet" />
             </LineChart>

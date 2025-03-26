@@ -20,7 +20,7 @@ export const SimulationProgress = ({ isRunning, progress }: SimulationProgressPr
           {isRunning ? t('networkTools.running') : t('networkTools.ready')}
         </Badge>
       </div>
-      <Progress value={progress} />
+      <Progress value={progress} className="h-2" />
     </div>
   );
 };

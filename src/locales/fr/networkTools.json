@@ -1,0 +1,22 @@
+
+{
+  "title": "Outils réseau",
+  "qualityMonitoring": "Surveillance de la qualité du réseau",
+  "signalStrength": "Force du signal",
+  "internetSpeed": "Vitesse Internet",
+  "download": "Téléchargement",
+  "upload": "Envoi",
+  "ping": "Ping",
+  "networkManagement": "Gestion des réseaux de communication",
+  "faultMonitoring": "Surveillance des défauts",
+  "deviceManagement": "Gestion des appareils",
+  "simulationSystems": "Systèmes de simulation",
+  "testEnvironment": "Environnement de test",
+  "dataTransmission": "Simulation de transmission de données",
+  "aiChatbot": "Chatbot IA",
+  "networkTroubleshooting": "Dépannage réseau",
+  "performanceTips": "Conseils de performance",
+  "autoSupport": "Support automatique",
+  "running": "En cours",
+  "ready": "Prêt"
+}

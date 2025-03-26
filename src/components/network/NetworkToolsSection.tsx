@@ -37,15 +37,15 @@ export function NetworkToolsSection() {
                 </TabsTrigger>
               </TabsList>
               
-              <TabsContent value="monitoring">
+              <TabsContent value="monitoring" className="mt-0">
                 <NetworkMonitoring />
               </TabsContent>
               
-              <TabsContent value="management">
+              <TabsContent value="management" className="mt-0">
                 <NetworkManagement />
               </TabsContent>
               
-              <TabsContent value="simulation">
+              <TabsContent value="simulation" className="mt-0">
                 <NetworkSimulation />
               </TabsContent>
             </Tabs>

@@ -15,7 +15,10 @@ i18n
     lng: localStorage.getItem('language') || 'ar', // اللغة الافتراضية
     fallbackLng: {
       'ar-iq': ['ar'],
-      'default': ['ar']
+      'ja': ['en'],
+      'zh': ['en'],
+      'fr': ['en'],
+      'default': ['ar', 'en']
     },
     debug: process.env.NODE_ENV === 'development',
     ns: ['common', 'license', 'access'],
@@ -42,7 +45,12 @@ i18n
     keySeparator: '.',
     pluralSeparator: '_',
     contextSeparator: '_',
-    saveMissing: process.env.NODE_ENV === 'development'
+    saveMissing: process.env.NODE_ENV === 'development',
+    parseMissingKeyHandler: (key) => {
+      // تنظيف المفتاح المفقود لتسهيل التعرف عليه
+      return key.trim();
+    },
+    appendNamespaceToMissingKey: true
   });
 
 // تطبيق اتجاه اللغة الصحيح عند تغيير اللغة
@@ -73,6 +81,13 @@ i18n.on('languageChanged', (lng) => {
       element.style.left = element.dataset.ltrPosition || '0';
     }
   });
+  
+  // تنظيف ذاكرة التخزين المؤقت للمفاتيح عند تغيير اللغة
+  if (translationKeyDetector) {
+    setTimeout(() => {
+      translationKeyDetector.resetMissingKeys();
+    }, 500);
+  }
 });
 
 // تهيئة اتجاه اللغة عند بدء التشغيل
