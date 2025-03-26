@@ -17,6 +17,8 @@ export interface A11ySettings {
   kashidaEnabled?: boolean;
   voiceName?: string;
   notificationVolume?: number;
+  languagePreference?: string;
+  contentRtl?: boolean;
 }
 
 /**
@@ -26,6 +28,7 @@ export interface SavedProfile {
   name: string;
   settings: A11ySettings;
   lastModified: number;
+  version?: string;
 }
 
 /**
@@ -35,6 +38,7 @@ export interface ProfilesCache {
   version: string;
   profiles: Record<string, A11ySettings>;
   lastUpdated: number;
+  languageProfiles?: Record<string, string[]>;
 }
 
 /**
@@ -45,6 +49,7 @@ export interface SystemPreferences {
   prefersHighContrast: boolean;
   prefersLightMode: boolean;
   prefersDarkMode: boolean;
+  prefersLanguage?: string;
 }
 
 /**
@@ -59,4 +64,17 @@ export interface ChangeLog {
   timestamp: number;
   type: string;
   settings: Partial<A11ySettings>;
+  language?: string;
+}
+
+/**
+ * نوع البيانات لإعدادات الترجمة والتعريب
+ */
+export interface LocalizationSettings {
+  rtlEnabled: boolean;
+  defaultLanguage: string;
+  availableLanguages: string[];
+  arabicKashida?: boolean;
+  arabicFontScale?: number;
+  fontScaling?: Record<string, number>;
 }

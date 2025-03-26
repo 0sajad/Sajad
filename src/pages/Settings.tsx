@@ -20,7 +20,7 @@ const Settings = () => {
       <main className="container mx-auto px-6 py-24">
         <div className="flex items-center mb-8">
           <h1 className="text-3xl font-bold font-tajawal">{t('settings.advancedSettings')}</h1>
-          <span className="mr-3 px-3 py-1 text-xs font-medium bg-octaBlue-50 text-octaBlue-600 rounded-full">
+          <span className="mr-3 px-3 py-1 text-xs font-medium bg-octaBlue-50 text-octaBlue-600 rounded-full rtl:ml-3 rtl:mr-0">
             {t('settings.developerVersion')}
           </span>
         </div>
@@ -31,7 +31,7 @@ const Settings = () => {
           </div>
           
           <div className="lg:col-span-3">
-            <Tabs defaultValue="features" dir="rtl" className="w-full">
+            <Tabs defaultValue="features" className="w-full">
               <TabsList className="w-full justify-start mb-6">
                 <TabsTrigger value="features" className="font-tajawal">{t('settings.tabs.advancedFeatures')}</TabsTrigger>
                 <TabsTrigger value="notifications" className="font-tajawal">{t('settings.tabs.notifications')}</TabsTrigger>
@@ -43,7 +43,7 @@ const Settings = () => {
               <TabsContent value="features">
                 <div className="space-y-4">
                   <div className="flex items-center">
-                    <BrainCircuit className="text-purple-600 ml-2" size={24} />
+                    <BrainCircuit className="text-purple-600 ml-2 rtl:ml-2 rtl:mr-0" size={24} />
                     <h2 className="text-2xl font-semibold font-tajawal">{t('settings.aiFeatures')}</h2>
                   </div>
                   <p className="text-muted-foreground font-tajawal leading-relaxed">
@@ -58,7 +58,7 @@ const Settings = () => {
               <TabsContent value="notifications">
                 <div className="space-y-4">
                   <div className="flex items-center">
-                    <Bell className="text-blue-600 ml-2" size={24} />
+                    <Bell className="text-blue-600 ml-2 rtl:ml-2 rtl:mr-0" size={24} />
                     <h2 className="text-2xl font-semibold font-tajawal">{t('settings.notificationSettings')}</h2>
                   </div>
                   <p className="text-muted-foreground font-tajawal leading-relaxed">
@@ -72,7 +72,7 @@ const Settings = () => {
               
               <TabsContent value="network">
                 <div className="flex items-center">
-                  <Server className="text-octaBlue-600 ml-2" size={24} />
+                  <Server className="text-octaBlue-600 ml-2 rtl:ml-2 rtl:mr-0" size={24} />
                   <h2 className="text-2xl font-semibold font-tajawal">{t('settings.advancedNetworkSettings')}</h2>
                 </div>
                 <p className="text-muted-foreground font-tajawal leading-relaxed mt-2">
@@ -86,7 +86,7 @@ const Settings = () => {
               
               <TabsContent value="security">
                 <div className="flex items-center">
-                  <Shield className="text-green-600 ml-2" size={24} />
+                  <Shield className="text-green-600 ml-2 rtl:ml-2 rtl:mr-0" size={24} />
                   <h2 className="text-2xl font-semibold font-tajawal">{t('settings.securityPrivacySettings')}</h2>
                 </div>
                 <p className="text-muted-foreground font-tajawal leading-relaxed mt-2">
@@ -100,7 +100,7 @@ const Settings = () => {
               
               <TabsContent value="system">
                 <div className="flex items-center">
-                  <Cpu className="text-amber-600 ml-2" size={24} />
+                  <Cpu className="text-amber-600 ml-2 rtl:ml-2 rtl:mr-0" size={24} />
                   <h2 className="text-2xl font-semibold font-tajawal">{t('settings.systemSettings')}</h2>
                 </div>
                 <p className="text-muted-foreground font-tajawal leading-relaxed mt-2">

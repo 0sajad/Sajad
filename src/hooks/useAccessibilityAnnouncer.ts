@@ -15,12 +15,12 @@ export function useAccessibilityAnnouncer(options: UseAccessibilityAnnouncerOpti
   const announce = useCallback(
     (message: string, level: AnnouncementLevel = "polite") => {
       // استخدام window.announce إذا كان متاحاً
-      if (typeof window !== "undefined" && window.announce) {
+      if (typeof window !== "undefined" && (window as any).announce) {
         const politeness = level === "warning" || level === "error" || level === "assertive"
           ? "assertive"
           : "polite";
         
-        window.announce(message, politeness);
+        (window as any).announce(message, politeness);
       } else {
         // استخدام المُعلن البديل إذا كان متاحاً
         const announcer = document.querySelector(announcerSelector);

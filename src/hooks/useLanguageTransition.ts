@@ -97,6 +97,9 @@ export function useLanguageTransition() {
             }
           });
         }
+        
+        // إطلاق حدث لتحديث كافة مكونات الصفحة
+        document.dispatchEvent(new CustomEvent('languageFullyChanged', { detail: { language } }));
       }).catch((error) => {
         console.error("خطأ في تغيير اللغة:", error);
         // إظهار إشعار بفشل تغيير اللغة
