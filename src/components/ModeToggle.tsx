@@ -26,14 +26,14 @@ export function ModeToggle() {
 
   return (
     <TooltipProvider>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-6">
         {isDeveloperMode && (
           <Tooltip>
             <TooltipTrigger asChild>
               <Button 
                 size="sm" 
-                variant="outline" 
-                className="h-[36px] bg-green-50 text-green-600 hover:bg-green-100 shadow-md hover:shadow-green-500/30 transform hover:translate-y-[-2px] transition-all"
+                variant="gradient" 
+                className="h-[38px] shadow-lg shadow-green-500/20 hover:shadow-green-500/40 transform hover:translate-y-[-3px] transition-all duration-300"
                 onClick={applyConfiguration}
                 disabled={isSyncing}
               >
@@ -41,7 +41,7 @@ export function ModeToggle() {
                 <span className="text-xs">تطبيق</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent className="bg-gradient-to-r from-green-500/90 to-green-600/90 text-white border-0 shadow-lg">
               <p>تطبيق التغييرات على وضع العميل</p>
             </TooltipContent>
           </Tooltip>
@@ -50,22 +50,22 @@ export function ModeToggle() {
         <div 
           onClick={handleToggle}
           className={cn(
-            "relative flex items-center w-[90px] h-[36px] rounded-full p-1 transition-colors duration-300 cursor-pointer shadow-md hover:shadow-lg transform hover:scale-105 transition-transform",
-            isDeveloperMode ? "bg-octaBlue-600" : "bg-gray-200"
+            "relative flex items-center w-[100px] h-[40px] rounded-full p-1 transition-colors duration-300 cursor-pointer shadow-xl hover:shadow-2xl transform hover:scale-105 transition-transform border border-white/20 backdrop-blur-sm",
+            isDeveloperMode ? "bg-gradient-to-r from-blue-600 to-purple-600" : "bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800"
           )}
         >
           {/* Sliding background */}
           <div 
             className={cn(
-              "absolute inset-y-1 w-[44px] bg-white rounded-full shadow-sm transform transition-transform duration-300",
-              isDeveloperMode ? "translate-x-[44px]" : "translate-x-0"
+              "absolute inset-y-1 w-[48px] bg-white dark:bg-gray-900 rounded-full shadow-md transform transition-transform duration-300",
+              isDeveloperMode ? "translate-x-[50px]" : "translate-x-0"
             )}
           />
           
           {/* Icons */}
           <div className={cn(
             "flex-1 flex items-center justify-center z-10 text-xs font-medium transition-colors duration-300",
-            isDeveloperMode ? "text-white/60" : "text-octaBlue-600"
+            isDeveloperMode ? "text-white/60" : "text-octaBlue-600 dark:text-white"
           )}>
             <User size={16} className="mr-1" />
             <span className="text-[10px]">عميل</span>
@@ -73,7 +73,7 @@ export function ModeToggle() {
           
           <div className={cn(
             "flex-1 flex items-center justify-center z-10 text-xs font-medium transition-colors duration-300",
-            isDeveloperMode ? "text-white" : "text-gray-500"
+            isDeveloperMode ? "text-white" : "text-gray-500 dark:text-gray-400"
           )}>
             <Code size={16} className="mr-1" />
             <span className="text-[10px]">مطور</span>

@@ -67,36 +67,36 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
               <Button
                 variant="outline"
                 size="icon"
-                className={`relative ${className} ${isTransitioning ? 'opacity-50' : 'opacity-100'} transition-opacity duration-300 shadow-md hover:shadow-lg transform hover:scale-110 hover:translate-y-[-2px] transition-all`}
+                className={`relative ${className} ${isTransitioning ? 'opacity-50' : 'opacity-100'} transition-opacity duration-300 shadow-xl hover:shadow-2xl bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-700 border border-blue-200 dark:border-gray-600`}
                 aria-label={t('common.selectLanguage', 'تغيير اللغة')}
                 data-testid="language-switcher"
               >
-                <Globe className="h-4 w-4" />
+                <Globe className="h-4 w-4 text-blue-500 dark:text-blue-300" />
                 <span className="sr-only">{t('common.language', 'اللغة')}</span>
               </Button>
             </DropdownMenuTrigger>
           </TooltipTrigger>
-          <TooltipContent>
+          <TooltipContent className="bg-gradient-to-r from-blue-500/90 to-blue-600/90 text-white border-0 shadow-lg">
             <p>{t('common.selectLanguage', 'تغيير اللغة')}</p>
           </TooltipContent>
         </Tooltip>
-        <DropdownMenuContent align="end" className="z-50 min-w-[180px] bg-background border border-border shadow-lg rounded-lg">
-          <DropdownMenuLabel className="text-center font-medium">
+        <DropdownMenuContent align="end" className="z-50 min-w-[180px] bg-white/90 dark:bg-gray-800/90 backdrop-blur-md border border-white/20 dark:border-gray-700/30 shadow-xl rounded-lg">
+          <DropdownMenuLabel className="text-center font-medium gradient-text">
             {t('common.language', 'اللغة')}
           </DropdownMenuLabel>
-          <DropdownMenuSeparator />
+          <DropdownMenuSeparator className="bg-gradient-to-r from-blue-200 to-purple-200 dark:from-blue-800/30 dark:to-purple-800/30" />
           {languages.map((lang) => (
             <DropdownMenuItem
               key={lang.code}
               className={`flex items-center justify-between px-4 py-2 cursor-pointer transform hover:translate-y-[-1px] transition-transform ${
-                i18n.language === lang.code ? 'bg-muted/50' : ''
+                i18n.language === lang.code ? 'bg-blue-50 dark:bg-blue-900/30' : ''
               }`}
               onClick={() => changeLanguage(lang.code)}
               data-testid={`language-option-${lang.code}`}
             >
               <span>{lang.nativeName}</span>
               {i18n.language === lang.code && (
-                <Check className="h-4 w-4 ml-2 rtl:mr-2 rtl:ml-0 text-primary" />
+                <Check className="h-4 w-4 ml-2 rtl:mr-2 rtl:ml-0 text-blue-500" />
               )}
             </DropdownMenuItem>
           ))}

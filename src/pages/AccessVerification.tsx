@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Shield, Key, ArrowLeft } from "lucide-react";
+import { Shield, Key, ArrowLeft, User, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
@@ -50,9 +50,9 @@ const AccessVerification = () => {
   };
   
   return (
-    <div className="min-h-screen w-full flex flex-col bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen w-full flex flex-col bg-gradient-to-br from-octaBlue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
       <div className="flex-1 flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 relative">
+        <div className="max-w-md w-full bg-white/80 dark:bg-gray-800/50 backdrop-blur-xl rounded-2xl shadow-2xl p-10 relative border border-white/20 dark:border-gray-700/30 transform hover:scale-[1.01] transition-all duration-300">
           {/* رابط العودة */}
           <Link 
             to="/" 
@@ -64,11 +64,13 @@ const AccessVerification = () => {
           
           {/* Shield Icon */}
           <div className="flex justify-center mb-8">
-            <Shield className="h-16 w-16 text-blue-500" />
+            <div className="bg-gradient-to-r from-octaBlue-500 to-purple-600 text-white p-5 rounded-full shadow-xl">
+              <Shield className="h-16 w-16" />
+            </div>
           </div>
           
           {/* Brand Name */}
-          <h1 className="text-3xl font-bold text-center mb-2">
+          <h1 className="text-3xl font-bold text-center mb-2 bg-gradient-to-r from-octaBlue-600 to-purple-600 bg-clip-text text-transparent">
             OCTA-GRAM
           </h1>
           
@@ -77,22 +79,36 @@ const AccessVerification = () => {
             {t('verification')}
           </h2>
           
-          {/* Access Key Input */}
-          <div className="relative mb-6">
+          {/* Username Input */}
+          <div className="relative mb-4">
+            <div className="absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 h-9 w-9 flex items-center justify-center bg-octaBlue-100 dark:bg-gray-700 rounded-full">
+              <User className="h-5 w-5 text-octaBlue-500 dark:text-octaBlue-300" />
+            </div>
             <Input
               type="text"
+              placeholder="اسم المستخدم"
+              className={`${isRTL ? 'pr-14' : 'pl-14'} py-6 text-lg bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 rounded-xl`}
+            />
+          </div>
+          
+          {/* Access Key Input */}
+          <div className="relative mb-6">
+            <div className="absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 h-9 w-9 flex items-center justify-center bg-octaBlue-100 dark:bg-gray-700 rounded-full">
+              <Lock className="h-5 w-5 text-octaBlue-500 dark:text-octaBlue-300" />
+            </div>
+            <Input
+              type="password"
               value={accessKey}
               onChange={(e) => setAccessKey(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={t('enterAccessKey')}
-              className="pl-10 pr-4 py-6 text-lg rtl:pl-4 rtl:pr-10"
+              className={`${isRTL ? 'pr-14' : 'pl-14'} py-6 text-lg bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 rounded-xl`}
             />
-            <Key className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500`} />
           </div>
           
           {/* Authenticate Button */}
           <Button 
-            className="w-full py-6 text-lg bg-blue-600 hover:bg-blue-700"
+            className="w-full py-6 text-lg bg-gradient-to-r from-octaBlue-500 to-purple-600 hover:from-octaBlue-600 hover:to-purple-700 rounded-xl shadow-lg hover:shadow-octaBlue-500/30 transform hover:translate-y-[-2px] transition-all"
             onClick={handleAuthenticate}
             disabled={isAuthenticating || accessKey.length === 0}
           >
@@ -105,7 +121,7 @@ const AccessVerification = () => {
           
           {/* Developer Mode Link */}
           <div className="mt-6 text-center">
-            <Link to="/license" className="text-sm text-gray-500 hover:text-blue-500 transition-colors">
+            <Link to="/license" className="text-sm text-gray-500 hover:text-octaBlue-500 transition-colors">
               {t('developerMode')}
             </Link>
           </div>

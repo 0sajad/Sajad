@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ModeToggle } from "./ModeToggle";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogIn, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DesktopNav } from "./nav/DesktopNav";
 import { MobileMenu } from "./nav/MobileMenu";
@@ -38,26 +38,32 @@ export function Header({ onLanguageChange }: HeaderProps) {
       >
         <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between">
           <div className="flex items-center">
-            <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-octaBlue-600 to-octaBlue-800 bg-clip-text text-transparent mr-6 sm:mr-16 transform hover:scale-105 transition-transform shadow-lg hover:shadow-octaBlue-500/30">
+            <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-octaBlue-600 to-purple-600 bg-clip-text text-transparent mr-6 sm:mr-16 transform hover:scale-105 transition-transform shadow-lg hover:shadow-octaBlue-500/30">
               OCTA-GRAM
             </Link>
             
             <DesktopNav />
           </div>
           
-          <div className="flex items-center space-x-6 rtl:space-x-reverse">
-            <LanguageSwitcher className="mr-2 rtl:ml-2 rtl:mr-0 transform hover:scale-110 transition-transform shadow-md rounded-full" />
+          <div className="flex items-center space-x-8 rtl:space-x-reverse">
+            <LanguageSwitcher className="mr-2 rtl:ml-2 rtl:mr-0 transform hover:scale-110 transition-transform shadow-xl rounded-full effect-3d" />
             
-            <div className="mr-6 rtl:ml-6 rtl:mr-0 transform hover:scale-110 transition-transform">
+            <div className="mr-6 rtl:ml-6 rtl:mr-0 transform hover:scale-110 transition-transform effect-3d">
               <ModeToggle />
             </div>
             
             <div className="hidden md:block">
               <Button 
-                size="sm" 
-                className="px-6 py-2 shadow-md hover:shadow-lg transform hover:scale-105 transition-all hover:translate-y-[-2px]"
+                size="xl" 
+                variant="gradient"
+                className="px-6 py-2 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all hover:translate-y-[-3px] rounded-full effect-3d"
               >
-                {t('header.login')}
+                <div className="flex items-center gap-2 rtl:flex-row-reverse">
+                  <div className="bg-white/30 p-1 rounded-full">
+                    <User size={18} className="text-white" />
+                  </div>
+                  <span>{t('header.login')}</span>
+                </div>
               </Button>
             </div>
             

@@ -90,23 +90,41 @@
 .effect-3d {
   transform-style: preserve-3d;
   perspective: 1000px;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .effect-3d:hover {
   transform: translateY(-5px) rotateX(5deg) rotateY(5deg);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.05);
 }
 
 .shadow-3d {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1),
               0 6px 6px rgba(0, 0, 0, 0.1),
               0 0 0 1px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .shadow-3d:hover {
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15),
               0 10px 10px rgba(0, 0, 0, 0.1),
               0 0 0 1px rgba(0, 0, 0, 0.05);
+  transform: translateY(-5px);
+}
+
+/* Glassmorphism Effects */
+.glass-effect {
+  @apply bg-white/20 backdrop-blur-lg border border-white/30 shadow-lg;
+}
+
+.glass-card {
+  @apply bg-white/80 dark:bg-gray-800/50 backdrop-blur-xl border border-white/20 dark:border-gray-700/30 shadow-xl rounded-2xl;
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  @apply bg-white/90 dark:bg-gray-800/60 shadow-2xl border-white/30 dark:border-gray-700/40;
+  transform: translateY(-5px);
 }
 
 /* UI Components */
@@ -196,4 +214,26 @@
 
 [dir="rtl"] .rtl\:mr-4 {
   margin-right: 1rem;
+}
+
+/* Button Animations */
+.btn-pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+/* Gradient Text */
+.gradient-text {
+  @apply bg-gradient-to-r from-octaBlue-600 to-purple-600 bg-clip-text text-transparent;
 }
