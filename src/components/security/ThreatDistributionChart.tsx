@@ -10,12 +10,12 @@ interface ThreatDistributionChartProps {
 }
 
 export const ThreatDistributionChart: React.FC<ThreatDistributionChartProps> = ({ threatData }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("securityDashboard");
   const threatTotal = threatData.reduce((sum, item) => sum + item.value, 0);
   
   return (
     <div className="p-4 rounded-lg border">
-      <h3 className="text-lg font-medium mb-4">{t('securityDashboard.threatDistribution', 'Threat Distribution')}</h3>
+      <h3 className="text-lg font-medium mb-4">{t('threatDistribution', 'Threat Distribution')}</h3>
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -40,7 +40,7 @@ export const ThreatDistributionChart: React.FC<ThreatDistributionChartProps> = (
       <div className="mt-4 text-center">
         <div className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
           <AlertCircle size={12} className="mr-1" />
-          {threatTotal} {t('securityDashboard.threatsDetected', 'threats detected')}
+          {threatTotal} {t('threatsDetected', 'threats detected')}
         </div>
       </div>
     </div>

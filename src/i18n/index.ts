@@ -1,4 +1,4 @@
 
-import i18n from './config';
+import { i18n, changeLanguage } from './config';
 
-export default i18n;
+export { i18n, changeLanguage };

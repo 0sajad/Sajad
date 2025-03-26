@@ -1,87 +1,82 @@
+
 import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
-import en from '@/locales/en/translation.json';
-import enAIAssistant from '@/locales/en/aiAssistant.json';
-import enDashboard from '@/locales/en/dashboard.json';
-import enDeveloper from '@/locales/en/developer.json';
-import enSecurityDashboard from '@/locales/en/securityDashboard.json';
-import enSecurityStatus from '@/locales/en/securityStatus.json';
-import enSettings from '@/locales/en/settings.json';
-import enHelpCenter from '@/locales/en/helpCenter.json';
-
-import ar from '@/locales/ar/translation.json';
-import arAIAssistant from '@/locales/ar/aiAssistant.json';
-import arDashboard from '@/locales/ar/dashboard.json';
-import arDeveloper from '@/locales/ar/developer.json';
-import arSecurityDashboard from '@/locales/ar/securityDashboard.json';
-import arSecurityStatus from '@/locales/ar/securityStatus.json';
-import arSettings from '@/locales/ar/settings.json';
-import arHelpCenter from '@/locales/ar/helpCenter.json';
-
-import arIQ from '@/locales/ar-iq/translation.json';
-import arIQAIAssistant from '@/locales/ar-iq/aiAssistant.json';
-import arIQDashboard from '@/locales/ar-iq/dashboard.json';
-import arIQDeveloper from '@/locales/ar-iq/developer.json';
-import arIQSecurityDashboard from '@/locales/ar-iq/securityDashboard.json';
-import arIQSecurityStatus from '@/locales/ar-iq/securityStatus.json';
-import arIQSettings from '@/locales/ar-iq/settings.json';
-import arIQHelpCenter from '@/locales/ar-iq/helpCenter.json';
-
-import ja from '@/locales/ja/translation.json';
-import jaAIAssistant from '@/locales/ja/aiAssistant.json';
-import jaDashboard from '@/locales/ja/dashboard.json';
-import jaDeveloper from '@/locales/ja/developer.json';
-import jaSecurityDashboard from '@/locales/ja/securityDashboard.json';
-import jaSecurityStatus from '@/locales/ja/securityStatus.json';
-import jaSettings from '@/locales/ja/settings.json';
-import jaHelpCenter from '@/locales/ja/helpCenter.json';
-
+// تعريف ملفات الترجمة المتاحة
 const resources = {
   en: {
-    translation: en,
-    aiAssistant: enAIAssistant,
-    dashboard: enDashboard,
-    developer: enDeveloper,
-    securityDashboard: enSecurityDashboard,
-    securityStatus: enSecurityStatus,
-    settings: enSettings,
-    helpCenter: enHelpCenter,
+    common: require('@/locales/en/common.json'),
+    securityDashboard: require('@/locales/en/securityDashboard.json'),
+    networkTools: require('@/locales/en/networkTools.json'),
+    ai: require('@/locales/en/ai.json'),
+    aiAssistant: require('@/locales/en/aiAssistant.json'),
+    cta: require('@/locales/en/cta.json'),
+    access: require('@/locales/en/access.json'),
+    license: require('@/locales/en/license.json'),
+    dashboard: require('@/locales/en/dashboard.json'),
+    deviceManager: require('@/locales/en/deviceManager.json'),
+    settings: require('@/locales/en/settings.json'),
+    systemMonitor: require('@/locales/en/systemMonitor.json')
   },
   ar: {
-    translation: ar,
-    aiAssistant: arAIAssistant,
-    dashboard: arDashboard,
-    developer: arDeveloper,
-    securityDashboard: arSecurityDashboard,
-    securityStatus: arSecurityStatus,
-    settings: arSettings,
-    helpCenter: arHelpCenter,
+    common: require('@/locales/ar/common.json'),
+    securityDashboard: require('@/locales/ar/securityDashboard.json') || {},
+    networkTools: require('@/locales/ar/networkTools.json'),
+    ai: require('@/locales/ar/ai.json'),
+    aiAssistant: require('@/locales/ar/aiAssistant.json'),
+    cta: require('@/locales/ar/cta.json'),
+    access: require('@/locales/ar/access.json'),
+    license: require('@/locales/ar/license.json'),
+    aiFeatures: require('@/locales/ar/aiFeatures.json')
   },
-    'ar-iq': {
-    translation: arIQ,
-    aiAssistant: arIQAIAssistant,
-    dashboard: arIQDashboard,
-    developer: arIQDeveloper,
-    securityDashboard: arIQSecurityDashboard,
-    securityStatus: arIQSecurityStatus,
-    settings: arIQSettings,
-    helpCenter: arIQHelpCenter,
+  'ar-iq': {
+    common: require('@/locales/ar-iq/common.json') || {},
+    securityDashboard: require('@/locales/ar-iq/securityDashboard.json'),
+    networkTools: require('@/locales/ar-iq/networkTools.json'),
+    ai: require('@/locales/ar-iq/ai.json'),
+    aiAssistant: require('@/locales/ar-iq/aiAssistant.json'),
+    cta: require('@/locales/ar-iq/cta.json'),
+    access: require('@/locales/ar-iq/access.json'),
+    dashboard: require('@/locales/ar-iq/dashboard.json'),
+    deviceManager: require('@/locales/ar-iq/deviceManager.json'),
+    securityStatus: require('@/locales/ar-iq/securityStatus.json'),
+    aiFeatures: require('@/locales/ar-iq/aiFeatures.json'),
+    helpCenter: require('@/locales/ar-iq/helpCenter.json'),
+    license: require('@/locales/ar-iq/license.json'),
+    systemMonitor: require('@/locales/ar-iq/systemMonitor.json'),
+    settings: require('@/locales/ar-iq/settings.json')
   },
   ja: {
-    translation: ja,
-    aiAssistant: jaAIAssistant,
-    dashboard: jaDashboard,
-    developer: jaDeveloper,
-    securityDashboard: jaSecurityDashboard,
-    securityStatus: jaSecurityStatus,
-    settings: jaSettings,
-    helpCenter: jaHelpCenter,
+    common: require('@/locales/ja/common.json'),
+    securityDashboard: require('@/locales/ja/securityDashboard.json') || {},
+    networkTools: require('@/locales/ja/networkTools.json'),
+    ai: require('@/locales/ja/ai.json'),
+    aiAssistant: require('@/locales/ja/aiAssistant.json'),
+    cta: require('@/locales/ja/cta.json'),
+    footer: require('@/locales/ja/footer.json'),
+    hero: require('@/locales/ja/hero.json'),
+    securityStatus: require('@/locales/ja/securityStatus.json'),
+    aiFeatures: require('@/locales/ja/aiFeatures.json'),
+    settings: require('@/locales/ja/settings.json'),
+    helpCenter: require('@/locales/ja/helpCenter.json')
   },
+  fr: {
+    cta: require('@/locales/fr/cta.json'),
+    networkTools: require('@/locales/fr/networkTools.json'),
+    ai: require('@/locales/fr/ai.json'),
+    aiAssistant: require('@/locales/fr/aiAssistant.json'),
+    settings: require('@/locales/fr/settings.json')
+  },
+  zh: {
+    ai: require('@/locales/zh/ai.json'),
+    cta: require('@/locales/zh/cta.json'),
+    networkTools: require('@/locales/zh/networkTools.json'),
+    aiAssistant: require('@/locales/zh/aiAssistant.json')
+  }
 };
 
-const SUPPORTED_LANGUAGES = ['en', 'ar', 'ar-iq', 'ja'];
+const SUPPORTED_LANGUAGES = ['en', 'ar', 'ar-iq', 'ja', 'fr', 'zh'];
 const FALLBACK_LANGUAGES: { [key: string]: string } = {
   'ar-iq': 'ar',
 };
@@ -97,7 +92,7 @@ export const i18n = i18next
     fallbackLng: (code) => {
       if (!code) return DEFAULT_LANGUAGE;
       
-      // Fix type error by explicitly converting array to string
+      // تحويل المصفوفة إلى سلسلة إذا لزم الأمر
       if (Array.isArray(code)) {
         return code[0] as string;
       }
@@ -106,10 +101,13 @@ export const i18n = i18next
       return FALLBACK_LANGUAGES[language] || DEFAULT_LANGUAGE;
     },
     debug: process.env.NODE_ENV === 'development',
-    whitelist: SUPPORTED_LANGUAGES,
+    supportedLngs: SUPPORTED_LANGUAGES, // استخدام supportedLngs بدلاً من whitelist
     interpolation: {
-      escapeValue: false, // not needed for react as it escapes by default
+      escapeValue: false, // لا حاجة لـ React لأنه يهرب القيم افتراضياً
     },
+    // التأكد من استخدام اللغة الافتراضية لترجمة النصوص
+    ns: ['common', 'securityDashboard', 'networkTools', 'ai', 'aiAssistant', 'cta'],
+    defaultNS: 'common',
   });
 
 export const changeLanguage = (lng: string) => {
