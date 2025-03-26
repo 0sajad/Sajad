@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { AccessibilityMenu } from "@/components/ui/accessibility-menu";
+import { AccessibilityMenu } from "@/components/ui/accessibility";
 import { useA11y } from "@/hooks/useA11y";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Accessibility } from "lucide-react";
