@@ -1,31 +1,61 @@
 
 {
-  "title": "AI Assistant",
-  "ready": "Ready",
-  "learning": "Learning",
-  "processing": "Processing",
-  "protecting": "Protecting",
+  "features": {
+    "webDevelopment": "Web Development",
+    "security": "Advanced Security",
+    "selfImproving": "Self Improvement",
+    "database": "Databases",
+    "codeAnalysis": "Code Analysis",
+    "networkAnalysis": "Network Analysis",
+    "dataVisualization": "Data Visualization",
+    "research": "Advanced Research",
+    "commandLine": "Command Line"
+  },
+  "bubbleMessages": {
+    "newTools": "New tools available!",
+    "help": "Need help?",
+    "security": "Important security updates!",
+    "optimization": "I can help optimize your network"
+  },
+  "security": "Advanced Security",
+  "securityDesc": "Robust protection for networks with advanced threat analysis",
+  "multiLanguage": "Multi-language Support",
+  "multiLanguageDesc": "Supports all programming languages and communicates in multiple languages",
+  "selfDevelopment": "Self Development",
+  "selfDevelopmentDesc": "Continuously improves itself and learns new techniques without human intervention",
   "navigating": "Navigating",
   "openingPage": "Opening AI Assistant page",
-  "features": {
-    "selfImproving": "Self Improving",
-    "security": "Security",
-    "codeAnalysis": "Code Analysis",
-    "webDevelopment": "Web Development",
-    "database": "Database"
+  "learningDesc": "The assistant learns from your previous interactions to better assist you",
+  "title": "AI Assistant",
+  "subtitle": "Your personal network guide",
+  "description": "Get instant help, recommendations, and automation for your network",
+  "greeting": "Hello! How can I help with your network today?",
+  "placeholder": "Ask me anything about your network...",
+  "suggestions": {
+    "optimize": "How can I improve my WiFi signal?",
+    "secure": "Is my network secure?",
+    "troubleshoot": "Why is my internet connection slow?",
+    "device": "How do I connect a new device?"
+  },
+  "responses": {
+    "analyzing": "Analyzing your network...",
+    "optimizing": "Looking for optimization solutions...",
+    "securing": "Checking security status...",
+    "troubleshooting": "Diagnosing connectivity issues..."
+  },
+  "settings": {
+    "voice": "Voice Interaction",
+    "proactive": "Proactive Assistance",
+    "learning": "Learning Mode",
+    "privacy": "Privacy Mode"
   },
   "continuousLearning": "Continuous Learning",
-  "learningDesc": "Continuous improvement of capabilities",
-  "security": "Security & Protection",
-  "securityDesc": "Network monitoring and security",
-  "multiLanguage": "Multi Language",
-  "multiLanguageDesc": "Support for many languages and dialects",
-  "selfDevelopment": "Self Development",
-  "selfDevelopmentDesc": "Automatically develop new functions",
-  "bubbleMessages": {
-    "help": "Need help? I'm here to assist you!",
-    "newTools": "New tools are available! Click to learn more.",
-    "security": "Security settings updated. Want to review?",
-    "optimization": "There are opportunities to optimize network performance!"
-  }
+  "ready": "Ready",
+  "processing": "Processing...",
+  "protecting": "Protecting...",
+  "learning": "Learning...",
+  "analyzing": "Analyzing...",
+  "optimizing": "Optimizing...",
+  "learningSources": "Learning Sources",
+  "aiCapabilities": "AI Capabilities"
 }

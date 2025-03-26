@@ -1,0 +1,22 @@
+
+{
+  "title": "إدارة أجهزة الشبكة",
+  "description": "مراقبة وإدارة جميع الأجهزة المتصلة بشبكتك",
+  "scan": "فحص",
+  "addDevice": "إضافة جهاز",
+  "device": "الجهاز",
+  "status": "الحالة",
+  "ipAddress": "عنوان IP",
+  "lastSeen": "آخر ظهور",
+  "actions": "الإجراءات",
+  "details": "التفاصيل",
+  "noDevices": "لم يتم العثور على أجهزة",
+  "networkInsights": "تحليلات الشبكة",
+  "activeDevices": "الأجهزة النشطة",
+  "lastScan": "آخر فحص",
+  "networkHealth": "صحة الشبكة",
+  "refreshing": "تحديث الأجهزة",
+  "scanningNetwork": "فحص الشبكة للأجهزة المتصلة...",
+  "scanComplete": "اكتمل الفحص",
+  "devicesFound": "تم العثور على {count} جهاز في شبكتك"
+}

@@ -1,0 +1,11 @@
+
+{
+  "title": "System Performance Monitor",
+  "description": "Real-time monitoring of system resources",
+  "refresh": "Refresh",
+  "memory": "Memory",
+  "disk": "Disk",
+  "temperature": "Temperature",
+  "refreshing": "Refreshing Data",
+  "collectingMetrics": "Collecting system metrics..."
+}

@@ -1,0 +1,34 @@
+
+{
+  "title": "Dashboard",
+  "welcome": "Welcome to OCTA-GRAM Dashboard",
+  "systemStatus": "System Status",
+  "status": "Status",
+  "active": "Active",
+  "quickActions": "Quick Actions",
+  "selectAction": "Select action",
+  "actions": {
+    "scan": "Scan Network",
+    "optimize": "Optimize Performance",
+    "backup": "Backup Settings",
+    "security": "Security Check",
+    "debug": "Debug Connection"
+  },
+  "latestUpdates": "Latest Updates",
+  "noUpdates": "No new updates available",
+  "securityUpdate": "Security update available",
+  "performanceOptimized": "Performance optimized",
+  "uptime": "Uptime",
+  "lastCheck": "Last Check",
+  "minutesAgo": "minutes ago",
+  "quickScan": "Quick Scan",
+  "systemScan": "System Scan",
+  "scanStarted": "Network scan started. Results will be available soon.",
+  "optimize": "Optimize",
+  "optimizeStarted": "Network optimization started.",
+  "execute": "Execute",
+  "schedule": "Schedule",
+  "systemPerformance": "System",
+  "devices": "Devices",
+  "security": "Security"
+}

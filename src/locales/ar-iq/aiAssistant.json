@@ -5,7 +5,11 @@
     "security": "الأمان المتقدم",
     "selfImproving": "التحسين الذاتي",
     "database": "قواعد البيانات",
-    "codeAnalysis": "تحليل الكود"
+    "codeAnalysis": "تحليل الكود",
+    "networkAnalysis": "تحليل الشبكات",
+    "dataVisualization": "تصور البيانات",
+    "research": "البحث المتقدم",
+    "commandLine": "سطر الأوامر"
   },
   "bubbleMessages": {
     "newTools": "أدوات يديدة متوفرة!",
@@ -49,5 +53,9 @@
   "ready": "جاهز",
   "processing": "شغال...",
   "protecting": "دا أحمي...",
-  "learning": "دا أتعلم..."
+  "learning": "دا أتعلم...",
+  "analyzing": "دا أحلل...",
+  "optimizing": "دا أحسن...",
+  "learningSources": "مصادر التعلم",
+  "aiCapabilities": "قدرات الذكاء الاصطناعي"
 }

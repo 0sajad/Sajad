@@ -1,0 +1,22 @@
+
+{
+  "title": "Network Device Manager",
+  "description": "Monitor and manage all devices connected to your network",
+  "scan": "Scan",
+  "addDevice": "Add Device",
+  "device": "Device",
+  "status": "Status",
+  "ipAddress": "IP Address",
+  "lastSeen": "Last Seen",
+  "actions": "Actions",
+  "details": "Details",
+  "noDevices": "No devices found",
+  "networkInsights": "Network Insights",
+  "activeDevices": "Active Devices",
+  "lastScan": "Last Scan",
+  "networkHealth": "Network Health",
+  "refreshing": "Refreshing Devices",
+  "scanningNetwork": "Scanning network for connected devices...",
+  "scanComplete": "Scan Complete",
+  "devicesFound": "{count} devices found on your network"
+}
