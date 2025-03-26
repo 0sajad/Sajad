@@ -17,6 +17,7 @@ const Index = () => {
   const [loaded, setLoaded] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const { i18n, t } = useTranslation();
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
     setLoaded(true);
@@ -34,27 +35,52 @@ const Index = () => {
       setShowAIAssistant(true);
     }, 5000);
     
-    return () => clearTimeout(timeout);
+    // إضافة مستمع للحدث المخصص languageChanged
+    const handleLanguageChange = () => {
+      // تطبيق تأثير انتقالي عند تغيير اللغة
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 500);
+    };
+    
+    document.addEventListener('languageChanged', handleLanguageChange);
+    
+    return () => {
+      clearTimeout(timeout);
+      document.removeEventListener('languageChanged', handleLanguageChange);
+    };
   }, [i18n]);
 
   const handleLanguageChange = (language: string) => {
-    localStorage.setItem("language", language);
+    // تطبيق تأثير انتقالي قبل تغيير اللغة
+    setIsTransitioning(true);
     
-    toast({
-      title: language === "ar" ? "تم تغيير اللغة" : language === "ar-iq" ? "تم تغيير اللغة" : 
-             language === "ja" ? "言語が変更されました" : language === "zh" ? "语言已更改" : 
-             language === "fr" ? "Langue modifiée" : "Language Changed",
-      description: language === "ar" ? "تم التحويل إلى اللغة العربية" : 
-                  language === "ar-iq" ? "تم التحويل إلى اللهجة العراقية" : 
-                  language === "en" ? "Switched to English language" : 
-                  language === "ja" ? "日本語に切り替えました" : 
-                  language === "zh" ? "切换到中文" : 
-                  "Passé à la langue française"
-    });
+    setTimeout(() => {
+      localStorage.setItem("language", language);
+      i18n.changeLanguage(language);
+      
+      toast({
+        title: language === "ar" ? "تم تغيير اللغة" : language === "ar-iq" ? "تم تغيير اللغة" : 
+               language === "ja" ? "言語が変更されました" : language === "zh" ? "语言已更改" : 
+               language === "fr" ? "Langue modifiée" : "Language Changed",
+        description: language === "ar" ? "تم التحويل إلى اللغة العربية" : 
+                    language === "ar-iq" ? "تم التحويل إلى اللهجة العراقية" : 
+                    language === "en" ? "Switched to English language" : 
+                    language === "ja" ? "日本語に切り替えました" : 
+                    language === "zh" ? "切换到中文" : 
+                    "Passé à la langue française"
+      });
+      
+      // إعادة تفعيل المحتوى بعد انتهاء الانتقال
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 300);
+    }, 150);
   };
 
   return (
-    <div className={`min-h-screen w-full transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'}`}>
+    <div className={`min-h-screen w-full transition-all duration-500 ${loaded ? 'opacity-100' : 'opacity-0'} ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}>
       <Header onLanguageChange={handleLanguageChange} />
       
       {/* Hero Section */}

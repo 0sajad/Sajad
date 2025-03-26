@@ -27,7 +27,7 @@ i18n
       escapeValue: false
     },
     react: {
-      useSuspense: false,
+      useSuspense: true,
       transKeepBasicHtmlNodesFor: ['br', 'strong', 'i', 'p', 'span', 'a', 'ul', 'ol', 'li']
     },
     missingKeyHandler: (lng, ns, key) => {
@@ -81,17 +81,15 @@ i18n.on('languageChanged', (lng) => {
     }
   });
   
-  // حل مشكلة النصوص الإنجليزية التي تظهر عند تغيير اللغة
-  // إعادة تحميل الصفحة بعد تغيير اللغة لضمان تطبيق جميع الترجمات
-  setTimeout(() => {
-    window.location.reload();
-  }, 100);
+  // حل مشكلة النصوص التي لا تتغير عند تبديل اللغة
+  // استخدام حدث مخصص لإعلام المكونات بتغيير اللغة بدلاً من إعادة تحميل الصفحة
+  document.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: lng } }));
   
   // تحسين أسلوب تنظيف ذاكرة التخزين المؤقت للمفاتيح عند تغيير اللغة
   if (translationKeyDetector) {
     setTimeout(() => {
       translationKeyDetector.resetMissingKeys();
-    }, 300);
+    }, 100);
   }
 });
 
