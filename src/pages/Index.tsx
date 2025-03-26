@@ -16,18 +16,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QuickAccessibilityButton } from "@/components/ui/QuickAccessibilityButton";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { usePreferenceSync } from "@/hooks/usePreferenceSync";
-import { KeyboardNavigationMenu } from "@/components/ui/accessibility/keyboard-navigation-menu";
-import { ReadingGuide } from "@/components/ui/accessibility/reading-guide";
-import { KeyboardFocusDetector } from "@/components/ui/accessibility/keyboard-focus-detector";
-import { LiveAnnouncer } from "@/components/ui/accessibility/live-announcer";
-import { useA11y } from "@/hooks/useA11y";
 
 const Index = () => {
   const [loaded, setLoaded] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const { i18n } = useTranslation();
   const { isTransitioning } = useLanguageTransition();
-  const { reducedMotion } = useA11y();
   
   // Use the new hooks
   useKeyboardShortcuts();
@@ -79,7 +73,7 @@ const Index = () => {
   return (
     <TooltipProvider>
       <div 
-        className={`min-h-screen w-full transition-all ${reducedMotion ? 'transition-none' : 'duration-500'} ${loaded ? 'opacity-100' : 'opacity-0'} ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}
+        className={`min-h-screen w-full transition-all duration-500 ${loaded ? 'opacity-100' : 'opacity-0'} ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}
         role="application"
       >
         <a 
@@ -124,12 +118,6 @@ const Index = () => {
         
         {/* Accessibility Controls */}
         <QuickAccessibilityButton />
-
-        {/* Accessibility Components */}
-        <ReadingGuide />
-        <KeyboardNavigationMenu />
-        <KeyboardFocusDetector />
-        <LiveAnnouncer />
       </div>
     </TooltipProvider>
   );

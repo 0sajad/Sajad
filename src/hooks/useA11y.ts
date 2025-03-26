@@ -29,7 +29,7 @@ export function useA11y() {
   } = useA11yText();
   
   // Sound-related accessibility settings
-  const { soundFeedback, setSoundFeedback, playNotificationSound } = useA11ySound();
+  const { soundFeedback, setSoundFeedback } = useA11ySound();
   
   // Monitor system preferences
   useSystemPreferences(setReducedMotion);
@@ -68,7 +68,6 @@ export function useA11y() {
     dyslexicFont, setDyslexicFont,
     readingGuide, setReadingGuide,
     soundFeedback, setSoundFeedback,
-    playNotificationSound,
     
     // Profile management functions
     saveA11yProfile,

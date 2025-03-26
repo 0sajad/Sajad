@@ -1,32 +1,27 @@
 
 import { A11ySettings } from '../../types/accessibility';
-import { saveAs } from 'file-saver';
 
 /**
- * Functions for importing and exporting accessibility profiles
+ * Hook for handling profile import and export functionality
  */
 export function useProfileImportExport() {
   /**
-   * Export settings to JSON file
+   * Export accessibility settings to a downloadable JSON file
    */
-  const exportSettings = (settings: A11ySettings): boolean => {
-    try {
-      // تحضير الملف للتصدير
-      const dataStr = JSON.stringify(settings, null, 2);
-      const blob = new Blob([dataStr], { type: 'application/json' });
-      
-      // استخدام FileSaver.js لتنزيل الملف
-      saveAs(blob, `accessibility-settings-${new Date().toISOString().slice(0, 10)}.json`);
-      
-      return true;
-    } catch (error) {
-      console.error('Failed to export settings:', error);
-      return false;
-    }
+  const exportSettings = (settings: A11ySettings) => {
+    const blob = new Blob([JSON.stringify(settings)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'a11y-settings.json';
+    a.click();
+    
+    URL.revokeObjectURL(url);
   };
   
   /**
-   * Import settings from JSON file
+   * Import accessibility settings from a JSON file
    */
   const importSettings = (file: File): Promise<A11ySettings> => {
     return new Promise((resolve, reject) => {
@@ -34,73 +29,21 @@ export function useProfileImportExport() {
       
       reader.onload = (event) => {
         try {
-          if (!event.target?.result) {
-            throw new Error('Failed to read file');
-          }
-          
-          const settings = JSON.parse(event.target.result as string) as A11ySettings;
-          
-          // التحقق من صحة البيانات المستوردة
-          if (!validateImportedSettings(settings)) {
-            throw new Error('Invalid settings format');
-          }
-          
+          const settings: A11ySettings = JSON.parse(event.target?.result as string);
           resolve(settings);
         } catch (error) {
-          console.error('Error parsing imported settings:', error);
           reject(error);
         }
       };
       
-      reader.onerror = (error) => {
-        console.error('Error reading file:', error);
-        reject(error);
-      };
+      reader.onerror = () => reject(new Error('فشل قراءة الملف'));
       
       reader.readAsText(file);
     });
   };
   
-  /**
-   * Show file dialog to import settings
-   */
-  const showImportDialog = (): Promise<File | null> => {
-    return new Promise((resolve) => {
-      // إنشاء عنصر input لاختيار الملف
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = '.json';
-      
-      input.onchange = (e) => {
-        const target = e.target as HTMLInputElement;
-        const files = target.files;
-        
-        if (files && files.length > 0) {
-          resolve(files[0]);
-        } else {
-          resolve(null);
-        }
-      };
-      
-      // محاكاة النقر على زر اختيار الملف
-      input.click();
-    });
-  };
-  
-  /**
-   * Validate imported settings
-   */
-  const validateImportedSettings = (settings: any): settings is A11ySettings => {
-    // التحقق من وجود بعض الحقول المتوقعة
-    const expectedProps = ['highContrast', 'largeText', 'reducedMotion'];
-    const hasProps = expectedProps.some(prop => Object.prototype.hasOwnProperty.call(settings, prop));
-    
-    return hasProps;
-  };
-  
   return {
     exportSettings,
-    importSettings,
-    showImportDialog
+    importSettings
   };
 }
