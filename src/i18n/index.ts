@@ -1,5 +1,6 @@
 
 import { i18n, changeLanguage } from './config';
-import { ResourceKey, TranslationResources } from './resources';
+import type { ResourceKey, TranslationResources } from './resources';
 
-export { i18n, changeLanguage, ResourceKey, TranslationResources };
+export { i18n, changeLanguage };
+export type { ResourceKey, TranslationResources };
