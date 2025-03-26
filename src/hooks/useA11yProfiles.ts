@@ -1,36 +1,26 @@
 
 import { useState, useEffect } from 'react';
-import { useA11y } from './useA11y';
 import { useTranslation } from 'react-i18next';
 import { toast } from '@/components/ui/use-toast';
+import { A11ySettings } from './types/accessibility';
 
 interface A11yProfile {
   id: string;
   name: string;
-  highContrast: boolean;
-  largeText: boolean;
-  reducedMotion: boolean;
-  focusMode: boolean;
-  dyslexiaFont?: boolean;
-  customCursor?: boolean;
-  underlineLinks?: boolean;
-  readingGuide?: boolean;
-  textSpacing?: boolean;
+  settings: A11ySettings;
 }
 
-export function useA11yProfiles() {
+// This hook manages accessibility profiles without depending on useA11y
+export function useA11yProfiles(
+  currentSettings?: A11ySettings,
+  applySettings?: (settings: A11ySettings) => void
+) {
   const { t } = useTranslation();
-  const {
-    highContrast, setHighContrast,
-    largeText, setLargeText,
-    reducedMotion, setReducedMotion,
-    focusMode, setFocusMode
-  } = useA11y();
   
   const [profiles, setProfiles] = useState<A11yProfile[]>([]);
   const [activeProfile, setActiveProfile] = useState<string | null>(null);
   
-  // تحميل الملفات الشخصية المحفوظة
+  // Load saved profiles
   useEffect(() => {
     const savedProfiles = localStorage.getItem('a11y-profiles');
     if (savedProfiles) {
@@ -41,44 +31,51 @@ export function useA11yProfiles() {
         console.error('Failed to parse saved accessibility profiles', error);
       }
     } else {
-      // إنشاء ملف تعريف افتراضي إذا لم يكن هناك ملفات شخصية محفوظة
+      // Create default profile if no profiles are saved
       const defaultProfile: A11yProfile = {
         id: 'default',
         name: t('accessibility.defaultProfileName', 'Default Profile'),
-        highContrast: false,
-        largeText: false,
-        reducedMotion: false,
-        focusMode: false
+        settings: {
+          highContrast: false,
+          largeText: false,
+          reducedMotion: false,
+          focusMode: false,
+          colorBlindMode: null,
+          dyslexicFont: false,
+          readingGuide: false,
+          soundFeedback: false
+        }
       };
       
       setProfiles([defaultProfile]);
       localStorage.setItem('a11y-profiles', JSON.stringify([defaultProfile]));
     }
     
-    // تحقق من وجود ملف تعريف نشط
+    // Check for active profile
     const savedActiveProfile = localStorage.getItem('a11y-active-profile');
     if (savedActiveProfile) {
       setActiveProfile(savedActiveProfile);
     }
   }, [t]);
   
-  // حفظ الملف الشخصي الحالي
+  // Save current settings as a profile
   const saveCurrentSettings = (name: string) => {
+    if (!currentSettings) {
+      console.error('No current settings provided to saveCurrentSettings');
+      return '';
+    }
+    
     const id = Date.now().toString();
     const newProfile: A11yProfile = {
       id,
       name,
-      highContrast,
-      largeText,
-      reducedMotion,
-      focusMode
+      settings: { ...currentSettings }
     };
     
     const updatedProfiles = [...profiles, newProfile];
     setProfiles(updatedProfiles);
     localStorage.setItem('a11y-profiles', JSON.stringify(updatedProfiles));
     
-    // تعيين هذا الملف كملف نشط
     setActiveProfile(id);
     localStorage.setItem('a11y-active-profile', id);
     
@@ -90,15 +87,12 @@ export function useA11yProfiles() {
     return id;
   };
   
-  // تطبيق ملف تعريف محدد
+  // Apply a profile
   const applyProfile = (profileId: string) => {
     const profileToApply = profiles.find(profile => profile.id === profileId);
     
-    if (profileToApply) {
-      setHighContrast(profileToApply.highContrast);
-      setLargeText(profileToApply.largeText);
-      setReducedMotion(profileToApply.reducedMotion);
-      setFocusMode(profileToApply.focusMode);
+    if (profileToApply && applySettings) {
+      applySettings(profileToApply.settings);
       
       setActiveProfile(profileId);
       localStorage.setItem('a11y-active-profile', profileId);
@@ -110,10 +104,10 @@ export function useA11yProfiles() {
     }
   };
   
-  // حذف ملف تعريف
+  // Delete a profile
   const deleteProfile = (profileId: string) => {
     if (profileId === 'default') {
-      // لا يمكن حذف الملف الافتراضي
+      // Cannot delete default profile
       return false;
     }
     
@@ -121,18 +115,15 @@ export function useA11yProfiles() {
     setProfiles(updatedProfiles);
     localStorage.setItem('a11y-profiles', JSON.stringify(updatedProfiles));
     
-    // إذا كان الملف المحذوف هو الملف النشط، قم بتعيين الملف الافتراضي
+    // If deleted profile was active, set default as active
     if (activeProfile === profileId) {
       setActiveProfile('default');
       localStorage.setItem('a11y-active-profile', 'default');
       
-      // تطبيق الإعدادات الافتراضية
+      // Apply default settings
       const defaultProfile = updatedProfiles.find(profile => profile.id === 'default');
-      if (defaultProfile) {
-        setHighContrast(defaultProfile.highContrast);
-        setLargeText(defaultProfile.largeText);
-        setReducedMotion(defaultProfile.reducedMotion);
-        setFocusMode(defaultProfile.focusMode);
+      if (defaultProfile && applySettings) {
+        applySettings(defaultProfile.settings);
       }
     }
     
@@ -143,7 +134,7 @@ export function useA11yProfiles() {
     return true;
   };
   
-  // تصدير ملف تعريف كملف JSON
+  // Export a profile
   const exportProfile = (profileId: string) => {
     const profileToExport = profiles.find(profile => profile.id === profileId);
     
@@ -168,20 +159,20 @@ export function useA11yProfiles() {
     return false;
   };
   
-  // استيراد ملف تعريف من ملف JSON
+  // Import a profile
   const importProfile = (jsonData: string) => {
     try {
       const importedProfile = JSON.parse(jsonData) as A11yProfile;
       
-      // التحقق من صحة الملف المستورد
-      if (!importedProfile.id || typeof importedProfile.highContrast !== 'boolean') {
+      // Validate imported profile
+      if (!importedProfile.id || !importedProfile.settings) {
         throw new Error('Invalid profile format');
       }
       
-      // تعديل معرف الملف لتجنب التضارب
+      // Modify ID to avoid conflicts
       importedProfile.id = Date.now().toString();
       
-      // إضافة الملف المستورد إلى القائمة
+      // Add imported profile to list
       const updatedProfiles = [...profiles, importedProfile];
       setProfiles(updatedProfiles);
       localStorage.setItem('a11y-profiles', JSON.stringify(updatedProfiles));
@@ -205,20 +196,30 @@ export function useA11yProfiles() {
     }
   };
   
-  // إعادة تعيين جميع الإعدادات إلى الوضع الافتراضي
+  // Reset to defaults
   const resetToDefaults = () => {
-    setHighContrast(false);
-    setLargeText(false);
-    setReducedMotion(false);
-    setFocusMode(false);
-    
-    setActiveProfile('default');
-    localStorage.setItem('a11y-active-profile', 'default');
-    
-    toast({
-      title: t('accessibility.resetToDefaults', 'Reset to defaults'),
-      description: t('accessibility.settingsReset', 'All accessibility settings have been reset')
-    });
+    if (applySettings) {
+      const defaultSettings: A11ySettings = {
+        highContrast: false,
+        largeText: false,
+        reducedMotion: false,
+        focusMode: false,
+        colorBlindMode: null,
+        dyslexicFont: false,
+        readingGuide: false,
+        soundFeedback: false
+      };
+      
+      applySettings(defaultSettings);
+      
+      setActiveProfile('default');
+      localStorage.setItem('a11y-active-profile', 'default');
+      
+      toast({
+        title: t('accessibility.resetToDefaults', 'Reset to defaults'),
+        description: t('accessibility.settingsReset', 'All accessibility settings have been reset')
+      });
+    }
   };
   
   return {

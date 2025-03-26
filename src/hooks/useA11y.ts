@@ -5,8 +5,8 @@ import { useA11yText } from './accessibility/useA11yText';
 import { useA11ySound } from './accessibility/useA11ySound';
 import { useSystemPreferences } from './accessibility/useA11yPreferences';
 import { useA11yKeyboard } from './accessibility/useA11yKeyboard';
-// Fix the import path - import from the root hooks directory where useA11yProfiles.ts exists
 import { useA11yProfiles } from './useA11yProfiles';
+import { A11ySettings } from './types/accessibility';
 
 /**
  * هوك مساعد لتحسين إمكانية الوصول في التطبيق
@@ -45,19 +45,34 @@ export function useA11y() {
     readingGuide, setReadingGuide
   );
   
+  // Get current settings
+  const getCurrentSettings = (): A11ySettings => {
+    return {
+      highContrast,
+      largeText, 
+      reducedMotion, 
+      focusMode,
+      colorBlindMode, 
+      dyslexicFont, 
+      readingGuide, 
+      soundFeedback
+    };
+  };
+  
+  // Apply settings
+  const applySettings = (settings: A11ySettings) => {
+    if (settings.highContrast !== undefined) setHighContrast(settings.highContrast);
+    if (settings.largeText !== undefined) setLargeText(settings.largeText);
+    if (settings.reducedMotion !== undefined) setReducedMotion(settings.reducedMotion);
+    if (settings.focusMode !== undefined) setFocusMode(settings.focusMode);
+    if (settings.colorBlindMode !== undefined) setColorBlindMode(settings.colorBlindMode);
+    if (settings.dyslexicFont !== undefined) setDyslexicFont(settings.dyslexicFont);
+    if (settings.readingGuide !== undefined) setReadingGuide(settings.readingGuide);
+    if (settings.soundFeedback !== undefined) setSoundFeedback(settings.soundFeedback);
+  };
+  
   // Profile management functions
-  const {
-    saveA11yProfile,
-    loadA11yProfile,
-    getA11yProfiles,
-    exportA11ySettings,
-    importA11ySettings
-  } = useA11yProfiles(
-    highContrast, largeText, reducedMotion, focusMode,
-    colorBlindMode, dyslexicFont, readingGuide, soundFeedback,
-    setHighContrast, setLargeText, setReducedMotion, setFocusMode,
-    setColorBlindMode, setDyslexicFont, setReadingGuide, setSoundFeedback
-  );
+  const profileManager = useA11yProfiles(getCurrentSettings(), applySettings);
 
   return {
     // Current settings
@@ -72,10 +87,10 @@ export function useA11y() {
     playNotificationSound,
     
     // Profile management functions
-    saveA11yProfile,
-    loadA11yProfile,
-    getA11yProfiles,
-    exportA11ySettings,
-    importA11ySettings
+    saveA11yProfile: profileManager.saveCurrentSettings,
+    loadA11yProfile: profileManager.applyProfile,
+    getA11yProfiles: () => profileManager.profiles,
+    exportA11ySettings: profileManager.exportProfile,
+    importA11ySettings: profileManager.importProfile
   };
 }
