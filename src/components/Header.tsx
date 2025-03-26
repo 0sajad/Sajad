@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LanguageSwitcher } from "./nav/LanguageSwitcher";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { motion } from "framer-motion";
 
 interface HeaderProps {
   onLanguageChange?: (language: string) => void;
@@ -38,8 +39,41 @@ export function Header({ onLanguageChange }: HeaderProps) {
       >
         <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between">
           <div className="flex items-center">
-            <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-octaBlue-600 to-purple-600 bg-clip-text text-transparent mr-6 sm:mr-16 transform hover:scale-105 transition-transform shadow-lg hover:shadow-octaBlue-500/30">
-              OCTA-GRAM
+            <Link to="/" className="relative mr-6 sm:mr-16 group">
+              <div className="absolute -inset-1.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+              <div className="relative flex items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/20 dark:border-gray-800/50 shadow-xl">
+                <motion.div
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="text-2xl font-bold"
+                >
+                  <span className="bg-gradient-to-br from-blue-500 via-purple-500 to-octaBlue-500 bg-clip-text text-transparent">OCTA</span>
+                  <span className="relative mx-1">
+                    <span className="absolute -top-0.5 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent"></span>
+                    <span className="absolute -bottom-0.5 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent"></span>
+                    -
+                  </span>
+                  <span className="bg-gradient-to-tr from-purple-600 to-octaBlue-500 bg-clip-text text-transparent">GRAM</span>
+                  
+                  {/* Subtle glowing circle behind the logo */}
+                  <motion.div 
+                    className="absolute -z-10 inset-0 rounded-lg opacity-30"
+                    animate={{
+                      boxShadow: [
+                        "0 0 0 rgba(79, 70, 229, 0)",
+                        "0 0 20px rgba(79, 70, 229, 0.5)",
+                        "0 0 0 rgba(79, 70, 229, 0)"
+                      ]
+                    }}
+                    transition={{ 
+                      duration: 2,
+                      repeat: Infinity,
+                      repeatType: "reverse"
+                    }}
+                  />
+                </motion.div>
+              </div>
             </Link>
             
             <DesktopNav />
