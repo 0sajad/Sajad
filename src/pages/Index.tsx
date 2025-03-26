@@ -13,13 +13,16 @@ import { NetworkToolsSection } from "@/components/network/NetworkToolsSection";
 import { useTranslation } from 'react-i18next';
 import { useLanguageTransition } from "@/hooks/useLanguageTransition";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useMode } from "@/context/ModeContext";
+import { Toaster } from "@/components/ui/toaster";
 
 const Index = () => {
   const [loaded, setLoaded] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const { i18n } = useTranslation();
   const { isTransitioning } = useLanguageTransition();
-
+  const { isDeveloperMode } = useMode();
+  
   useEffect(() => {
     setLoaded(true);
     
@@ -96,6 +99,8 @@ const Index = () => {
           show={showAIAssistant} 
           onMaximize={() => window.location.href = '/ai'} 
         />
+        
+        <Toaster />
       </div>
     </TooltipProvider>
   );

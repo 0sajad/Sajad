@@ -17,6 +17,25 @@ html[dir="rtl"] .rtl-swap-margins > * {
   margin-right: var(--margin-left, 0);
 }
 
+/* لتحسين دعم اتجاه RTL */
+html[dir="rtl"] .rtl-reverse-flex {
+  flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .rtl-text-right {
+  text-align: right;
+}
+
+html[dir="rtl"] .rtl-right {
+  right: auto;
+  left: 0;
+}
+
+html[dir="rtl"] .rtl-left {
+  left: auto;
+  right: 0;
+}
+
 /* Custom tailwind utilities */
 @layer utilities {
   .animate-spin-slow {
@@ -29,6 +48,26 @@ html[dir="rtl"] .rtl-swap-margins > * {
   
   .text-balance {
     text-wrap: balance;
+  }
+
+  .rtl-aware-ml {
+    @apply rtl:mr-2 rtl:ml-0 ltr:ml-2 ltr:mr-0;
+  }
+  
+  .rtl-aware-mr {
+    @apply rtl:ml-2 rtl:mr-0 ltr:mr-2 ltr:ml-0;
+  }
+  
+  .rtl-aware-pl {
+    @apply rtl:pr-2 rtl:pl-0 ltr:pl-2 ltr:pr-0;
+  }
+  
+  .rtl-aware-pr {
+    @apply rtl:pl-2 rtl:pr-0 ltr:pr-2 ltr:pl-0;
+  }
+  
+  .rtl-aware-rounded {
+    @apply rtl:rounded-r-none rtl:rounded-l-md ltr:rounded-l-none ltr:rounded-r-md;
   }
 }
 
@@ -112,6 +151,20 @@ html[dir="rtl"] .rtl-swap-margins > * {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Pulse animation for developer mode elements */
+@keyframes pulse-gold {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.pulse-gold {
+  animation: pulse-gold 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 /* Dark mode adjustments */

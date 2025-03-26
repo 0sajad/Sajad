@@ -11,7 +11,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { AlertTriangle, Tools } from "lucide-react";
+import { AlertTriangle, Wrench } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { FeatureManagement } from "./FeatureManagement";
 import { UiConfiguration } from "./UiConfiguration";
@@ -73,7 +73,7 @@ export function DeveloperPanel() {
               {t('developer.tabs.languages', 'اللغات')}
             </TabsTrigger>
             <TabsTrigger value="tools" className="font-tajawal flex items-center">
-              <Tools className="w-3.5 h-3.5 mr-1" />
+              <Wrench className="w-3.5 h-3.5 mr-1" />
               {t('developer.tabs.tools', 'الأدوات')}
             </TabsTrigger>
           </TabsList>
