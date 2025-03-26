@@ -97,6 +97,25 @@ export class TranslationKeyDetector implements Module {
     
     return report;
   }
+  
+  // Export statistics about missing keys
+  // تصدير إحصائيات حول المفاتيح المفقودة
+  getStatistics(): { total: number, byLanguage: Record<string, number> } {
+    let total = 0;
+    const byLanguage: Record<string, number> = {};
+    
+    Object.keys(this.missingKeys).forEach(lang => {
+      let langCount = 0;
+      Object.keys(this.missingKeys[lang]).forEach(ns => {
+        const count = this.missingKeys[lang][ns].size;
+        langCount += count;
+        total += count;
+      });
+      byLanguage[lang] = langCount;
+    });
+    
+    return { total, byLanguage };
+  }
 }
 
 // Export a ready-to-use instance
