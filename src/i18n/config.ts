@@ -1,184 +1,117 @@
-
-import i18n from 'i18next';
+import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import { resources } from './resources';
-import translationKeyDetector from './utils/TranslationKeyDetector';
 
-// Define the resource key type for TypeScript
-export interface ResourceKey {
-  [language: string]: {
-    [namespace: string]: {
-      [key: string]: string | object;
-    };
-  };
-}
+import en from '@/locales/en/translation.json';
+import enAIAssistant from '@/locales/en/aiAssistant.json';
+import enDashboard from '@/locales/en/dashboard.json';
+import enDeveloper from '@/locales/en/developer.json';
+import enSecurityDashboard from '@/locales/en/securityDashboard.json';
+import enSecurityStatus from '@/locales/en/securityStatus.json';
+import enSettings from '@/locales/en/settings.json';
+import enHelpCenter from '@/locales/en/helpCenter.json';
 
-// تهيئة i18next بإعدادات محسنة
-i18n
+import ar from '@/locales/ar/translation.json';
+import arAIAssistant from '@/locales/ar/aiAssistant.json';
+import arDashboard from '@/locales/ar/dashboard.json';
+import arDeveloper from '@/locales/ar/developer.json';
+import arSecurityDashboard from '@/locales/ar/securityDashboard.json';
+import arSecurityStatus from '@/locales/ar/securityStatus.json';
+import arSettings from '@/locales/ar/settings.json';
+import arHelpCenter from '@/locales/ar/helpCenter.json';
+
+import arIQ from '@/locales/ar-iq/translation.json';
+import arIQAIAssistant from '@/locales/ar-iq/aiAssistant.json';
+import arIQDashboard from '@/locales/ar-iq/dashboard.json';
+import arIQDeveloper from '@/locales/ar-iq/developer.json';
+import arIQSecurityDashboard from '@/locales/ar-iq/securityDashboard.json';
+import arIQSecurityStatus from '@/locales/ar-iq/securityStatus.json';
+import arIQSettings from '@/locales/ar-iq/settings.json';
+import arIQHelpCenter from '@/locales/ar-iq/helpCenter.json';
+
+import ja from '@/locales/ja/translation.json';
+import jaAIAssistant from '@/locales/ja/aiAssistant.json';
+import jaDashboard from '@/locales/ja/dashboard.json';
+import jaDeveloper from '@/locales/ja/developer.json';
+import jaSecurityDashboard from '@/locales/ja/securityDashboard.json';
+import jaSecurityStatus from '@/locales/ja/securityStatus.json';
+import jaSettings from '@/locales/ja/settings.json';
+import jaHelpCenter from '@/locales/ja/helpCenter.json';
+
+const resources = {
+  en: {
+    translation: en,
+    aiAssistant: enAIAssistant,
+    dashboard: enDashboard,
+    developer: enDeveloper,
+    securityDashboard: enSecurityDashboard,
+    securityStatus: enSecurityStatus,
+    settings: enSettings,
+    helpCenter: enHelpCenter,
+  },
+  ar: {
+    translation: ar,
+    aiAssistant: arAIAssistant,
+    dashboard: arDashboard,
+    developer: arDeveloper,
+    securityDashboard: arSecurityDashboard,
+    securityStatus: arSecurityStatus,
+    settings: arSettings,
+    helpCenter: arHelpCenter,
+  },
+    'ar-iq': {
+    translation: arIQ,
+    aiAssistant: arIQAIAssistant,
+    dashboard: arIQDashboard,
+    developer: arIQDeveloper,
+    securityDashboard: arIQSecurityDashboard,
+    securityStatus: arIQSecurityStatus,
+    settings: arIQSettings,
+    helpCenter: arIQHelpCenter,
+  },
+  ja: {
+    translation: ja,
+    aiAssistant: jaAIAssistant,
+    dashboard: jaDashboard,
+    developer: jaDeveloper,
+    securityDashboard: jaSecurityDashboard,
+    securityStatus: jaSecurityStatus,
+    settings: jaSettings,
+    helpCenter: jaHelpCenter,
+  },
+};
+
+const SUPPORTED_LANGUAGES = ['en', 'ar', 'ar-iq', 'ja'];
+const FALLBACK_LANGUAGES: { [key: string]: string } = {
+  'ar-iq': 'ar',
+};
+const DEFAULT_LANGUAGE = 'en';
+
+const normalizeLanguage = (code: string) => code.split('-')[0];
+
+export const i18n = i18next
   .use(LanguageDetector)
   .use(initReactI18next)
-  .use(translationKeyDetector as any)
   .init({
-    resources: resources,
-    lng: localStorage.getItem('language') || 'ar',
-    fallbackLng: {
-      'ar-iq': ['ar'],
-      'ja': ['en'],
-      'zh': ['en'],
-      'fr': ['en'],
-      'default': ['ar', 'en']
+    resources,
+    fallbackLng: (code) => {
+      if (!code) return DEFAULT_LANGUAGE;
+      
+      // Fix type error by explicitly converting array to string
+      if (Array.isArray(code)) {
+        return code[0] as string;
+      }
+      
+      const language = normalizeLanguage(code);
+      return FALLBACK_LANGUAGES[language] || DEFAULT_LANGUAGE;
     },
     debug: process.env.NODE_ENV === 'development',
-    ns: ['common', 'license', 'access', 'settings', 'aiFeatures'],
-    defaultNS: 'common',
+    whitelist: SUPPORTED_LANGUAGES,
     interpolation: {
-      escapeValue: false
+      escapeValue: false, // not needed for react as it escapes by default
     },
-    react: {
-      useSuspense: true,
-      transKeepBasicHtmlNodesFor: ['br', 'strong', 'i', 'p', 'span', 'a', 'ul', 'ol', 'li']
-    },
-    detection: {
-      order: ['localStorage', 'navigator', 'htmlTag'],
-      caches: ['localStorage'],
-      lookupLocalStorage: 'language'
-    },
-    load: 'languageOnly',
-    returnEmptyString: false,
-    keySeparator: '.',
-    pluralSeparator: '_',
-    contextSeparator: '_',
-    saveMissing: process.env.NODE_ENV === 'development',
-    parseMissingKeyHandler: (key) => {
-      return key.trim();
-    },
-    appendNamespaceToMissingKey: true,
-    partialBundledLanguages: true,
-    // تحسين المعالجة المتزامنة للترجمات
-    initImmediate: false
   });
 
-// تطبيق اتجاه اللغة الصحيح عند تغيير اللغة
-i18n.on('languageChanged', (lng) => {
-  const isRTL = lng === "ar" || lng === "ar-iq";
-  document.documentElement.setAttribute("lang", lng);
-  document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
-  document.documentElement.style.textAlign = isRTL ? "right" : "left";
-  localStorage.setItem('language', lng);
-  
-  // تطبيق أنماط CSS إضافية للغات RTL
-  if (isRTL) {
-    document.body.classList.add('rtl-active');
-  } else {
-    document.body.classList.remove('rtl-active');
-  }
-  
-  // تحديث اتجاه العناصر المطلقة
-  const rtlElements = document.querySelectorAll('[data-rtl-aware]');
-  rtlElements.forEach((el) => {
-    const element = el as HTMLElement;
-    if (element.style.left) element.style.left = '';
-    if (element.style.right) element.style.right = '';
-    
-    if (isRTL) {
-      element.style.right = element.dataset.rtlPosition || '0';
-    } else {
-      element.style.left = element.dataset.ltrPosition || '0';
-    }
-  });
-  
-  // حل مشكلة النصوص التي لا تتغير عند تبديل اللغة
-  // استخدام حدث مخصص لإعلام المكونات بتغيير اللغة بدلاً من إعادة تحميل الصفحة
-  setTimeout(() => {
-    document.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: lng } }));
-  }, 0);
-  
-  // تأخير إضافي للتأكد من تطبيق جميع التغييرات
-  setTimeout(() => {
-    document.dispatchEvent(new CustomEvent('languageFullyChanged', { detail: { language: lng } }));
-  }, 300);
-  
-  // تحسين أسلوب تنظيف ذاكرة التخزين المؤقت للمفاتيح عند تغيير اللغة
-  if (translationKeyDetector) {
-    setTimeout(() => {
-      translationKeyDetector.resetMissingKeys();
-    }, 100);
-  }
-});
-
-// تهيئة اتجاه اللغة عند بدء التشغيل
-const currentLng = i18n.language;
-const isRTL = currentLng === "ar" || currentLng === "ar-iq";
-document.documentElement.setAttribute("lang", currentLng);
-document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
-document.documentElement.style.textAlign = isRTL ? "right" : "left";
-
-// تطبيق أنماط CSS للغات RTL عند بدء التشغيل
-if (isRTL) {
-  document.body.classList.add('rtl-active');
-}
-
-// تحسين إدارة الأخطاء
-i18n.on('failedLoading', (lng, ns, msg) => {
-  console.error(`فشل تحميل ملف الترجمة: ${lng}/${ns} - ${msg}`);
-  // محاولة إعادة تحميل الملف
-  setTimeout(() => {
-    i18n.reloadResources([lng], [ns]);
-  }, 1000);
-});
-
-// إضافة تعامل أفضل مع المفاتيح المفقودة
-i18n.on('missingKey', (lng, ns, key) => {
-  if (process.env.NODE_ENV === 'development') {
-    console.warn(`مفتاح ترجمة مفقود: ${key} في مجال: ${ns} للغة: ${lng}`);
-  }
-  
-  // محاولة استخدام مفتاح من لغة أخرى
-  const fallbacks = i18n.options.fallbackLng;
-  if (typeof fallbacks === 'object' && fallbacks) {
-    // تحويل fallbacks إلى نوع معروف لـ TypeScript
-    const fallbackLngsObject = fallbacks as Record<string, string[] | string>;
-    const lngStr = lng as string;
-    
-    // التحقق مما إذا كانت اللغة موجودة في كائن اللغات الاحتياطية
-    if (lngStr in fallbackLngsObject) {
-      const fallbackLngs = fallbackLngsObject[lngStr];
-      
-      // معالجة المصفوفات بشكل صحيح
-      if (Array.isArray(fallbackLngs)) {
-        for (const fallbackLng of fallbackLngs) {
-          if (i18n.exists(key, { lng: fallbackLng, ns })) {
-            return i18n.t(key, { lng: fallbackLng, ns });
-          }
-        }
-      } else if (typeof fallbackLngs === 'string') {
-        // معالجة حالة القيمة المفردة
-        if (i18n.exists(key, { lng: fallbackLngs, ns })) {
-          return i18n.t(key, { lng: fallbackLngs, ns });
-        }
-      }
-    }
-    
-    // إذا لم نجد في اللغات الاحتياطية المحددة، جرب اللغات الاحتياطية الافتراضية
-    if ('default' in fallbackLngsObject) {
-      const defaultFallbacks = fallbackLngsObject['default'];
-      if (Array.isArray(defaultFallbacks)) {
-        for (const fallbackLng of defaultFallbacks) {
-          if (i18n.exists(key, { lng: fallbackLng as string, ns })) {
-            return i18n.t(key, { lng: fallbackLng as string, ns });
-          }
-        }
-      } else if (typeof defaultFallbacks === 'string') {
-        if (i18n.exists(key, { lng: defaultFallbacks, ns })) {
-          return i18n.t(key, { lng: defaultFallbacks, ns });
-        }
-      }
-    }
-  }
-  
-  // إذا لم يتم العثور على المفتاح في اللغات الاحتياطية، عرض المفتاح نفسه
-  return key;
-});
-
-export default i18n;
+export const changeLanguage = (lng: string) => {
+  i18next.changeLanguage(lng);
+};
