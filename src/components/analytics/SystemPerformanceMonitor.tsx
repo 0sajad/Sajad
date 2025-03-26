@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useTranslation } from "react-i18next";
 import { LineChart, Line, AreaChart, Area, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
-import { Cpu, Memory, HardDrive, Thermometer, RefreshCw } from "lucide-react";
+import { Cpu, HardDrive, Thermometer, RefreshCw, MemoryStick } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 
@@ -103,7 +103,7 @@ export const SystemPerformanceMonitor = () => {
           
           <div className="p-4 rounded-lg bg-gradient-to-br from-green-50 to-green-100">
             <div className="flex items-center">
-              <Memory className="text-green-500 mr-2 h-8 w-8" />
+              <MemoryStick className="text-green-500 mr-2 h-8 w-8" />
               <div>
                 <p className="text-sm text-muted-foreground">{t('systemMonitor.memory', 'Memory')}</p>
                 <p className="text-2xl font-bold">{currentValues.memory}%</p>

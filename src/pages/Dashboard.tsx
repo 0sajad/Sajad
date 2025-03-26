@@ -14,7 +14,7 @@ import { RealTimeMonitoring } from "@/components/analytics/RealTimeMonitoring";
 import { Button } from "@/components/ui/button";
 import { FloatingAIAssistant } from "@/components/FloatingAIAssistant";
 import { toast } from "@/components/ui/use-toast";
-import { Shield, Tool, Zap, Activity, Server, Database, Network, Cpu } from "lucide-react";
+import { Shield, Activity, Zap, Server, Database, Network, Cpu, Settings } from "lucide-react";
 import { useNetworkStats } from "@/hooks/useNetworkStats";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -122,7 +122,7 @@ const Dashboard = () => {
           <Card className="transform transition-all duration-300 hover:shadow-lg border-l-4 border-l-blue-500">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center">
-                <Tool className="mr-2 h-5 w-5 text-blue-500" />
+                <Settings className="mr-2 h-5 w-5 text-blue-500" />
                 {t('dashboard.quickActions', 'Quick Actions')}
               </CardTitle>
             </CardHeader>
