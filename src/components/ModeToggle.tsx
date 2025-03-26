@@ -60,7 +60,7 @@ export function ModeToggle() {
           <div 
             className={cn(
               "absolute inset-y-1 w-[48px] bg-white dark:bg-gray-900 rounded-full shadow-md transform transition-transform duration-300",
-              isDeveloperMode ? "translate-x-[50px]" : "translate-x-0"
+              isDeveloperMode ? "translate-x-[45px]" : "translate-x-0"
             )}
           />
           
