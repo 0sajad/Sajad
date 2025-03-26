@@ -26,7 +26,7 @@ export function ModeToggle() {
 
   return (
     <TooltipProvider>
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-6 rtl:flex-row-reverse">
         {isDeveloperMode && (
           <Tooltip>
             <TooltipTrigger asChild>
@@ -50,8 +50,10 @@ export function ModeToggle() {
         <div 
           onClick={handleToggle}
           className={cn(
-            "relative flex items-center w-[100px] h-[40px] rounded-full p-1 transition-colors duration-300 cursor-pointer shadow-xl hover:shadow-2xl transform hover:scale-105 transition-transform border border-white/20 backdrop-blur-sm",
-            isDeveloperMode ? "bg-gradient-to-r from-blue-600 to-purple-600" : "bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800"
+            "relative flex items-center w-[100px] h-[40px] rounded-full p-1 transition-colors duration-300 cursor-pointer shadow-xl hover:shadow-2xl transform hover:scale-105 border border-white/20 backdrop-blur-sm overflow-hidden",
+            isDeveloperMode 
+              ? "bg-gradient-to-r from-purple-600 to-blue-600" 
+              : "bg-gradient-to-r from-blue-600 to-purple-600"
           )}
         >
           {/* Sliding background */}
@@ -62,21 +64,23 @@ export function ModeToggle() {
             )}
           />
           
-          {/* Icons */}
-          <div className={cn(
-            "flex-1 flex items-center justify-center z-10 text-xs font-medium transition-colors duration-300",
-            isDeveloperMode ? "text-white/60" : "text-octaBlue-600 dark:text-white"
-          )}>
-            <User size={16} className="mr-1" />
-            <span className="text-[10px]">عميل</span>
-          </div>
-          
-          <div className={cn(
-            "flex-1 flex items-center justify-center z-10 text-xs font-medium transition-colors duration-300",
-            isDeveloperMode ? "text-white" : "text-gray-500 dark:text-gray-400"
-          )}>
-            <Code size={16} className="mr-1" />
-            <span className="text-[10px]">مطور</span>
+          {/* Icons and labels container - always maintains consistent layout */}
+          <div className="relative flex w-full z-10">
+            <div className={cn(
+              "flex-1 flex items-center justify-center z-10 text-xs font-medium transition-colors duration-300",
+              isDeveloperMode ? "text-white/60" : "text-octaBlue-600 dark:text-white"
+            )}>
+              <User size={16} className="mr-1" />
+              <span className="text-[10px]">عميل</span>
+            </div>
+            
+            <div className={cn(
+              "flex-1 flex items-center justify-center z-10 text-xs font-medium transition-colors duration-300",
+              isDeveloperMode ? "text-white" : "text-gray-500 dark:text-gray-400"
+            )}>
+              <Code size={16} className="mr-1" />
+              <span className="text-[10px]">مطور</span>
+            </div>
           </div>
         </div>
       </div>

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ModeToggle } from "./ModeToggle";
-import { Menu, X, LogIn, User } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DesktopNav } from "./nav/DesktopNav";
 import { MobileMenu } from "./nav/MobileMenu";
@@ -45,24 +45,24 @@ export function Header({ onLanguageChange }: HeaderProps) {
             <DesktopNav />
           </div>
           
-          <div className="flex items-center space-x-8 rtl:space-x-reverse">
-            <LanguageSwitcher className="mr-2 rtl:ml-2 rtl:mr-0 transform hover:scale-110 transition-transform shadow-xl rounded-full effect-3d" />
+          <div className="flex items-center space-x-10 rtl:space-x-reverse">
+            <LanguageSwitcher className="transform hover:scale-110 transition-transform shadow-xl rounded-full" />
             
-            <div className="mr-6 rtl:ml-6 rtl:mr-0 transform hover:scale-110 transition-transform effect-3d">
+            <div className="transform hover:scale-105 transition-transform">
               <ModeToggle />
             </div>
             
             <div className="hidden md:block">
               <Button 
-                size="xl" 
+                size="lg" 
                 variant="gradient"
-                className="px-6 py-2 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all hover:translate-y-[-3px] rounded-full effect-3d"
+                className="px-8 py-2.5 shadow-xl hover:shadow-2xl transform hover:translate-y-[-3px] transition-all rounded-full"
               >
-                <div className="flex items-center gap-2 rtl:flex-row-reverse">
-                  <div className="bg-white/30 p-1 rounded-full">
-                    <User size={18} className="text-white" />
+                <div className="flex items-center gap-2.5 rtl:flex-row-reverse">
+                  <div className="bg-white/30 p-1.5 rounded-full">
+                    <User size={16} className="text-white" />
                   </div>
-                  <span>{t('header.login')}</span>
+                  <span className="font-medium">{t('header.login')}</span>
                 </div>
               </Button>
             </div>
