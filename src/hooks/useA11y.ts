@@ -74,6 +74,13 @@ export function useA11y() {
   // Profile management functions
   const profileManager = useA11yProfiles(getCurrentSettings(), applySettings);
 
+  // Function to announce messages to screen readers
+  const announce = (message: string, level: "polite" | "assertive" = "polite") => {
+    if (typeof window !== 'undefined' && window.announce) {
+      window.announce(message, level);
+    }
+  };
+
   return {
     // Current settings
     highContrast, setHighContrast,
@@ -85,6 +92,9 @@ export function useA11y() {
     readingGuide, setReadingGuide,
     soundFeedback, setSoundFeedback,
     playNotificationSound,
+    
+    // Add announce function
+    announce,
     
     // Profile management functions
     saveA11yProfile: profileManager.saveCurrentSettings,
