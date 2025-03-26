@@ -129,7 +129,7 @@ i18n.on('missingKey', (lng, ns, key) => {
   const fallbacks = i18n.options.fallbackLng;
   if (typeof fallbacks === 'object' && fallbacks) {
     // تحويل fallbacks إلى نوع معروف لـ TypeScript
-    const fallbackLngsObject = fallbacks as Record<string, string[]>;
+    const fallbackLngsObject = fallbacks as Record<string, string[] | readonly string[]>;
     const lngStr = lng as string;
     
     // التحقق مما إذا كانت اللغة موجودة في كائن اللغات الاحتياطية
