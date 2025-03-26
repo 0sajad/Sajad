@@ -8,6 +8,7 @@ import arAiAssistant from '../../locales/ar/aiAssistant.json';
 import arConfig from '../../locales/ar/config.json';
 import arCta from '../../locales/ar/cta.json';
 import arNetworkTools from '../../locales/ar/networkTools.json';
+import arSearch from '../../locales/ar/search.json';
 
 export function loadArabicResources() {
   // دمج ملفات العربية في كائن واحد
@@ -17,6 +18,7 @@ export function loadArabicResources() {
     aiAssistant: arAiAssistant,
     cta: arCta,
     networkTools: arNetworkTools,
+    search: arSearch,
     ...arConfig
   };
 
