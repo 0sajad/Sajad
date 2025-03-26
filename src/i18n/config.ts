@@ -9,7 +9,7 @@ import translationKeyDetector from './utils/TranslationKeyDetector';
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
-  .use(translationKeyDetector)
+  .use(translationKeyDetector as any)
   .init({
     resources: resources,
     lng: localStorage.getItem('language') || 'ar',
@@ -143,3 +143,4 @@ i18n.on('missingKey', (lng, ns, key) => {
 });
 
 export default i18n;
+

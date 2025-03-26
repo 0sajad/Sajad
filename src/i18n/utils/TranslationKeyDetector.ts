@@ -10,9 +10,9 @@ class TranslationKeyDetector {
   processedKeys: Record<string, Set<string>> = {};
   
   /**
-   * تسجيل المفاتيح المفقودة
+   * تحديد نوع الوحدة
    */
-  type = 'postProcessor';
+  type = 'postProcessor' as const;
   name = 'translationKeyDetector';
 
   resetMissingKeys(): void {
@@ -86,3 +86,4 @@ class TranslationKeyDetector {
 const translationKeyDetector = new TranslationKeyDetector();
 
 export default translationKeyDetector;
+
