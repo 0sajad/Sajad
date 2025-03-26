@@ -16,7 +16,7 @@ import {
   Shield, 
   Server
 } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/components/ui/use-toast";
 
 interface NotificationCategory {
   id: string;
