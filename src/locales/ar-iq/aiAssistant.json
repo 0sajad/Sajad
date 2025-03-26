@@ -4,7 +4,8 @@
     "webDevelopment": "تطوير الويب",
     "security": "الأمان المتقدم",
     "selfImproving": "التحسين الذاتي",
-    "database": "قواعد البيانات"
+    "database": "قواعد البيانات",
+    "codeAnalysis": "تحليل الكود"
   },
   "bubbleMessages": {
     "newTools": "أدوات يديدة متوفرة!",
