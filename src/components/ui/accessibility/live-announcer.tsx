@@ -38,6 +38,13 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
       if (announcerRef.current) {
         announcerRef.current.textContent = "";
       }
+      
+      // إعادة إنشاء دالة announce كدالة فارغة للسلامة
+      if (typeof window !== 'undefined') {
+        window.announce = (message: string) => {
+          console.log("LiveAnnouncer unmounted, but announce was called with:", message);
+        };
+      }
     };
   }, []);
   
