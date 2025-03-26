@@ -26,12 +26,42 @@ export const ResourceMetricCard = ({
   ariaLabel,
   description
 }: ResourceMetricCardProps) => {
-  // استخدام القيم المباشرة للألوان بدلاً من الاعتماد على توليد فئات Tailwind
+  // استخدام متغيرات CSS مخصصة للألوان بدلاً من الاعتماد على توليد فئات Tailwind
+  const getBackgroundColor = (colorName: string) => {
+    // تعيين قيم افتراضية آمنة للألوان
+    const safeColors: Record<string, string> = {
+      'blue': '#e6f7ff',
+      'green': '#e6ffed',
+      'red': '#fff1f0',
+      'yellow': '#fffbe6',
+      'purple': '#f9f0ff',
+      'orange': '#fff7e6',
+      'gray': '#f5f5f5'
+    };
+    
+    return safeColors[colorName] || safeColors['blue'];
+  };
+  
+  const getIconColor = (colorName: string) => {
+    // تعيين قيم افتراضية آمنة للألوان
+    const safeColors: Record<string, string> = {
+      'blue': '#1890ff',
+      'green': '#52c41a',
+      'red': '#f5222d',
+      'yellow': '#faad14',
+      'purple': '#722ed1',
+      'orange': '#fa8c16',
+      'gray': '#8c8c8c'
+    };
+    
+    return safeColors[colorName] || safeColors['blue'];
+  };
+  
   const safeStyles = {
     card: "shadow-sm transition-all duration-300 hover:shadow-md",
     icon: {
-      backgroundColor: `var(--color-${bgColorFrom}-100, #e6f7ff)`,
-      color: `var(--color-${iconColor}-500, #3b82f6)`
+      backgroundColor: getBackgroundColor(bgColorFrom),
+      color: getIconColor(iconColor)
     }
   };
   
@@ -65,7 +95,9 @@ export const ResourceMetricCard = ({
               )}
               {/* نص مخفي لقارئات الشاشة لتوفير المزيد من السياق */}
               {description && (
-                <span className="sr-only">{description}</span>
+                <span className="sr-only">
+                  {label}: {value}. {description}
+                </span>
               )}
             </div>
           </div>

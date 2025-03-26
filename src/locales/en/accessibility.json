@@ -99,5 +99,17 @@
   "snapToElements": "Snap To Elements",
   "snapToElementsDescription": "Make the cursor snap to interactive elements",
   "colorFilters": "Color Filters",
-  "colorFiltersDescription": "Apply color filters to improve visibility"
+  "colorFiltersDescription": "Apply color filters to improve visibility",
+  "clickToCustomize": "Click to customize",
+  "saveAsDefault": "Save as default",
+  "resetToDefaults": "Reset to defaults",
+  "viewTutorial": "View tutorial",
+  "readingGuide": "Reading Guide",
+  "readingGuideDescription": "Show a horizontal guide to help with reading text",
+  "defaultProfileName": "Default Profile",
+  "profileSaved": "Profile saved successfully",
+  "profileLoaded": "Profile loaded successfully",
+  "profileDeleted": "Profile deleted successfully",
+  "profileExported": "Profile exported successfully",
+  "profileImported": "Profile imported successfully"
 }

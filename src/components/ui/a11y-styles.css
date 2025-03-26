@@ -280,3 +280,88 @@ a:hover, a:focus {
   pointer-events: none;
   z-index: -1;
 }
+
+/* تعريفات جديدة للدعم الإضافي لإمكانية الوصول */
+
+/* خط أكثر وضوحًا لذوي صعوبات القراءة */
+.accessible-font {
+  font-family: 'Verdana', 'Arial', sans-serif !important;
+  letter-spacing: 0.03em !important;
+  word-spacing: 0.05em !important;
+}
+
+/* تباين إضافي للنصوص الصغيرة */
+.high-contrast .text-xs,
+.high-contrast .text-sm {
+  text-shadow: 0 0 1px var(--contrast-text) !important;
+}
+
+/* تحسين قابلية القراءة لمربعات النصوص */
+.readable-inputs input,
+.readable-inputs textarea,
+.readable-inputs select {
+  font-size: 1.1em !important;
+  line-height: 1.5 !important;
+  padding: 0.6em !important;
+}
+
+/* وضع التركيز على العنصر النشط فقط */
+.intense-focus-mode:not(:focus):not(:focus-within) * {
+  opacity: 0.5 !important;
+}
+
+.intense-focus-mode:focus,
+.intense-focus-mode:focus-within {
+  opacity: 1 !important;
+  box-shadow: 0 0 0 4px var(--primary) !important;
+}
+
+/* دعم الطباعة المحسنة لإمكانية الوصول */
+@media print {
+  .high-contrast {
+    --contrast-bg: white !important;
+    --contrast-text: black !important;
+    --contrast-border: black !important;
+  }
+  
+  .large-text {
+    font-size: 1rem !important;
+  }
+  
+  .large-text h1 {
+    font-size: 1.8rem !important;
+  }
+  
+  .large-text h2 {
+    font-size: 1.5rem !important;
+  }
+}
+
+/* تحسينات للمستخدمين الذين يعانون من حساسية للضوء */
+.low-light-mode {
+  filter: brightness(80%) !important;
+}
+
+/* تحسينات لمستخدمي تكنولوجيا المساعدة */
+.assistive-technology-friendly * {
+  pointer-events: auto !important;
+}
+
+/* مساعدة خاصة لمستخدمي قارئ الشاشة */
+.sr-help-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border-width: 0;
+  white-space: nowrap;
+}
+
+/* دعم خاص باللغة العربية ومحاذاة RTL */
+.rtl-active .improved-rtl-support {
+  text-align: right;
+  direction: rtl;
+}

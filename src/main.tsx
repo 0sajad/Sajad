@@ -112,7 +112,7 @@ const AppWrapper = () => {
     }
   }, []);
 
-  return isLoading ? <LoadingScreen /> : <App isKeyboardUser={isKeyboardUser} />;
+  return isLoading ? <LoadingScreen /> : <App />;
 };
 
 createRoot(document.getElementById("root")!).render(
