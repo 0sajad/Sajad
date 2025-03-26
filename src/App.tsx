@@ -13,6 +13,7 @@ import { useA11y } from "@/hooks/useA11y";
 import { LiveAnnouncer } from "@/components/ui/accessibility/live-announcer";
 import { LoadingScreen } from "./components/LoadingScreen";
 import { SmartSuspense } from "@/components/ui/smart-suspense";
+import { ErrorBoundary } from "./components/ui/error-boundary";
 
 // استيراد المكونات بشكل كسول لتحسين أداء التحميل الأولي
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -74,6 +75,21 @@ function App() {
     };
   }, []);
   
+  // تتبع حالة التحميل
+  const [isAppReady, setIsAppReady] = useState(false);
+  
+  useEffect(() => {
+    // ضمان أن الصفحة جاهزة للعرض
+    if (!isLoading) {
+      const readyTimer = setTimeout(() => {
+        setIsAppReady(true);
+        console.log("📊 التطبيق جاهز للعرض");
+      }, 100);
+      
+      return () => clearTimeout(readyTimer);
+    }
+  }, [isLoading]);
+  
   if (isLoading) {
     return <LoadingScreen />;
   }
@@ -86,85 +102,87 @@ function App() {
             "min-h-screen bg-background font-sans antialiased",
             isRTL ? "rtl" : "ltr"
           )}>
-            <Router>
-              <AnimatePresence mode="wait">
-                <Routes>
-                  <Route 
-                    path="/" 
-                    element={
-                      <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
-                        <Index />
-                      </SmartSuspense>
-                    } 
-                  />
-                  <Route 
-                    path="/dashboard" 
-                    element={
-                      <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
-                        <Dashboard />
-                      </SmartSuspense>
-                    } 
-                  />
-                  <Route 
-                    path="/ai" 
-                    element={
-                      <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
-                        <AIAssistant />
-                      </SmartSuspense>
-                    } 
-                  />
-                  <Route 
-                    path="/settings" 
-                    element={
-                      <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
-                        <Settings />
-                      </SmartSuspense>
-                    } 
-                  />
-                  <Route 
-                    path="/settings/accessibility" 
-                    element={
-                      <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
-                        <AccessibilitySettings />
-                      </SmartSuspense>
-                    } 
-                  />
-                  <Route 
-                    path="/license" 
-                    element={
-                      <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
-                        <License />
-                      </SmartSuspense>
-                    } 
-                  />
-                  <Route 
-                    path="/fiber-optic" 
-                    element={
-                      <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
-                        <FiberOptic />
-                      </SmartSuspense>
-                    } 
-                  />
-                  <Route 
-                    path="/help-center" 
-                    element={
-                      <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
-                        <HelpCenter />
-                      </SmartSuspense>
-                    } 
-                  />
-                  <Route 
-                    path="/404" 
-                    element={
-                      <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
-                        <NotFound />
-                      </SmartSuspense>
-                    } 
-                  />
-                  <Route path="*" element={<Navigate to="/404" replace />} />
-                </Routes>
-              </AnimatePresence>
-            </Router>
+            <ErrorBoundary fallback={<div className="p-8 text-center">حدث خطأ ما. يرجى تحديث الصفحة.</div>}>
+              <Router>
+                <AnimatePresence mode="wait">
+                  <Routes>
+                    <Route 
+                      path="/" 
+                      element={
+                        <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
+                          <Index />
+                        </SmartSuspense>
+                      } 
+                    />
+                    <Route 
+                      path="/dashboard" 
+                      element={
+                        <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
+                          <Dashboard />
+                        </SmartSuspense>
+                      } 
+                    />
+                    <Route 
+                      path="/ai" 
+                      element={
+                        <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
+                          <AIAssistant />
+                        </SmartSuspense>
+                      } 
+                    />
+                    <Route 
+                      path="/settings" 
+                      element={
+                        <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
+                          <Settings />
+                        </SmartSuspense>
+                      } 
+                    />
+                    <Route 
+                      path="/settings/accessibility" 
+                      element={
+                        <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
+                          <AccessibilitySettings />
+                        </SmartSuspense>
+                      } 
+                    />
+                    <Route 
+                      path="/license" 
+                      element={
+                        <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
+                          <License />
+                        </SmartSuspense>
+                      } 
+                    />
+                    <Route 
+                      path="/fiber-optic" 
+                      element={
+                        <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
+                          <FiberOptic />
+                        </SmartSuspense>
+                      } 
+                    />
+                    <Route 
+                      path="/help-center" 
+                      element={
+                        <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
+                          <HelpCenter />
+                        </SmartSuspense>
+                      } 
+                    />
+                    <Route 
+                      path="/404" 
+                      element={
+                        <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
+                          <NotFound />
+                        </SmartSuspense>
+                      } 
+                    />
+                    <Route path="*" element={<Navigate to="/404" replace />} />
+                  </Routes>
+                </AnimatePresence>
+              </Router>
+            </ErrorBoundary>
             <Toaster position="top-right" toastOptions={{ 
               duration: 5000,
               className: cn("rounded-lg shadow-lg", 

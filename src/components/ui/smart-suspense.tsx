@@ -3,6 +3,7 @@ import React, { Suspense, useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useA11y } from "@/hooks/useA11y";
+import { ErrorBoundary } from "./error-boundary";
 
 interface SmartSuspenseProps {
   children: React.ReactNode;
@@ -10,6 +11,7 @@ interface SmartSuspenseProps {
   minLoadTime?: number;
   maxLoadTime?: number;
   onLoad?: () => void;
+  errorFallback?: React.ReactNode;
 }
 
 export function SmartSuspense({
@@ -18,6 +20,7 @@ export function SmartSuspense({
   minLoadTime = 300, // الحد الأدنى لوقت العرض للفالباك
   maxLoadTime = 5000, // الحد الأقصى للانتظار قبل عرض المحتوى بغض النظر عن التحميل
   onLoad,
+  errorFallback,
 }: SmartSuspenseProps) {
   const [isLoading, setIsLoading] = useState(true);
   const { reducedMotion } = useA11y();
@@ -57,8 +60,10 @@ export function SmartSuspense({
   );
   
   return (
-    <Suspense fallback={fallback || defaultFallback}>
-      {!isLoading ? children : (fallback || defaultFallback)}
-    </Suspense>
+    <ErrorBoundary fallback={errorFallback || <div className="p-4 text-center">حدث خطأ في تحميل المحتوى. يرجى تحديث الصفحة.</div>}>
+      <Suspense fallback={fallback || defaultFallback}>
+        {!isLoading ? children : (fallback || defaultFallback)}
+      </Suspense>
+    </ErrorBoundary>
   );
 }
