@@ -157,8 +157,7 @@ i18n.on('missingKey', (lng, ns, key) => {
       if (Array.isArray(defaultFallbacks)) {
         for (const defaultFallbackLng of defaultFallbacks) {
           if (i18n.exists(key, { lng: defaultFallbackLng as string, ns })) {
-            // تصحيح الخطأ: استخدام المعاملة المناسبة للنوع 'readonly string[]'
-            // بدلاً من التحويل المباشر، نستخدم كل عنصر في المصفوفة بشكل منفصل
+            // استخدام المعاملة المناسبة للنوع 'readonly string[]'
             return i18n.t(key, { lng: defaultFallbackLng as string, ns });
           }
         }
