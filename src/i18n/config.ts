@@ -137,31 +137,16 @@ i18n.on('missingKey', (lng, ns, key) => {
       const fallbackLngs = fallbackLngsObject[lngStr];
       
       if (Array.isArray(fallbackLngs)) {
-        for (let i = 0; i < fallbackLngs.length; i++) {
-          // تحويل النوع readonly string[] إلى string بشكل صحيح
-          const fallbackLng = String(fallbackLngs[i]);
-          if (i18n.exists(key, { lng: fallbackLng, ns })) {
-            // الحصول على الترجمة من اللغة الاحتياطية
-            return i18n.t(key, { lng: fallbackLng, ns });
+        for (const fallbackLng of fallbackLngs) {
+          // إضافة التحويل المباشر من readonly string[] إلى string
+          if (i18n.exists(key, { lng: String(fallbackLng), ns })) {
+            return i18n.t(key, { lng: String(fallbackLng), ns });
           }
-        }
-      }
-    }
-    
-    // إذا لم نجد في اللغات الاحتياطية المحددة، جرب اللغات الاحتياطية الافتراضية
-    const defaultFallbacks = fallbackLngsObject['default'];
-    if (Array.isArray(defaultFallbacks)) {
-      for (let i = 0; i < defaultFallbacks.length; i++) {
-        // تحويل النوع readonly string[] إلى string بشكل صحيح
-        const defaultFallbackLng = String(defaultFallbacks[i]);
-        if (i18n.exists(key, { lng: defaultFallbackLng, ns })) {
-          return i18n.t(key, { lng: defaultFallbackLng, ns });
         }
       }
     }
   }
   
-  // إذا لم يتم العثور على المفتاح في اللغات الاحتياطية، عرض المفتاح نفسه
   return key;
 });
 
