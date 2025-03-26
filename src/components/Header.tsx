@@ -42,6 +42,9 @@ export function Header({ onLanguageChange }: HeaderProps) {
     return () => window.removeEventListener("resize", handleResize);
   }, [isMobileMenuOpen]);
   
+  // رسم موجة نبضات القلب
+  const heartbeatPath = "M0,10 L5,10 L7,2 L9,18 L11,0 L13,10 L15,5 L17,10 L20,10";
+  
   return (
     <TooltipProvider>
       <header
@@ -52,6 +55,104 @@ export function Header({ onLanguageChange }: HeaderProps) {
         <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between">
           <div className="flex items-center">
             <Link to="/" className="relative mr-4 sm:mr-16 group">
+              {/* إضافة تخطيط القلب المتحرك على يسار الشعار */}
+              <motion.div 
+                className="absolute -left-16 top-1/2 -translate-y-1/2 h-8 w-14"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <svg width="60" height="20" viewBox="0 0 60 20" className="overflow-visible">
+                  <motion.path
+                    d={heartbeatPath}
+                    stroke="rgba(14, 165, 233, 0.8)"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    fill="none"
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    animate={{ 
+                      pathLength: 1, 
+                      opacity: 1,
+                      stroke: [
+                        "rgba(14, 165, 233, 0.8)",
+                        "rgba(139, 92, 246, 0.8)",
+                        "rgba(14, 165, 233, 0.8)"
+                      ]
+                    }}
+                    transition={{
+                      pathLength: { 
+                        duration: 1.5, 
+                        repeat: Infinity,
+                        repeatType: "loop",
+                        ease: "easeInOut"
+                      },
+                      opacity: { duration: 0.5 },
+                      stroke: {
+                        duration: 2,
+                        repeat: Infinity,
+                        repeatType: "reverse"
+                      }
+                    }}
+                  />
+                  
+                  {/* نقطة متحركة على طول المسار */}
+                  <motion.circle
+                    r="1.5"
+                    fill="#0EA5E9"
+                    initial={{ opacity: 0 }}
+                    animate={{ 
+                      opacity: 1,
+                      fill: [
+                        "#0EA5E9",
+                        "#8B5CF6",
+                        "#0EA5E9"
+                      ]
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      repeatType: "reverse"
+                    }}
+                  >
+                    <motion.animateMotion
+                      path={heartbeatPath}
+                      rotate="auto"
+                      repeatCount="indefinite"
+                      dur="1.5s"
+                    />
+                  </motion.circle>
+                  
+                  {/* توهج خلفي للمسار */}
+                  <motion.path
+                    d={heartbeatPath}
+                    stroke="rgba(14, 165, 233, 0.3)"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    fill="none"
+                    initial={{ opacity: 0 }}
+                    animate={{ 
+                      opacity: 1,
+                      stroke: [
+                        "rgba(14, 165, 233, 0.3)",
+                        "rgba(139, 92, 246, 0.3)",
+                        "rgba(14, 165, 233, 0.3)"
+                      ]
+                    }}
+                    transition={{
+                      opacity: { duration: 0.5 },
+                      stroke: {
+                        duration: 2,
+                        repeat: Infinity,
+                        repeatType: "reverse"
+                      }
+                    }}
+                    style={{ filter: "blur(4px)" }}
+                  />
+                </svg>
+              </motion.div>
+              
               <div className="absolute -inset-1.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
               <div className="relative flex items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-sm px-3 py-2 xs:px-4 xs:py-2 rounded-lg border border-white/20 dark:border-gray-800/50 shadow-xl">
                 <motion.div
