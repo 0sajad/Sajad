@@ -92,8 +92,8 @@ export function Header({ onLanguageChange }: HeaderProps) {
             <DesktopNav />
           </div>
           
-          <div className="flex items-center space-x-5 sm:space-x-8 md:space-x-10 rtl:space-x-reverse">
-            <LanguageSwitcher className="transform hover:scale-110 transition-transform shadow-xl rounded-full" />
+          <div className="flex items-center space-x-3 sm:space-x-6 md:space-x-8 rtl:space-x-reverse">
+            <LanguageSwitcher className="transform hover:scale-110 transition-transform shadow-xl rounded-full -mr-1 sm:-mr-2" />
             
             <div className="transform hover:scale-105 transition-transform">
               <ModeToggle />
