@@ -139,9 +139,10 @@ i18n.on('missingKey', (lng, ns, key) => {
       // معالجة المصفوفات بشكل صحيح
       if (Array.isArray(fallbackLngs)) {
         for (const fallbackLng of fallbackLngs) {
-          const fallbackLngStr = fallbackLng as string;
-          if (i18n.exists(key, { lng: fallbackLngStr, ns })) {
-            return i18n.t(key, { lng: fallbackLngStr, ns });
+          if (typeof fallbackLng === 'string') {
+            if (i18n.exists(key, { lng: fallbackLng, ns })) {
+              return i18n.t(key, { lng: fallbackLng, ns });
+            }
           }
         }
       } else if (typeof fallbackLngs === 'string') {
@@ -157,7 +158,7 @@ i18n.on('missingKey', (lng, ns, key) => {
       const defaultFallbacks = fallbackLngsObject['default'];
       if (Array.isArray(defaultFallbacks)) {
         for (const defaultFallbackLng of defaultFallbacks) {
-          if (typeof defaultFallbackLng === 'string') {  // Explicit check that the array element is a string
+          if (typeof defaultFallbackLng === 'string') {
             if (i18n.exists(key, { lng: defaultFallbackLng, ns })) {
               return i18n.t(key, { lng: defaultFallbackLng, ns });
             }
