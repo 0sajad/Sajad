@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ModeToggle } from "./ModeToggle";
-import { Menu, X, User } from "lucide-react";
+import { Menu, X, User, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DesktopNav } from "./nav/DesktopNav";
 import { MobileMenu } from "./nav/MobileMenu";
@@ -55,6 +55,28 @@ export function Header({ onLanguageChange }: HeaderProps) {
             <Link to="/" className="relative mr-4 sm:mr-16 group">
               <div className="absolute -inset-1.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
               <div className="relative flex items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-sm px-3 py-2 xs:px-4 xs:py-2 rounded-lg border border-white/20 dark:border-gray-800/50 shadow-xl">
+                {/* إضافة رمز القلب المتحرك على اليمين */}
+                <motion.div 
+                  className="absolute -right-4 rtl:right-auto rtl:-left-4"
+                  animate={{
+                    scale: [1, 1.15, 1, 1.15, 1],
+                    opacity: [0.8, 1, 0.8, 1, 0.8],
+                  }}
+                  transition={{
+                    duration: 2.5,
+                    repeat: Infinity,
+                    repeatType: "loop"
+                  }}
+                >
+                  <Heart 
+                    size={16} 
+                    className="text-red-500 fill-red-500"
+                    style={{
+                      filter: "drop-shadow(0 0 3px rgba(239, 68, 68, 0.7))"
+                    }}
+                  />
+                </motion.div>
+                
                 <motion.div
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
