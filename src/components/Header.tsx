@@ -37,15 +37,17 @@ export function Header({ onLanguageChange }: HeaderProps) {
         }`}
       >
         <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between">
-          <div className="flex items-center">
+          <div className="flex-1 flex justify-end ltr:mr-4 rtl:ml-4">
             <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-octaBlue-600 to-purple-600 bg-clip-text text-transparent mr-6 sm:mr-16 transform hover:scale-105 transition-transform shadow-lg hover:shadow-octaBlue-500/30">
               OCTA-GRAM
             </Link>
-            
+          </div>
+          
+          <div className="flex-[2]">
             <DesktopNav />
           </div>
           
-          <div className="flex items-center space-x-10 rtl:space-x-reverse">
+          <div className="flex-1 flex items-center justify-end space-x-10 rtl:space-x-reverse">
             <LanguageSwitcher className="transform hover:scale-110 transition-transform shadow-xl rounded-full" />
             
             <div className="transform hover:scale-105 transition-transform">

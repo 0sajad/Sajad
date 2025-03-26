@@ -44,8 +44,8 @@ export const DesktopNav = () => {
   
   return (
     <div className="hidden md:flex items-center justify-end flex-grow relative">
-      {/* Developer Logo Surrounding the Nav */}
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[380px] h-[72px] -z-10">
+      {/* Developer Logo Positioned Above the Nav */}
+      <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-[20px] w-[380px] h-[72px] z-10">
         <motion.div 
           className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-gray-300/20 dark:border-gray-700/20"
           animate={{
@@ -110,7 +110,7 @@ export const DesktopNav = () => {
       </div>
       
       <motion.nav 
-        className="flex items-center space-x-7 rtl:space-x-reverse bg-white/20 dark:bg-gray-900/30 backdrop-blur-md px-8 py-2.5 rounded-full border border-gray-200/30 dark:border-gray-700/30 shadow-sm"
+        className="flex items-center space-x-7 rtl:space-x-reverse bg-white/20 dark:bg-gray-900/30 backdrop-blur-md px-8 py-2.5 rounded-full border border-gray-200/30 dark:border-gray-700/30 shadow-sm mt-5"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
