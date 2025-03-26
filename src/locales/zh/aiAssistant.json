@@ -5,6 +5,15 @@
   "description": "获取网络的即时帮助、建议和自动化功能",
   "greeting": "您好！今天我能如何帮助您的网络？",
   "placeholder": "关于您的网络，可以问我任何问题...",
+  "learning": "学习中...",
+  "processing": "处理中...",
+  "protecting": "保护中...",
+  "analyzing": "分析中...",
+  "optimizing": "优化中...",
+  "ready": "就绪",
+  "complete": "完成",
+  "learningSources": "学习来源",
+  "maximize": "打开AI助手",
   "suggestions": {
     "optimize": "如何优化我的Wi-Fi信号？",
     "secure": "我的网络安全吗？",
@@ -29,15 +38,15 @@
     "webDevelopment": "网页开发",
     "security": "高级安全",
     "selfImproving": "自我完善",
-    "database": "数据库"
+    "database": "数据库",
+    "codeAnalysis": "代码分析",
+    "networkAnalysis": "网络分析"
   },
-  "bubbleMessages": {
-    "newTools": "新工具可用！",
-    "help": "需要帮助吗？"
-  },
+  "multiLanguage": "多语言支持",
+  "fileHandling": "文件处理",
   "security": "高级安全",
   "securityDesc": "强大的网络和通信保护，具有先进的威胁分析功能",
-  "multiLanguage": "多语言支持",
   "multiLanguageDesc": "支持所有编程语言和多种语言的交流",
-  "selfDevelopmentDesc": "不断自我改进并学习新技术，无需人工干预"
+  "selfImprovingDesc": "不断自我改进并学习新技术，无需人工干预",
+  "fileHandlingDesc": "处理所有类型的文件和媒体"
 }

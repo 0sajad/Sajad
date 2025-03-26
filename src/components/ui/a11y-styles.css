@@ -1,0 +1,74 @@
+
+/* وضع التباين العالي */
+.high-contrast {
+  --contrast-bg: black;
+  --contrast-text: white;
+  --contrast-border: yellow;
+  --contrast-focus: orange;
+  --contrast-button: #0070f3;
+  --contrast-button-text: white;
+  --contrast-input: black;
+  --contrast-input-text: white;
+  --contrast-input-border: yellow;
+}
+
+.high-contrast * {
+  background-color: var(--contrast-bg) !important;
+  color: var(--contrast-text) !important;
+  border-color: var(--contrast-border) !important;
+}
+
+.high-contrast button,
+.high-contrast a {
+  background-color: var(--contrast-button) !important;
+  color: var(--contrast-button-text) !important;
+  border: 2px solid var(--contrast-border) !important;
+}
+
+.high-contrast input,
+.high-contrast select,
+.high-contrast textarea {
+  background-color: var(--contrast-input) !important;
+  color: var(--contrast-input-text) !important;
+  border: 2px solid var(--contrast-input-border) !important;
+}
+
+.high-contrast *:focus {
+  outline: 3px solid var(--contrast-focus) !important;
+  outline-offset: 2px !important;
+}
+
+/* وضع النص الكبير */
+.large-text {
+  font-size: 1.2rem !important;
+}
+
+.large-text h1 {
+  font-size: 2.4rem !important;
+}
+
+.large-text h2 {
+  font-size: 2rem !important;
+}
+
+.large-text h3 {
+  font-size: 1.8rem !important;
+}
+
+.large-text p,
+.large-text div,
+.large-text span,
+.large-text button,
+.large-text input,
+.large-text select,
+.large-text textarea {
+  font-size: 1.2rem !important;
+}
+
+.large-text .text-xs {
+  font-size: 1rem !important;
+}
+
+.large-text .text-sm {
+  font-size: 1.1rem !important;
+}

@@ -1,31 +1,52 @@
 
 {
-  "title": "المساعد الذكي",
+  "title": "مساعد الذكاء الاصطناعي",
+  "subtitle": "دليلك الشخصي للشبكة",
+  "description": "احصل على مساعدة فورية واقتراحات وميزات آلية لشبكتك",
+  "greeting": "مرحبًا! كيف يمكنني مساعدتك في شبكتك اليوم؟",
+  "placeholder": "اسألني أي شيء عن شبكتك...",
+  "learning": "يتعلم...",
+  "processing": "يعالج...",
+  "protecting": "يحمي...",
+  "analyzing": "يحلل...",
+  "optimizing": "يحسّن...",
   "ready": "جاهز",
-  "learning": "يتعلم",
-  "processing": "يعالج",
-  "protecting": "يحمي",
-  "navigating": "جاري الانتقال",
-  "openingPage": "جاري فتح صفحة المساعد الذكي",
-  "features": {
-    "selfImproving": "تحسين ذاتي",
-    "security": "حماية",
-    "codeAnalysis": "تحليل الكود",
-    "webDevelopment": "تطوير الويب",
-    "database": "قواعد البيانات"
+  "complete": "مكتمل",
+  "learningSources": "يتعلم من",
+  "maximize": "فتح مساعد الذكاء الاصطناعي",
+  "suggestions": {
+    "optimize": "كيف يمكنني تحسين إشارة الواي فاي؟",
+    "secure": "هل شبكتي آمنة؟",
+    "troubleshoot": "لماذا اتصالي بالإنترنت بطيء؟",
+    "device": "كيف أقوم بتوصيل جهاز جديد؟"
   },
-  "continuousLearning": "تعلم مستمر",
-  "learningDesc": "تحسين مستمر للقدرات والأداء",
-  "security": "الحماية والأمان",
-  "securityDesc": "مراقبة وتأمين الشبكة",
-  "multiLanguage": "متعدد اللغات",
-  "multiLanguageDesc": "دعم للعديد من اللغات واللهجات",
-  "selfDevelopment": "تطوير ذاتي",
-  "selfDevelopmentDesc": "تطوير وظائف جديدة تلقائيًا",
-  "bubbleMessages": {
-    "help": "هل تحتاج إلى مساعدة؟ أنا هنا لمساعدتك!",
-    "newTools": "هناك أدوات جديدة متاحة! انقر لمعرفة المزيد.",
-    "security": "تم تحديث إعدادات الأمان. هل ترغب في المراجعة؟",
-    "optimization": "هناك فرص لتحسين أداء الشبكة!"
-  }
+  "responses": {
+    "analyzing": "جاري تحليل شبكتك...",
+    "optimizing": "البحث عن حلول تحسين...",
+    "securing": "التحقق من حالة الأمان...",
+    "troubleshooting": "تشخيص مشاكل الاتصال..."
+  },
+  "settings": {
+    "voice": "التفاعل الصوتي",
+    "proactive": "المساعدة الاستباقية",
+    "learning": "وضع التعلم",
+    "privacy": "وضع الخصوصية"
+  },
+  "selfDevelopment": "التطوير الذاتي",
+  "selfDevelopmentDesc": "يستمر مساعد الذكاء الاصطناعي في التعلم من التفاعلات لتقديم دعم أفضل",
+  "features": {
+    "webDevelopment": "تطوير الويب",
+    "security": "أمان متقدم",
+    "selfImproving": "تحسين ذاتي",
+    "database": "قواعد البيانات",
+    "codeAnalysis": "تحليل الكود",
+    "networkAnalysis": "تحليل الشبكة"
+  },
+  "multiLanguage": "دعم متعدد اللغات",
+  "fileHandling": "معالجة الملفات",
+  "security": "الأمان المتقدم",
+  "securityDesc": "حماية قوية للشبكات والاتصالات مع تحليل متقدم للتهديدات",
+  "multiLanguageDesc": "دعم جميع لغات البرمجة والتواصل بلغات متعددة",
+  "selfImprovingDesc": "يتحسن ذاتيًا ويتعلم تقنيات جديدة دون تدخل بشري",
+  "fileHandlingDesc": "معالجة جميع أنواع الملفات والوسائط"
 }

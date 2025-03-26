@@ -4,7 +4,12 @@
   "language": "ar",
   "common": {
     "selectLanguage": "تغيير اللغة",
-    "language": "اللغة"
+    "language": "اللغة",
+    "enableAutoDarkMode": "تفعيل الوضع الليلي التلقائي",
+    "disableAutoDarkMode": "تعطيل الوضع الليلي التلقائي",
+    "darkMode": "الوضع الليلي",
+    "lightMode": "الوضع النهاري",
+    "autoMode": "الوضع التلقائي"
   },
   "header": {
     "dashboard": "لوحة التحكم",
@@ -94,8 +99,23 @@
       "securityScansDesc": "نتائج فحوصات الأمان الدورية",
       "serverStatusDesc": "تنبيهات عن حالة خوادم النظام",
       "networkActivityDesc": "ملخصات نشاط الشبكة غير العادي"
+    },
+    "appearance": {
+      "title": "المظهر",
+      "theme": "السمة",
+      "darkMode": "الوضع الليلي",
+      "lightMode": "الوضع النهاري",
+      "systemPreference": "تفضيل النظام",
+      "autoMode": "وضع تلقائي",
+      "autoModeDesc": "التبديل التلقائي بين الوضع الليلي والنهاري حسب الوقت"
     }
   },
   "error": "خطأ",
-  "languageChangeError": "فشل تغيير اللغة"
+  "languageChangeError": "فشل تغيير اللغة",
+  "accessibility": {
+    "skipToContent": "تخطي إلى المحتوى",
+    "highContrast": "تباين عالي",
+    "textToSpeech": "تحويل النص إلى كلام",
+    "largeText": "نص كبير"
+  }
 }

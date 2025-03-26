@@ -1,44 +1,64 @@
 
 import React from "react";
-import { Server, Shield, Globe, Zap } from "lucide-react";
+import { FileCode, Globe, Database, Network } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
 
-export function AICapabilitiesGrid() {
+interface AICapabilitiesGridProps {
+  isCompact?: boolean;
+}
+
+export function AICapabilitiesGrid({ isCompact = false }: AICapabilitiesGridProps) {
   const { t } = useTranslation();
   
+  const capabilities = [
+    { 
+      id: "webDevelopment", 
+      icon: Globe, 
+      color: "text-green-500",
+      delay: 0.1
+    },
+    { 
+      id: "codeAnalysis", 
+      icon: FileCode, 
+      color: "text-blue-500",
+      delay: 0.2
+    },
+    { 
+      id: "database", 
+      icon: Database, 
+      color: "text-amber-500",
+      delay: 0.3
+    },
+    { 
+      id: "networkAnalysis", 
+      icon: Network, 
+      color: "text-cyan-500",
+      delay: 0.4
+    }
+  ];
+  
+  // تحديد عدد الأعمدة بناءً على isCompact
+  const gridCols = isCompact ? "grid-cols-2" : "grid-cols-4";
+  
   return (
-    <div className="grid grid-cols-2 gap-2">
-      <div className="flex-1 rounded-md bg-gray-50 p-2 transform transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
-        <div className="flex items-center mb-1">
-          <Server size={12} className="text-octaBlue-600 mr-1 rtl:mr-0 rtl:ml-1" />
-          <span className="text-xs font-medium">{t('aiAssistant.continuousLearning')}</span>
-        </div>
-        <p className="text-xs text-muted-foreground">{t('aiAssistant.learningDesc')}</p>
-      </div>
-      
-      <div className="flex-1 rounded-md bg-gray-50 p-2 transform transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
-        <div className="flex items-center mb-1">
-          <Shield size={12} className="text-red-500 mr-1 rtl:mr-0 rtl:ml-1" />
-          <span className="text-xs font-medium">{t('aiAssistant.security')}</span>
-        </div>
-        <p className="text-xs text-muted-foreground">{t('aiAssistant.securityDesc')}</p>
-      </div>
-      
-      <div className="flex-1 rounded-md bg-gray-50 p-2 transform transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
-        <div className="flex items-center mb-1">
-          <Globe size={12} className="text-green-600 mr-1 rtl:mr-0 rtl:ml-1" />
-          <span className="text-xs font-medium">{t('aiAssistant.multiLanguage')}</span>
-        </div>
-        <p className="text-xs text-muted-foreground">{t('aiAssistant.multiLanguageDesc')}</p>
-      </div>
-      
-      <div className="flex-1 rounded-md bg-gray-50 p-2 transform transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
-        <div className="flex items-center mb-1">
-          <Zap size={12} className="text-amber-500 mr-1 rtl:mr-0 rtl:ml-1" />
-          <span className="text-xs font-medium">{t('aiAssistant.selfDevelopment')}</span>
-        </div>
-        <p className="text-xs text-muted-foreground">{t('aiAssistant.selfDevelopmentDesc')}</p>
-      </div>
+    <div className={`grid ${gridCols} gap-2 mb-3`}>
+      {capabilities.map((capability) => (
+        <motion.div
+          key={capability.id}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: capability.delay, duration: 0.2 }}
+          className="bg-muted/30 p-2 rounded-md text-center flex flex-col items-center"
+          whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
+          aria-label={t(`aiAssistant.features.${capability.id}`, capability.id)}
+        >
+          <capability.icon className={`${capability.color} h-5 w-5 mb-1`} />
+          <span className="text-xs text-muted-foreground">
+            {t(`aiAssistant.features.${capability.id}`, capability.id)}
+          </span>
+        </motion.div>
+      ))}
     </div>
   );
 }
