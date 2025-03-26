@@ -60,7 +60,7 @@ function App() {
                 <Route path="*" element={<Navigate to="/404" replace />} />
               </Routes>
             </Router>
-            <Toaster />
+            <Toaster position="top-right" />
           </div>
         </TooltipProvider>
       </ModeProvider>

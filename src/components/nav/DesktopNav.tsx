@@ -16,16 +16,16 @@ export const DesktopNav = () => {
   const { t } = useTranslation();
   
   return (
-    <nav className="hidden md:flex items-center space-x-4 rtl:space-x-reverse">
+    <nav className="hidden md:flex items-center space-x-6 rtl:space-x-reverse">
       <NavItem 
         to="/" 
-        icon={<LayoutDashboard size={16} />} 
+        icon={<LayoutDashboard size={18} />} 
         label={t('header.dashboard')} 
       />
       
       <NavDropdown 
         label={t('header.tools')}
-        icon={<Wrench size={16} />}
+        icon={<Wrench size={18} />}
         items={[
           { to: '/fiber-optic', label: t('header.networkScanner') },
           { to: '#', label: t('header.wifiAnalyzer') },
@@ -35,25 +35,25 @@ export const DesktopNav = () => {
       
       <NavItem 
         to="/ai" 
-        icon={<BrainCircuit size={16} />} 
+        icon={<BrainCircuit size={18} />} 
         label={t('header.aiAssistant')} 
       />
       
       <NavItem 
         to="/settings" 
-        icon={<Settings size={16} />} 
+        icon={<Settings size={18} />} 
         label={t('header.settings')} 
       />
       
       <NavItem 
         to="/help-center" 
-        icon={<HelpCircle size={16} />} 
+        icon={<HelpCircle size={18} />} 
         label={t('header.helpCenter')} 
       />
       
       <NavItem 
         to="/license" 
-        icon={<Shield size={16} />} 
+        icon={<Shield size={18} />} 
         label={t('header.license')} 
       />
     </nav>
