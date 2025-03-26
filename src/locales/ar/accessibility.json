@@ -35,5 +35,13 @@
   "altM": "Alt + M: تبديل تقليل الحركة",
   "altF": "Alt + F: تبديل وضع التركيز",
   "announcementFeaturesToggled": "تم {{state}} {{feature}}",
-  "announcementsTitle": "الإعلانات"
+  "announcementsTitle": "الإعلانات",
+  "enabled": "تفعيل",
+  "disabled": "تعطيل",
+  "skipToContent": "انتقل إلى المحتوى",
+  "navigateToSection": "انتقل إلى {{section}}",
+  "mainContent": "المحتوى الرئيسي",
+  "navigation": "التنقل",
+  "settings": "الإعدادات",
+  "tools": "الأدوات"
 }

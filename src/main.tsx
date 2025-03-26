@@ -7,39 +7,53 @@ import './components/ui/a11y-styles.css';
 import './i18n';
 import { LoadingScreen } from './components/LoadingScreen';
 
-// Wrapper component to handle initialization
+// مكون الغلاف للتعامل مع التهيئة
 const AppWrapper = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Handle accessibility and preferences setup
+    // التعامل مع إعداد إمكانية الوصول والتفضيلات
     if (typeof window !== 'undefined') {
-      // Set document language based on direction
+      // تعيين لغة المستند بناءً على الاتجاه
       document.documentElement.lang = document.documentElement.dir === 'rtl' ? 'ar' : 'en';
       
-      // Check for reduced motion preference
+      // التحقق من تفضيلات الحركة المخفضة
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
       if (prefersReducedMotion.matches) {
         document.body.classList.add('reduced-motion');
       }
       
-      // Set up main content for screen readers
+      // إعداد المحتوى الرئيسي لقارئات الشاشة
       const main = document.querySelector('main');
       if (main) {
         main.setAttribute('role', 'main');
+        main.setAttribute('id', 'main-content');
         main.setAttribute('tabIndex', '-1');
       }
       
-      // Add skip to content link for keyboard users
+      // إضافة رابط التخطي إلى المحتوى لمستخدمي لوحة المفاتيح
       const skipLink = document.createElement('a');
       skipLink.href = '#main-content';
       skipLink.className = 'sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:p-4 focus:bg-white focus:text-black';
-      skipLink.textContent = 'Skip to content';
+      skipLink.textContent = document.documentElement.lang === 'ar' ? 'انتقل إلى المحتوى' : 'Skip to content';
       document.body.insertBefore(skipLink, document.body.firstChild);
       
-      // Simulate loading completion
+      // محاكاة اكتمال التحميل
       const timer = setTimeout(() => {
         setIsLoading(false);
+        // إعلام قارئات الشاشة أن التطبيق قد اكتمل تحميله
+        const announcer = document.createElement('div');
+        announcer.setAttribute('aria-live', 'polite');
+        announcer.className = 'sr-only';
+        announcer.textContent = document.documentElement.lang === 'ar' ? 'تم تحميل التطبيق بنجاح' : 'Application loaded successfully';
+        document.body.appendChild(announcer);
+        
+        // إزالة المُعلن بعد فترة
+        setTimeout(() => {
+          if (document.body.contains(announcer)) {
+            document.body.removeChild(announcer);
+          }
+        }, 1000);
       }, 800);
       
       return () => clearTimeout(timer);

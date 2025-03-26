@@ -35,5 +35,13 @@
   "altM": "Alt + M: Toggle reduced motion",
   "altF": "Alt + F: Toggle focus mode",
   "announcementFeaturesToggled": "{{feature}} has been {{state}}",
-  "announcementsTitle": "Announcements"
+  "announcementsTitle": "Announcements",
+  "enabled": "enabled",
+  "disabled": "disabled",
+  "skipToContent": "Skip to content",
+  "navigateToSection": "Navigate to {{section}}",
+  "mainContent": "Main content",
+  "navigation": "Navigation",
+  "settings": "Settings",
+  "tools": "Tools"
 }

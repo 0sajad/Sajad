@@ -2,6 +2,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { LucideIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export interface ResourceMetricCardProps {
   icon: LucideIcon;
@@ -10,8 +11,8 @@ export interface ResourceMetricCardProps {
   iconColor: string;
   bgColorFrom: string;
   bgColorTo: string;
-  ariaLabel?: string; // Add optional ariaLabel prop
-  description?: string; // Add optional description for more context
+  ariaLabel?: string;
+  description?: string;
 }
 
 export const ResourceMetricCard = ({ 
@@ -24,24 +25,37 @@ export const ResourceMetricCard = ({
   ariaLabel,
   description
 }: ResourceMetricCardProps) => {
+  // استخدام cn لدمج الفئات بشكل صحيح وتجنب مشاكل الألوان المخصصة مع Tailwind
+  const cardClassName = cn(
+    "shadow-sm transition-all duration-300 hover:shadow-md focus-within:ring-2",
+    `border-${bgColorFrom}-200`,
+    `focus-within:ring-${iconColor}-500`
+  );
+  
+  const iconContainerClassName = cn(
+    "mr-3 p-2 rounded-md",
+    `bg-${bgColorFrom}-100`,
+    `text-${iconColor}-500`
+  );
+  
   return (
     <Card 
-      className={`border-${bgColorFrom}-200 shadow-sm transition-all duration-300 hover:shadow-md focus-within:ring-2 focus-within:ring-${iconColor}-500`}
+      className={cardClassName}
       aria-label={ariaLabel || label}
-      tabIndex={0} // Make card focusable for keyboard navigation
+      tabIndex={0}
     >
       <CardContent className="p-4">
         <div className="flex items-center">
-          <div className={`mr-3 p-2 rounded-md bg-${bgColorFrom}-100 text-${iconColor}-500`} aria-hidden="true">
+          <div className={iconContainerClassName} aria-hidden="true">
             <Icon className="h-5 w-5" />
           </div>
           <div>
             <p className="text-sm text-muted-foreground font-medium">{label}</p>
             <p className="text-lg font-bold">{value}</p>
             {description && (
-              <p className="text-xs text-muted-foreground mt-1" aria-hidden="true">{description}</p>
+              <p className="text-xs text-muted-foreground mt-1">{description}</p>
             )}
-            {/* Hidden text for screen readers with more context if description is provided */}
+            {/* نص مخفي لقارئات الشاشة لتوفير المزيد من السياق */}
             {description && (
               <span className="sr-only">{description}</span>
             )}

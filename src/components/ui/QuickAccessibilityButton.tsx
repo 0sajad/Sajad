@@ -11,10 +11,10 @@ export function QuickAccessibilityButton() {
   const { highContrast, largeText, reducedMotion, focusMode } = useA11y();
   const { t } = useTranslation();
   
-  // Calculate how many accessibility features are enabled
+  // حساب عدد ميزات إمكانية الوصول المفعلة
   const activeFeatures = [highContrast, largeText, reducedMotion, focusMode].filter(Boolean).length;
   
-  // Get a list of active features for screen readers
+  // الحصول على قائمة الميزات النشطة لقارئات الشاشة
   const getActiveFeaturesText = () => {
     const features = [];
     if (highContrast) features.push(t('accessibility.highContrast'));
@@ -27,7 +27,7 @@ export function QuickAccessibilityButton() {
   };
   
   return (
-    <div className="fixed bottom-4 left-4 z-50">
+    <div className="fixed bottom-4 left-4 z-50 md:bottom-6 md:left-6">
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -42,7 +42,7 @@ export function QuickAccessibilityButton() {
             >
               <Accessibility className="h-4 w-4" />
               {activeFeatures > 0 && (
-                <div className="absolute -top-2 -right-2 w-5 h-5 bg-primary rounded-full animate-pulse flex items-center justify-center">
+                <div className="absolute -top-2 -right-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center" aria-hidden="true">
                   <span className="text-xs text-white">{activeFeatures}</span>
                 </div>
               )}
