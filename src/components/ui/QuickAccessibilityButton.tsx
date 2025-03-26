@@ -8,8 +8,23 @@ import { Accessibility } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export function QuickAccessibilityButton() {
-  const { highContrast, largeText } = useA11y();
+  const { highContrast, largeText, reducedMotion, focusMode } = useA11y();
   const { t } = useTranslation();
+  
+  // Calculate how many accessibility features are enabled
+  const activeFeatures = [highContrast, largeText, reducedMotion, focusMode].filter(Boolean).length;
+  
+  // Get a list of active features for screen readers
+  const getActiveFeaturesText = () => {
+    const features = [];
+    if (highContrast) features.push(t('accessibility.highContrast'));
+    if (largeText) features.push(t('accessibility.largeText'));
+    if (reducedMotion) features.push(t('accessibility.reducedMotion'));
+    if (focusMode) features.push(t('accessibility.focusMode'));
+    
+    if (features.length === 0) return t('accessibility.noFeaturesActive', 'No accessibility features are active');
+    return t('accessibility.activeFeatures', 'Active features: ') + features.join(', ');
+  };
   
   return (
     <div className="fixed bottom-4 left-4 z-50">
@@ -19,17 +34,23 @@ export function QuickAccessibilityButton() {
             <Button
               variant="outline"
               size="icon"
-              className="relative shadow-md hover:shadow-lg bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-700 border border-blue-200 dark:border-gray-600"
-              aria-label={t('accessibility.a11ySettings', 'إعدادات إمكانية الوصول')}
+              className="relative shadow-md hover:shadow-lg bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-700 border border-blue-200 dark:border-gray-600 transition-all duration-300"
+              aria-label={t('accessibility.a11ySettings')}
+              aria-haspopup="menu"
+              aria-expanded="false"
+              aria-describedby="a11y-settings-desc"
             >
               <Accessibility className="h-4 w-4" />
-              {(highContrast || largeText) && (
-                <div className="absolute -top-2 -right-2 w-3 h-3 bg-primary rounded-full animate-pulse" />
+              {activeFeatures > 0 && (
+                <div className="absolute -top-2 -right-2 w-5 h-5 bg-primary rounded-full animate-pulse flex items-center justify-center">
+                  <span className="text-xs text-white">{activeFeatures}</span>
+                </div>
               )}
+              <span id="a11y-settings-desc" className="sr-only">{getActiveFeaturesText()}</span>
             </Button>
           </TooltipTrigger>
           <TooltipContent side="right">
-            <p>{t('accessibility.a11ySettings', 'إعدادات إمكانية الوصول')}</p>
+            <p>{t('accessibility.a11ySettings')}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

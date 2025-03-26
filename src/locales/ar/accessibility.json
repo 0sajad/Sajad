@@ -25,5 +25,15 @@
   "reducedMotionEnabled": "تم تفعيل تقليل الحركة",
   "reducedMotionDisabled": "تم تعطيل تقليل الحركة",
   "focusModeEnabled": "تم تفعيل وضع التركيز",
-  "focusModeDisabled": "تم تعطيل وضع التركيز"
+  "focusModeDisabled": "تم تعطيل وضع التركيز",
+  "noFeaturesActive": "لا توجد ميزات إمكانية وصول مفعلة",
+  "activeFeatures": "الميزات النشطة: ",
+  "keyboardShortcuts": "اختصارات لوحة المفاتيح",
+  "keyboardShortcutsDescription": "استخدم Alt + حرف لتبديل ميزات إمكانية الوصول بسرعة",
+  "altC": "Alt + C: تبديل وضع التباين العالي",
+  "altT": "Alt + T: تبديل النص الكبير",
+  "altM": "Alt + M: تبديل تقليل الحركة",
+  "altF": "Alt + F: تبديل وضع التركيز",
+  "announcementFeaturesToggled": "تم {{state}} {{feature}}",
+  "announcementsTitle": "الإعلانات"
 }

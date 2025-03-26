@@ -11,10 +11,12 @@ import { DiskTemperatureChart } from "./performance/DiskTemperatureChart";
 import { SystemHealthAssessment } from "./performance/SystemHealthAssessment";
 import { generatePerformanceData, PerformanceDataPoint } from "./performance/utils/performanceUtils";
 import { useA11y } from "@/hooks/useA11y";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 
 export const SystemPerformanceMonitor = () => {
   const { t } = useTranslation();
   const { reducedMotion } = useA11y();
+  const { announce } = useKeyboardShortcuts();
   const [performanceData, setPerformanceData] = useState<PerformanceDataPoint[]>(generatePerformanceData());
   const [isRefreshing, setIsRefreshing] = useState(false);
   
@@ -29,9 +31,16 @@ export const SystemPerformanceMonitor = () => {
       description: t('systemMonitor.collectingMetrics', 'Collecting system metrics...')
     });
     
+    // Announce to screen readers
+    announce(t('systemMonitor.refreshing', 'Refreshing Data') + '. ' + 
+             t('systemMonitor.collectingMetrics', 'Collecting system metrics...'));
+    
     setTimeout(() => {
       setPerformanceData(generatePerformanceData());
       setIsRefreshing(false);
+      
+      // Announce when complete
+      announce(t('systemMonitor.dataRefreshed', 'System data has been refreshed'));
     }, 1000);
   };
   
@@ -60,8 +69,40 @@ export const SystemPerformanceMonitor = () => {
     };
   }, [performanceData, reducedMotion]);
   
+  // Get descriptions for metrics with more context
+  const getCpuDescription = () => {
+    const value = currentValues.cpu;
+    if (value > 80) return t('systemMonitor.cpuHigh', 'CPU usage is very high');
+    if (value > 50) return t('systemMonitor.cpuModerate', 'CPU usage is moderate');
+    return t('systemMonitor.cpuLow', 'CPU usage is low');
+  };
+  
+  const getMemoryDescription = () => {
+    const value = currentValues.memory;
+    if (value > 80) return t('systemMonitor.memoryHigh', 'Memory usage is very high');
+    if (value > 50) return t('systemMonitor.memoryModerate', 'Memory usage is moderate');
+    return t('systemMonitor.memoryLow', 'Memory usage is low');
+  };
+  
+  const getDiskDescription = () => {
+    const value = currentValues.disk;
+    if (value > 80) return t('systemMonitor.diskHigh', 'Disk usage is very high');
+    if (value > 50) return t('systemMonitor.diskModerate', 'Disk usage is moderate');
+    return t('systemMonitor.diskLow', 'Disk usage is low');
+  };
+  
+  const getTemperatureDescription = () => {
+    const value = currentValues.temperature;
+    if (value > 75) return t('systemMonitor.tempHigh', 'Temperature is very high');
+    if (value > 60) return t('systemMonitor.tempModerate', 'Temperature is moderate');
+    return t('systemMonitor.tempLow', 'Temperature is in normal range');
+  };
+  
   return (
-    <Card className="border-octaBlue-200 shadow-md animate-fade-in" aria-label={t('systemMonitor.title', 'مراقبة أداء النظام')}>
+    <Card 
+      className="border-octaBlue-200 shadow-md animate-fade-in" 
+      aria-label={t('systemMonitor.title', 'System Performance Monitor')}
+    >
       <SystemMonitorHeader onRefresh={refreshData} isRefreshing={isRefreshing} />
       
       <CardContent className="p-6">
@@ -73,7 +114,8 @@ export const SystemPerformanceMonitor = () => {
             value={`${currentValues.cpu}%`}
             bgColorFrom="blue"
             bgColorTo="blue"
-            ariaLabel={t('systemMonitor.cpuUsage', 'استخدام المعالج {value}', { value: `${currentValues.cpu}%` })}
+            ariaLabel={t('systemMonitor.cpuUsage', 'CPU usage {value}', { value: `${currentValues.cpu}%` })}
+            description={getCpuDescription()}
           />
           
           <ResourceMetricCard 
@@ -83,7 +125,8 @@ export const SystemPerformanceMonitor = () => {
             value={`${currentValues.memory}%`}
             bgColorFrom="green"
             bgColorTo="green"
-            ariaLabel={t('systemMonitor.memoryUsage', 'استخدام الذاكرة {value}', { value: `${currentValues.memory}%` })}
+            ariaLabel={t('systemMonitor.memoryUsage', 'Memory usage {value}', { value: `${currentValues.memory}%` })}
+            description={getMemoryDescription()}
           />
           
           <ResourceMetricCard 
@@ -93,7 +136,8 @@ export const SystemPerformanceMonitor = () => {
             value={`${currentValues.disk}%`}
             bgColorFrom="purple"
             bgColorTo="purple"
-            ariaLabel={t('systemMonitor.diskUsage', 'استخدام القرص {value}', { value: `${currentValues.disk}%` })}
+            ariaLabel={t('systemMonitor.diskUsage', 'Disk usage {value}', { value: `${currentValues.disk}%` })}
+            description={getDiskDescription()}
           />
           
           <ResourceMetricCard 
@@ -103,7 +147,8 @@ export const SystemPerformanceMonitor = () => {
             value={`${currentValues.temperature}°C`}
             bgColorFrom="amber"
             bgColorTo="amber"
-            ariaLabel={t('systemMonitor.tempReading', 'قراءة درجة الحرارة {value}', { value: `${currentValues.temperature}°C` })}
+            ariaLabel={t('systemMonitor.tempReading', 'Temperature reading {value}', { value: `${currentValues.temperature}°C` })}
+            description={getTemperatureDescription()}
           />
         </div>
         

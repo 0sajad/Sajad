@@ -25,5 +25,15 @@
   "reducedMotionEnabled": "Reduced Motion Enabled",
   "reducedMotionDisabled": "Reduced Motion Disabled",
   "focusModeEnabled": "Focus Mode Enabled",
-  "focusModeDisabled": "Focus Mode Disabled"
+  "focusModeDisabled": "Focus Mode Disabled",
+  "noFeaturesActive": "No accessibility features are active",
+  "activeFeatures": "Active features: ",
+  "keyboardShortcuts": "Keyboard Shortcuts",
+  "keyboardShortcutsDescription": "Use Alt + letter to quickly toggle accessibility features",
+  "altC": "Alt + C: Toggle high contrast mode",
+  "altT": "Alt + T: Toggle large text",
+  "altM": "Alt + M: Toggle reduced motion",
+  "altF": "Alt + F: Toggle focus mode",
+  "announcementFeaturesToggled": "{{feature}} has been {{state}}",
+  "announcementsTitle": "Announcements"
 }
