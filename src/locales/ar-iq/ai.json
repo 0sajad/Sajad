@@ -10,5 +10,13 @@
   "messageInput": "حقل الرسالة",
   "sendMessage": "دز الرسالة",
   "writeSomething": "اكتب شي هنا...",
-  "chatPlaceholder": "اكتب سؤالك هنا..."
+  "chatPlaceholder": "اكتب سؤالك هنا...",
+  "help": "محتاج مساعدة؟",
+  "askingNetwork": "اسأل عن الشبكة وراح اساعدك",
+  "helpPrompts": {
+    "speedTest": "شلون افحص سرعة النت؟",
+    "wifiIssue": "الواي فاي ضعيف شنو الحل؟",
+    "securityCheck": "شلون أتأكد من أمان الشبكة؟",
+    "deviceConnection": "ماكدر اوصل جهاز يديد للشبكة"
+  }
 }

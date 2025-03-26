@@ -32,7 +32,7 @@ i18n
     },
     missingKeyHandler: (lng, ns, key) => {
       if (process.env.NODE_ENV === 'development') {
-        console.warn(`Missing translation key: ${key} in namespace: ${ns} for language: ${lng}`);
+        console.warn(`مفتاح ترجمة مفقود: ${key} في مجال: ${ns} للغة: ${lng}`);
       }
     },
     detection: {

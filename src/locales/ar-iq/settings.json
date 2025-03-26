@@ -18,10 +18,10 @@
   "connectionLimits": "حدود الاتصال",
   "networkScanner": "ماسح الشبكة",
   "supported": "مدعوم",
-  "customizable": "قابل للتخصيص",
+  "customizable": "كيفما تريد",
   "automatic": "تلقائي",
   "languages": "7 لغات",
-  "adjustable": "قابل للتعديل",
+  "adjustable": "تكدر تعدله",
   "lightDark": "فاتح/غامج",
   "scale": "50-200%",
   "advanced": "متقدم",
@@ -38,7 +38,7 @@
     "system": "النظام"
   },
   "aiFeatures": "ميزات الذكاء الاصطناعي",
-  "aiDescription": "قم بتفعيل ميزات الذكاء الاصطناعي المتقدمة لتحليل شبكتك وتحسينها تلقائيًا.",
+  "aiDescription": "فعّل ميزات الذكاء الاصطناعي المتقدمة لتحليل شبكتك وتحسينها تلقائيًا.",
   "notificationSettings": "إعدادات الإشعارات",
   "notificationDescription": "التحكم بكافة أنواع الإشعارات من النظام",
   "advancedNetworkSettings": "إعدادات الشبكة المتقدمة",
@@ -47,7 +47,7 @@
   "securityDescription": "ضبط مستويات الحماية والخصوصية للشبكة والأجهزة المتصلة.",
   "systemSettings": "إعدادات النظام",
   "systemDescription": "ضبط إعدادات موارد النظام والطاقة والأداء.",
-  "comingSoon": "قريبًا",
+  "comingSoon": "كريب",
   "notifications": {
     "title": "إعدادات الإشعارات",
     "description": "تحكم بأنواع الإشعارات اللي تريد استلامها",
@@ -56,8 +56,8 @@
     "disabled": "تم إيقاف إشعارات {type}",
     "allEnabled": "تم تفعيل جميع الإشعارات",
     "allDisabled": "تم تعطيل جميع الإشعارات",
-    "enableAll": "تفعيل الكل",
-    "disableAll": "تعطيل الكل",
+    "enableAll": "فعّل الكل",
+    "disableAll": "عطل الكل",
     "types": {
       "system": "إشعارات النظام",
       "security": "تنبيهات الأمان",
@@ -78,5 +78,10 @@
     "securityScansDesc": "نتائج فحوصات الأمان الدورية",
     "serverStatusDesc": "إشعارات عن حالة الخوادم المتصلة",
     "networkActivityDesc": "إشعارات عن نشاط غير معتاد في الشبكة"
-  }
+  },
+  "saveChanges": "حفظ التغييرات",
+  "cancelChanges": "إلغاء",
+  "resetDefault": "استعادة الافتراضي",
+  "settingsSaved": "تم الحفظ",
+  "confirmReset": "متأكد تريد ترجع للإعدادات الافتراضية؟"
 }

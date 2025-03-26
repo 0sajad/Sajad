@@ -7,5 +7,14 @@
   "intrusionDetection": "كشف التطفل",
   "intrusionStatus": "نشط - مافي تهديدات",
   "vpnStatus": "حالة الـ VPN",
-  "vpnStatusValue": "متصل - آمن"
+  "vpnStatusValue": "متصل - آمن",
+  "threatLevel": "مستوى الخطر",
+  "threatLevelValue": "واطي",
+  "lastScan": "آخر فحص",
+  "lastScanTime": "قبل ساعة",
+  "scanNow": "افحص هسه",
+  "secureNetwork": "الشبكة آمنة",
+  "vulnerabilities": "نقاط ضعف",
+  "noVulnerabilities": "ما اكو نقاط ضعف",
+  "protectionEnabled": "الحماية مفعلة"
 }
