@@ -21,7 +21,7 @@ i18n
       'default': ['ar', 'en']
     },
     debug: process.env.NODE_ENV === 'development',
-    ns: ['common', 'license', 'access', 'settings'],
+    ns: ['common', 'license', 'access', 'settings', 'aiFeatures'],
     defaultNS: 'common',
     interpolation: {
       escapeValue: false
@@ -49,7 +49,10 @@ i18n
     parseMissingKeyHandler: (key) => {
       return key.trim();
     },
-    appendNamespaceToMissingKey: true
+    appendNamespaceToMissingKey: true,
+    // زيادة مهلة تحميل الترجمة لضمان تحميل كافة الملفات
+    partialBundledLanguages: true,
+    loadPath: '/locales/{{lng}}/{{ns}}.json'
   });
 
 // تطبيق اتجاه اللغة الصحيح عند تغيير اللغة
@@ -106,5 +109,14 @@ document.documentElement.style.textAlign = isRTL ? "right" : "left";
 if (isRTL) {
   document.body.classList.add('rtl-active');
 }
+
+// تحسين إدارة الأخطاء
+i18n.on('failedLoading', (lng, ns, msg) => {
+  console.error(`فشل تحميل ملف الترجمة: ${lng}/${ns} - ${msg}`);
+  // محاولة إعادة تحميل الملف
+  setTimeout(() => {
+    i18n.reloadResources([lng], [ns]);
+  }, 1000);
+});
 
 export default i18n;

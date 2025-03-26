@@ -55,6 +55,12 @@ export function useLanguageTransition() {
         } else {
           document.body.classList.remove('rtl-active');
         }
+
+        // إعادة تحميل التطبيق بآمان بعد تغيير اللغة لضمان تطبيق جميع الترجمات
+        setTimeout(() => {
+          // بدلاً من إعادة تحميل الصفحة، نقوم بتطبيق تحديث مخصص
+          document.dispatchEvent(new CustomEvent('languageFullyChanged', { detail: { language } }));
+        }, 100);
       });
       
       // إعادة تفعيل المحتوى بعد انتهاء الانتقال

@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Check, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +20,7 @@ interface LanguageSwitcherProps {
 export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
   const { i18n, t } = useTranslation();
   const { isTransitioning, changeLanguage } = useLanguageTransition();
+  const [mounted, setMounted] = useState(false);
   
   const languages = [
     { code: "ar", name: "العربية", nativeName: "العربية" },
@@ -30,8 +31,25 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
     { code: "zh", name: "Chinese", nativeName: "中文" }
   ];
 
+  // التأكد من تطبيق الاتجاه الصحيح حسب اللغة عند التحميل
+  useEffect(() => {
+    setMounted(true);
+    const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
+    if (isRTL) {
+      document.documentElement.setAttribute("dir", "rtl");
+      document.body.classList.add('rtl-active');
+    } else {
+      document.documentElement.setAttribute("dir", "ltr");
+      document.body.classList.remove('rtl-active');
+    }
+  }, [i18n.language]);
+
   // العثور على اللغة الحالية
   const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <DropdownMenu>
@@ -40,10 +58,10 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
           variant="outline"
           size="icon"
           className={`relative ${className} ${isTransitioning ? 'opacity-50' : 'opacity-100'} transition-opacity duration-300`}
-          aria-label="Select Language"
+          aria-label={t('common.selectLanguage', 'Select Language')}
         >
           <Globe className="h-4 w-4" />
-          <span className="sr-only">Change Language</span>
+          <span className="sr-only">{t('common.language', 'Language')}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

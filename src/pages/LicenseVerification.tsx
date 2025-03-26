@@ -9,6 +9,7 @@ import { Key, Shield, Download, LockKeyhole, ArrowLeft } from "lucide-react";
 import { LicenseSelector } from "@/components/license/LicenseSelector";
 import { toast } from "@/components/ui/use-toast";
 import { Link } from "react-router-dom";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 
 const LicenseVerification = () => {
   const { t, i18n } = useTranslation('license');
@@ -60,86 +61,83 @@ const LicenseVerification = () => {
       <Header />
       
       <main className="flex-1 flex items-center justify-center p-6">
-        <div className="max-w-md w-full mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 relative">
-          {/* رابط العودة */}
-          <Link 
-            to="/" 
-            className="absolute top-4 left-4 rtl:left-auto rtl:right-4 text-gray-500 hover:text-gray-700 transition-colors"
-            aria-label={t('returnToHome', 'Return to home')}
-          >
-            <ArrowLeft className={`h-5 w-5 ${isRTL ? 'transform rotate-180' : ''}`} />
-          </Link>
-          
-          {/* شعار الدرع */}
-          <div className="flex justify-center mb-6">
-            <div className="bg-blue-500 p-4 rounded-full">
-              <Shield className="w-12 h-12 text-white" />
+        <Card className="max-w-md w-full mx-auto shadow-lg">
+          <CardHeader className="text-center pb-2">
+            <div className="flex justify-center mb-4">
+              <div className="bg-blue-500 p-4 rounded-full">
+                <Shield className="w-12 h-12 text-white" />
+              </div>
             </div>
-          </div>
+            <CardTitle className="text-2xl font-bold">
+              {t('verification')}
+            </CardTitle>
+            <CardDescription>
+              {t('enterKeyToActivate')}
+            </CardDescription>
+          </CardHeader>
           
-          {/* عنوان الصفحة */}
-          <h1 className="text-2xl font-bold text-center mb-4">
-            {t('verification')}
-          </h1>
-          
-          {/* الوصف */}
-          <p className="text-gray-600 dark:text-gray-300 text-center mb-6 text-sm">
-            {t('enterKeyToActivate')}
-          </p>
-          
-          {/* حقل إدخال مفتاح الترخيص */}
-          <div className="mb-6">
-            <div className="relative">
-              <Input 
-                type="text"
-                value={licenseKey}
-                onChange={(e) => setLicenseKey(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={t('enterKeyHere')}
-                className="pl-10 pr-4 rtl:pl-4 rtl:pr-10 h-12"
-              />
-              <Key className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500`} />
+          <CardContent className="space-y-4">
+            {/* حقل إدخال مفتاح الترخيص */}
+            <div className="space-y-2">
+              <div className="relative">
+                <Input 
+                  type="text"
+                  value={licenseKey}
+                  onChange={(e) => setLicenseKey(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder={t('enterKeyHere')}
+                  className={`${isRTL ? 'pl-4 pr-10' : 'pl-10 pr-4'} h-12 text-base`}
+                />
+                <Key className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500`} />
+              </div>
+              
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                <p>{t('keyFormat')}</p>
+              </div>
             </div>
             
-            <div className="mt-2 text-sm text-gray-500">
-              <p>{t('keyFormat')}</p>
-            </div>
-          </div>
-          
-          {/* منتقي نوع الترخيص */}
-          <div className="mb-6">
+            {/* منتقي نوع الترخيص */}
             <LicenseSelector 
               value={licenseType} 
               onChange={(value) => setLicenseType(value as "client" | "developer")} 
             />
-          </div>
-          
-          {/* معلومات إضافية */}
-          <div className="mb-6 text-center text-gray-600 dark:text-gray-300 text-sm">
-            <p className="mb-3">{t('requiredMessage')}</p>
             
-            <div className="flex items-center justify-center text-blue-600">
-              <Download className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
-              <span>{t('developerPermissions')}</span>
+            {/* معلومات إضافية */}
+            <div className="text-center text-gray-600 dark:text-gray-300 text-sm space-y-3">
+              <p>{t('requiredMessage')}</p>
+              
+              <div className="flex items-center justify-center text-blue-600">
+                <Download className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                <span>{t('developerPermissions')}</span>
+              </div>
             </div>
-          </div>
+          </CardContent>
           
-          {/* زر التحقق */}
-          <Button 
-            className="w-full py-6 text-lg"
-            onClick={handleVerify}
-            disabled={isVerifying || licenseKey.length === 0}
-          >
-            {isVerifying ? (
-              <span className="animate-pulse">{t('verifying')}</span>
-            ) : (
-              <>
-                <LockKeyhole className="mr-2 rtl:ml-2 rtl:mr-0" />
-                {t('verifyKey')}
-              </>
-            )}
-          </Button>
-        </div>
+          <CardFooter className="flex flex-col space-y-3">
+            <Button 
+              className="w-full py-5 text-lg"
+              onClick={handleVerify}
+              disabled={isVerifying || licenseKey.length === 0}
+            >
+              {isVerifying ? (
+                <span className="animate-pulse">{t('verifying')}</span>
+              ) : (
+                <>
+                  <LockKeyhole className={`${isRTL ? 'ml-2' : 'mr-2'}`} />
+                  {t('verifyKey')}
+                </>
+              )}
+            </Button>
+            
+            <Link 
+              to="/" 
+              className="text-gray-500 hover:text-gray-700 transition-colors text-sm text-center"
+              aria-label={t('returnToHome')}
+            >
+              {t('returnToHome')}
+            </Link>
+          </CardFooter>
+        </Card>
       </main>
       
       <Footer />

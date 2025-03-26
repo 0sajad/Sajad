@@ -28,12 +28,37 @@ const Index = () => {
       i18n.changeLanguage(savedLanguage);
     }
     
+    // التحقق من اتجاه اللغة وتطبيقه
+    const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
+    document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
+    if (isRTL) {
+      document.body.classList.add('rtl-active');
+    } else {
+      document.body.classList.remove('rtl-active');
+    }
+    
+    // عرض مساعد الذكاء الاصطناعي بعد فترة
     const timeout = setTimeout(() => {
       setShowAIAssistant(true);
     }, 5000);
     
+    // الاستماع لحدث تغيير اللغة
+    const handleLanguageFullChange = () => {
+      // إعادة تطبيق الاتجاه
+      const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
+      document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
+      if (isRTL) {
+        document.body.classList.add('rtl-active');
+      } else {
+        document.body.classList.remove('rtl-active');
+      }
+    };
+    
+    document.addEventListener('languageFullyChanged', handleLanguageFullChange);
+    
     return () => {
       clearTimeout(timeout);
+      document.removeEventListener('languageFullyChanged', handleLanguageFullChange);
     };
   }, [i18n]);
 
