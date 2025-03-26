@@ -86,4 +86,3 @@ class TranslationKeyDetector {
 const translationKeyDetector = new TranslationKeyDetector();
 
 export default translationKeyDetector;
-

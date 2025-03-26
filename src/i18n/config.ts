@@ -129,7 +129,7 @@ i18n.on('missingKey', (lng, ns, key) => {
   const fallbacks = i18n.options.fallbackLng;
   if (typeof fallbacks === 'object' && fallbacks && lng in fallbacks) {
     const fallbackLngs = fallbacks[lng as keyof typeof fallbacks];
-    if (Array.isArray(fallbackLngs) && fallbackLngs.length > 0) {
+    if (Array.isArray(fallbackLngs)) {
       for (const fallbackLng of fallbackLngs) {
         if (i18n.exists(key, { lng: fallbackLng, ns })) {
           return i18n.t(key, { lng: fallbackLng, ns });
