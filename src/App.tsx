@@ -15,7 +15,8 @@ import { LoadingScreen } from "./components/LoadingScreen";
 
 // تقسيم الرمز باستخدام تقنية تقسيم الرمز المتقدمة
 // استخدام webpackPreload للتحميل المسبق للصفحات الرئيسية
-const Dashboard = lazy(() => import(/* webpackPreload: true */ "./pages/Dashboard"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Index = lazy(() => import("./pages/Index"));
 const AIAssistant = lazy(() => import(/* webpackPreload: true */ "./pages/AIAssistant"));
 const Settings = lazy(() => import("./pages/Settings"));
 const License = lazy(() => import("./pages/License"));
@@ -73,6 +74,7 @@ function App() {
                 <Suspense fallback={<PageLoader />}>
                   <Routes>
                     <Route path="/" element={<Dashboard />} />
+                    <Route path="/index" element={<Index />} />
                     <Route path="/ai" element={<AIAssistant />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="/license" element={<License />} />
