@@ -45,15 +45,15 @@ export function Header({ onLanguageChange }: HeaderProps) {
             <DesktopNav />
           </div>
           
-          <div className="flex items-center">
-            <LanguageSwitcher className="mr-2" />
+          <div className="flex items-center space-x-4 rtl:space-x-reverse">
+            <LanguageSwitcher className="mr-2 rtl:ml-2 rtl:mr-0" />
             
-            <div className="mr-4">
+            <div className="mr-4 rtl:ml-4 rtl:mr-0">
               <ModeToggle />
             </div>
             
             <div className="hidden md:block">
-              <Button size="sm">
+              <Button size="sm" className="px-5 py-2">
                 {t('header.login')}
               </Button>
             </div>
