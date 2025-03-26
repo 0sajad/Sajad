@@ -10,7 +10,7 @@ import { ModeProvider } from "@/context/ModeContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 // Pages
-import Dashboard from "./pages/Dashboard";
+import Index from "./pages/Index";
 import AIAssistant from "./pages/AIAssistant";
 import Settings from "./pages/Settings";
 import License from "./pages/License";
@@ -29,9 +29,13 @@ function App() {
   const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
   
   useEffect(() => {
-    // Simulate loading time
+    // تسجيل حالة التحميل الأولي
+    console.log("App initializing");
+    
+    // محاكاة وقت التحميل
     const timer = setTimeout(() => {
       setIsLoading(false);
+      console.log("App loaded");
     }, 1500);
     
     return () => clearTimeout(timer);
@@ -51,7 +55,7 @@ function App() {
           )}>
             <Router>
               <Routes>
-                <Route path="/" element={<Dashboard />} />
+                <Route path="/" element={<Index />} />
                 <Route path="/ai" element={<AIAssistant />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/license" element={<License />} />

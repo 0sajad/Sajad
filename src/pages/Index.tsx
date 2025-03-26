@@ -16,6 +16,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useMode } from "@/context/ModeContext";
 import { Toaster } from "@/components/ui/toaster";
 
+// البرنامج الرئيسي للصفحة الرئيسية
 const Index = () => {
   const [loaded, setLoaded] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
@@ -24,6 +25,7 @@ const Index = () => {
   const { isDeveloperMode } = useMode();
   
   useEffect(() => {
+    // تعيين حالة التحميل
     setLoaded(true);
     
     // التحقق من اللغة المحفوظة أو استخدام لغة المتصفح
@@ -60,11 +62,17 @@ const Index = () => {
     
     document.addEventListener('languageFullyChanged', handleLanguageFullChange);
     
+    // تنظيف الموارد عند إزالة المكون
     return () => {
       clearTimeout(timeout);
       document.removeEventListener('languageFullyChanged', handleLanguageFullChange);
     };
   }, [i18n]);
+
+  // تسجيل الوصول للصفحة الرئيسية
+  useEffect(() => {
+    console.log("Index page loaded");
+  }, []);
 
   return (
     <TooltipProvider>

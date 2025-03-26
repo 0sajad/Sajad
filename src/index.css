@@ -69,6 +69,14 @@ html[dir="rtl"] .rtl-left {
   .rtl-aware-rounded {
     @apply rtl:rounded-r-none rtl:rounded-l-md ltr:rounded-l-none ltr:rounded-r-md;
   }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
 }
 
 /* Ensure float directions are properly handled in RTL */
@@ -131,6 +139,16 @@ html[dir="rtl"] .rtl-left {
   animation: gradient 15s ease infinite;
 }
 
+/* Action buttons */
+.action-button {
+  @apply px-5 py-3 bg-octaBlue-600 hover:bg-octaBlue-700 text-white rounded-md font-medium shadow-lg transition-all duration-200 hover:-translate-y-0.5;
+}
+
+.secondary-button {
+  @apply px-5 py-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md font-medium shadow transition-all duration-200 hover:-translate-y-0.5;
+}
+
+/* Animation keyframes */
 @keyframes gradient {
   0% {
     background-position: 0% 50%;
@@ -140,6 +158,29 @@ html[dir="rtl"] .rtl-left {
   }
   100% {
     background-position: 0% 50%;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
   }
 }
 
