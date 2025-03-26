@@ -51,7 +51,7 @@ class TranslationKeyDetector {
         i18next.emit('missingKey', lng, ns, key);
       }
       
-      // رجع للمفتاح في اللغة الاحتياطية عند الإمكان
+      // رجوع للمفتاح في اللغة الاحتياطية عند الإمكان
       if (options.fallbackLng) {
         const fallbackValue = i18next.t(key, { lng: options.fallbackLng, ns });
         if (fallbackValue !== key) {
