@@ -13,9 +13,11 @@ import { AnimatePresence } from "framer-motion";
 // استخدام التحميل الكسول (Lazy Loading) لتسريع تحميل الصفحة الرئيسية
 import { LoadingScreen } from "./components/LoadingScreen";
 
-// تقسيم الرمز باستخدام تقنية تقسيم الرمز المتقدمة
-// استخدام webpackPreload للتحميل المسبق للصفحات الرئيسية
-const Dashboard = lazy(() => import("./pages/Dashboard"));
+// تحسين استدعاء المكونات باستخدام التنويع الصحيح للـ lazy loading
+const Dashboard = lazy(() => import("./pages/Dashboard").catch(() => {
+  console.error("Error loading Dashboard component");
+  return import("./pages/NotFound");
+}));
 const Index = lazy(() => import("./pages/Index"));
 const AIAssistant = lazy(() => import(/* webpackPreload: true */ "./pages/AIAssistant"));
 const Settings = lazy(() => import("./pages/Settings"));
@@ -28,6 +30,20 @@ const HelpCenter = lazy(() => import("./pages/HelpCenter"));
 const PageLoader = () => (
   <div className="flex items-center justify-center min-h-screen animate-fade-in">
     <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
+  </div>
+);
+
+// تحسين مكون الخطأ العام
+const ErrorFallback = () => (
+  <div className="flex flex-col items-center justify-center min-h-screen bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200 p-6">
+    <h2 className="text-2xl font-bold mb-4">حدث خطأ غير متوقع</h2>
+    <p className="mb-4">نأسف لهذا الخطأ، يرجى تحديث الصفحة أو العودة للصفحة الرئيسية.</p>
+    <button 
+      onClick={() => window.location.href = "/"} 
+      className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+    >
+      العودة للصفحة الرئيسية
+    </button>
   </div>
 );
 
@@ -46,8 +62,12 @@ function App() {
     if ('requestIdleCallback' in window) {
       (window as any).requestIdleCallback(() => {
         // تحميل مسبق للصفحات الرئيسية في وقت الخمول
-        import("./pages/Dashboard");
-        import("./pages/AIAssistant");
+        Promise.all([
+          import("./pages/Dashboard"),
+          import("./pages/AIAssistant")
+        ]).catch(err => {
+          console.error("Error preloading components:", err);
+        });
       });
     }
     
