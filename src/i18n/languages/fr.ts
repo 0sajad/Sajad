@@ -6,6 +6,7 @@ import frAi from '../../locales/fr/ai.json';
 import frAiAssistant from '../../locales/fr/aiAssistant.json';
 import frCta from '../../locales/fr/cta.json';
 import frSettings from '../../locales/fr/settings.json';
+import frNetworkTools from '../../locales/fr/networkTools.json';
 
 export function loadFrenchResources() {
   return {
@@ -14,6 +15,7 @@ export function loadFrenchResources() {
       ai: frAi,
       aiAssistant: frAiAssistant,
       cta: frCta,
+      networkTools: frNetworkTools,
       ...frConfig
     },
     license: {},

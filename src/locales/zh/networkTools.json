@@ -1,0 +1,22 @@
+
+{
+  "title": "网络工具",
+  "qualityMonitoring": "网络质量监控",
+  "signalStrength": "信号强度",
+  "internetSpeed": "互联网速度",
+  "download": "下载",
+  "upload": "上传",
+  "ping": "延迟",
+  "networkManagement": "通信网络管理",
+  "faultMonitoring": "故障监控",
+  "deviceManagement": "设备管理",
+  "simulationSystems": "模拟系统",
+  "testEnvironment": "测试环境",
+  "dataTransmission": "数据传输模拟",
+  "aiChatbot": "AI聊天机器人",
+  "networkTroubleshooting": "网络故障排除",
+  "performanceTips": "性能提升建议",
+  "autoSupport": "自动支持",
+  "running": "运行中",
+  "ready": "就绪"
+}

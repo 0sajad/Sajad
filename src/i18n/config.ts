@@ -5,14 +5,14 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import { resources } from './resources';
 import translationKeyDetector from './utils/TranslationKeyDetector';
 
-// تهيئة i18next
+// تهيئة i18next بإعدادات محسنة
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
-  .use(translationKeyDetector) // إضافة كاشف مفتاح الترجمة
+  .use(translationKeyDetector)
   .init({
     resources,
-    lng: localStorage.getItem('language') || 'ar', // اللغة الافتراضية
+    lng: localStorage.getItem('language') || 'ar',
     fallbackLng: {
       'ar-iq': ['ar'],
       'ja': ['en'],
@@ -21,14 +21,14 @@ i18n
       'default': ['ar', 'en']
     },
     debug: process.env.NODE_ENV === 'development',
-    ns: ['common', 'license', 'access'],
+    ns: ['common', 'license', 'access', 'settings'],
     defaultNS: 'common',
     interpolation: {
       escapeValue: false
     },
     react: {
       useSuspense: false,
-      transKeepBasicHtmlNodesFor: ['br', 'strong', 'i', 'p', 'span']
+      transKeepBasicHtmlNodesFor: ['br', 'strong', 'i', 'p', 'span', 'a', 'ul', 'ol', 'li']
     },
     missingKeyHandler: (lng, ns, key) => {
       if (process.env.NODE_ENV === 'development') {
@@ -47,7 +47,6 @@ i18n
     contextSeparator: '_',
     saveMissing: process.env.NODE_ENV === 'development',
     parseMissingKeyHandler: (key) => {
-      // تنظيف المفتاح المفقود لتسهيل التعرف عليه
       return key.trim();
     },
     appendNamespaceToMissingKey: true
@@ -82,11 +81,11 @@ i18n.on('languageChanged', (lng) => {
     }
   });
   
-  // تنظيف ذاكرة التخزين المؤقت للمفاتيح عند تغيير اللغة
+  // تحسين أسلوب تنظيف ذاكرة التخزين المؤقت للمفاتيح عند تغيير اللغة
   if (translationKeyDetector) {
     setTimeout(() => {
       translationKeyDetector.resetMissingKeys();
-    }, 500);
+    }, 300);
   }
 });
 
@@ -97,7 +96,7 @@ document.documentElement.setAttribute("lang", currentLng);
 document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
 document.documentElement.style.textAlign = isRTL ? "right" : "left";
 
-// تطبيق أنماط CSS إضافية للغات RTL عند بدء التشغيل
+// تطبيق أنماط CSS للغات RTL عند بدء التشغيل
 if (isRTL) {
   document.body.classList.add('rtl-active');
 }
