@@ -10,6 +10,7 @@ import { AIFeatureIndicator } from "./AIFeatureIndicator";
 import { AILearningSourcesPanel } from "./AILearningSourcesPanel";
 import { AICapabilitiesGrid } from "./AICapabilitiesGrid";
 import { AICapabilitiesBadges } from "./AICapabilitiesBadges";
+import { AIFeaturesList } from "./AIFeaturesList";
 
 interface AIAssistantProps {
   minimized?: boolean;
