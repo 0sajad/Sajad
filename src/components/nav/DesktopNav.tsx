@@ -1,7 +1,4 @@
 
-// Update only the necessary parts in the DesktopNav.tsx file to fix the type error
-// and use the correct props for DashboardNavItem and ToolsNavItems
-
 import React, { useState } from "react";
 import { DashboardNavItem } from "./items/DashboardNavItem";
 import { ToolsNavItems } from "./items/ToolsNavItems";

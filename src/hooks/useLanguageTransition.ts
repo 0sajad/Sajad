@@ -7,12 +7,23 @@ import { useTranslation } from 'react-i18next';
 export interface UseLanguageTransitionReturnType {
   isTransitioning: boolean;
   changeLanguage: (language: string) => void;
+  supportedLanguages: Array<{code: string, name: string, nativeName: string}>;
 }
 
 export function useLanguageTransition(): UseLanguageTransitionReturnType {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const { playSound } = useA11ySound();
   const { i18n, t } = useTranslation();
+
+  // Supported languages
+  const supportedLanguages = [
+    { code: 'ar', name: 'Arabic', nativeName: 'العربية' },
+    { code: 'ar-iq', name: 'Iraqi Arabic', nativeName: 'العراقية' },
+    { code: 'en', name: 'English', nativeName: 'English' },
+    { code: 'fr', name: 'French', nativeName: 'Français' },
+    { code: 'ja', name: 'Japanese', nativeName: '日本語' },
+    { code: 'zh', name: 'Chinese', nativeName: '中文' },
+  ];
 
   // Function to change the language with transition effects
   const changeLanguage = useCallback((language: string) => {
@@ -45,7 +56,7 @@ export function useLanguageTransition(): UseLanguageTransitionReturnType {
         toast.success(t('common.languageChanged', { language: languageName }));
         
         // تشغيل صوت إشعار (إذا كان مفعلاً)
-        playSound('success');
+        playSound('language');
         
         // إنهاء الانتقال بعد فترة
         setTimeout(() => {
@@ -82,5 +93,5 @@ export function useLanguageTransition(): UseLanguageTransitionReturnType {
     }
   };
 
-  return { isTransitioning, changeLanguage };
+  return { isTransitioning, changeLanguage, supportedLanguages };
 }
