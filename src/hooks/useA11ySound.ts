@@ -5,11 +5,11 @@ import { useA11yPreferences } from './useA11yPreferences';
 type SoundType = 'success' | 'error' | 'warning' | 'info' | 'language';
 
 export function useA11ySound() {
-  const { soundsEnabled } = useA11yPreferences();
+  const { soundFeedback } = useA11yPreferences();
   
   // Function to play sound based on type
   const playSound = useCallback((type: SoundType) => {
-    if (!soundsEnabled) return;
+    if (!soundFeedback) return;
     
     // Create an audio context
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -79,7 +79,7 @@ export function useA11ySound() {
       oscillator.stop();
       audioContext.close();
     };
-  }, [soundsEnabled]);
+  }, [soundFeedback]);
   
   return { playSound };
 }
