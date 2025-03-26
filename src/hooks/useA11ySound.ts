@@ -1,11 +1,14 @@
 
-import { useCallback } from 'react';
-import { useA11yPreferences } from './useA11yPreferences';
+import { useCallback, useState } from 'react';
 
 type SoundType = 'success' | 'error' | 'warning' | 'info' | 'language';
 
 export function useA11ySound() {
-  const { soundFeedback, setSoundFeedback } = useA11yPreferences();
+  // Since useA11yPreferences doesn't have soundFeedback directly,
+  // we'll manage sound state here
+  const [soundFeedback, setSoundFeedback] = useState<boolean>(() => {
+    return localStorage.getItem('a11y-sound-feedback') === 'true';
+  });
   
   // Function to play sound based on type
   const playSound = useCallback((type: SoundType) => {
@@ -81,5 +84,5 @@ export function useA11ySound() {
     };
   }, [soundFeedback]);
   
-  return { playSound };
+  return { playSound, soundFeedback, setSoundFeedback };
 }
