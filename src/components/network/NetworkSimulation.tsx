@@ -8,6 +8,8 @@ import { useSimulation } from "@/hooks/useSimulation";
 import { SimulationControls } from "./simulation/SimulationControls";
 import { SimulationActionButtons } from "./simulation/SimulationActionButtons";
 import { SimulationLogs } from "./simulation/SimulationLogs";
+import { SimulationHeader } from "./simulation/SimulationHeader";
+import { SimulationProgress } from "./simulation/SimulationProgress";
 
 export const NetworkSimulation = () => {
   const { t } = useTranslation();
@@ -30,22 +32,11 @@ export const NetworkSimulation = () => {
   
   return (
     <GlassCard className="p-0 overflow-hidden">
-      <div className="p-4 border-b border-gray-100 dark:border-gray-800">
-        <h3 className="font-semibold">{t('networkTools.simulationSystems')}</h3>
-        <p className="text-sm text-muted-foreground">{t('networkTools.dataTransmission')}</p>
-      </div>
+      <SimulationHeader />
       
       <div className="p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="md:col-span-2">
-          <div className="mb-6">
-            <div className="mb-2 flex justify-between items-center">
-              <label className="text-sm font-medium">{t('networkTools.testEnvironment')}</label>
-              <Badge variant={isRunning ? 'default' : 'secondary'}>
-                {isRunning ? 'Running' : 'Ready'}
-              </Badge>
-            </div>
-            <Progress value={progress} />
-          </div>
+          <SimulationProgress isRunning={isRunning} progress={progress} />
           
           <SimulationControls 
             protocol={protocol}
