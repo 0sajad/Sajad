@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from "@/components/ui/use-toast";
-import { useA11ySound } from './useA11ySound'; 
+import { useA11ySound } from './accessibility/useA11ySound'; 
 
 /**
  * هوك مخصص لإدارة الانتقالات السلسة عند تغيير اللغة
