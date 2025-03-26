@@ -28,7 +28,7 @@ i18n
     },
     react: {
       useSuspense: true,
-      tranKeepBasicHtmlNodesFor: ['br', 'strong', 'i', 'p', 'span', 'a', 'ul', 'ol', 'li']
+      transKeepBasicHtmlNodesFor: ['br', 'strong', 'i', 'p', 'span', 'a', 'ul', 'ol', 'li']
     },
     detection: {
       order: ['localStorage', 'navigator', 'htmlTag'],
@@ -129,7 +129,7 @@ i18n.on('missingKey', (lng, ns, key) => {
   const fallbacks = i18n.options.fallbackLng;
   if (typeof fallbacks === 'object' && fallbacks && lng in fallbacks) {
     // تحويل fallbacks إلى نوع معروف لـ TypeScript
-    const fallbackLngsObject = fallbacks as Record<string, readonly string[]>;
+    const fallbackLngsObject = fallbacks as Record<string, string[]>;
     const fallbackLngs = fallbackLngsObject[lng];
     
     if (Array.isArray(fallbackLngs)) {
