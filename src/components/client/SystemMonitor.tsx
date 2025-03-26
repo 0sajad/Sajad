@@ -6,7 +6,6 @@ import { Progress } from "@/components/ui/progress";
 import { 
   Cpu, 
   HardDrive, 
-  Memory, 
   Thermometer, 
   Zap,
   Clock,
@@ -69,7 +68,7 @@ export const SystemMonitor = () => {
         <div className="space-y-6">
           {/* مؤشرات النظام الحالية */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="flex flex-col items-center p-3 border rounded-md">
+            <div className="flex flex-col items-center p-3 border rounded-md transform hover:scale-105 transition-all hover:shadow-lg">
               <div className="flex items-center justify-center bg-blue-50 rounded-full p-3 mb-2">
                 <Cpu className="h-5 w-5 text-blue-600" />
               </div>
@@ -79,9 +78,9 @@ export const SystemMonitor = () => {
               </span>
             </div>
             
-            <div className="flex flex-col items-center p-3 border rounded-md">
+            <div className="flex flex-col items-center p-3 border rounded-md transform hover:scale-105 transition-all hover:shadow-lg">
               <div className="flex items-center justify-center bg-purple-50 rounded-full p-3 mb-2">
-                <Memory className="h-5 w-5 text-purple-600" />
+                <HardDrive className="h-5 w-5 text-purple-600" />
               </div>
               <span className="text-xs text-muted-foreground">{t('dashboard.memoryUsage', 'استخدام الذاكرة')}</span>
               <span className={`text-xl font-semibold ${getIndicatorColor(currentValues.memory)}`}>
@@ -89,7 +88,7 @@ export const SystemMonitor = () => {
               </span>
             </div>
             
-            <div className="flex flex-col items-center p-3 border rounded-md">
+            <div className="flex flex-col items-center p-3 border rounded-md transform hover:scale-105 transition-all hover:shadow-lg">
               <div className="flex items-center justify-center bg-amber-50 rounded-full p-3 mb-2">
                 <HardDrive className="h-5 w-5 text-amber-600" />
               </div>
@@ -99,7 +98,7 @@ export const SystemMonitor = () => {
               </span>
             </div>
             
-            <div className="flex flex-col items-center p-3 border rounded-md">
+            <div className="flex flex-col items-center p-3 border rounded-md transform hover:scale-105 transition-all hover:shadow-lg">
               <div className="flex items-center justify-center bg-red-50 rounded-full p-3 mb-2">
                 <Thermometer className="h-5 w-5 text-red-600" />
               </div>
@@ -111,7 +110,7 @@ export const SystemMonitor = () => {
           </div>
           
           {/* رسم بياني لأداء النظام */}
-          <div>
+          <div className="transform hover:scale-102 transition-transform">
             <h3 className="text-sm font-medium mb-2 flex items-center">
               <AreaChart className="mr-1 h-4 w-4 text-blue-500" />
               {t('dashboard.systemPerformance', 'أداء النظام على مدار اليوم')}
@@ -156,7 +155,7 @@ export const SystemMonitor = () => {
           
           {/* معلومات إضافية */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="border rounded-md p-3">
+            <div className="border rounded-md p-3 transform hover:scale-105 transition-all hover:shadow-lg">
               <h4 className="text-sm font-medium mb-2 flex items-center">
                 <Clock className="mr-1 h-4 w-4 text-green-500" />
                 {t('dashboard.uptime', 'وقت التشغيل')}
@@ -166,7 +165,7 @@ export const SystemMonitor = () => {
               </div>
             </div>
             
-            <div className="border rounded-md p-3">
+            <div className="border rounded-md p-3 transform hover:scale-105 transition-all hover:shadow-lg">
               <h4 className="text-sm font-medium mb-2 flex items-center">
                 <Zap className="mr-1 h-4 w-4 text-amber-500" />
                 {t('dashboard.powerStatus', 'حالة الطاقة')}

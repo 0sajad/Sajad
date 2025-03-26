@@ -1,176 +1,155 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { 
-  Activity, Wifi, Network, Server, Shield, Database, 
-  Search, FileText, Cpu, Zap, Tool, Globe, Bot, 
-  AlertTriangle, RefreshCw, Download
+  Wifi, Database, Search, Shield, 
+  BarChart2, Zap, Download, RefreshCw, 
+  Thermometer, Server, Cpu, Save as SaveIcon
 } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-
-const toolCategories = [
-  { id: "diagnostic", icon: Search, color: "text-blue-500" },
-  { id: "network", icon: Wifi, color: "text-green-500" },
-  { id: "security", icon: Shield, color: "text-purple-500" },
-  { id: "system", icon: Cpu, color: "text-amber-500" },
-  { id: "utility", icon: Tool, color: "text-rose-500" },
-];
 
 export const ClientToolbox = () => {
   const { t } = useTranslation();
-  const { toast } = useToast();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState("diagnostic");
   
-  // محاكاة تشغيل أداة
-  const runTool = (toolId: string) => {
-    toast({
-      title: t('tools.running', 'جاري تشغيل الأداة'),
-      description: t('tools.runDescription', 'جاري تشغيل: ') + toolId,
-    });
-    
-    // هنا يمكن إضافة منطق حقيقي لتشغيل الأدوات المختلفة
-    setTimeout(() => {
-      toast({
-        title: t('tools.completed', 'اكتملت العملية'),
-        description: t('tools.completedDescription', 'تم تنفيذ العملية بنجاح'),
-      });
-    }, 1500);
-  };
-  
-  // أدوات التشخيص
-  const diagnosticTools = [
-    { id: "networkScan", icon: Network, name: "tools.networkScan", description: "tools.networkScanDesc" },
-    { id: "speedTest", icon: Activity, name: "tools.speedTest", description: "tools.speedTestDesc" },
-    { id: "connectionTest", icon: Wifi, name: "tools.connectionTest", description: "tools.connectionTestDesc" },
-    { id: "systemCheck", icon: Cpu, name: "tools.systemCheck", description: "tools.systemCheckDesc" },
-    { id: "securityAudit", icon: Shield, name: "tools.securityAudit", description: "tools.securityAuditDesc" },
-  ];
-  
-  // أدوات الشبكة
-  const networkTools = [
-    { id: "signalOptimizer", icon: Wifi, name: "tools.signalOptimizer", description: "tools.signalOptimizerDesc" },
-    { id: "dnsOptimizer", icon: Globe, name: "tools.dnsOptimizer", description: "tools.dnsOptimizerDesc" },
-    { id: "bandwidthManager", icon: Activity, name: "tools.bandwidthManager", description: "tools.bandwidthManagerDesc" },
-    { id: "packetAnalyzer", icon: Database, name: "tools.packetAnalyzer", description: "tools.packetAnalyzerDesc" },
-    { id: "connectionManager", icon: Server, name: "tools.connectionManager", description: "tools.connectionManagerDesc" },
-  ];
-  
-  // أدوات الأمان
-  const securityTools = [
-    { id: "threatScan", icon: Shield, name: "tools.threatScan", description: "tools.threatScanDesc" },
-    { id: "vulnerabilityScan", icon: AlertTriangle, name: "tools.vulnerabilityScan", description: "tools.vulnerabilityScanDesc" },
-    { id: "encryptionCheck", icon: Lock, name: "tools.encryptionCheck", description: "tools.encryptionCheckDesc" },
-    { id: "firewallManager", icon: Shield, name: "tools.firewallManager", description: "tools.firewallManagerDesc" },
-    { id: "malwareRemoval", icon: Shield, name: "tools.malwareRemoval", description: "tools.malwareRemovalDesc" },
-  ];
-  
-  // أدوات النظام
-  const systemTools = [
-    { id: "performanceOptimizer", icon: Zap, name: "tools.performanceOptimizer", description: "tools.performanceOptimizerDesc" },
-    { id: "systemCleanup", icon: Cpu, name: "tools.systemCleanup", description: "tools.systemCleanupDesc" },
-    { id: "tempMonitor", icon: ThermometerSun, name: "tools.tempMonitor", description: "tools.tempMonitorDesc" },
-    { id: "resourceMonitor", icon: Activity, name: "tools.resourceMonitor", description: "tools.resourceMonitorDesc" },
-    { id: "deviceManager", icon: ServerCrash, name: "tools.deviceManager", description: "tools.deviceManagerDesc" },
-  ];
-  
-  // أدوات عامة
-  const utilityTools = [
-    { id: "aiAssistant", icon: Bot, name: "tools.aiAssistant", description: "tools.aiAssistantDesc" },
-    { id: "fileAnalyzer", icon: FileText, name: "tools.fileAnalyzer", description: "tools.fileAnalyzerDesc" },
-    { id: "softwareUpdater", icon: Download, name: "tools.softwareUpdater", description: "tools.softwareUpdaterDesc" },
-    { id: "systemBackup", icon: Save, name: "tools.systemBackup", description: "tools.systemBackupDesc" },
-    { id: "dataSynchronizer", icon: RefreshCw, name: "tools.dataSynchronizer", description: "tools.dataSynchronizerDesc" },
-  ];
-  
-  // الحصول على قائمة الأدوات حسب الفئة المحددة
-  const getToolsByCategory = () => {
-    switch (activeCategory) {
-      case "diagnostic": return diagnosticTools;
-      case "network": return networkTools;
-      case "security": return securityTools;
-      case "system": return systemTools;
-      case "utility": return utilityTools;
-      default: return diagnosticTools;
-    }
-  };
-  
-  const filteredTools = searchQuery
-    ? getToolsByCategory().filter(tool => 
-        t(tool.name).toLowerCase().includes(searchQuery.toLowerCase()) ||
-        t(tool.description).toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : getToolsByCategory();
+  const commonToolClasses = 
+    "flex flex-col items-center justify-center p-4 border rounded-lg hover:bg-primary/5 transition-colors cursor-pointer";
   
   return (
     <Card className="border-octaBlue-200">
       <CardHeader className="bg-gradient-to-r from-octaBlue-50 to-octaBlue-100 rounded-t-lg">
         <CardTitle className="text-lg flex items-center">
-          <Tool className="mr-2 h-5 w-5 text-octaBlue-600" />
+          <Cpu className="mr-2 h-5 w-5 text-octaBlue-600" />
           {t('dashboard.clientTools', 'أدوات العميل')}
         </CardTitle>
-        <CardDescription>
-          {t('dashboard.clientToolsDesc', 'مجموعة متنوعة من الأدوات لمساعدتك في إدارة وتحسين شبكتك ونظامك')}
-        </CardDescription>
       </CardHeader>
       
-      <CardContent className="p-0">
-        <div className="p-4 pb-0">
-          <Input
-            placeholder={t('tools.searchTools', 'ابحث عن أداة...')}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="mb-4"
-          />
+      <CardContent className="p-4">
+        <div className="mb-4">
+          <p className="text-sm text-muted-foreground">
+            {t('dashboard.clientToolsDesc', 'مجموعة متنوعة من الأدوات لمساعدتك في إدارة وتحسين شبكتك ونظامك')}
+          </p>
         </div>
         
-        <Tabs defaultValue="diagnostic" value={activeCategory} onValueChange={setActiveCategory}>
-          <div className="px-4">
-            <TabsList className="grid grid-cols-5 mb-4">
-              {toolCategories.map((category) => (
-                <TabsTrigger key={category.id} value={category.id} className="flex flex-col items-center py-2">
-                  <category.icon className={`h-5 w-5 mb-1 ${category.color}`} />
-                  <span className="text-xs">{t(`tools.categories.${category.id}`)}</span>
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </div>
+        <Tabs defaultValue="network" className="space-y-4">
+          <TabsList className="grid grid-cols-3 gap-2">
+            <TabsTrigger value="network">
+              <Wifi className="mr-1 h-4 w-4" />
+              {t('network', 'الشبكة')}
+            </TabsTrigger>
+            <TabsTrigger value="system">
+              <Cpu className="mr-1 h-4 w-4" />
+              {t('system', 'النظام')}
+            </TabsTrigger>
+            <TabsTrigger value="security">
+              <Shield className="mr-1 h-4 w-4" />
+              {t('security', 'الأمان')}
+            </TabsTrigger>
+          </TabsList>
           
-          <TabsContent value={activeCategory} className="m-0 px-0">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-4">
-              {filteredTools.map((tool) => (
-                <div 
-                  key={tool.id}
-                  className="flex border rounded-md p-3 hover:bg-gray-50 transition-colors cursor-pointer"
-                  onClick={() => runTool(tool.id)}
-                >
-                  <div className="mr-3 p-2 rounded-full bg-gray-100">
-                    <tool.icon className="h-5 w-5 text-octaBlue-600" />
-                  </div>
-                  <div className="flex-grow">
-                    <div className="font-medium text-sm">{t(tool.name)}</div>
-                    <div className="text-xs text-muted-foreground">{t(tool.description)}</div>
-                  </div>
-                </div>
-              ))}
+          <TabsContent value="network" className="space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className={commonToolClasses}>
+                <Wifi className="h-6 w-6 mb-2 text-blue-500" />
+                <span className="text-sm font-medium">{t('dashboard.actions.scan', 'فحص الشبكة')}</span>
+              </div>
+              <div className={commonToolClasses}>
+                <BarChart2 className="h-6 w-6 mb-2 text-purple-500" />
+                <span className="text-sm font-medium">{t('dashboard.actions.optimize', 'تحسين الأداء')}</span>
+              </div>
+              <div className={commonToolClasses}>
+                <Database className="h-6 w-6 mb-2 text-amber-500" />
+                <span className="text-sm font-medium">{t('dashboard.actions.backup', 'نسخ احتياطي')}</span>
+              </div>
+              <div className={commonToolClasses}>
+                <Thermometer className="h-6 w-6 mb-2 text-red-500" />
+                <span className="text-sm font-medium">{t('temperature', 'قياس الحرارة')}</span>
+              </div>
+              <div className={commonToolClasses}>
+                <Server className="h-6 w-6 mb-2 text-red-500" />
+                <span className="text-sm font-medium">{t('serverStatus', 'حالة الخادم')}</span>
+              </div>
+              <div className={commonToolClasses}>
+                <Search className="h-6 w-6 mb-2 text-green-500" />
+                <span className="text-sm font-medium">{t('find', 'بحث عن مشاكل')}</span>
+              </div>
+              <div className={commonToolClasses}>
+                <SaveIcon className="h-6 w-6 mb-2 text-blue-500" />
+                <span className="text-sm font-medium">{t('saveSettings', 'حفظ الإعدادات')}</span>
+              </div>
+              <div className={commonToolClasses}>
+                <RefreshCw className="h-6 w-6 mb-2 text-octaBlue-600" />
+                <span className="text-sm font-medium">{t('reset', 'إعادة تعيين')}</span>
+              </div>
+            </div>
+            
+            <div className="pt-2">
+              <Select defaultValue="scan">
+                <SelectTrigger>
+                  <SelectValue placeholder={t('dashboard.selectAction', 'اختر إجراء')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="scan">{t('dashboard.actions.scan', 'فحص الشبكة')}</SelectItem>
+                  <SelectItem value="optimize">{t('dashboard.actions.optimize', 'تحسين الأداء')}</SelectItem>
+                  <SelectItem value="backup">{t('dashboard.actions.backup', 'نسخ احتياطي للإعدادات')}</SelectItem>
+                  <SelectItem value="security">{t('dashboard.actions.security', 'فحص الأمان')}</SelectItem>
+                  <SelectItem value="update">{t('dashboard.actions.update', 'تحديث النظام')}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="flex justify-end">
+              <Button className="bg-octaBlue-600 hover:bg-octaBlue-700">
+                {t('run', 'تشغيل')}
+              </Button>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="system" className="space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className={commonToolClasses}>
+                <Cpu className="h-6 w-6 mb-2 text-blue-500" />
+                <span className="text-sm font-medium">{t('cpuAnalysis', 'تحليل المعالج')}</span>
+              </div>
+              <div className={commonToolClasses}>
+                <Thermometer className="h-6 w-6 mb-2 text-red-500" />
+                <span className="text-sm font-medium">{t('tempMonitor', 'مراقبة الحرارة')}</span>
+              </div>
+              <div className={commonToolClasses}>
+                <Zap className="h-6 w-6 mb-2 text-amber-500" />
+                <span className="text-sm font-medium">{t('powerOptimization', 'تحسين الطاقة')}</span>
+              </div>
+              <div className={commonToolClasses}>
+                <Database className="h-6 w-6 mb-2 text-green-500" />
+                <span className="text-sm font-medium">{t('storageCleanup', 'تنظيف التخزين')}</span>
+              </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="security" className="space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className={commonToolClasses}>
+                <Shield className="h-6 w-6 mb-2 text-blue-500" />
+                <span className="text-sm font-medium">{t('securityScan', 'فحص أمني')}</span>
+              </div>
+              <div className={commonToolClasses}>
+                <Wifi className="h-6 w-6 mb-2 text-red-500" />
+                <span className="text-sm font-medium">{t('wifiSecurity', 'أمان الواي فاي')}</span>
+              </div>
+              <div className={commonToolClasses}>
+                <Database className="h-6 w-6 mb-2 text-purple-500" />
+                <span className="text-sm font-medium">{t('dataEncryption', 'تشفير البيانات')}</span>
+              </div>
+              <div className={commonToolClasses}>
+                <RefreshCw className="h-6 w-6 mb-2 text-green-500" />
+                <span className="text-sm font-medium">{t('updateSecurity', 'تحديث الأمان')}</span>
+              </div>
             </div>
           </TabsContent>
         </Tabs>
       </CardContent>
-      
-      <CardFooter className="bg-gray-50 border-t p-3 flex justify-between items-center">
-        <span className="text-xs text-muted-foreground">
-          {t('tools.total', 'إجمالي الأدوات المتاحة')}: {getToolsByCategory().length}
-        </span>
-        <Badge variant="outline" className="bg-blue-50 text-blue-700">
-          {t(`tools.categories.${activeCategory}`)}
-        </Badge>
-      </CardFooter>
     </Card>
   );
 };

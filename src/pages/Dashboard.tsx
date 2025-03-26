@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useMode } from "@/context/ModeContext";
 import { DeveloperPanel } from "@/components/developer/DeveloperPanel";
@@ -9,50 +8,42 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { 
+  Activity, AlertTriangle, BarChart2, Bot, BrainCircuit, 
+  CheckCircle, Cpu, Database, Download, FileText, Gauge, 
+  Globe, Info, Network, Search, Server, Settings, ShieldCheck, 
+  Wrench, Wifi, Zap, Layers, RefreshCw
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { FloatingAIAssistant } from "@/components/FloatingAIAssistant";
-import { NetworkQualityGauge } from "@/components/analytics/NetworkQualityGauge";
-import { RealTimeMonitoring } from "@/components/analytics/RealTimeMonitoring";
-import { AdvancedNetworkAnalytics } from "@/components/analytics/AdvancedNetworkAnalytics";
 import { ClientToolbox } from "@/components/client/ClientToolbox";
 import { NetworkStats } from "@/components/client/NetworkStats";
 import { SystemMonitor } from "@/components/client/SystemMonitor";
-import {
-  Activity,
-  AlertTriangle,
-  Bot,
-  BrainCircuit,
-  CheckCircle,
-  Cpu,
-  Database,
-  Download,
-  Gauge,
-  Globe,
-  Layers,
-  Network,
-  RefreshCw,
-  Search,
-  Server,
-  Settings,
-  Shield,
-  Tool,
-  Wifi,
-  Zap
-} from "lucide-react";
+import { FloatingAIAssistant } from "@/components/FloatingAIAssistant";
 
 const Dashboard = () => {
   const { t } = useTranslation();
   const { isDeveloperMode, features } = useMode();
   const [activeTab, setActiveTab] = useState("overview");
-  const [showAIAssistant, setShowAIAssistant] = useState(true);
+  const [showAIAssistant, setShowAIAssistant] = useState(false);
+  
+  const networkData = {
+    uptime: 99.8,
+    speed: 450,
+    latency: 28,
+    packetLoss: 0.02,
+    connections: 42,
+    trafficToday: 1.8,
+    securityAlerts: features?.advancedSecurity ? 0 : 3,
+  };
+  
+  const systemPerformance = Math.floor(Math.random() * 20) + 80; // 80-99%
   
   return (
     <TooltipProvider>
       <div className="container mx-auto p-4 md:p-6">
         <Header />
         
-        {/* Show Developer Panel only in Developer Mode */}
         {isDeveloperMode && <DeveloperPanel />}
         
         <div className="flex items-center justify-between mb-6">
@@ -95,11 +86,11 @@ const Dashboard = () => {
               {t('dashboard.tabs.system', 'النظام')}
             </TabsTrigger>
             <TabsTrigger value="security">
-              <Shield className="mr-2 h-4 w-4" />
+              <ShieldCheck className="mr-2 h-4 w-4" />
               {t('dashboard.tabs.security', 'الأمان')}
             </TabsTrigger>
             <TabsTrigger value="tools">
-              <Tool className="mr-2 h-4 w-4" />
+              <Wrench className="mr-2 h-4 w-4" />
               {t('dashboard.tabs.tools', 'الأدوات')}
             </TabsTrigger>
           </TabsList>
@@ -323,7 +314,13 @@ const Dashboard = () => {
           </TabsContent>
         </Tabs>
         
-        {showAIAssistant && <FloatingAIAssistant show={showAIAssistant} onMaximize={() => setShowAIAssistant(false)} />}
+        {showAIAssistant && (
+          <FloatingAIAssistant
+            show={showAIAssistant}
+            onClose={() => setShowAIAssistant(false)}
+            onMaximize={() => window.location.href = '/ai'}
+          />
+        )}
       </div>
     </TooltipProvider>
   );
