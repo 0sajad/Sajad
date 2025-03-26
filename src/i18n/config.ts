@@ -139,8 +139,10 @@ i18n.on('missingKey', (lng, ns, key) => {
       // معالجة المصفوفات بشكل صحيح
       if (Array.isArray(fallbackLngs)) {
         for (const fallbackLng of fallbackLngs) {
-          if (i18n.exists(key, { lng: fallbackLng, ns })) {
-            return i18n.t(key, { lng: fallbackLng, ns });
+          // تحويل العنصر إلى string للتعامل مع readonly string[]
+          const fallbackLngStr = String(fallbackLng);
+          if (i18n.exists(key, { lng: fallbackLngStr, ns })) {
+            return i18n.t(key, { lng: fallbackLngStr, ns });
           }
         }
       } else if (typeof fallbackLngs === 'string') {
@@ -156,8 +158,10 @@ i18n.on('missingKey', (lng, ns, key) => {
       const defaultFallbacks = fallbackLngsObject['default'];
       if (Array.isArray(defaultFallbacks)) {
         for (const fallbackLng of defaultFallbacks) {
-          if (i18n.exists(key, { lng: fallbackLng, ns })) {
-            return i18n.t(key, { lng: fallbackLng, ns });
+          // تحويل العنصر إلى string للتعامل مع readonly string[]
+          const fallbackLngStr = String(fallbackLng);
+          if (i18n.exists(key, { lng: fallbackLngStr, ns })) {
+            return i18n.t(key, { lng: fallbackLngStr, ns });
           }
         }
       } else if (typeof defaultFallbacks === 'string') {
