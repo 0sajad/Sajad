@@ -5,7 +5,6 @@ import App from './App.tsx';
 import './index.css';
 import './components/ui/a11y-styles.css'; 
 import './i18n';
-import { LoadingScreen } from './components/LoadingScreen';
 import { toast } from '@/components/ui/use-toast';
 
 // معرف فريد لتتبع تفاعلات المستخدم مع ميزات إمكانية الوصول
@@ -13,7 +12,6 @@ const ACCESS_INTERACTION_KEY = 'a11y_interaction_version';
 
 // مكون الغلاف للتعامل مع التهيئة
 const AppWrapper = () => {
-  const [isLoading, setIsLoading] = useState(true);
   const [isKeyboardUser, setIsKeyboardUser] = useState(false);
   const [hasInitialized, setHasInitialized] = useState(false);
 
@@ -119,11 +117,8 @@ const AppWrapper = () => {
       
       window.addEventListener('keydown', handleFirstTab);
       
-      // محاكاة اكتمال التحميل
-      const timer = setTimeout(() => {
-        setIsLoading(false);
-        
-        // إعلام قارئات الشاشة أن التطبيق قد اكتمل تحميله
+      // إعلام قارئات الشاشة أن التطبيق قد اكتمل تحميله
+      setTimeout(() => {
         window.announce(
           document.documentElement.lang === 'ar' 
             ? 'تم تحميل التطبيق بنجاح' 
@@ -148,13 +143,13 @@ const AppWrapper = () => {
       }, 800);
       
       return () => {
-        clearTimeout(timer);
         window.removeEventListener('keydown', handleFirstTab);
       };
     }
   }, [hasInitialized]);
 
-  return isLoading ? <LoadingScreen /> : <App />;
+  // نكتفي بعرض الـ App مباشرة دون شاشة تحميل إضافية
+  return <App />;
 };
 
 // إضافة أنواع عالمية للإعلانات

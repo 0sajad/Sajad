@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -27,10 +28,10 @@ function App() {
   const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
   
   useEffect(() => {
-    // Simulate loading time
+    // تقليل وقت التحميل للتأكد من عرض المحتوى بسرعة أكبر
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1500);
+    }, 800);
     
     return () => clearTimeout(timer);
   }, []);
