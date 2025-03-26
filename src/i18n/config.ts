@@ -128,7 +128,10 @@ i18n.on('missingKey', (lng, ns, key) => {
   // محاولة استخدام مفتاح من لغة أخرى
   const fallbacks = i18n.options.fallbackLng;
   if (typeof fallbacks === 'object' && fallbacks && lng in fallbacks) {
-    const fallbackLngs = fallbacks[lng as keyof typeof fallbacks];
+    // Fix TypeScript error by explicitly casting the indexed type
+    const fallbackLngsObject = fallbacks as Record<string, string[]>;
+    const fallbackLngs = fallbackLngsObject[lng];
+    
     if (Array.isArray(fallbackLngs)) {
       for (const fallbackLng of fallbackLngs) {
         if (i18n.exists(key, { lng: fallbackLng, ns })) {
