@@ -140,8 +140,20 @@ i18n.on('missingKey', (lng, ns, key) => {
         for (let i = 0; i < fallbackLngs.length; i++) {
           const fallbackLng = fallbackLngs[i];
           if (i18n.exists(key, { lng: fallbackLng, ns })) {
+            // الحصول على الترجمة من اللغة الاحتياطية
             return i18n.t(key, { lng: fallbackLng, ns });
           }
+        }
+      }
+    }
+    
+    // إذا لم نجد في اللغات الاحتياطية المحددة، جرب اللغات الاحتياطية الافتراضية
+    const defaultFallbacks = fallbackLngsObject['default'];
+    if (Array.isArray(defaultFallbacks)) {
+      for (let i = 0; i < defaultFallbacks.length; i++) {
+        const defaultFallbackLng = defaultFallbacks[i];
+        if (i18n.exists(key, { lng: defaultFallbackLng, ns })) {
+          return i18n.t(key, { lng: defaultFallbackLng, ns });
         }
       }
     }
