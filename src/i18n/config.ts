@@ -1,3 +1,4 @@
+
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
@@ -133,21 +134,25 @@ i18n.on('languageChanged', (language) => {
   document.documentElement.setAttribute('dir', getLanguageDirection(language));
   document.documentElement.setAttribute('lang', language);
   
-  // Fix for the TypeScript error: Convert the readonly string[] to individual strings when checking
+  // Fix for the TypeScript error: Properly handle the namespaces array
   const namespaces = i18n.options.ns;
   if (namespaces) {
     if (Array.isArray(namespaces)) {
-      // Handle each namespace individually to prevent type errors
+      // Handle each namespace individually
       namespaces.forEach((ns) => {
-        // Convert each element to a string explicitly
+        // Convert to string explicitly to fix TypeScript error
         const namespace = String(ns);
         
-        // Now we can safely use it as a string
-        if (language === 'ar-iq' && i18n.exists(namespace)) {
+        if (language === 'ar-iq') {
           const fallbacks = getIraqiArabicFallbacks();
           Object.keys(fallbacks).forEach(key => {
-            if (!i18n.exists(`${namespace}:${key}`, { lng: 'ar-iq' })) {
-              i18n.addResource('ar-iq', namespace, key, i18n.t(`${namespace}:${key}`, { lng: 'ar' }));
+            const keyPath = `${namespace}:${key}`;
+            // Check if the key exists in ar-iq
+            if (!i18n.exists(keyPath, { lng: 'ar-iq' })) {
+              // Get the value from standard Arabic as fallback
+              const fallbackValue = i18n.t(keyPath, { lng: 'ar' });
+              // Add it to ar-iq resources
+              i18n.addResource('ar-iq', namespace, key, fallbackValue);
             }
           });
         }
@@ -155,11 +160,13 @@ i18n.on('languageChanged', (language) => {
     } else {
       // Handle if namespaces is a single string
       const namespace = String(namespaces);
-      if (language === 'ar-iq' && i18n.exists(namespace)) {
+      if (language === 'ar-iq') {
         const fallbacks = getIraqiArabicFallbacks();
         Object.keys(fallbacks).forEach(key => {
-          if (!i18n.exists(`${namespace}:${key}`, { lng: 'ar-iq' })) {
-            i18n.addResource('ar-iq', namespace, key, i18n.t(`${namespace}:${key}`, { lng: 'ar' }));
+          const keyPath = `${namespace}:${key}`;
+          if (!i18n.exists(keyPath, { lng: 'ar-iq' })) {
+            const fallbackValue = i18n.t(keyPath, { lng: 'ar' });
+            i18n.addResource('ar-iq', namespace, key, fallbackValue);
           }
         });
       }
