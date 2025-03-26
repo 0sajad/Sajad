@@ -4,11 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { toast } from "@/components/ui/use-toast";
 
 /**
- * Hook مخصص لإدارة الانتقالات السلسة عند تغيير اللغة
+ * هوك مخصص لإدارة الانتقالات السلسة عند تغيير اللغة
  */
 export function useLanguageTransition() {
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   
   useEffect(() => {
     // إضافة مستمع للحدث المخصص languageChanged
@@ -28,22 +28,40 @@ export function useLanguageTransition() {
   }, []);
 
   const changeLanguage = (language: string) => {
+    // لا تقم بتغيير اللغة إذا كانت هي نفس اللغة الحالية
+    if (i18n.language === language) {
+      return;
+    }
+    
     // تطبيق تأثير انتقالي قبل تغيير اللغة
     setIsTransitioning(true);
     
     setTimeout(() => {
       localStorage.setItem("language", language);
-      i18n.changeLanguage(language);
-      
-      // إظهار إشعار بتغيير اللغة
-      toast({
-        title: getLanguageChangeTitle(language),
-        description: getLanguageChangeDescription(language)
+      i18n.changeLanguage(language).then(() => {
+        // إظهار إشعار بتغيير اللغة بناءً على اللغة الجديدة
+        toast({
+          title: getLanguageChangeTitle(language),
+          description: getLanguageChangeDescription(language)
+        });
+        
+        // التأكد من تطبيق اتجاه اللغة الصحيح
+        const isRTL = language === "ar" || language === "ar-iq";
+        document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
+        document.documentElement.setAttribute("lang", language);
+        
+        if (isRTL) {
+          document.body.classList.add('rtl-active');
+        } else {
+          document.body.classList.remove('rtl-active');
+        }
       });
       
       // إعادة تفعيل المحتوى بعد انتهاء الانتقال
       setTimeout(() => {
         setIsTransitioning(false);
+        // تطبيق تأثير إعادة التحميل
+        document.dispatchEvent(new CustomEvent('languageChanged', { detail: { language } }));
       }, 300);
     }, 150);
   };
@@ -52,6 +70,7 @@ export function useLanguageTransition() {
   const getLanguageChangeTitle = (language: string): string => {
     switch (language) {
       case "ar":
+        return "تم تغيير اللغة";
       case "ar-iq":
         return "تم تغيير اللغة";
       case "ja":

@@ -83,7 +83,9 @@ i18n.on('languageChanged', (lng) => {
   
   // حل مشكلة النصوص التي لا تتغير عند تبديل اللغة
   // استخدام حدث مخصص لإعلام المكونات بتغيير اللغة بدلاً من إعادة تحميل الصفحة
-  document.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: lng } }));
+  setTimeout(() => {
+    document.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: lng } }));
+  }, 0);
   
   // تحسين أسلوب تنظيف ذاكرة التخزين المؤقت للمفاتيح عند تغيير اللغة
   if (translationKeyDetector) {

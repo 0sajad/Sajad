@@ -3,15 +3,16 @@
   "verification": "التحقق من الترخيص",
   "enterKeyToActivate": "يرجى إدخال مفتاح ترخيص صالح للوصول إلى OCTA-GRAM",
   "enterKeyHere": "أدخل مفتاح الترخيص هنا",
-  "keyFormat": "يمكنك استخدام أي تنسيق للمفتاح طالما يبدأ بـ -CLT أو -DEV",
+  "keyFormat": "يجب أن يبدأ مفتاح الترخيص بـ -CLT للعملاء أو -DEV للمطورين",
   "clientVersion": "نسخة العميل",
   "developerVersion": "نسخة المطور",
-  "requiredMessage": "مفتاح الترخيص مطلوب للتشغيل. إذا لم يكن لديك مفتاح يرجى OCTA-GRAM",
+  "requiredMessage": "مفتاح الترخيص مطلوب لتشغيل OCTA-GRAM. إذا لم يكن لديك مفتاح، يرجى التواصل مع الدعم",
   "developerPermissions": "نسخة المطور تمنحك صلاحية تنفيذ التحديثات للعملاء",
   "verifyKey": "التحقق من المفتاح",
   "verifying": "جاري التحقق...",
   "verificationSuccess": "تم التحقق بنجاح",
   "verificationFailed": "فشل التحقق",
   "accessGranted": "تم منح الوصول بنجاح",
-  "invalidKey": "مفتاح الترخيص الذي أدخلته غير صالح"
+  "invalidKey": "مفتاح الترخيص الذي أدخلته غير صالح",
+  "returnToHome": "العودة إلى الصفحة الرئيسية"
 }

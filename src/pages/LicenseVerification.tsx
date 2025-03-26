@@ -5,9 +5,10 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Key, Shield, Download, LockKeyhole } from "lucide-react";
+import { Key, Shield, Download, LockKeyhole, ArrowLeft } from "lucide-react";
 import { LicenseSelector } from "@/components/license/LicenseSelector";
 import { toast } from "@/components/ui/use-toast";
+import { Link } from "react-router-dom";
 
 const LicenseVerification = () => {
   const { t, i18n } = useTranslation('license');
@@ -35,6 +36,9 @@ const LicenseVerification = () => {
           description: t('accessGranted'),
           variant: "default",
         });
+
+        // يمكن هنا التوجيه إلى الصفحة الرئيسية بعد التحقق الناجح
+        // navigate("/");
       } else {
         toast({
           title: t('verificationFailed'),
@@ -52,11 +56,20 @@ const LicenseVerification = () => {
   };
   
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       <Header />
       
       <main className="flex-1 flex items-center justify-center p-6">
-        <div className="max-w-md w-full mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+        <div className="max-w-md w-full mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 relative">
+          {/* رابط العودة */}
+          <Link 
+            to="/" 
+            className="absolute top-4 left-4 rtl:left-auto rtl:right-4 text-gray-500 hover:text-gray-700 transition-colors"
+            aria-label={t('returnToHome', 'Return to home')}
+          >
+            <ArrowLeft className={`h-5 w-5 ${isRTL ? 'transform rotate-180' : ''}`} />
+          </Link>
+          
           {/* شعار الدرع */}
           <div className="flex justify-center mb-6">
             <div className="bg-blue-500 p-4 rounded-full">
@@ -88,9 +101,8 @@ const LicenseVerification = () => {
               <Key className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500`} />
             </div>
             
-            <div className="mt-2 text-sm text-blue-600 flex items-center">
-              <span className="mr-1 rtl:ml-1 rtl:mr-0">⚡</span>
-              XXX-XXXX-XXXX-XXXX
+            <div className="mt-2 text-sm text-gray-500">
+              <p>{t('keyFormat')}</p>
             </div>
           </div>
           
