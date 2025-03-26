@@ -29,13 +29,12 @@ function App() {
   const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
   
   useEffect(() => {
-    // تسجيل حالة التحميل الأولي
-    console.log("App initializing");
+    console.log("App initializing - Current language:", i18n.language);
     
     // محاكاة وقت التحميل
     const timer = setTimeout(() => {
       setIsLoading(false);
-      console.log("App loaded");
+      console.log("App loaded successfully");
     }, 1500);
     
     return () => clearTimeout(timer);

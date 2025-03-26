@@ -20,11 +20,14 @@ import { Toaster } from "@/components/ui/toaster";
 const Index = () => {
   const [loaded, setLoaded] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { isTransitioning } = useLanguageTransition();
   const { isDeveloperMode } = useMode();
   
   useEffect(() => {
+    // تسجيل وصول للصفحة الرئيسية
+    console.log("Index page mounted - Current language:", i18n.language);
+    
     // تعيين حالة التحميل
     setLoaded(true);
     
@@ -66,51 +69,45 @@ const Index = () => {
     return () => {
       clearTimeout(timeout);
       document.removeEventListener('languageFullyChanged', handleLanguageFullChange);
+      console.log("Index page unmounting");
     };
   }, [i18n]);
 
-  // تسجيل الوصول للصفحة الرئيسية
-  useEffect(() => {
-    console.log("Index page loaded");
-  }, []);
-
   return (
-    <TooltipProvider>
-      <div className={`min-h-screen w-full transition-all duration-500 ${loaded ? 'opacity-100' : 'opacity-0'} ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}>
-        <Header />
-        
-        {/* Hero Section */}
-        <HeroSection />
-        
-        {/* Network Dashboard Section */}
-        <NetworkDashboard />
-        
-        {/* Network Tools Section */}
-        <NetworkToolsSection />
-        
-        {/* Features Section */}
-        <AnimatedCards />
-        
-        {/* AI Features Section */}
-        <AIFeaturesSection />
-        
-        {/* Settings Section */}
-        <SettingsSection />
-        
-        {/* CTA Section */}
-        <CTASection />
-        
-        <Footer />
-        
-        {/* Floating AI Assistant */}
-        <FloatingAIAssistant 
-          show={showAIAssistant} 
-          onMaximize={() => window.location.href = '/ai'} 
-        />
-        
-        <Toaster />
-      </div>
-    </TooltipProvider>
+    <div className={`min-h-screen w-full transition-all duration-500 ${loaded ? 'opacity-100' : 'opacity-0'} ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}>
+      <Header />
+      
+      {/* Hero Section */}
+      <HeroSection />
+      
+      {/* Network Dashboard Section */}
+      <NetworkDashboard />
+      
+      {/* Network Tools Section */}
+      <NetworkToolsSection />
+      
+      {/* Features Section */}
+      <AnimatedCards />
+      
+      {/* AI Features Section */}
+      <AIFeaturesSection />
+      
+      {/* Settings Section */}
+      <SettingsSection />
+      
+      {/* CTA Section */}
+      <CTASection />
+      
+      <Footer />
+      
+      {/* Floating AI Assistant */}
+      <FloatingAIAssistant 
+        show={showAIAssistant} 
+        onMaximize={() => window.location.href = '/ai'} 
+      />
+      
+      <Toaster />
+    </div>
   );
 };
 
