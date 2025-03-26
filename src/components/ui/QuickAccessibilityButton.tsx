@@ -12,18 +12,31 @@ export function QuickAccessibilityButton() {
   const { highContrast, largeText, reducedMotion, focusMode } = useA11y();
   const { t } = useTranslation();
   const [isInitiallyVisible, setIsInitiallyVisible] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
   
   // حساب عدد ميزات إمكانية الوصول المفعلة
   const activeFeatures = [highContrast, largeText, reducedMotion, focusMode].filter(Boolean).length;
   
   // تأثير لجعل الزر أكثر وضوحًا عند التحميل الأول
   useEffect(() => {
+    // تحقق مما إذا كان المستخدم قد تفاعل مع إعدادات إمكانية الوصول من قبل
+    const hasUserInteracted = localStorage.getItem('a11yInteracted') === 'true';
+    setHasInteracted(hasUserInteracted);
+    
     const timer = setTimeout(() => {
-      setIsInitiallyVisible(true);
-    }, 2000);
+      setIsInitiallyVisible(!hasUserInteracted);
+    }, hasUserInteracted ? 5000 : 2000);
     
     return () => clearTimeout(timer);
   }, []);
+  
+  // حفظ حالة التفاعل عند تغيير أي إعداد
+  useEffect(() => {
+    if (activeFeatures > 0 && !hasInteracted) {
+      localStorage.setItem('a11yInteracted', 'true');
+      setHasInteracted(true);
+    }
+  }, [activeFeatures, hasInteracted]);
   
   // الحصول على قائمة الميزات النشطة لقارئات الشاشة
   const getActiveFeaturesText = () => {
@@ -48,7 +61,7 @@ export function QuickAccessibilityButton() {
         transition={{ delay: 1.5, duration: 0.5 }}
       >
         <TooltipProvider>
-          <Tooltip>
+          <Tooltip delayDuration={350}>
             <TooltipTrigger asChild>
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -64,6 +77,12 @@ export function QuickAccessibilityButton() {
                   aria-haspopup="menu"
                   aria-expanded="false"
                   aria-describedby="a11y-settings-desc"
+                  onClick={() => {
+                    if (!hasInteracted) {
+                      localStorage.setItem('a11yInteracted', 'true');
+                      setHasInteracted(true);
+                    }
+                  }}
                 >
                   <Accessibility className="h-4 w-4" />
                   {activeFeatures > 0 && (
@@ -83,7 +102,7 @@ export function QuickAccessibilityButton() {
             </TooltipTrigger>
             <TooltipContent side="right" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0">
               <p className="text-sm">{t('accessibility.a11ySettings')}</p>
-              <p className="text-xs text-blue-100">{t('accessibility.clickToCustomize', 'انقر للتخصيص')}</p>
+              <p className="text-xs text-blue-100">{t('accessibility.clickToCustomize')}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

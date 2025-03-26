@@ -1,105 +1,130 @@
 
-/* وضع التباين العالي */
+/* أنماط التباين العالي */
 .high-contrast {
-  --contrast-bg: black;
-  --contrast-text: white;
-  --contrast-border: yellow;
-  --contrast-focus: orange;
-  --contrast-button: #0070f3;
-  --contrast-button-text: white;
-  --contrast-input: black;
-  --contrast-input-text: white;
-  --contrast-input-border: yellow;
+  --text-color: #000000;
+  --background-color: #ffffff;
+  --link-color: #0000EE;
+  --visited-link-color: #551A8B;
+  --border-color: #000000;
+  --button-background: #000000;
+  --button-text: #ffffff;
+  --input-border: #000000;
+  --focus-outline: 3px solid #0000EE;
 }
 
-.high-contrast * {
-  background-color: var(--contrast-bg) !important;
-  color: var(--contrast-text) !important;
-  border-color: var(--contrast-border) !important;
+.high-contrast body {
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
-.high-contrast button,
 .high-contrast a {
-  background-color: var(--contrast-button) !important;
-  color: var(--contrast-button-text) !important;
-  border: 2px solid var(--contrast-border) !important;
+  color: var(--link-color);
+  text-decoration: underline;
+}
+
+.high-contrast a:visited {
+  color: var(--visited-link-color);
+}
+
+.high-contrast button:not([disabled]),
+.high-contrast .button:not([disabled]) {
+  background-color: var(--button-background);
+  color: var(--button-text);
+  border: 2px solid var(--border-color);
 }
 
 .high-contrast input,
 .high-contrast select,
 .high-contrast textarea {
-  background-color: var(--contrast-input) !important;
-  color: var(--contrast-input-text) !important;
-  border: 2px solid var(--contrast-input-border) !important;
+  border: 2px solid var(--input-border);
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
 .high-contrast *:focus {
-  outline: 3px solid var(--contrast-focus) !important;
-  outline-offset: 2px !important;
+  outline: var(--focus-outline);
+  outline-offset: 2px;
 }
 
-/* وضع النص الكبير */
+/* أنماط النص الكبير */
 .large-text {
-  font-size: 1.2rem !important;
+  --base-font-size: 1.2rem;
+  --heading-scale: 1.2;
+}
+
+.large-text body {
+  font-size: var(--base-font-size);
 }
 
 .large-text h1 {
-  font-size: 2.4rem !important;
+  font-size: calc(2rem * var(--heading-scale));
 }
 
 .large-text h2 {
-  font-size: 2rem !important;
+  font-size: calc(1.5rem * var(--heading-scale));
 }
 
 .large-text h3 {
-  font-size: 1.8rem !important;
+  font-size: calc(1.3rem * var(--heading-scale));
 }
 
-.large-text p,
-.large-text div,
-.large-text span,
-.large-text button,
-.large-text input,
-.large-text select,
-.large-text textarea {
-  font-size: 1.2rem !important;
+.large-text h4 {
+  font-size: calc(1.2rem * var(--heading-scale));
+}
+
+.large-text p, 
+.large-text li, 
+.large-text label, 
+.large-text input, 
+.large-text button {
+  font-size: var(--base-font-size);
 }
 
 .large-text .text-xs {
-  font-size: 1rem !important;
+  font-size: calc(0.75rem * var(--heading-scale));
 }
 
 .large-text .text-sm {
-  font-size: 1.1rem !important;
+  font-size: calc(0.875rem * var(--heading-scale));
 }
 
-/* وضع تقليل الحركة */
+.large-text .text-base {
+  font-size: calc(1rem * var(--heading-scale));
+}
+
+.large-text .text-lg {
+  font-size: calc(1.125rem * var(--heading-scale));
+}
+
+.large-text .text-xl {
+  font-size: calc(1.25rem * var(--heading-scale));
+}
+
+/* أنماط تقليل الحركة */
 .reduced-motion * {
-  transition: none !important;
-  animation: none !important;
+  animation-duration: 0.001s !important;
+  transition-duration: 0.001s !important;
   scroll-behavior: auto !important;
 }
 
-/* وضع التركيز */
-.focus-mode .card,
-.focus-mode section {
-  transition: filter 0.2s ease;
+/* أنماط وضع التركيز */
+.focus-mode {
+  --focus-opacity: 0.5;
 }
 
-.focus-mode .card:not(:hover):not(:focus-within),
-.focus-mode section:not(:hover):not(:focus-within) {
-  filter: grayscale(30%) opacity(90%);
+.focus-mode *:not(:focus):not(:active):not(:hover):not(:focus-within) {
+  opacity: var(--focus-opacity);
 }
 
-.focus-mode .card:hover,
-.focus-mode .card:focus-within,
-.focus-mode section:hover,
-.focus-mode section:focus-within {
-  filter: none;
-  outline: 2px solid var(--primary);
+.focus-mode *:focus,
+.focus-mode *:active,
+.focus-mode *:hover,
+.focus-mode *:focus-within {
+  opacity: 1;
+  transition: opacity 0.2s ease;
 }
 
-/* تحسينات للتوافق مع قارئ الشاشة */
+/* دعم قارئات الشاشة - العناصر المخفية */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -112,256 +137,212 @@
   border-width: 0;
 }
 
-/* تمييز عناصر التنقل لإمكانية الوصول */
-a:focus, button:focus, input:focus, select:focus, textarea:focus {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
+.focus:not-sr-only {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
 }
 
-/* مساعدة في تمييز الروابط والأزرار المتشابهة لضعاف البصر */
-a {
-  text-decoration-thickness: 0.1em;
-  text-underline-offset: 0.15em;
-}
-
-a:hover, a:focus {
-  text-decoration-thickness: 0.2em;
-}
-
-/* تباعد النص المحسن للقراءة */
-.text-spacing {
-  letter-spacing: 0.12em !important;
-  word-spacing: 0.16em !important;
-  line-height: 1.6 !important;
-}
-
-/* ارتفاع السطر المحسن */
-.increased-line-height {
-  line-height: 1.8 !important;
-}
-
-/* خط قابل للقراءة */
-.readable-font {
-  font-family: 'Arial', 'Helvetica', sans-serif !important;
-}
-
-/* خط مساعد لذوي عسر القراءة */
-.dyslexia-font {
-  font-family: 'OpenDyslexic', 'Comic Sans MS', 'Arial', sans-serif !important;
-  letter-spacing: 0.15em !important;
-  word-spacing: 0.25em !important;
-  line-height: 1.8 !important;
-}
-
-/* مؤشر مخصص أكبر للرؤية */
-.custom-cursor {
-  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" fill="white" stroke="black"/><circle cx="12" cy="12" r="2" fill="black"/></svg>') 12 12, auto !important;
-}
-
-/* تحسينات للمستخدمين الذين يعانون من عمى الألوان */
-.colorblind-deuteranopia {
-  filter: url('#deuteranopia-filter') !important;
-}
-
-.colorblind-protanopia {
-  filter: url('#protanopia-filter') !important;
-}
-
-.colorblind-tritanopia {
-  filter: url('#tritanopia-filter') !important;
-}
-
-/* وضع الألوان المعكوسة */
-.invert-colors {
-  filter: invert(100%) !important;
-}
-
-/* وضع أحادي اللون */
-.monochrome {
-  filter: grayscale(100%) !important;
-}
-
-/* تسطير الروابط */
-.underline-links a {
-  text-decoration: underline !important;
-  text-decoration-thickness: 0.15em !important;
-  text-underline-offset: 0.2em !important;
-}
-
-/* تحسينات للمساعدة في القراءة */
-.reading-guide {
+/* دليل القراءة */
+.reading-guide-element {
   position: fixed;
+  left: 0;
   width: 100%;
-  height: 36px;
-  background-color: rgba(255, 255, 0, 0.2);
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
-  pointer-events: none;
+  height: 2px;
+  background-color: rgba(0, 0, 0, 0.3);
   z-index: 9999;
-}
-
-/* دعم للإعلانات التلقائية */
-.announcer {
-  position: absolute;
-  height: 1px;
-  width: 1px;
-  overflow: hidden;
-  clip: rect(1px, 1px, 1px, 1px);
-}
-
-/* مساحات حول العناصر أكبر للنقر بسهولة */
-.easy-click a,
-.easy-click button,
-.easy-click input[type="checkbox"],
-.easy-click input[type="radio"] {
-  min-height: 44px !important;
-  min-width: 44px !important;
-  padding: 0.5rem !important;
-}
-
-/* وضع الوصول السريع بلوحة المفاتيح - إظهار الاختصارات */
-.keyboard-mode [data-keyboard-shortcut]::after {
-  content: attr(data-keyboard-shortcut);
-  position: absolute;
-  right: 8px;
-  top: 8px;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 3px 6px;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-family: monospace;
-}
-
-/* دعم للوضع الداكن بتباين عالي للرؤية المحسنة */
-.dark-high-contrast {
-  --background: #000000;
-  --foreground: #ffffff;
-  --card: #121212;
-  --card-foreground: #ffffff;
-  --border: #ffff00;
-  --input: #121212;
-  --primary: #ffff00;
-  --secondary: #ffffff;
-  --accent: #ffff00;
-  --ring: #ff8c00;
-}
-
-/* إضافة الدعم لشاشات القراءة المحمولة */
-@media (max-width: 768px) {
-  .large-text {
-    font-size: 1.3rem !important;
-  }
-  
-  .large-text h1 {
-    font-size: 2.6rem !important;
-  }
-  
-  a, button, input, select {
-    padding: 0.6rem !important;
-  }
-  
-  .focus-mode .card:not(:hover):not(:focus-within),
-  .focus-mode section:not(:hover):not(:focus-within) {
-    filter: grayscale(40%) opacity(85%);
-  }
-}
-
-/* تنسيق مخصص لإشعارات قارئ الشاشة */
-.screen-reader-announcement {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
   pointer-events: none;
-  z-index: -1;
 }
 
-/* تعريفات جديدة للدعم الإضافي لإمكانية الوصول */
-
-/* خط أكثر وضوحًا لذوي صعوبات القراءة */
-.accessible-font {
-  font-family: 'Verdana', 'Arial', sans-serif !important;
-  letter-spacing: 0.03em !important;
-  word-spacing: 0.05em !important;
+.high-contrast .reading-guide-element {
+  background-color: rgba(0, 0, 0, 0.8);
+  height: 4px;
 }
 
-/* تباين إضافي للنصوص الصغيرة */
-.high-contrast .text-xs,
-.high-contrast .text-sm {
-  text-shadow: 0 0 1px var(--contrast-text) !important;
+/* مرشحات عمى الألوان */
+.protanopia {
+  filter: url('#protanopia-filter');
 }
 
-/* تحسين قابلية القراءة لمربعات النصوص */
-.readable-inputs input,
-.readable-inputs textarea,
-.readable-inputs select {
-  font-size: 1.1em !important;
-  line-height: 1.5 !important;
-  padding: 0.6em !important;
+.deuteranopia {
+  filter: url('#deuteranopia-filter');
 }
 
-/* وضع التركيز على العنصر النشط فقط */
-.intense-focus-mode:not(:focus):not(:focus-within) * {
-  opacity: 0.5 !important;
+.tritanopia {
+  filter: url('#tritanopia-filter');
 }
 
-.intense-focus-mode:focus,
-.intense-focus-mode:focus-within {
-  opacity: 1 !important;
-  box-shadow: 0 0 0 4px var(--primary) !important;
+/* خط عسر القراءة */
+.dyslexic-font {
+  --dyslexic-font: 'Open Sans', 'Arial', sans-serif;
+  --letter-spacing: 0.35px;
+  --line-height: 1.5;
 }
 
-/* دعم الطباعة المحسنة لإمكانية الوصول */
+.dyslexic-font body,
+.dyslexic-font p,
+.dyslexic-font h1,
+.dyslexic-font h2,
+.dyslexic-font h3,
+.dyslexic-font h4,
+.dyslexic-font h5,
+.dyslexic-font h6,
+.dyslexic-font span,
+.dyslexic-font button,
+.dyslexic-font a {
+  font-family: var(--dyslexic-font) !important;
+  letter-spacing: var(--letter-spacing) !important;
+  line-height: var(--line-height) !important;
+  word-spacing: 0.15em !important;
+}
+
+/* وضع لوحة المفاتيح */
+body.keyboard-user *:focus {
+  outline: 3px solid dodgerblue !important;
+  outline-offset: 2px !important;
+}
+
+/* وضع الطباعة */
 @media print {
-  .high-contrast {
-    --contrast-bg: white !important;
-    --contrast-text: black !important;
-    --contrast-border: black !important;
+  .no-print {
+    display: none !important;
   }
   
-  .large-text {
-    font-size: 1rem !important;
+  a[href]:after {
+    content: " (" attr(href) ")";
   }
   
-  .large-text h1 {
-    font-size: 1.8rem !important;
-  }
-  
-  .large-text h2 {
-    font-size: 1.5rem !important;
+  abbr[title]:after {
+    content: " (" attr(title) ")";
   }
 }
 
-/* تحسينات للمستخدمين الذين يعانون من حساسية للضوء */
-.low-light-mode {
-  filter: brightness(80%) !important;
-}
-
-/* تحسينات لمستخدمي تكنولوجيا المساعدة */
-.assistive-technology-friendly * {
-  pointer-events: auto !important;
-}
-
-/* مساعدة خاصة لمستخدمي قارئ الشاشة */
-.sr-help-text {
+/* المعلن المباشر */
+.live-announcer {
   position: absolute;
+  left: -10000px;
+  top: auto;
   width: 1px;
   height: 1px;
-  padding: 0;
-  margin: -1px;
   overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  border-width: 0;
-  white-space: nowrap;
 }
 
-/* دعم خاص باللغة العربية ومحاذاة RTL */
-.rtl-active .improved-rtl-support {
-  text-align: right;
-  direction: rtl;
+/* وضع النص فقط */
+.text-only-mode img:not([role="presentation"]) {
+  display: none;
+}
+
+.text-only-mode iframe,
+.text-only-mode video,
+.text-only-mode canvas,
+.text-only-mode svg {
+  display: none;
+}
+
+.text-only-mode button[aria-label]:before,
+.text-only-mode a[aria-label]:before {
+  content: attr(aria-label);
+  display: inline-block;
+}
+
+/* اختصارات خاصة بذوي الإعاقة */
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 0;
+  z-index: 10000;
+  padding: 10px;
+  background: #fff;
+  color: #000;
+  border: 2px solid #000;
+  transition: top 0.3s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* أنماط القراءة بيد واحدة */
+.one-hand-mode button,
+.one-hand-mode input[type="submit"],
+.one-hand-mode .clickable {
+  min-height: 48px;
+  min-width: 48px;
+}
+
+.one-hand-mode .interactive {
+  margin-bottom: 16px;
+}
+
+/* الوضع المظلم عالي التباين */
+.dark.high-contrast {
+  --text-color: #ffffff;
+  --background-color: #000000;
+  --link-color: #3391ff;
+  --visited-link-color: #a58eff;
+  --border-color: #ffffff;
+  --button-background: #ffffff;
+  --button-text: #000000;
+  --input-border: #ffffff;
+  --focus-outline: 3px solid #ffffff;
+}
+
+/* إعدادات الوضع المريح للعين */
+.eye-comfort-mode {
+  --eye-comfort-bg: #f0f5fa;
+  --eye-comfort-text: #222b40;
+  --eye-comfort-tint: rgba(53, 74, 95, 0.05);
+}
+
+.eye-comfort-mode body {
+  background-color: var(--eye-comfort-bg);
+  color: var(--eye-comfort-text);
+}
+
+.eye-comfort-mode img,
+.eye-comfort-mode video {
+  filter: brightness(0.95);
+}
+
+.dark.eye-comfort-mode {
+  --eye-comfort-bg: #1a1f2c;
+  --eye-comfort-text: #e2e8f0;
+}
+
+/* مساعد تتبع المؤشر */
+.large-cursor-mode {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 16 16"><path fill="black" d="M1 1 L15 8 L8 9 L7 15 Z"/></svg>') 8 8, auto;
+}
+
+/* مستوى تفاعل مبسط */
+.simplified-ui * {
+  border-radius: 4px !important;
+  box-shadow: none !important;
+  animation: none !important;
+}
+
+.simplified-ui button,
+.simplified-ui .button {
+  background: #f1f1f1 !important;
+  color: #000 !important;
+  border: 1px solid #000 !important;
+  padding: 10px 20px !important;
+  margin: 5px !important;
+  font-size: 16px !important;
+}
+
+/* ترميز لوني للإشارات */
+.semantic-colors .success { color: #00600f !important; background-color: #e8f5e9 !important; }
+.semantic-colors .warning { color: #663c00 !important; background-color: #fff8e1 !important; }
+.semantic-colors .error { color: #7f0000 !important; background-color: #ffebee !important; }
+.semantic-colors .info { color: #002171 !important; background-color: #e3f2fd !important; }
+
+/* دعم طباعة برايل إذا تم تنفيذها */
+.braille-support {
+  braille-render: full;
 }

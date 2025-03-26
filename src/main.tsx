@@ -8,14 +8,20 @@ import './i18n';
 import { LoadingScreen } from './components/LoadingScreen';
 import { toast } from '@/components/ui/use-toast';
 
+// معرف فريد لتتبع تفاعلات المستخدم مع ميزات إمكانية الوصول
+const ACCESS_INTERACTION_KEY = 'a11y_interaction_version';
+
 // مكون الغلاف للتعامل مع التهيئة
 const AppWrapper = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isKeyboardUser, setIsKeyboardUser] = useState(false);
+  const [hasInitialized, setHasInitialized] = useState(false);
 
   useEffect(() => {
     // التعامل مع إعداد إمكانية الوصول والتفضيلات
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && !hasInitialized) {
+      setHasInitialized(true);
+      
       // تعيين لغة المستند بناءً على الاتجاه
       document.documentElement.lang = document.documentElement.dir === 'rtl' ? 'ar' : 'en';
       
@@ -31,6 +37,17 @@ const AppWrapper = () => {
       if (prefersContrastMore.matches && localStorage.getItem('highContrast') === null) {
         document.body.classList.add('high-contrast');
         localStorage.setItem('highContrast', 'true');
+      }
+      
+      // التحقق من وضع الخط لذوي عسر القراءة
+      if (localStorage.getItem('dyslexicFont') === 'true') {
+        document.body.classList.add('dyslexic-font');
+      }
+      
+      // التحقق من وضع عمى الألوان
+      const colorBlindMode = localStorage.getItem('colorBlindMode');
+      if (colorBlindMode) {
+        document.body.classList.add(colorBlindMode);
       }
       
       // إعداد المحتوى الرئيسي لقارئات الشاشة
@@ -50,6 +67,7 @@ const AppWrapper = () => {
       
       // إضافة مرشحات SVG لوضع عمى الألوان
       const svgFilters = document.createElement('div');
+      svgFilters.setAttribute('aria-hidden', 'true');
       svgFilters.innerHTML = `
         <svg style="display:none">
           <filter id="deuteranopia-filter">
@@ -61,12 +79,37 @@ const AppWrapper = () => {
           <filter id="tritanopia-filter">
             <feColorMatrix type="matrix" values="0.95 0.05 0 0 0 0 0.433 0.567 0 0 0 0.475 0.525 0 0 0 0 0 1 0"/>
           </filter>
+          <filter id="grayscale-filter">
+            <feColorMatrix type="matrix" values="0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 0 0 1 0"/>
+          </filter>
         </svg>
       `;
       document.body.appendChild(svgFilters);
       
+      // إضافة عنصر معلن القارئ الشاشة
+      const liveAnnouncer = document.createElement('div');
+      liveAnnouncer.id = 'liveAnnouncer';
+      liveAnnouncer.className = 'sr-only';
+      liveAnnouncer.setAttribute('aria-live', 'polite');
+      liveAnnouncer.setAttribute('aria-atomic', 'true');
+      document.body.appendChild(liveAnnouncer);
+      
+      // إضافة هوك للإعلان عن التغييرات لقارئات الشاشة
+      window.announce = (message: string, priority: 'polite' | 'assertive' = 'polite') => {
+        const announcer = document.getElementById('liveAnnouncer');
+        if (announcer) {
+          announcer.setAttribute('aria-live', priority);
+          announcer.textContent = message;
+          
+          // مسح الرسالة بعد قراءتها
+          setTimeout(() => {
+            announcer.textContent = '';
+          }, 3000);
+        }
+      };
+      
       // اكتشاف مستخدمي لوحة المفاتيح
-      const handleFirstTab = (e) => {
+      const handleFirstTab = (e: KeyboardEvent) => {
         if (e.key === 'Tab') {
           document.body.classList.add('keyboard-user');
           setIsKeyboardUser(true);
@@ -81,18 +124,11 @@ const AppWrapper = () => {
         setIsLoading(false);
         
         // إعلام قارئات الشاشة أن التطبيق قد اكتمل تحميله
-        const announcer = document.createElement('div');
-        announcer.setAttribute('aria-live', 'polite');
-        announcer.className = 'sr-only';
-        announcer.textContent = document.documentElement.lang === 'ar' ? 'تم تحميل التطبيق بنجاح' : 'Application loaded successfully';
-        document.body.appendChild(announcer);
-        
-        // إزالة المُعلن بعد فترة
-        setTimeout(() => {
-          if (document.body.contains(announcer)) {
-            document.body.removeChild(announcer);
-          }
-        }, 1000);
+        window.announce(
+          document.documentElement.lang === 'ar' 
+            ? 'تم تحميل التطبيق بنجاح' 
+            : 'Application loaded successfully'
+        );
         
         // عرض إشعار ترحيبي خفيف
         setTimeout(() => {
@@ -103,6 +139,12 @@ const AppWrapper = () => {
               : 'Use the accessibility button at the bottom left to customize your experience'
           });
         }, 1500);
+        
+        // تحديث إصدار تفاعل المستخدم مع ميزات إمكانية الوصول إذا لم يتم تحديثه بعد
+        const currentVersion = localStorage.getItem(ACCESS_INTERACTION_KEY);
+        if (!currentVersion) {
+          localStorage.setItem(ACCESS_INTERACTION_KEY, '1.0');
+        }
       }, 800);
       
       return () => {
@@ -110,10 +152,17 @@ const AppWrapper = () => {
         window.removeEventListener('keydown', handleFirstTab);
       };
     }
-  }, []);
+  }, [hasInitialized]);
 
   return isLoading ? <LoadingScreen /> : <App />;
 };
+
+// إضافة أنواع عالمية للإعلانات
+declare global {
+  interface Window {
+    announce: (message: string, priority?: 'polite' | 'assertive') => void;
+  }
+}
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
