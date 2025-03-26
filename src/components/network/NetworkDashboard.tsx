@@ -1,12 +1,12 @@
 
 import React from "react";
 import { useNetworkStats } from "@/hooks/useNetworkStats";
-import { NetworkStatusCard } from "./network/NetworkStatusCard";
-import { ConnectedDevicesCard } from "./network/ConnectedDevicesCard";
-import { DataTransferCard } from "./network/DataTransferCard";
-import { NetworkSpeedCard } from "./network/NetworkSpeedCard";
-import { NetworkPerformanceCard } from "./network/NetworkPerformanceCard";
-import { SecurityStatusCard } from "./network/SecurityStatusCard";
+import { NetworkStatusCard } from "./NetworkStatusCard";
+import { ConnectedDevicesCard } from "./ConnectedDevicesCard";
+import { DataTransferCard } from "./DataTransferCard";
+import { NetworkSpeedCard } from "./NetworkSpeedCard";
+import { NetworkPerformanceCard } from "./NetworkPerformanceCard";
+import { SecurityStatusCard } from "./SecurityStatusCard";
 import { useTranslation } from "react-i18next";
 
 export function NetworkDashboard() {
