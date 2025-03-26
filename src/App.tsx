@@ -8,6 +8,7 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import { ModeProvider } from "@/context/ModeContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AnimatePresence } from "framer-motion";
 
 // Pages
 import Dashboard from "./pages/Dashboard";
@@ -49,16 +50,18 @@ function App() {
             isRTL ? "rtl" : "ltr"
           )}>
             <Router>
-              <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/ai" element={<AIAssistant />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/license" element={<License />} />
-                <Route path="/fiber-optic" element={<FiberOptic />} />
-                <Route path="/help-center" element={<HelpCenter />} />
-                <Route path="/404" element={<NotFound />} />
-                <Route path="*" element={<Navigate to="/404" replace />} />
-              </Routes>
+              <AnimatePresence mode="wait">
+                <Routes>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/ai" element={<AIAssistant />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/license" element={<License />} />
+                  <Route path="/fiber-optic" element={<FiberOptic />} />
+                  <Route path="/help-center" element={<HelpCenter />} />
+                  <Route path="/404" element={<NotFound />} />
+                  <Route path="*" element={<Navigate to="/404" replace />} />
+                </Routes>
+              </AnimatePresence>
             </Router>
             <Toaster />
           </div>
