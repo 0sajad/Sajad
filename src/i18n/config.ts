@@ -1,179 +1,175 @@
-
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import { resources } from './resources';
-import translationKeyDetector from './utils/TranslationKeyDetector';
+import * as enTranslation from '../locales/en/translation.json';
+import * as enCommon from '../locales/en/common.json';
+import * as enNetwork from '../locales/en/network.json';
+import * as enDashboard from '../locales/en/dashboard.json';
+import * as enAi from '../locales/en/ai.json';
+import * as enAiAssistant from '../locales/en/aiAssistant.json';
+import * as enAiFeatures from '../locales/en/aiFeatures.json';
+import * as enHelpCenter from '../locales/en/helpCenter.json';
+import * as enCommunicationTools from '../locales/en/communicationTools.json';
+import * as arTranslation from '../locales/ar/translation.json';
+import * as arCommon from '../locales/ar/common.json';
+import * as arNetwork from '../locales/ar/network.json';
+import * as arDashboard from '../locales/ar/dashboard.json';
+import * as arAi from '../locales/ar/ai.json';
+import * as arAiAssistant from '../locales/ar/aiAssistant.json';
+import * as arAiFeatures from '../locales/ar/aiFeatures.json';
+import * as arHelpCenter from '../locales/ar/helpCenter.json';
+import * as arCommunicationTools from '../locales/ar/communicationTools.json';
+import * as arIqTranslation from '../locales/ar-iq/translation.json';
+import * as arIqCommon from '../locales/ar-iq/common.json';
+import * as arIqNetwork from '../locales/ar-iq/network.json';
+import * as arIqDashboard from '../locales/ar-iq/dashboard.json';
+import * as arIqAi from '../locales/ar-iq/ai.json';
+import * as arIqAiAssistant from '../locales/ar-iq/aiAssistant.json';
+import * as arIqAiFeatures from '../locales/ar-iq/aiFeatures.json';
+import * as arIqHelpCenter from '../locales/ar-iq/helpCenter.json';
+import * as arIqCommunicationTools from '../locales/ar-iq/communicationTools.json';
 
-// تهيئة i18next بإعدادات محسنة
+export const resources = {
+  en: {
+    translation: enTranslation,
+    common: enCommon,
+    network: enNetwork,
+    dashboard: enDashboard,
+    ai: enAi,
+    aiAssistant: enAiAssistant,
+    aiFeatures: enAiFeatures,
+    helpCenter: enHelpCenter,
+    communicationTools: enCommunicationTools
+  },
+  ar: {
+    translation: arTranslation,
+    common: arCommon,
+    network: arNetwork,
+    dashboard: arDashboard,
+    ai: arAi,
+    aiAssistant: arAiAssistant,
+    aiFeatures: arAiFeatures,
+    helpCenter: arHelpCenter,
+    communicationTools: arCommunicationTools
+  },
+  'ar-iq': {
+    translation: arIqTranslation,
+    common: arIqCommon,
+    network: arIqNetwork,
+    dashboard: arIqDashboard,
+    ai: arIqAi,
+    aiAssistant: arIqAiAssistant,
+    aiFeatures: arIqAiFeatures,
+    helpCenter: arIqHelpCenter,
+    communicationTools: arIqCommunicationTools
+  }
+};
+
+const getLanguageDirection = (language: string) => {
+  return ['ar', 'ar-iq'].includes(language) ? 'rtl' : 'ltr';
+};
+
+const getIraqiArabicFallbacks = () => {
+  const result: Record<string, string> = {};
+  
+  Object.keys(arIqTranslation).forEach(key => {
+    if (!arIqTranslation[key as keyof typeof arIqTranslation]) {
+      result[key] = arTranslation[key as keyof typeof arTranslation];
+    }
+  });
+  
+  return result;
+};
+
+const getDefaultNamespace = () => {
+  return 'translation';
+};
+
+const languageDetector = new LanguageDetector();
+languageDetector.addDetector({
+  name: 'customDetector',
+  lookup: () => {
+    // Check for manually set language first
+    const savedLanguage = localStorage.getItem('language');
+    if (savedLanguage) {
+      return savedLanguage;
+    }
+    
+    // Otherwise use browser language
+    const browserLanguage = navigator.language;
+    if (browserLanguage.startsWith('ar')) {
+      // Check if it's Iraqi Arabic dialect
+      if (browserLanguage.includes('iq')) {
+        return 'ar-iq';
+      }
+      // Default to Standard Arabic
+      return 'ar';
+    }
+    
+    // Default to English
+    return 'en';
+  }
+});
+
 i18n
-  .use(LanguageDetector)
+  .use(languageDetector)
   .use(initReactI18next)
-  .use(translationKeyDetector as any)
   .init({
-    resources: resources,
-    lng: localStorage.getItem('language') || 'ar',
-    fallbackLng: {
-      'ar-iq': ['ar'],
-      'ja': ['en'],
-      'zh': ['en'],
-      'fr': ['en'],
-      'default': ['ar', 'en']
-    },
-    debug: process.env.NODE_ENV === 'development',
-    ns: ['common', 'license', 'access', 'settings', 'aiFeatures', 'helpCenter', 'communicationTools'],
-    defaultNS: 'common',
+    resources,
+    fallbackLng: 'en',
+    lng: localStorage.getItem('language') || 'en',
+    debug: false,
+    ns: ['translation', 'common', 'network', 'dashboard', 'ai', 'aiAssistant', 'aiFeatures', 'helpCenter', 'communicationTools'],
+    defaultNS: getDefaultNamespace(),
     interpolation: {
       escapeValue: false
     },
     react: {
-      useSuspense: true,
-      transKeepBasicHtmlNodesFor: ['br', 'strong', 'i', 'p', 'span', 'a', 'ul', 'ol', 'li']
-    },
-    detection: {
-      order: ['localStorage', 'navigator', 'htmlTag'],
-      caches: ['localStorage'],
-      lookupLocalStorage: 'language'
-    },
-    load: 'languageOnly',
-    returnEmptyString: false,
-    keySeparator: '.',
-    pluralSeparator: '_',
-    contextSeparator: '_',
-    saveMissing: process.env.NODE_ENV === 'development',
-    parseMissingKeyHandler: (key) => {
-      return key.trim();
-    },
-    appendNamespaceToMissingKey: true,
-    partialBundledLanguages: true,
-    // تحسين المعالجة المتزامنة للترجمات
-    initImmediate: false
+      useSuspense: true
+    }
   });
 
-// تطبيق اتجاه اللغة الصحيح عند تغيير اللغة
-i18n.on('languageChanged', (lng) => {
-  const isRTL = lng === "ar" || lng === "ar-iq";
-  document.documentElement.setAttribute("lang", lng);
-  document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
-  document.documentElement.style.textAlign = isRTL ? "right" : "left";
-  localStorage.setItem('language', lng);
+i18n.on('languageChanged', (language) => {
+  document.documentElement.setAttribute('dir', getLanguageDirection(language));
+  document.documentElement.setAttribute('lang', language);
   
-  // تطبيق أنماط CSS إضافية للغات RTL
-  if (isRTL) {
-    document.body.classList.add('rtl-active');
-  } else {
-    document.body.classList.remove('rtl-active');
-  }
-  
-  // تحديث اتجاه العناصر المطلقة
-  const rtlElements = document.querySelectorAll('[data-rtl-aware]');
-  rtlElements.forEach((el) => {
-    const element = el as HTMLElement;
-    if (element.style.left) element.style.left = '';
-    if (element.style.right) element.style.right = '';
-    
-    if (isRTL) {
-      element.style.right = element.dataset.rtlPosition || '0';
+  // Fix for the TypeScript error: Convert the readonly string[] to individual strings when checking
+  const namespaces = i18n.options.ns;
+  if (namespaces) {
+    if (Array.isArray(namespaces)) {
+      // Handle each namespace individually to prevent type errors
+      namespaces.forEach((ns) => {
+        // Convert each element to a string explicitly
+        const namespace = String(ns);
+        
+        // Now we can safely use it as a string
+        if (language === 'ar-iq' && i18n.exists(namespace)) {
+          const fallbacks = getIraqiArabicFallbacks();
+          Object.keys(fallbacks).forEach(key => {
+            if (!i18n.exists(`${namespace}:${key}`, { lng: 'ar-iq' })) {
+              i18n.addResource('ar-iq', namespace, key, i18n.t(`${namespace}:${key}`, { lng: 'ar' }));
+            }
+          });
+        }
+      });
     } else {
-      element.style.left = element.dataset.ltrPosition || '0';
-    }
-  });
-  
-  // حل مشكلة النصوص التي لا تتغير عند تبديل اللغة
-  // استخدام حدث مخصص لإعلام المكونات بتغيير اللغة بدلاً من إعادة تحميل الصفحة
-  setTimeout(() => {
-    document.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: lng } }));
-  }, 0);
-  
-  // تأخير إضافي للتأكد من تطبيق جميع التغييرات
-  setTimeout(() => {
-    document.dispatchEvent(new CustomEvent('languageFullyChanged', { detail: { language: lng } }));
-  }, 300);
-  
-  // تحسين أسلوب تنظيف ذاكرة التخزين المؤقت للمفاتيح عند تغيير اللغة
-  if (translationKeyDetector) {
-    setTimeout(() => {
-      translationKeyDetector.resetMissingKeys();
-    }, 100);
-  }
-});
-
-// تهيئة اتجاه اللغة عند بدء التشغيل
-const currentLng = i18n.language;
-const isRTL = currentLng === "ar" || currentLng === "ar-iq";
-document.documentElement.setAttribute("lang", currentLng);
-document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
-document.documentElement.style.textAlign = isRTL ? "right" : "left";
-
-// تطبيق أنماط CSS للغات RTL عند بدء التشغيل
-if (isRTL) {
-  document.body.classList.add('rtl-active');
-}
-
-// تحسين إدارة الأخطاء
-i18n.on('failedLoading', (lng, ns, msg) => {
-  console.error(`فشل تحميل ملف الترجمة: ${lng}/${ns} - ${msg}`);
-  // محاولة إعادة تحميل الملف
-  setTimeout(() => {
-    i18n.reloadResources([lng], [ns]);
-  }, 1000);
-});
-
-// إضافة تعامل أفضل مع المفاتيح المفقودة
-i18n.on('missingKey', (lng, ns, key) => {
-  if (process.env.NODE_ENV === 'development') {
-    console.warn(`مفتاح ترجمة مفقود: ${key} في مجال: ${ns} للغة: ${lng}`);
-  }
-  
-  // محاولة استخدام مفتاح من لغة أخرى
-  const fallbacks = i18n.options.fallbackLng;
-  if (typeof fallbacks === 'object' && fallbacks) {
-    // تحويل fallbacks إلى نوع معروف لـ TypeScript
-    const fallbackLngsObject = fallbacks as Record<string, string[] | string>;
-    const lngStr = lng as string;
-    
-    // التحقق مما إذا كانت اللغة موجودة في كائن اللغات الاحتياطية
-    if (lngStr in fallbackLngsObject) {
-      const fallbackLngs = fallbackLngsObject[lngStr];
-      
-      // معالجة المصفوفات بشكل صحيح
-      if (Array.isArray(fallbackLngs)) {
-        for (const fallbackLng of fallbackLngs) {
-          // تحويل العنصر إلى string للتعامل مع readonly string[]
-          const fallbackLngStr = String(fallbackLng);
-          if (i18n.exists(key, { lng: fallbackLngStr, ns })) {
-            return i18n.t(key, { lng: fallbackLngStr, ns });
+      // Handle if namespaces is a single string
+      const namespace = String(namespaces);
+      if (language === 'ar-iq' && i18n.exists(namespace)) {
+        const fallbacks = getIraqiArabicFallbacks();
+        Object.keys(fallbacks).forEach(key => {
+          if (!i18n.exists(`${namespace}:${key}`, { lng: 'ar-iq' })) {
+            i18n.addResource('ar-iq', namespace, key, i18n.t(`${namespace}:${key}`, { lng: 'ar' }));
           }
-        }
-      } else if (typeof fallbackLngs === 'string') {
-        // معالجة حالة القيمة المفردة
-        if (i18n.exists(key, { lng: fallbackLngs, ns })) {
-          return i18n.t(key, { lng: fallbackLngs, ns });
-        }
-      }
-    }
-    
-    // إذا لم نجد في اللغات الاحتياطية المحددة، جرب اللغات الاحتياطية الافتراضية
-    if ('default' in fallbackLngsObject) {
-      const defaultFallbacks = fallbackLngsObject['default'];
-      if (Array.isArray(defaultFallbacks)) {
-        for (const fallbackLng of defaultFallbacks) {
-          // تحويل العنصر إلى string للتعامل مع readonly string[]
-          const fallbackLngStr = String(fallbackLng);
-          if (i18n.exists(key, { lng: fallbackLngStr, ns })) {
-            return i18n.t(key, { lng: fallbackLngStr, ns });
-          }
-        }
-      } else if (typeof defaultFallbacks === 'string') {
-        if (i18n.exists(key, { lng: defaultFallbacks, ns })) {
-          return i18n.t(key, { lng: defaultFallbacks, ns });
-        }
+        });
       }
     }
   }
   
-  // إذا لم يتم العثور على المفتاح في اللغات الاحتياطية، عرض المفتاح نفسه
-  return key;
+  // Trigger a custom event once language is fully changed and applied
+  document.dispatchEvent(new CustomEvent('languageFullyChanged', { 
+    detail: { language }
+  }));
 });
 
 export default i18n;
