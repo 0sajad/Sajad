@@ -17,6 +17,7 @@ import License from "./pages/License";
 import FiberOptic from "./pages/FiberOptic";
 import NotFound from "./pages/NotFound";
 import HelpCenter from "./pages/HelpCenter";
+import CommunicationTools from "./pages/CommunicationTools";
 
 // Components
 import { LoadingScreen } from "./components/LoadingScreen";
@@ -56,6 +57,7 @@ function App() {
                 <Route path="/license" element={<License />} />
                 <Route path="/fiber-optic" element={<FiberOptic />} />
                 <Route path="/help-center" element={<HelpCenter />} />
+                <Route path="/communication-tools" element={<CommunicationTools />} />
                 <Route path="/404" element={<NotFound />} />
                 <Route path="*" element={<Navigate to="/404" replace />} />
               </Routes>

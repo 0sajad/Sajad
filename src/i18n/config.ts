@@ -21,7 +21,7 @@ i18n
       'default': ['ar', 'en']
     },
     debug: process.env.NODE_ENV === 'development',
-    ns: ['common', 'license', 'access', 'settings', 'aiFeatures'],
+    ns: ['common', 'license', 'access', 'settings', 'aiFeatures', 'helpCenter', 'communicationTools'],
     defaultNS: 'common',
     interpolation: {
       escapeValue: false
