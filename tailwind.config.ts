@@ -24,7 +24,6 @@ const config = {
     "to-amber-600",
     "from-teal-400",
     "to-teal-600",
-    "toast-3d",
   ],
   theme: {
     container: {
@@ -99,52 +98,14 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        "float": {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-10px)" },
-        },
-        "fade-in": {
-          "0%": { opacity: "0", transform: "translateY(10px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "float": "float 3s ease-in-out infinite",
-        "fade-in": "fade-in 0.5s ease-out",
       },
     },
   },
-  plugins: [
-    require("tailwindcss-animate"),
-    function({ addComponents, theme }) {
-      addComponents({
-        '.toast-3d': {
-          'transform-style': 'preserve-3d',
-          'box-shadow': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 -2px 0 0 rgba(255, 255, 255, 0.2) inset, 0 2px 0 0 rgba(0, 0, 0, 0.1)',
-          'border-radius': '12px',
-          'backdrop-filter': 'blur(16px)',
-          'border': '1px solid rgba(255, 255, 255, 0.2)',
-          'animation': 'toast-entry 0.5s cubic-bezier(0.21, 1.02, 0.73, 1)',
-          '@keyframes toast-entry': {
-            '0%': {
-              transform: 'scale(0.9) translateY(20px) perspective(700px) rotateX(10deg)',
-              opacity: 0,
-            },
-            '100%': {
-              transform: 'scale(1) translateY(0) perspective(700px) rotateX(0deg)',
-              opacity: 1,
-            },
-          },
-          '&:hover': {
-            transform: 'translateY(-3px) scale(1.02) perspective(700px)',
-            transition: 'all 0.2s ease',
-          },
-        },
-      });
-    },
-  ],
+  plugins: [require("tailwindcss-animate")],
 } satisfies Config;
 
 export default config;
