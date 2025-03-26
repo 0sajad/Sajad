@@ -1,107 +1,84 @@
 
-import React, { useEffect, useState } from "react";
-import { Check, Globe } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { ChevronDown, Globe } from "lucide-react";
+import { 
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { useTranslation } from "react-i18next";
-import { useLanguageTransition } from "@/hooks/useLanguageTransition";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 interface LanguageSwitcherProps {
   className?: string;
 }
 
-export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
-  const { i18n, t } = useTranslation();
-  const { isTransitioning, changeLanguage } = useLanguageTransition();
-  const [mounted, setMounted] = useState(false);
+export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
+  const { i18n } = useTranslation();
+  const [isOpen, setIsOpen] = useState(false);
   
   const languages = [
-    { code: "ar", name: "العربية", nativeName: "العربية" },
-    { code: "ar-iq", name: "Iraqi Arabic", nativeName: "العراقية" },
-    { code: "en", name: "English", nativeName: "English" },
-    { code: "fr", name: "French", nativeName: "Français" },
-    { code: "ja", name: "Japanese", nativeName: "日本語" },
-    { code: "zh", name: "Chinese", nativeName: "中文" }
+    { code: 'en', label: 'English' },
+    { code: 'ar', label: 'العربية' },
+    { code: 'ar-iq', label: 'العراقية' },
+    { code: 'fr', label: 'Français' },
+    { code: 'ja', label: '日本語' },
+    { code: 'zh', label: '中文' },
   ];
-
-  // التأكد من تطبيق الاتجاه الصحيح حسب اللغة عند التحميل
-  useEffect(() => {
-    setMounted(true);
-    const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
-    if (isRTL) {
-      document.documentElement.setAttribute("dir", "rtl");
-      document.body.classList.add('rtl-active');
-    } else {
-      document.documentElement.setAttribute("dir", "ltr");
-      document.body.classList.remove('rtl-active');
-    }
-    
-    // التأكد من أن اللغة مطبقة بشكل صحيح
-    const savedLanguage = localStorage.getItem("language");
-    if (savedLanguage && savedLanguage !== i18n.language) {
-      i18n.changeLanguage(savedLanguage);
-    }
-  }, [i18n.language, i18n]);
-
-  // العثور على اللغة الحالية
+  
   const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
-
-  if (!mounted) {
-    return null;
-  }
-
+  
+  const handleLanguageChange = (languageCode: string) => {
+    i18n.changeLanguage(languageCode);
+    document.documentElement.lang = languageCode;
+    document.documentElement.dir = ['ar', 'ar-iq'].includes(languageCode) ? 'rtl' : 'ltr';
+    setIsOpen(false);
+  };
+  
   return (
-    <TooltipProvider>
-      <DropdownMenu>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className={`relative ${className} ${isTransitioning ? 'opacity-50' : 'opacity-100'} transition-opacity duration-300 shadow-xl hover:shadow-2xl bg-gradient-to-r from-orange-50 to-amber-100 dark:from-gray-800 dark:to-gray-700 border border-orange-200 dark:border-gray-600`}
-                aria-label={t('common.selectLanguage', 'تغيير اللغة')}
-                data-testid="language-switcher"
-              >
-                <Globe className="h-4 w-4 text-orange-500 dark:text-amber-300" />
-                <span className="sr-only">{t('common.language', 'اللغة')}</span>
-              </Button>
-            </DropdownMenuTrigger>
-          </TooltipTrigger>
-          <TooltipContent className="bg-gradient-to-r from-orange-500/90 to-amber-600/90 text-white border-0 shadow-lg">
-            <p>{t('common.selectLanguage', 'تغيير اللغة')}</p>
-          </TooltipContent>
-        </Tooltip>
-        <DropdownMenuContent align="end" className="z-50 min-w-[180px] bg-white/90 dark:bg-gray-800/90 backdrop-blur-md border border-white/20 dark:border-gray-700/30 shadow-xl rounded-lg">
-          <DropdownMenuLabel className="text-center font-medium gradient-text">
-            {t('common.language', 'اللغة')}
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator className="bg-gradient-to-r from-orange-200 to-amber-200 dark:from-orange-800/30 dark:to-amber-800/30" />
-          {languages.map((lang) => (
-            <DropdownMenuItem
-              key={lang.code}
-              className={`flex items-center justify-between px-4 py-2 cursor-pointer transform hover:translate-y-[-1px] transition-transform ${
-                i18n.language === lang.code ? 'bg-orange-50 dark:bg-orange-900/30' : ''
-              }`}
-              onClick={() => changeLanguage(lang.code)}
-              data-testid={`language-option-${lang.code}`}
-            >
-              <span>{lang.nativeName}</span>
-              {i18n.language === lang.code && (
-                <Check className="h-4 w-4 ml-2 rtl:mr-2 rtl:ml-0 text-orange-500" />
-              )}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </TooltipProvider>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger asChild>
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(
+              "relative h-9 w-9 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 hover:brightness-110 text-white",
+              className
+            )}
+          >
+            <Globe className="h-5 w-5" />
+          </Button>
+        </motion.div>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="end"
+        className="w-48 bg-black/90 backdrop-blur-xl border border-orange-500/20 shadow-lg animate-in fade-in-80 slide-in-from-top-5"
+      >
+        {languages.map((language) => (
+          <DropdownMenuItem
+            key={language.code}
+            onClick={() => handleLanguageChange(language.code)}
+            className={cn(
+              "flex items-center gap-2 px-3 py-2 text-sm cursor-pointer hover:bg-orange-500/10",
+              language.code === currentLanguage.code
+                ? "text-orange-400 font-medium"
+                : "text-gray-300"
+            )}
+          >
+            {language.label}
+            {language.code === currentLanguage.code && (
+              <div className="ml-auto h-2 w-2 rounded-full bg-orange-500" />
+            )}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

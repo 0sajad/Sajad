@@ -33,7 +33,7 @@ export const showNotification = ({
     success: "from-green-500 to-green-600",
     error: "from-red-500 to-red-600",
     warning: "from-amber-500 to-amber-600", 
-    info: "from-orange-500 to-amber-500",
+    info: "from-orange-500 to-orange-600",
   };
 
   return toast(

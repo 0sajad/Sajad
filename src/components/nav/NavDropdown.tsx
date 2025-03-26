@@ -1,93 +1,76 @@
 
-import React, { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { ChevronDown } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useIsMobile } from "@/hooks/use-mobile";
+import React, { ReactNode, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown } from 'lucide-react';
 
 interface NavDropdownProps {
   label: string;
-  icon?: React.ReactNode;
-  items: {
-    to: string;
-    label: string;
-    icon?: React.ReactNode;
-  }[];
+  icon?: ReactNode;
+  items: { to: string; label: string }[];
 }
 
-export function NavDropdown({ label, icon, items }: NavDropdownProps) {
+export const NavDropdown = ({ label, icon, items }: NavDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const isMobile = useIsMobile();
-  
-  // إغلاق القائمة عند النقر خارجها
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (ref.current && !ref.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-  
+
   return (
-    <div className="relative group" ref={ref}>
+    <div
+      className="relative"
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
+    >
       <motion.button
-        className="flex items-center text-gray-700 hover:text-octaBlue-600 transition-colors"
+        className="flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium text-gray-300 hover:text-orange-300 transition-all"
         onClick={() => setIsOpen(!isOpen)}
-        onMouseEnter={() => !isMobile && setIsOpen(true)}
-        onMouseLeave={() => !isMobile && setTimeout(() => setIsOpen(false), 200)}
-        whileHover={{ scale: 1.05 }}
-        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+        whileHover={{ y: -2 }}
+        transition={{ type: "spring", stiffness: 500, damping: 15 }}
       >
-        {icon && <span className="mr-1 rtl:ml-1 rtl:mr-0">{icon}</span>}
-        {label}
-        <motion.div
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
-        >
-          <ChevronDown size={16} className="ml-1 rtl:mr-1 rtl:ml-0" />
-        </motion.div>
+        {icon && <span className="transition-transform hover:scale-110">{icon}</span>}
+        <span>{label}</span>
+        <ChevronDown
+          size={14}
+          className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
+        />
+        
+        <motion.div 
+          className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-orange-500 to-orange-400 rounded-full origin-left"
+          initial={{ scaleX: 0 }}
+          whileHover={{ scaleX: 1 }}
+          transition={{ duration: 0.3 }}
+        />
       </motion.button>
-      
+
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
-            className="absolute z-50 mt-2 w-48 bg-white dark:bg-gray-900 rounded-md shadow-lg py-2"
-            style={{ 
-              right: document.dir === 'rtl' ? 'auto' : '0',
-              left: document.dir === 'rtl' ? '0' : 'auto'
-            }}
-            onMouseEnter={() => !isMobile && setIsOpen(true)}
-            onMouseLeave={() => !isMobile && setIsOpen(false)}
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
+          <motion.div
+            className="absolute top-full left-0 mt-1 bg-black/90 backdrop-blur-xl rounded-lg shadow-lg border border-orange-500/20 min-w-[180px] z-50 overflow-hidden"
+            initial={{ opacity: 0, y: -5, scaleY: 0.8 }}
+            animate={{ opacity: 1, y: 0, scaleY: 1 }}
+            exit={{ opacity: 0, y: -5, scaleY: 0.8 }}
             transition={{ duration: 0.2 }}
+            style={{ transformOrigin: 'top center' }}
           >
-            {items.map((item, index) => (
-              <motion.div 
-                key={index}
-                initial={{ opacity: 0, x: document.dir === 'rtl' ? 10 : -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.05 }}
-                whileHover={{ backgroundColor: "#f3f4f6" }}
-              >
-                <Link
-                  to={item.to}
-                  className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200"
-                  onClick={() => setIsOpen(false)}
+            <div className="py-2">
+              {items.map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
                 >
-                  {item.icon && <span className="mr-2 rtl:ml-2 rtl:mr-0">{item.icon}</span>}
-                  {item.label}
-                </Link>
-              </motion.div>
-            ))}
+                  <Link
+                    to={item.to}
+                    className="flex items-center px-4 py-2 text-sm text-orange-100 hover:bg-orange-500/10 hover:text-orange-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
     </div>
   );
-}
+};
