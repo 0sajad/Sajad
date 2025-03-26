@@ -31,7 +31,7 @@ export const SimulationControls = ({
   const { t } = useTranslation();
 
   return (
-    <>
+    <TooltipProvider>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div>
           <label className="text-sm font-medium block mb-2">{t('networkTools.simulationSystems')}</label>
@@ -50,50 +50,46 @@ export const SimulationControls = ({
         
         <div>
           <label className="text-sm font-medium block mb-2">Packet Loss (%)</label>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div>
-                  <Slider 
-                    value={[packetLoss]} 
-                    onValueChange={(value) => setPacketLoss(value[0])} 
-                    min={0} 
-                    max={30} 
-                    step={1}
-                    disabled={isRunning}
-                  />
-                  <p className="text-center text-sm mt-1">{packetLoss}%</p>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Simulated packet loss percentage</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Slider 
+                  value={[packetLoss]} 
+                  onValueChange={(value) => setPacketLoss(value[0])} 
+                  min={0} 
+                  max={30} 
+                  step={1}
+                  disabled={isRunning}
+                />
+                <p className="text-center text-sm mt-1">{packetLoss}%</p>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Simulated packet loss percentage</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
         
         <div>
           <label className="text-sm font-medium block mb-2">Latency (ms)</label>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div>
-                  <Slider 
-                    value={[latency]} 
-                    onValueChange={(value) => setLatency(value[0])} 
-                    min={0} 
-                    max={200} 
-                    step={5}
-                    disabled={isRunning}
-                  />
-                  <p className="text-center text-sm mt-1">{latency} ms</p>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Simulated network latency</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Slider 
+                  value={[latency]} 
+                  onValueChange={(value) => setLatency(value[0])} 
+                  min={0} 
+                  max={200} 
+                  step={5}
+                  disabled={isRunning}
+                />
+                <p className="text-center text-sm mt-1">{latency} ms</p>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Simulated network latency</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
       
@@ -111,6 +107,6 @@ export const SimulationControls = ({
           <p className="text-center text-sm mt-1">{bandwidth} Mbps</p>
         </div>
       </div>
-    </>
+    </TooltipProvider>
   );
 };
