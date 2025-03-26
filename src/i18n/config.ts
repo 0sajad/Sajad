@@ -138,8 +138,8 @@ i18n.on('missingKey', (lng, ns, key) => {
       
       if (Array.isArray(fallbackLngs)) {
         for (let i = 0; i < fallbackLngs.length; i++) {
-          // إصلاح خطأ TS2352: تحويل النوع readonly string[] إلى string بشكل صحيح
-          const fallbackLng = String(fallbackLngs[i]);
+          // تحويل النوع readonly string[] إلى string بشكل صحيح
+          const fallbackLng = fallbackLngs[i].toString();
           if (i18n.exists(key, { lng: fallbackLng, ns })) {
             // الحصول على الترجمة من اللغة الاحتياطية
             return i18n.t(key, { lng: fallbackLng, ns });
@@ -152,8 +152,8 @@ i18n.on('missingKey', (lng, ns, key) => {
     const defaultFallbacks = fallbackLngsObject['default'];
     if (Array.isArray(defaultFallbacks)) {
       for (let i = 0; i < defaultFallbacks.length; i++) {
-        // إصلاح خطأ TS2352: تحويل النوع readonly string[] إلى string بشكل صحيح
-        const defaultFallbackLng = String(defaultFallbacks[i]);
+        // تحويل النوع readonly string[] إلى string بشكل صحيح
+        const defaultFallbackLng = defaultFallbacks[i].toString();
         if (i18n.exists(key, { lng: defaultFallbackLng, ns })) {
           return i18n.t(key, { lng: defaultFallbackLng, ns });
         }
