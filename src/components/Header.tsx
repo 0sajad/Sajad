@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ModeToggle } from "./ModeToggle";
@@ -90,7 +91,7 @@ export function Header({ onLanguageChange }: HeaderProps) {
           </div>
           
           <div className="flex items-center space-x-2 sm:space-x-4 md:space-x-6 rtl:space-x-reverse">
-            <LanguageSwitcher className="transform hover:scale-110 transition-transform shadow-xl rounded-full mr-3 sm:mr-4" />
+            <LanguageSwitcher className="transform hover:scale-110 transition-transform shadow-xl rounded-full mr-6 sm:mr-8" />
             
             <div className="transform hover:scale-105 transition-transform">
               <ModeToggle />
