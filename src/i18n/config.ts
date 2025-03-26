@@ -159,7 +159,6 @@ i18n.on('missingKey', (lng, ns, key) => {
         for (const defaultFallbackLng of defaultFallbacks) {
           const defaultFallbackLngStr = defaultFallbackLng as string;
           if (i18n.exists(key, { lng: defaultFallbackLngStr, ns })) {
-            // استخدام المعاملة المناسبة للنوع 'readonly string[]'
             return i18n.t(key, { lng: defaultFallbackLngStr, ns });
           }
         }
