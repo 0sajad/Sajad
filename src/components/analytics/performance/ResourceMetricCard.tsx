@@ -47,10 +47,14 @@ export const ResourceMetricCard = ({
       className={cardClassName}
       aria-label={ariaLabel || label}
       tabIndex={0}
+      role="region"
     >
       <CardContent className="p-4">
         <div className="flex items-center">
-          <div className={iconContainerClassName} aria-hidden="true">
+          <div 
+            className={iconContainerClassName} 
+            aria-hidden="true"
+          >
             <Icon className="h-5 w-5" />
           </div>
           <div>

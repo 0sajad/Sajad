@@ -54,5 +54,21 @@
   "colorContrast": "Color Contrast",
   "colorContrastDescription": "Adjust color contrast for better visibility",
   "keyboardFocus": "Keyboard Focus",
-  "keyboardFocusDescription": "Enhanced visual indicators for keyboard focus"
+  "keyboardFocusDescription": "Enhanced visual indicators for keyboard focus",
+  "readableFont": "Readable Font",
+  "readableFontDescription": "Use a more readable font throughout the application",
+  "textSpacing": "Text Spacing",
+  "textSpacingDescription": "Increase spacing between letters, words, and lines",
+  "lineHeight": "Line Height",
+  "lineHeightDescription": "Adjust line height for better readability",
+  "customCursor": "Custom Cursor",
+  "customCursorDescription": "Use a larger cursor for better visibility",
+  "speechRecognition": "Speech Recognition",
+  "speechRecognitionDescription": "Control the application using voice commands",
+  "textToSpeech": "Text to Speech",
+  "textToSpeechDescription": "Have text read aloud automatically",
+  "automaticAnnouncements": "Automatic Announcements",
+  "automaticAnnouncementsDescription": "Announce important changes automatically",
+  "savePreferences": "Save Preferences",
+  "loadPreferences": "Load Preferences"
 }

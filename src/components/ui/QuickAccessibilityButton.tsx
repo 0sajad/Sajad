@@ -22,13 +22,13 @@ export function QuickAccessibilityButton() {
     if (reducedMotion) features.push(t('accessibility.reducedMotion'));
     if (focusMode) features.push(t('accessibility.focusMode'));
     
-    if (features.length === 0) return t('accessibility.noFeaturesActive', 'No accessibility features are active');
-    return t('accessibility.activeFeatures', 'Active features: ') + features.join(', ');
+    if (features.length === 0) return t('accessibility.noFeaturesActive');
+    return t('accessibility.activeFeatures') + features.join(', ');
   };
   
   return (
     <div 
-      className="fixed bottom-4 left-4 z-50 md:bottom-6 md:left-6"
+      className="fixed bottom-4 left-4 z-50 md:bottom-6 md:left-6 rtl:left-auto rtl:right-4 rtl:md:right-6"
       role="region"
       aria-label={t('accessibility.a11ySettings')}
     >
@@ -38,7 +38,7 @@ export function QuickAccessibilityButton() {
             <Button
               variant="outline"
               size="icon"
-              className="relative shadow-md hover:shadow-lg bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-700 border border-blue-200 dark:border-gray-600 transition-all duration-300"
+              className="relative shadow-md hover:shadow-lg bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-700 border border-blue-200 dark:border-gray-600 transition-all duration-300 focus:ring-2 focus:ring-blue-400 dark:focus:ring-gray-400"
               aria-label={t('accessibility.a11ySettings')}
               aria-haspopup="menu"
               aria-expanded="false"
@@ -50,7 +50,7 @@ export function QuickAccessibilityButton() {
                   className="absolute -top-2 -right-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center" 
                   aria-hidden="true"
                 >
-                  <span className="text-xs text-white">{activeFeatures}</span>
+                  <span className="text-xs text-white font-bold">{activeFeatures}</span>
                 </div>
               )}
               <span id="a11y-settings-desc" className="sr-only">{getActiveFeaturesText()}</span>
