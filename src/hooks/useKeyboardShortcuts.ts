@@ -1,133 +1,168 @@
 
-import { useEffect, useRef, useMemo } from 'react';
-import { useA11y } from './useA11y';
-import { toast } from '@/components/ui/use-toast';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useA11y } from './useA11y';
 
+/**
+ * هوك يضيف اختصارات لوحة المفاتيح للتطبيق
+ * يتضمن اختصارات للوصول والتنقل وتبديل الميزات
+ */
 export function useKeyboardShortcuts() {
-  const { 
+  const {
     highContrast, setHighContrast,
     largeText, setLargeText,
     reducedMotion, setReducedMotion,
-    focusMode, setFocusMode
+    focusMode, setFocusMode,
+    readingGuide, setReadingGuide,
+    soundFeedback, setSoundFeedback
   } = useA11y();
-  const { t } = useTranslation();
-  
-  // Create a ref for the screen reader announcer element
-  const announcerRef = useRef<HTMLDivElement | null>(null);
-  
-  // Function to announce to screen readers
-  const announce = (message: string) => {
-    try {
-      // إذا كانت الدالة العامة announce متاحة، فاستخدمها أولاً
-      if (typeof window !== 'undefined' && window.announce) {
-        window.announce(message);
-        return;
-      }
+
+  const { t, i18n } = useTranslation();
+
+  // تبديل ميزة مع إضافة الإعلان الصوتي
+  const toggleFeature = (
+    feature: boolean,
+    setFeature: (val: boolean) => void,
+    featureName: string
+  ) => {
+    const newState = !feature;
+    setFeature(newState);
+
+    if (typeof window !== 'undefined' && window.announce) {
+      const state = newState 
+        ? t('accessibility.enabled', 'مفعّل') 
+        : t('accessibility.disabled', 'معطّل');
       
-      if (!announcerRef.current) {
-        // Create the announcer element if it doesn't exist
-        const announcer = document.createElement('div');
-        announcer.className = 'sr-only';
-        announcer.setAttribute('aria-live', 'assertive');
-        announcer.setAttribute('aria-atomic', 'true');
-        document.body.appendChild(announcer);
-        announcerRef.current = announcer;
-      }
+      const announcement = t('accessibility.announcementFeaturesToggled', {
+        feature: featureName,
+        state: state,
+        defaultValue: `ميزة {{feature}} الآن {{state}}`
+      });
       
-      // Update the announcer content
-      announcerRef.current.textContent = message;
-      
-      // Clear the announcer after a delay to prevent duplicate readings
-      setTimeout(() => {
-        if (announcerRef.current) {
-          announcerRef.current.textContent = '';
-        }
-      }, 1000);
-    } catch (error) {
-      console.error('Error announcing message to screen readers:', error);
+      window.announce(announcement, 'polite');
     }
   };
 
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Only respond to Alt + key combinations
-      if (event.altKey) {
-        let featureName = '';
-        let featureState = false;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // لا تعمل الاختصارات داخل حقول الإدخال
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement ||
+        e.target instanceof HTMLSelectElement
+      ) {
+        return;
+      }
+
+      // تبديل ميزة التباين العالي - Alt+C
+      if (e.altKey && (e.key === 'c' || e.key === 'C')) {
+        e.preventDefault();
+        toggleFeature(
+          highContrast, 
+          setHighContrast, 
+          t('accessibility.highContrast', 'التباين العالي')
+        );
+      }
+
+      // تبديل ميزة النص الكبير - Alt+T
+      if (e.altKey && (e.key === 't' || e.key === 'T')) {
+        e.preventDefault();
+        toggleFeature(
+          largeText, 
+          setLargeText, 
+          t('accessibility.largeText', 'النص الكبير')
+        );
+      }
+
+      // تبديل ميزة تقليل الحركة - Alt+M
+      if (e.altKey && (e.key === 'm' || e.key === 'M')) {
+        e.preventDefault();
+        toggleFeature(
+          reducedMotion, 
+          setReducedMotion, 
+          t('accessibility.reducedMotion', 'تقليل الحركة')
+        );
+      }
+
+      // تبديل ميزة وضع التركيز - Alt+F
+      if (e.altKey && (e.key === 'f' || e.key === 'F')) {
+        e.preventDefault();
+        toggleFeature(
+          focusMode, 
+          setFocusMode, 
+          t('accessibility.focusMode', 'وضع التركيز')
+        );
+      }
+
+      // تبديل دليل القراءة - Alt+G
+      if (e.altKey && (e.key === 'g' || e.key === 'G')) {
+        e.preventDefault();
+        toggleFeature(
+          readingGuide, 
+          setReadingGuide, 
+          t('accessibility.readingGuide', 'دليل القراءة')
+        );
+      }
+
+      // تبديل الإشعارات الصوتية - Alt+S
+      if (e.altKey && (e.key === 's' || e.key === 'S')) {
+        e.preventDefault();
+        toggleFeature(
+          soundFeedback, 
+          setSoundFeedback, 
+          t('accessibility.soundFeedback', 'التنبيهات الصوتية')
+        );
+      }
+
+      // تبديل اللغة - Alt+L
+      if (e.altKey && (e.key === 'l' || e.key === 'L')) {
+        e.preventDefault();
+        // الانتقال بين اللغات المدعومة
+        const supportedLanguages = ['ar', 'en', 'fr', 'ar-iq', 'ja', 'zh'];
+        const currentIndex = supportedLanguages.indexOf(i18n.language);
+        const nextIndex = (currentIndex + 1) % supportedLanguages.length;
+        const nextLanguage = supportedLanguages[nextIndex];
         
-        switch (event.key.toLowerCase()) {
-          case 'c': // Alt + C for High Contrast
-            setHighContrast(!highContrast);
-            featureName = t('accessibility.highContrast', 'High Contrast');
-            featureState = !highContrast;
-            toast({
-              title: highContrast 
-                ? t('accessibility.highContrastDisabled', 'High contrast disabled')
-                : t('accessibility.highContrastEnabled', 'High contrast enabled')
+        i18n.changeLanguage(nextLanguage).then(() => {
+          if (typeof window !== 'undefined' && window.announce) {
+            const langName = getLanguageName(nextLanguage);
+            
+            const announcement = t('accessibility.languageChanged', {
+              language: langName,
+              defaultValue: `تم تغيير اللغة إلى {{language}}`
             });
-            break;
-          case 't': // Alt + T for Large Text
-            setLargeText(!largeText);
-            featureName = t('accessibility.largeText', 'Large Text');
-            featureState = !largeText;
-            toast({
-              title: largeText 
-                ? t('accessibility.largeTextDisabled', 'Large text disabled')
-                : t('accessibility.largeTextEnabled', 'Large text enabled')
-            });
-            break;
-          case 'm': // Alt + M for Reduced Motion
-            setReducedMotion(!reducedMotion);
-            featureName = t('accessibility.reducedMotion', 'Reduced Motion');
-            featureState = !reducedMotion;
-            toast({
-              title: reducedMotion 
-                ? t('accessibility.reducedMotionDisabled', 'Reduced motion disabled')
-                : t('accessibility.reducedMotionEnabled', 'Reduced motion enabled')
-            });
-            break;
-          case 'f': // Alt + F for Focus Mode
-            setFocusMode(!focusMode);
-            featureName = t('accessibility.focusMode', 'Focus Mode');
-            featureState = !focusMode;
-            toast({
-              title: focusMode 
-                ? t('accessibility.focusModeDisabled', 'Focus mode disabled')
-                : t('accessibility.focusModeEnabled', 'Focus mode enabled')
-            });
-            break;
-        }
-        
-        // Announce changes to screen readers if a feature was toggled
-        if (featureName) {
-          const state = featureState ? 
-            t('accessibility.enabled', 'enabled') : 
-            t('accessibility.disabled', 'disabled');
-          
-          // Fixed interpolation syntax for i18next
-          const message = t('accessibility.announcementFeaturesToggled', {
-            feature: featureName,
-            state: state,
-            defaultValue: `Feature ${featureName} is now ${state}`
-          });
-          
-          announce(message);
-        }
+            
+            window.announce(announcement, 'polite');
+          }
+        });
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    
+    document.addEventListener('keydown', handleKeyDown);
+
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      // Clean up the announcer element on unmount
-      if (announcerRef.current && document.body.contains(announcerRef.current)) {
-        document.body.removeChild(announcerRef.current);
-      }
+      document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [highContrast, largeText, reducedMotion, focusMode, setHighContrast, setLargeText, setReducedMotion, setFocusMode, t]);
+  }, [
+    highContrast, setHighContrast,
+    largeText, setLargeText,
+    reducedMotion, setReducedMotion,
+    focusMode, setFocusMode,
+    readingGuide, setReadingGuide,
+    soundFeedback, setSoundFeedback, 
+    t, i18n
+  ]);
 
-  // باستخدام useMemo لإعادة كائن واحد ثابت لمنع التحديثات غير الضرورية
-  return useMemo(() => ({ announce }), []);
+  // الحصول على اسم اللغة
+  const getLanguageName = (lang: string): string => {
+    switch (lang) {
+      case 'ar': return 'العربية';
+      case 'ar-iq': return 'العراقية';
+      case 'en': return 'English';
+      case 'fr': return 'Français';
+      case 'ja': return '日本語';
+      case 'zh': return '中文';
+      default: return lang;
+    }
+  };
 }

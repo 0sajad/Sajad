@@ -1,5 +1,6 @@
 
 import React, { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 interface LiveAnnouncerProps {
   politeness?: "polite" | "assertive";
@@ -7,6 +8,7 @@ interface LiveAnnouncerProps {
 
 export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
   const announcerRef = useRef<HTMLDivElement>(null);
+  const { i18n } = useTranslation();
   
   useEffect(() => {
     // تعريف وظيفة الإعلان العامة
@@ -24,16 +26,28 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
             setTimeout(() => {
               if (announcerRef.current) {
                 announcerRef.current.textContent = message;
+                
+                // إضافة سمة اللغة للإعلان
+                announcerRef.current.setAttribute("lang", i18n.language);
+                
+                // التأكد من اتجاه النص الصحيح
+                const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
+                announcerRef.current.setAttribute("dir", isRTL ? "rtl" : "ltr");
               }
             }, 50);
+            
+            // سجل الإعلان في وحدة التحكم للتصحيح
+            console.log(`[LiveAnnouncer] ${level}: ${message}`);
           } catch (error) {
             console.error("Error while announcing:", error);
           }
+        } else {
+          console.warn("[LiveAnnouncer] Announcer element not found in DOM");
         }
       };
     }
     
-    // التنظيف: تفريغ عنصر الإعلان عند إزالة المكون
+    // للتنظيف: تفريغ عنصر الإعلان عند إزالة المكون
     return () => {
       if (announcerRef.current) {
         announcerRef.current.textContent = "";
@@ -46,16 +60,21 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
         };
       }
     };
-  }, []);
+  }, [i18n.language]);
   
   // تأكد من تشغيل هذا المكون عند تحميل التطبيق
   useEffect(() => {
     // التحقق من وجود وظيفة الإعلان
     if (typeof window !== 'undefined' && window.announce) {
       // إعلان أولي للتأكد من عمل النظام
-      window.announce("تم تحميل نظام الإعلانات للوصول", "polite");
+      const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
+      const initialMessage = isRTL 
+        ? "تم تحميل نظام الإعلانات للوصول" 
+        : "Accessibility announcements system loaded";
+      
+      window.announce(initialMessage, "polite");
     }
-  }, []);
+  }, [i18n.language]);
   
   // تنسيق CSS للتأكد من إخفاء العنصر بصريًا مع السماح لقارئات الشاشة بقراءته
   const announcerStyle: React.CSSProperties = {
@@ -78,6 +97,8 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
       aria-atomic="true"
       aria-relevant="additions"
       style={announcerStyle}
+      lang={i18n.language}
+      dir={i18n.language === "ar" || i18n.language === "ar-iq" ? "rtl" : "ltr"}
     />
   );
 }
