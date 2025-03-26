@@ -11,7 +11,7 @@ i18n
   .use(initReactI18next)
   .use(translationKeyDetector)
   .init({
-    resources,
+    resources: resources,
     lng: localStorage.getItem('language') || 'ar',
     fallbackLng: {
       'ar-iq': ['ar'],
@@ -30,11 +30,6 @@ i18n
       useSuspense: true,
       transKeepBasicHtmlNodesFor: ['br', 'strong', 'i', 'p', 'span', 'a', 'ul', 'ol', 'li']
     },
-    missingKeyHandler: (lng, ns, key) => {
-      if (process.env.NODE_ENV === 'development') {
-        console.warn(`مفتاح ترجمة مفقود: ${key} في مجال: ${ns} للغة: ${lng}`);
-      }
-    },
     detection: {
       order: ['localStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage'],
@@ -50,9 +45,7 @@ i18n
       return key.trim();
     },
     appendNamespaceToMissingKey: true,
-    // زيادة مهلة تحميل الترجمة لضمان تحميل كافة الملفات
-    partialBundledLanguages: true,
-    loadPath: '/locales/{{lng}}/{{ns}}.json'
+    partialBundledLanguages: true
   });
 
 // تطبيق اتجاه اللغة الصحيح عند تغيير اللغة
