@@ -27,5 +27,44 @@
   "advanced": "متقدم",
   "httpSocks": "HTTP/SOCKS",
   "configurable": "قابل للضبط",
-  "proFeature": "ميزة اضافية"
+  "proFeature": "ميزة اضافية",
+  "advancedSettings": "الإعدادات المتقدمة",
+  "developerVersion": "نسخة المطور",
+  "tabs": {
+    "advancedFeatures": "الميزات المتقدمة",
+    "notifications": "الإشعارات",
+    "network": "إعدادات الشبكة",
+    "security": "الأمان والخصوصية",
+    "system": "النظام"
+  },
+  "aiFeatures": "ميزات الذكاء الاصطناعي",
+  "aiDescription": "قم بتفعيل ميزات الذكاء الاصطناعي المتقدمة لتحليل شبكتك وتحسينها تلقائيًا.",
+  "notificationSettings": "إعدادات الإشعارات",
+  "notificationDescription": "التحكم بكافة أنواع الإشعارات من النظام",
+  "advancedNetworkSettings": "إعدادات الشبكة المتقدمة",
+  "networkDescription": "تحكم بكل تفاصيل اتصال الشبكة، من DNS لحد ربط الشبكات المتعددة.",
+  "securityPrivacySettings": "إعدادات الأمان والخصوصية",
+  "securityDescription": "ضبط مستويات الحماية والخصوصية للشبكة والأجهزة المتصلة.",
+  "systemSettings": "إعدادات النظام",
+  "systemDescription": "ضبط إعدادات موارد النظام والطاقة والأداء.",
+  "comingSoon": "قريبًا",
+  "notifications": {
+    "title": "إعدادات الإشعارات",
+    "description": "تحكم بأنواع الإشعارات اللي تريد استلامها",
+    "updated": "الإشعارات تحدثت",
+    "enabled": "تم تفعيل إشعارات {type}",
+    "disabled": "تم إيقاف إشعارات {type}",
+    "types": {
+      "system": "إشعارات النظام",
+      "security": "تنبيهات الأمان",
+      "updates": "التحديثات",
+      "aiAssistant": "مساعد الذكاء الاصطناعي",
+      "networkAlerts": "تنبيهات الشبكة"
+    },
+    "systemDesc": "إشعارات عن حالة النظام والأحداث المهمة",
+    "securityDesc": "تنبيهات عاجلة عن تهديدات الأمان المحتملة",
+    "updatesDesc": "إشعارات عن تحديثات النظام والميزات اليديدة",
+    "aiAssistantDesc": "رسائل واقتراحات من مساعد الذكاء الاصطناعي",
+    "networkAlertsDesc": "تنبيهات عن مشاكل الشبكة والاتصال"
+  }
 }

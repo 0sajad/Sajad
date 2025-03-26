@@ -27,5 +27,44 @@
   "advanced": "高度",
   "httpSocks": "HTTP/SOCKS",
   "configurable": "設定可能",
-  "proFeature": "プロ機能"
+  "proFeature": "プロ機能",
+  "advancedSettings": "高度な設定",
+  "developerVersion": "開発者バージョン",
+  "tabs": {
+    "advancedFeatures": "高度な機能",
+    "notifications": "通知",
+    "network": "ネットワーク設定",
+    "security": "セキュリティとプライバシー",
+    "system": "システム"
+  },
+  "aiFeatures": "AI機能",
+  "aiDescription": "高度なAI機能を有効にしてネットワークを自動的に分析および最適化します",
+  "notificationSettings": "通知設定",
+  "notificationDescription": "システムから送信されるすべてのタイプの通知を制御する",
+  "advancedNetworkSettings": "高度なネットワーク設定",
+  "networkDescription": "DNSの最適化からマルチネットワークの統合まで、ネットワーク接続のあらゆる側面を制御します",
+  "securityPrivacySettings": "セキュリティとプライバシーの設定",
+  "securityDescription": "ネットワークと接続デバイスの保護レベルとプライバシーを調整します",
+  "systemSettings": "システム設定",
+  "systemDescription": "システムリソース、電源管理、パフォーマンスの設定を調整します",
+  "comingSoon": "近日公開",
+  "notifications": {
+    "title": "通知設定",
+    "description": "受信したい通知の種類を制御する",
+    "updated": "通知が更新されました",
+    "enabled": "{type}通知が有効になりました",
+    "disabled": "{type}通知が無効になりました",
+    "types": {
+      "system": "システム通知",
+      "security": "セキュリティアラート",
+      "updates": "アップデート",
+      "aiAssistant": "AIアシスタント",
+      "networkAlerts": "ネットワークアラート"
+    },
+    "systemDesc": "システム状態と重要なイベントに関する通知",
+    "securityDesc": "潜在的なセキュリティ脅威に関する緊急アラート",
+    "updatesDesc": "システムアップデートと新機能に関する通知",
+    "aiAssistantDesc": "AIアシスタントからのメッセージと提案",
+    "networkAlertsDesc": "ネットワークと接続の問題に関するアラート"
+  }
 }
