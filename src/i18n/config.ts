@@ -127,13 +127,14 @@ i18n.on('missingKey', (lng, ns, key) => {
   
   // محاولة استخدام مفتاح من لغة أخرى
   const fallbacks = i18n.options.fallbackLng;
-  if (typeof fallbacks === 'object' && fallbacks && lng in fallbacks) {
+  if (typeof fallbacks === 'object' && fallbacks) {
     // تحويل fallbacks إلى نوع معروف لـ TypeScript
     const fallbackLngsObject = fallbacks as Record<string, string[]>;
-    const fbLng = lng as string;
+    const lngStr = lng as string;
     
-    if (fbLng in fallbackLngsObject) {
-      const fallbackLngs = fallbackLngsObject[fbLng];
+    // التحقق مما إذا كانت اللغة موجودة في كائن اللغات الاحتياطية
+    if (lngStr in fallbackLngsObject) {
+      const fallbackLngs = fallbackLngsObject[lngStr];
       
       if (Array.isArray(fallbackLngs)) {
         for (let i = 0; i < fallbackLngs.length; i++) {
