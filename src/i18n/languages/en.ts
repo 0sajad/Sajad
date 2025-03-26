@@ -9,7 +9,6 @@ import enAi from '../../locales/en/ai.json';
 import enAiAssistant from '../../locales/en/aiAssistant.json';
 import enConfig from '../../locales/en/config.json';
 import enCta from '../../locales/en/cta.json';
-import enSearch from '../../locales/en/search.json';
 
 export function loadEnglishResources() {
   return {
@@ -19,7 +18,6 @@ export function loadEnglishResources() {
       aiAssistant: enAiAssistant,
       cta: enCta,
       networkTools: enNetworkTools,
-      search: enSearch,
       ...enConfig
     },
     license: enLicense,

@@ -1,11 +1,10 @@
 
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Laptop, Settings, HelpCircle, LayoutDashboard, LogIn, Shield, BrainCircuit, Search } from "lucide-react";
+import { Laptop, Settings, HelpCircle, LayoutDashboard, LogIn, Shield, BrainCircuit } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { MobileNavItem } from "./NavItem";
 import { motion } from "framer-motion";
-import { SearchCommand } from "@/components/search/SearchCommand";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -52,12 +51,6 @@ export function MobileMenu({ isOpen }: MobileMenuProps) {
       exit={{ opacity: 0, y: -20 }}
     >
       <nav className="container mx-auto px-4 py-6 flex flex-col space-y-3">
-        <motion.div variants={itemVariants} className="mb-2">
-          <div className="px-2">
-            <SearchCommand />
-          </div>
-        </motion.div>
-        
         <motion.div variants={itemVariants}>
           <MobileNavItem
             to="/"

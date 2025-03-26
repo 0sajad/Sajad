@@ -2,11 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
-interface LoadingScreenProps {
-  showSpinner?: boolean;
-}
-
-export function LoadingScreen({ showSpinner = true }: LoadingScreenProps) {
+export function LoadingScreen() {
   const [progress, setProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
 
@@ -37,18 +33,16 @@ export function LoadingScreen({ showSpinner = true }: LoadingScreenProps) {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-background z-50">
       <div className="flex flex-col items-center">
-        {showSpinner && (
-          <div className="relative w-20 h-20">
-            <div className={cn(
-              "absolute w-full h-full border-4 border-primary rounded-full",
-              "animate-spin"
-            )} />
-            <div className={cn(
-              "absolute w-full h-full border-4 border-transparent border-t-primary rounded-full",
-              "animate-spin-slow"
-            )} />
-          </div>
-        )}
+        <div className="relative w-20 h-20">
+          <div className={cn(
+            "absolute w-full h-full border-4 border-primary rounded-full",
+            "animate-spin"
+          )} />
+          <div className={cn(
+            "absolute w-full h-full border-4 border-transparent border-t-primary rounded-full",
+            "animate-spin-slow"
+          )} />
+        </div>
         <h2 className="mt-4 text-2xl font-semibold text-foreground">OCTA-GRAM</h2>
         <p className="text-muted-foreground">Loading...</p>
         
