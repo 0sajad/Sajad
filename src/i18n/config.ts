@@ -5,6 +5,15 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import { resources } from './resources';
 import translationKeyDetector from './utils/TranslationKeyDetector';
 
+// Define the resource key type for TypeScript
+export interface ResourceKey {
+  [language: string]: {
+    [namespace: string]: {
+      [key: string]: string | object;
+    };
+  };
+}
+
 // تهيئة i18next بإعدادات محسنة
 i18n
   .use(LanguageDetector)
