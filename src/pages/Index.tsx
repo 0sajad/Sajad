@@ -16,6 +16,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QuickAccessibilityButton } from "@/components/ui/QuickAccessibilityButton";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { usePreferenceSync } from "@/hooks/usePreferenceSync";
+import { KeyboardNavigationMenu } from "@/components/ui/accessibility/keyboard-navigation-menu";
+import { ReadingGuide } from "@/components/ui/accessibility/reading-guide";
+import { KeyboardFocusDetector } from "@/components/ui/accessibility/keyboard-focus-detector";
+import { LiveAnnouncer } from "@/components/ui/accessibility/live-announcer";
 
 const Index = () => {
   const [loaded, setLoaded] = useState(false);
@@ -118,6 +122,12 @@ const Index = () => {
         
         {/* Accessibility Controls */}
         <QuickAccessibilityButton />
+
+        {/* Accessibility Components */}
+        <ReadingGuide />
+        <KeyboardNavigationMenu />
+        <KeyboardFocusDetector />
+        <LiveAnnouncer />
       </div>
     </TooltipProvider>
   );

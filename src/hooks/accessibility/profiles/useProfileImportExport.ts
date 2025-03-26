@@ -1,55 +1,51 @@
 
-import { A11ySettings } from '../../types/accessibility';
+import { saveAs } from 'file-saver';
 import { toast } from '@/components/ui/use-toast';
 import { useTranslation } from 'react-i18next';
-import { Download, Check } from 'lucide-react';
+import { A11ySettings } from '../../types/accessibility';
 
 /**
- * Hook for handling profile import and export functionality
+ * Hook for import/export of accessibility profiles
  */
 export function useProfileImportExport() {
   const { t } = useTranslation();
   
   /**
-   * Export accessibility settings to a downloadable JSON file
+   * Export accessibility settings to a JSON file
    */
   const exportSettings = (settings: A11ySettings) => {
     try {
-      // إضافة البيانات الوصفية للتصدير
-      const exportData = {
-        ...settings,
-        exportedAt: new Date().toISOString(),
-        schemaVersion: "1.1",
-        platform: navigator.platform,
-        appName: "OCTA-GRAM"
-      };
+      const dataStr = JSON.stringify(settings, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
       
-      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
+      // Create filename with date
+      const date = new Date();
+      const dateStr = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+      const filename = `a11y-settings-${dateStr}.json`;
       
-      const a = document.createElement('a');
-      const timestamp = new Date().toISOString().replace(/:/g, '-').substring(0, 19);
-      a.href = url;
-      a.download = `a11y-settings-${timestamp}.json`;
-      a.click();
+      // Save file
+      saveAs(dataBlob, filename);
       
-      URL.revokeObjectURL(url);
-      
-      // عرض إشعار نجاح التصدير
+      // Show success toast
       toast({
-          title: t('accessibility.exportSuccess', 'تم تصدير الإعدادات بنجاح'),
-          description: t('accessibility.exportSuccessDescription', 'تم حفظ ملف الإعدادات على جهازك'),
-          icon: <Download className="h-4 w-4 text-green-500" />
+        title: t('accessibility.exportSuccess', 'تم تصدير الإعدادات بنجاح'),
+        description: t('accessibility.exportSuccessDescription', 'تم حفظ إعدادات إمكانية الوصول الخاصة بك إلى ملف'),
+        variant: 'default'
       });
+      
+      // Announce to screen readers
+      if (window.announce) {
+        window.announce(t('accessibility.exportSuccessAnnouncement', 'تم تصدير إعدادات إمكانية الوصول بنجاح'), 'polite');
+      }
       
       return true;
     } catch (error) {
       console.error('Failed to export settings:', error);
       
-      // عرض إشعار فشل التصدير
+      // Show error toast
       toast({
-        title: t('accessibility.exportFailed', 'فشل تصدير الإعدادات'),
-        description: t('accessibility.exportFailedDescription', 'حدث خطأ أثناء تصدير الإعدادات'),
+        title: t('accessibility.exportError', 'فشل تصدير الإعدادات'),
+        description: t('accessibility.exportErrorDescription', 'حدث خطأ أثناء محاولة تصدير الإعدادات'),
         variant: 'destructive'
       });
       
@@ -62,55 +58,58 @@ export function useProfileImportExport() {
    */
   const importSettings = (file: File): Promise<A11ySettings> => {
     return new Promise((resolve, reject) => {
-      // عرض إشعار بدء الاستيراد
-      toast({
-        title: t('accessibility.importInProgress', 'جاري استيراد الإعدادات...'),
-        description: t('accessibility.importInProgressDescription', 'يرجى الانتظار بينما يتم استيراد الإعدادات الخاصة بك')
-      });
-      
       const reader = new FileReader();
       
       reader.onload = (event) => {
         try {
-          const imported = JSON.parse(event.target?.result as string);
+          if (!event.target || typeof event.target.result !== 'string') {
+            throw new Error('Failed to read file');
+          }
           
-          // التحقق من صحة البيانات المستوردة
-          if (!validateImportedSettings(imported)) {
+          const settings = JSON.parse(event.target.result) as A11ySettings;
+          
+          // Validate imported settings
+          if (!isValidSettings(settings)) {
             throw new Error('Invalid settings format');
           }
           
-          // إزالة البيانات الوصفية من البيانات المستوردة
-          const { exportedAt, schemaVersion, platform, appName, ...settings } = imported;
-          
-          // عرض إشعار نجاح الاستيراد
+          // Show success toast
           toast({
-              title: t('accessibility.importSuccess', 'تم استيراد الإعدادات بنجاح'),
-              description: t('accessibility.importSuccessDescription', 'تم تطبيق الإعدادات المستوردة'),
-              icon: <Check className="h-4 w-4 text-green-500" />
+            title: t('accessibility.importSuccess', 'تم استيراد الإعدادات بنجاح'),
+            description: t('accessibility.importSuccessDescription', 'تم تطبيق إعدادات إمكانية الوصول الجديدة'),
+            variant: 'default'
           });
           
-          resolve(settings as A11ySettings);
+          // Announce to screen readers
+          if (window.announce) {
+            window.announce(t('accessibility.importSuccessAnnouncement', 'تم استيراد إعدادات إمكانية الوصول بنجاح'), 'polite');
+          }
+          
+          resolve(settings);
         } catch (error) {
-          // عرض إشعار فشل الاستيراد
+          console.error('Failed to import settings:', error);
+          
+          // Show error toast
           toast({
-            title: t('accessibility.importFailed', 'فشل استيراد الإعدادات'),
-            description: t('accessibility.invalidFileFormat', 'تنسيق الملف غير صالح أو تالف'),
+            title: t('accessibility.importError', 'فشل استيراد الإعدادات'),
+            description: t('accessibility.importErrorDescription', 'الملف المحدد ليس بتنسيق صالح'),
             variant: 'destructive'
           });
           
-          reject(new Error('فشل قراءة الملف: تنسيق غير صالح'));
+          reject(error);
         }
       };
       
-      reader.onerror = () => {
-        // عرض إشعار فشل قراءة الملف
+      reader.onerror = (error) => {
+        console.error('Error reading file:', error);
+        
         toast({
-          title: t('accessibility.importFailed', 'فشل استيراد الإعدادات'),
-          description: t('accessibility.readError', 'فشل قراءة الملف المحدد'),
+          title: t('accessibility.importError', 'فشل استيراد الإعدادات'),
+          description: t('accessibility.importErrorDescription', 'حدث خطأ أثناء قراءة الملف'),
           variant: 'destructive'
         });
         
-        reject(new Error('فشل قراءة الملف'));
+        reject(error);
       };
       
       reader.readAsText(file);
@@ -118,54 +117,25 @@ export function useProfileImportExport() {
   };
   
   /**
-   * Validate imported settings structure
+   * Validate imported settings
    */
-  const validateImportedSettings = (data: any): boolean => {
-    // التحقق من وجود الحقول الأساسية
-    const requiredFields = ['highContrast', 'largeText', 'reducedMotion'];
-    for (const field of requiredFields) {
-      if (typeof data[field] !== 'boolean') {
-        return false;
-      }
-    }
-    
-    // التحقق إذا كان الملف من إصدار قديم وإجراء ترقية البيانات
-    if (!data.schemaVersion) {
-      // إضافة الحقول الافتراضية إذا كانت مفقودة (للتوافق الخلفي)
-      if (data.dyslexicFont === undefined) data.dyslexicFont = false;
-      if (data.readingGuide === undefined) data.readingGuide = false;
-      if (data.soundFeedback === undefined) data.soundFeedback = false;
-    }
-    
-    return true;
-  };
-  
-  /**
-   * Show file picker dialog to import settings
-   */
-  const showImportDialog = (): Promise<File | null> => {
-    return new Promise((resolve) => {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = '.json';
-      
-      input.onchange = (event) => {
-        const files = (event.target as HTMLInputElement).files;
-        if (files && files.length > 0) {
-          resolve(files[0]);
-        } else {
-          resolve(null);
-        }
-      };
-      
-      // محاكاة النقر لفتح مربع حوار اختيار الملف
-      input.click();
-    });
+  const isValidSettings = (settings: any): settings is A11ySettings => {
+    return (
+      typeof settings === 'object' &&
+      settings !== null &&
+      (typeof settings.highContrast === 'boolean' || settings.highContrast === undefined) &&
+      (typeof settings.largeText === 'boolean' || settings.largeText === undefined) &&
+      (typeof settings.reducedMotion === 'boolean' || settings.reducedMotion === undefined) &&
+      (typeof settings.focusMode === 'boolean' || settings.focusMode === undefined) &&
+      (typeof settings.dyslexicFont === 'boolean' || settings.dyslexicFont === undefined) &&
+      (typeof settings.readingGuide === 'boolean' || settings.readingGuide === undefined) &&
+      (typeof settings.soundFeedback === 'boolean' || settings.soundFeedback === undefined) &&
+      (typeof settings.colorBlindMode === 'string' || settings.colorBlindMode === null || settings.colorBlindMode === undefined)
+    );
   };
   
   return {
     exportSettings,
-    importSettings,
-    showImportDialog
+    importSettings
   };
 }
