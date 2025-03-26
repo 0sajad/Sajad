@@ -1,0 +1,20 @@
+
+{
+  "title": "حالة الأمان",
+  "subtitle": "مؤشرات حماية الشبكة",
+  "firewall": "جدار الحماية",
+  "firewallStatus": "يعمل بشكل كامل",
+  "intrusionDetection": "كشف التطفل",
+  "intrusionStatus": "نشط - لا توجد تهديدات",
+  "vpnStatus": "حالة الـ VPN",
+  "vpnStatusValue": "متصل - آمن",
+  "threatLevel": "مستوى التهديد",
+  "threatLevelValue": "منخفض",
+  "lastScan": "آخر فحص",
+  "lastScanTime": "قبل ساعة",
+  "scanNow": "فحص الآن",
+  "secureNetwork": "الشبكة آمنة",
+  "vulnerabilities": "نقاط الضعف",
+  "noVulnerabilities": "لم يتم اكتشاف نقاط ضعف",
+  "protectionEnabled": "الحماية مفعلة"
+}

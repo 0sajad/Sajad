@@ -1,18 +1,28 @@
 
-// English language resources
+import translation from '../../locales/en/translation.json';
+import common from '../../locales/en/common.json';
+import network from '../../locales/en/network.json';
+import dashboard from '../../locales/en/dashboard.json';
+import ai from '../../locales/en/ai.json';
+import aiAssistant from '../../locales/en/aiAssistant.json';
+import aiFeatures from '../../locales/en/aiFeatures.json';
+import helpCenter from '../../locales/en/helpCenter.json';
+import communicationTools from '../../locales/en/communicationTools.json';
+import networkTools from '../../locales/en/networkTools.json';
+import settings from '../../locales/en/settings.json';
+
 export function loadEnglishResources() {
   return {
-    translation: require('../../locales/en/translation.json'),
-    common: require('../../locales/en/common.json'),
-    network: require('../../locales/en/network.json'),
-    dashboard: require('../../locales/en/dashboard.json'),
-    ai: require('../../locales/en/ai.json'),
-    aiAssistant: require('../../locales/en/aiAssistant.json'),
-    aiFeatures: require('../../locales/en/aiFeatures.json'),
-    helpCenter: require('../../locales/en/helpCenter.json'),
-    communicationTools: require('../../locales/en/communicationTools.json'),
-    cta: require('../../locales/en/cta.json'),
-    license: require('../../locales/en/license.json'),
-    settings: require('../../locales/en/settings.json')
+    translation,
+    common,
+    network,
+    dashboard,
+    ai,
+    aiAssistant,
+    aiFeatures,
+    helpCenter,
+    communicationTools,
+    networkTools,
+    settings
   };
 }

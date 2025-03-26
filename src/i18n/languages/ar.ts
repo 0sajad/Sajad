@@ -1,19 +1,24 @@
 
-// Arabic language resources
+import translation from '../../locales/ar/translation.json';
+import common from '../../locales/ar/common.json';
+import network from '../../locales/ar/network.json';
+import dashboard from '../../locales/ar/dashboard.json';
+import ai from '../../locales/ar/ai.json';
+import aiAssistant from '../../locales/ar/aiAssistant.json';
+import aiFeatures from '../../locales/ar/aiFeatures.json';
+import communicationTools from '../../locales/ar/communicationTools.json';
+import networkTools from '../../locales/ar/networkTools.json';
+
 export function loadArabicResources() {
   return {
-    translation: require('../../locales/ar/translation.json'),
-    common: require('../../locales/ar/common.json'),
-    network: require('../../locales/ar/network.json'),
-    dashboard: require('../../locales/ar/dashboard.json'),
-    ai: require('../../locales/ar/ai.json'),
-    aiAssistant: require('../../locales/ar/aiAssistant.json'),
-    aiFeatures: require('../../locales/ar/aiFeatures.json'),
-    helpCenter: require('../../locales/ar/helpCenter.json'),
-    communicationTools: require('../../locales/ar/communicationTools.json'),
-    cta: require('../../locales/ar/cta.json'),
-    license: require('../../locales/ar/license.json'),
-    access: require('../../locales/ar/access.json'),
-    config: require('../../locales/ar/config.json')
+    translation,
+    common,
+    network,
+    dashboard,
+    ai,
+    aiAssistant,
+    aiFeatures,
+    communicationTools,
+    networkTools
   };
 }

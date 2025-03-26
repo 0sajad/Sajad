@@ -1,0 +1,20 @@
+
+{
+  "title": "Security Status",
+  "subtitle": "Network Protection Indicators",
+  "firewall": "Firewall",
+  "firewallStatus": "Fully Operational",
+  "intrusionDetection": "Intrusion Detection",
+  "intrusionStatus": "Active - No Threats",
+  "vpnStatus": "VPN Status",
+  "vpnStatusValue": "Connected - Secure",
+  "threatLevel": "Threat Level",
+  "threatLevelValue": "Low",
+  "lastScan": "Last Scan",
+  "lastScanTime": "1 hour ago",
+  "scanNow": "Scan Now",
+  "secureNetwork": "Network is Secure",
+  "vulnerabilities": "Vulnerabilities",
+  "noVulnerabilities": "No vulnerabilities detected",
+  "protectionEnabled": "Protection Enabled"
+}
