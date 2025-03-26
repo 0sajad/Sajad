@@ -44,27 +44,43 @@ export function NavDropdown({ label, icon, items }: NavDropdownProps) {
         }`}
         onClick={() => setIsOpen(!isOpen)}
         onMouseEnter={() => !isMobile && setIsOpen(true)}
-        onMouseLeave={() => !isMobile && setTimeout(() => setIsOpen(false), 200)}
+        onMouseLeave={() => !isMobile && setTimeout(() => setIsOpen(false), 300)}
         whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         transition={{ type: "spring", stiffness: 400, damping: 10 }}
       >
         {icon && <span className="mr-1.5 rtl:ml-1.5 rtl:mr-0">{icon}</span>}
-        {label}
+        <span className="relative z-10">{label}</span>
         <motion.div
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
+          animate={{ 
+            rotate: isOpen ? 180 : 0,
+            y: isOpen ? 1 : 0
+          }}
+          transition={{ duration: 0.3 }}
+          className="ml-1 rtl:mr-1 rtl:ml-0"
         >
-          <ChevronDown size={16} className="ml-1 rtl:mr-1 rtl:ml-0" />
+          <ChevronDown size={16} className={`transition-colors ${hasActiveItem ? "text-purple-600" : ""}`} />
         </motion.div>
         
         {/* إضافة خط أسفل القائمة إذا كان أحد عناصرها نشطاً */}
         {hasActiveItem && (
           <motion.div 
-            className="absolute -bottom-2 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-600 to-blue-600"
+            className="absolute -bottom-2 left-0 right-0 h-1 rounded-full bg-gradient-to-r from-purple-600 to-blue-600"
             layoutId="activeNavIndicator"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
+            style={{ boxShadow: "0 0 10px rgba(139, 92, 246, 0.5)" }}
+          />
+        )}
+        
+        {/* تأثير الهالة خلف النص عند النشاط */}
+        {hasActiveItem && (
+          <motion.div
+            className="absolute inset-0 -z-10 rounded-full opacity-10 bg-purple-400"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 0.15, scale: 1.1 }}
+            transition={{ duration: 0.5 }}
           />
         )}
       </motion.button>
@@ -72,7 +88,7 @@ export function NavDropdown({ label, icon, items }: NavDropdownProps) {
       <AnimatePresence>
         {isOpen && (
           <motion.div 
-            className="absolute z-50 mt-2 w-56 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-md shadow-lg py-2 border border-gray-200/40 dark:border-gray-700/40"
+            className="absolute z-50 mt-2 w-60 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-lg shadow-xl py-2 border border-gray-200/40 dark:border-gray-700/40"
             style={{ 
               right: document.dir === 'rtl' ? 'auto' : '0',
               left: document.dir === 'rtl' ? '0' : 'auto'
@@ -83,7 +99,7 @@ export function NavDropdown({ label, icon, items }: NavDropdownProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ 
-              duration: 0.2,
+              duration: 0.3,
               type: "spring",
               stiffness: 300,
               damping: 20
@@ -100,13 +116,14 @@ export function NavDropdown({ label, icon, items }: NavDropdownProps) {
                   transition={{ delay: index * 0.05 }}
                   whileHover={{ 
                     backgroundColor: isActive ? "rgba(124, 58, 237, 0.1)" : "#f3f4f6",
-                    x: document.dir === 'rtl' ? -3 : 3
+                    x: document.dir === 'rtl' ? -3 : 3,
+                    transition: { type: "spring", stiffness: 300, damping: 20 }
                   }}
-                  className={`${isActive ? 'bg-purple-50 dark:bg-purple-900/20' : ''}`}
+                  className={`${isActive ? 'bg-purple-50 dark:bg-purple-900/20' : ''} my-1 mx-1 rounded-md overflow-hidden`}
                 >
                   <Link
                     to={item.to}
-                    className={`flex items-center px-4 py-2.5 text-sm transition-colors
+                    className={`flex items-center px-4 py-2.5 text-sm transition-all
                     ${isActive 
                       ? 'text-purple-600 font-medium' 
                       : 'text-gray-700 dark:text-gray-200'}`}
@@ -117,8 +134,11 @@ export function NavDropdown({ label, icon, items }: NavDropdownProps) {
                     
                     {isActive && (
                       <motion.div 
-                        className="ml-auto w-1.5 h-1.5 rounded-full bg-purple-600"
+                        className="ml-auto w-2 h-2 rounded-full bg-purple-600"
                         layoutId="activeDropdownDot"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 10 }}
                       />
                     )}
                   </Link>

@@ -44,7 +44,7 @@ export const DesktopNav = () => {
   
   return (
     <div className="hidden md:flex items-center justify-end flex-grow relative">
-      {/* Developer Logo Positioned Above the Nav */}
+      {/* شعار المطور مع تحسين الموضع */}
       <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 w-[380px] h-[20px] z-10">
         <motion.div 
           className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-gray-300/20 dark:border-gray-700/20"
@@ -75,9 +75,9 @@ export const DesktopNav = () => {
           }}
         />
         
-        {/* تحسين وضع أيقونات الكود - الجانب الأيسر */}
+        {/* أيقونة كود الجانب الأيسر - تحسين الموضع */}
         <motion.div 
-          className="absolute -left-6 top-[24px] -translate-y-1/2 bg-gradient-to-r from-blue-500 to-purple-600 text-white p-1.5 rounded-full shadow-md"
+          className="absolute -left-8 top-[16px] -translate-y-1/2 bg-gradient-to-r from-blue-500 to-purple-600 text-white p-1.5 rounded-full shadow-md"
           animate={{
             rotate: [0, 10, 0, -10, 0],
             scale: [1, 1.1, 1],
@@ -92,9 +92,9 @@ export const DesktopNav = () => {
           <Code size={16} />
         </motion.div>
         
-        {/* تحسين وضع أيقونات الكود - الجانب الأيمن */}
+        {/* أيقونة كود الجانب الأيمن - تحسين الموضع */}
         <motion.div 
-          className="absolute -right-6 top-[24px] -translate-y-1/2 bg-gradient-to-r from-purple-600 to-blue-500 text-white p-1.5 rounded-full shadow-md"
+          className="absolute -right-8 top-[16px] -translate-y-1/2 bg-gradient-to-r from-purple-600 to-blue-500 text-white p-1.5 rounded-full shadow-md"
           animate={{
             rotate: [0, -10, 0, 10, 0],
             scale: [1, 1.1, 1],
@@ -112,7 +112,7 @@ export const DesktopNav = () => {
       </div>
       
       <motion.nav 
-        className="flex items-center space-x-7 rtl:space-x-reverse bg-white/20 dark:bg-gray-900/30 backdrop-blur-md px-8 py-2.5 rounded-full border border-gray-200/30 dark:border-gray-700/30 shadow-sm"
+        className="flex items-center space-x-8 rtl:space-x-reverse bg-white/20 dark:bg-gray-900/30 backdrop-blur-md px-8 py-3 rounded-full border border-gray-200/30 dark:border-gray-700/30 shadow-md"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -120,7 +120,7 @@ export const DesktopNav = () => {
         <motion.div variants={itemVariants}>
           <NavItem 
             to="/" 
-            icon={<LayoutDashboard size={16} />} 
+            icon={<LayoutDashboard size={17} />} 
             label={t('header.dashboard')} 
           />
         </motion.div>
@@ -128,7 +128,7 @@ export const DesktopNav = () => {
         <motion.div variants={itemVariants}>
           <NavDropdown 
             label={t('header.tools')}
-            icon={<Wrench size={16} />}
+            icon={<Wrench size={17} />}
             items={[
               { to: '/fiber-optic', label: t('header.networkScanner') },
               { to: '#', label: t('header.wifiAnalyzer') },
@@ -140,7 +140,7 @@ export const DesktopNav = () => {
         <motion.div variants={itemVariants}>
           <NavItem 
             to="/ai" 
-            icon={<BrainCircuit size={16} />} 
+            icon={<BrainCircuit size={17} />} 
             label={t('header.aiAssistant')} 
           />
         </motion.div>
@@ -148,7 +148,7 @@ export const DesktopNav = () => {
         <motion.div variants={itemVariants}>
           <NavItem 
             to="/settings" 
-            icon={<Settings size={16} />} 
+            icon={<Settings size={17} />} 
             label={t('header.settings')} 
           />
         </motion.div>
@@ -156,7 +156,7 @@ export const DesktopNav = () => {
         <motion.div variants={itemVariants}>
           <NavItem 
             to="/help-center" 
-            icon={<HelpCircle size={16} />} 
+            icon={<HelpCircle size={17} />} 
             label={t('header.helpCenter')} 
           />
         </motion.div>
@@ -164,7 +164,7 @@ export const DesktopNav = () => {
         <motion.div variants={itemVariants}>
           <NavItem 
             to="/license" 
-            icon={<Shield size={16} />} 
+            icon={<Shield size={17} />} 
             label={t('header.license')} 
           />
         </motion.div>
