@@ -1,0 +1,140 @@
+
+/* أنماط معززة للوضع المظلم */
+
+/* خلفية متدرجة قاتمة */
+.dark body {
+  background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+  color: #e2e8f0;
+}
+
+/* تحسين الظلال في الوضع المظلم */
+.dark .shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+.dark .shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+/* تعزيز ألوان الاقتباس */
+.dark blockquote {
+  border-left-color: #4f46e5;
+  background-color: rgba(79, 70, 229, 0.1);
+}
+
+/* تعزيز عناصر الإدخال */
+.dark input, 
+.dark textarea, 
+.dark select {
+  background-color: rgba(30, 41, 59, 0.8);
+  border-color: rgba(71, 85, 105, 0.5);
+}
+
+.dark input:focus, 
+.dark textarea:focus, 
+.dark select:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.25);
+}
+
+/* تحسين الأزرار */
+.dark .btn-primary {
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  border: none;
+}
+
+.dark .btn-secondary {
+  background-color: #334155;
+  border-color: #475569;
+}
+
+/* تحسين الروابط */
+.dark a:not(.btn) {
+  color: #93c5fd;
+  text-decoration-color: rgba(147, 197, 253, 0.4);
+}
+
+.dark a:not(.btn):hover {
+  color: #bfdbfe;
+  text-decoration-color: rgba(191, 219, 254, 0.6);
+}
+
+/* تأثيرات توهج خفيفة */
+.dark .glow-text {
+  text-shadow: 0 0 10px rgba(191, 219, 254, 0.3);
+}
+
+.dark .glow-box {
+  box-shadow: 0 0 15px rgba(79, 70, 229, 0.3);
+}
+
+/* تحسين خطوط العرض */
+.dark pre, 
+.dark code {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
+/* تأثير زجاجي في الوضع المظلم */
+.dark .glass {
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(71, 85, 105, 0.3);
+}
+
+/* إضاءة حدود خفيفة على التحويم */
+.dark .border-hover-effect {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dark .border-hover-effect:hover {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.3);
+}
+
+/* تحسينات العنصر النشط */
+.dark :focus-visible {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+/* تحسين عناصر العرض التقدمي */
+.dark .progress-bar {
+  background-color: #0f172a;
+}
+
+.dark .progress-value {
+  background: linear-gradient(90deg, #4f46e5, #6366f1);
+}
+
+/* ألوان رسومات بيانية محسنة */
+.dark .chart-primary {
+  stroke: #4f46e5;
+  fill: rgba(79, 70, 229, 0.2);
+}
+
+.dark .chart-secondary {
+  stroke: #8b5cf6;
+  fill: rgba(139, 92, 246, 0.2);
+}
+
+/* تعزيز مخططات الحالة والتنبيهات */
+.dark .status-success {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: #86efac;
+}
+
+.dark .status-warning {
+  background-color: rgba(234, 179, 8, 0.2);
+  color: #fde047;
+}
+
+.dark .status-error {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+.dark .status-info {
+  background-color: rgba(6, 182, 212, 0.2);
+  color: #67e8f9;
+}

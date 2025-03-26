@@ -1,143 +1,99 @@
 
 import { useEffect } from 'react';
-import { useA11y } from './useA11y';
+import { useA11y } from '@/hooks/useA11y';
 
+/**
+ * هوك لمزامنة تفضيلات المستخدم مع تفضيلات النظام
+ */
 export function usePreferenceSync() {
   const { 
-    highContrast, setHighContrast,
+    setReducedMotion, 
+    setHighContrast,
     largeText, setLargeText,
-    reducedMotion, setReducedMotion,
-    focusMode, setFocusMode
+    dyslexicFont, setDyslexicFont,
+    reducedMotion,
+    highContrast
   } = useA11y();
-
-  // مزامنة مع تخزين المتصفح والتفضيلات النظام
+  
+  // مراقبة تفضيلات النظام وتحديث الإعدادات وفقًا لذلك
   useEffect(() => {
-    // تحميل القيم الأولية من التخزين المحلي
-    const loadInitialPreferences = () => {
-      const savedHighContrast = localStorage.getItem('a11y-highContrast');
-      const savedLargeText = localStorage.getItem('a11y-largeText');
-      const savedReducedMotion = localStorage.getItem('a11y-reducedMotion');
-      const savedFocusMode = localStorage.getItem('a11y-focusMode');
-      
-      if (savedHighContrast === 'true') setHighContrast(true);
-      if (savedLargeText === 'true') setLargeText(true);
-      if (savedReducedMotion === 'true') setReducedMotion(true);
-      if (savedFocusMode === 'true') setFocusMode(true);
-      
-      // التحقق من تفضيلات تقليل الحركة في النظام
-      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-      if (prefersReducedMotion.matches && savedReducedMotion === null) {
-        setReducedMotion(true);
-      }
-      
-      // التحقق من تفضيلات مخطط الألوان لتباين محتمل أعلى
-      const prefersColorScheme = window.matchMedia('(prefers-color-scheme: dark)');
-      const prefersDarkWithContrast = window.matchMedia('(prefers-contrast: more)');
-      if (prefersColorScheme.matches && prefersDarkWithContrast.matches && savedHighContrast === null) {
-        setHighContrast(true);
-      }
-      
-      // التحقق من تفضيلات حجم النص في النظام
-      const prefersLargerText = window.matchMedia('(prefers-reduced-transparency: reduce)'); // ليس مثاليًا، ولكنه مؤشر ممكن
-      if (prefersLargerText.matches && savedLargeText === null) {
-        setLargeText(true);
-      }
-    };
+    // تفضيل تقليل الحركة
+    const prefersReducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     
-    loadInitialPreferences();
-    
-    // إعلان الإعدادات النشطة للمستخدم
-    const announceInitialSettings = () => {
-      // إذا كانت هناك ميزات نشطة، قم بإنشاء عنصر إعلان لقارئات الشاشة
-      const activeFeatures = [];
-      if (highContrast) activeFeatures.push('high contrast');
-      if (largeText) activeFeatures.push('large text');
-      if (reducedMotion) activeFeatures.push('reduced motion');
-      if (focusMode) activeFeatures.push('focus mode');
+    const handleReducedMotionChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      // تحديث الإعداد فقط إذا كان المستخدم لم يعين تفضيلًا صريحًا
+      const hasExplicitSetting = localStorage.getItem('reducedMotion') !== null;
       
-      if (activeFeatures.length > 0) {
-        const announcer = document.createElement('div');
-        announcer.setAttribute('aria-live', 'polite');
-        announcer.className = 'sr-only';
-        announcer.textContent = `Active accessibility features: ${activeFeatures.join(', ')}`;
-        document.body.appendChild(announcer);
-        
-        // إزالة الإعلان بعد قراءته
-        setTimeout(() => {
-          if (document.body.contains(announcer)) {
-            document.body.removeChild(announcer);
-          }
-        }, 3000);
-      }
-    };
-    
-    // تأخير الإعلان للسماح للمستخدم بتحميل الصفحة أولاً
-    const timer = setTimeout(announceInitialSettings, 2000);
-    
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [setHighContrast, setLargeText, setReducedMotion, setFocusMode]);
-  
-  // حفظ التفضيلات عند تغييرها
-  useEffect(() => {
-    localStorage.setItem('a11y-highContrast', highContrast.toString());
-  }, [highContrast]);
-  
-  useEffect(() => {
-    localStorage.setItem('a11y-largeText', largeText.toString());
-  }, [largeText]);
-  
-  useEffect(() => {
-    localStorage.setItem('a11y-reducedMotion', reducedMotion.toString());
-  }, [reducedMotion]);
-  
-  useEffect(() => {
-    localStorage.setItem('a11y-focusMode', focusMode.toString());
-  }, [focusMode]);
-  
-  // الاستماع لتغييرات تفضيلات النظام
-  useEffect(() => {
-    // مراقبة تغييرات تفضيلات تقليل الحركة
-    const prefersReducedMotionMediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const handleReducedMotionChange = (e: MediaQueryListEvent) => {
-      // التحديث فقط إذا لم يقم المستخدم بتعيين تفضيل صريح
-      if (localStorage.getItem('a11y-reducedMotion') === null) {
+      if (!hasExplicitSetting && e.matches !== reducedMotion) {
         setReducedMotion(e.matches);
       }
     };
     
-    // مراقبة تغييرات تفضيلات التباين
-    const prefersContrastMediaQuery = window.matchMedia('(prefers-contrast: more)');
-    const handleContrastChange = (e: MediaQueryListEvent) => {
-      // التحديث فقط إذا لم يقم المستخدم بتعيين تفضيل صريح
-      if (localStorage.getItem('a11y-highContrast') === null) {
+    // تفضيل التباين العالي
+    const prefersContrastQuery = window.matchMedia('(prefers-contrast: more)');
+    
+    const handleContrastChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      // تحديث الإعداد فقط إذا كان المستخدم لم يعين تفضيلًا صريحًا
+      const hasExplicitSetting = localStorage.getItem('highContrast') !== null;
+      
+      if (!hasExplicitSetting && e.matches !== highContrast) {
         setHighContrast(e.matches);
       }
     };
     
-    // مراقبة تغيرات الوضع الخفيف/الداكن
-    const prefersColorSchemeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleColorSchemeChange = () => {
-      // لا تغيير مباشر، ولكن قد نحتاج إلى تعديل سلوك التباين العالي
-      const isDarkMode = prefersColorSchemeMediaQuery.matches;
-      const prefersMoreContrast = prefersContrastMediaQuery.matches;
+    // إعداد الخطوط الكبيرة / الحجم
+    const prefersLargeTextQuery = window.matchMedia('(prefers-reduced-transparency: reduce)');
+    
+    const handleLargeTextChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      // استخدام تفضيل الشفافية المنخفضة كمؤشر على تفضيل النص الكبير
+      // (لا يوجد استعلام مباشر للنص الكبير في CSS)
+      const hasExplicitSetting = localStorage.getItem('largeText') !== null;
       
-      if (isDarkMode && prefersMoreContrast && localStorage.getItem('a11y-highContrast') === null) {
-        setHighContrast(true);
+      if (!hasExplicitSetting && e.matches !== largeText) {
+        setLargeText(e.matches);
       }
     };
     
-    prefersReducedMotionMediaQuery.addEventListener('change', handleReducedMotionChange);
-    prefersContrastMediaQuery.addEventListener('change', handleContrastChange);
-    prefersColorSchemeMediaQuery.addEventListener('change', handleColorSchemeChange);
+    // تفضيل قراءة الشاشة (يمكن أن يشير إلى تفضيل خط عسر القراءة)
+    const prefersReaderMediaQuery = window.matchMedia('(prefers-reduced-transparency: reduce), (prefers-contrast: more)');
+    
+    const handleReaderChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      // استخدام تفضيلات القابلية للقراءة كمؤشر على احتمال الحاجة لخط عسر القراءة
+      const hasExplicitSetting = localStorage.getItem('dyslexicFont') !== null;
+      
+      if (!hasExplicitSetting && e.matches !== dyslexicFont) {
+        setDyslexicFont(e.matches);
+      }
+    };
+    
+    // تطبيق التفضيلات الأولية
+    handleReducedMotionChange(prefersReducedMotionQuery);
+    handleContrastChange(prefersContrastQuery);
+    handleLargeTextChange(prefersLargeTextQuery);
+    handleReaderChange(prefersReaderMediaQuery);
+    
+    // الاستماع للتغييرات
+    prefersReducedMotionQuery.addEventListener('change', handleReducedMotionChange);
+    prefersContrastQuery.addEventListener('change', handleContrastChange);
+    prefersLargeTextQuery.addEventListener('change', handleLargeTextChange);
+    prefersReaderMediaQuery.addEventListener('change', handleReaderChange);
     
     return () => {
-      prefersReducedMotionMediaQuery.removeEventListener('change', handleReducedMotionChange);
-      prefersContrastMediaQuery.removeEventListener('change', handleContrastChange);
-      prefersColorSchemeMediaQuery.removeEventListener('change', handleColorSchemeChange);
+      prefersReducedMotionQuery.removeEventListener('change', handleReducedMotionChange);
+      prefersContrastQuery.removeEventListener('change', handleContrastChange);
+      prefersLargeTextQuery.removeEventListener('change', handleLargeTextChange);
+      prefersReaderMediaQuery.removeEventListener('change', handleReaderChange);
     };
-  }, [setReducedMotion, setHighContrast]);
-
-  return null;
+  }, [
+    setReducedMotion, 
+    setHighContrast, 
+    setLargeText, 
+    setDyslexicFont, 
+    reducedMotion,
+    highContrast,
+    largeText,
+    dyslexicFont
+  ]);
+  
+  return null; // هذا الهوك ليس له قيمة إرجاع
 }

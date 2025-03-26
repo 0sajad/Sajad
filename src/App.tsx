@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -9,31 +9,68 @@ import { cn } from "@/lib/utils";
 import { ModeProvider } from "@/context/ModeContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AnimatePresence } from "framer-motion";
-
-// Pages
-import Dashboard from "./pages/Dashboard";
-import AIAssistant from "./pages/AIAssistant";
-import Settings from "./pages/Settings";
-import License from "./pages/License";
-import FiberOptic from "./pages/FiberOptic";
-import NotFound from "./pages/NotFound";
-import HelpCenter from "./pages/HelpCenter";
-
-// Components
+import { useA11y } from "@/hooks/useA11y";
+import { LiveAnnouncer } from "@/components/ui/accessibility/live-announcer";
 import { LoadingScreen } from "./components/LoadingScreen";
+import { SmartSuspense } from "@/components/ui/smart-suspense";
+
+// استيراد المكونات بشكل كسول لتحسين أداء التحميل الأولي
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const AIAssistant = lazy(() => import("./pages/AIAssistant"));
+const Settings = lazy(() => import("./pages/Settings"));
+const License = lazy(() => import("./pages/License"));
+const FiberOptic = lazy(() => import("./pages/FiberOptic"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const HelpCenter = lazy(() => import("./pages/HelpCenter"));
+const AccessibilitySettings = lazy(() => import("./pages/AccessibilitySettings"));
+
+// استيراد ملفات CSS لدعم التحسينات الجديدة
+import "./components/ui/ui-effects.css";
+import "./components/ui/dark-mode.css";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const { i18n } = useTranslation();
+  const { reducedMotion } = useA11y();
   const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
   
   useEffect(() => {
     // تقليل وقت التحميل للتأكد من عرض المحتوى بسرعة أكبر
-    const timer = setTimeout(() => {
+    if (reducedMotion) {
+      // تقليل وقت التحميل إذا كان المستخدم يفضل تقليل الحركة
       setIsLoading(false);
-    }, 800);
+    } else {
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 800);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [reducedMotion]);
+  
+  // تطبيق الوضع عالي التباين إذا كان المستخدم يفضله
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-contrast: more)');
     
-    return () => clearTimeout(timer);
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (e.matches) {
+        document.documentElement.classList.add('high-contrast');
+      } else {
+        document.documentElement.classList.remove('high-contrast');
+      }
+    };
+    
+    // تطبيق الإعداد الافتراضي
+    if (mediaQuery.matches) {
+      document.documentElement.classList.add('high-contrast');
+    }
+    
+    // الاستماع للتغييرات
+    mediaQuery.addEventListener('change', handleChange);
+    
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
   }, []);
   
   if (isLoading) {
@@ -41,7 +78,7 @@ function App() {
   }
   
   return (
-    <ThemeProvider defaultTheme="system" storageKey="octa-gram-theme">
+    <ThemeProvider defaultTheme="system" storageKey="octa-gram-theme" attribute="class">
       <ModeProvider>
         <TooltipProvider>
           <div className={cn(
@@ -51,18 +88,81 @@ function App() {
             <Router>
               <AnimatePresence mode="wait">
                 <Routes>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/ai" element={<AIAssistant />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="/license" element={<License />} />
-                  <Route path="/fiber-optic" element={<FiberOptic />} />
-                  <Route path="/help-center" element={<HelpCenter />} />
-                  <Route path="/404" element={<NotFound />} />
+                  <Route 
+                    path="/" 
+                    element={
+                      <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
+                        <Dashboard />
+                      </SmartSuspense>
+                    } 
+                  />
+                  <Route 
+                    path="/ai" 
+                    element={
+                      <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
+                        <AIAssistant />
+                      </SmartSuspense>
+                    } 
+                  />
+                  <Route 
+                    path="/settings" 
+                    element={
+                      <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
+                        <Settings />
+                      </SmartSuspense>
+                    } 
+                  />
+                  <Route 
+                    path="/settings/accessibility" 
+                    element={
+                      <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
+                        <AccessibilitySettings />
+                      </SmartSuspense>
+                    } 
+                  />
+                  <Route 
+                    path="/license" 
+                    element={
+                      <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
+                        <License />
+                      </SmartSuspense>
+                    } 
+                  />
+                  <Route 
+                    path="/fiber-optic" 
+                    element={
+                      <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
+                        <FiberOptic />
+                      </SmartSuspense>
+                    } 
+                  />
+                  <Route 
+                    path="/help-center" 
+                    element={
+                      <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
+                        <HelpCenter />
+                      </SmartSuspense>
+                    } 
+                  />
+                  <Route 
+                    path="/404" 
+                    element={
+                      <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
+                        <NotFound />
+                      </SmartSuspense>
+                    } 
+                  />
                   <Route path="*" element={<Navigate to="/404" replace />} />
                 </Routes>
               </AnimatePresence>
             </Router>
-            <Toaster />
+            <Toaster position="top-right" toastOptions={{ 
+              duration: 5000,
+              className: cn("rounded-lg shadow-lg", 
+                reducedMotion ? "transition-none" : "transition-all duration-300",
+                "glass-card") 
+            }} />
+            <LiveAnnouncer />
           </div>
         </TooltipProvider>
       </ModeProvider>
