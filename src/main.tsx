@@ -34,7 +34,7 @@ const AppWrapper = () => {
       // إضافة رابط التخطي إلى المحتوى لمستخدمي لوحة المفاتيح
       const skipLink = document.createElement('a');
       skipLink.href = '#main-content';
-      skipLink.className = 'sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:p-4 focus:bg-white focus:text-black';
+      skipLink.className = 'sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:p-4 focus:bg-white focus:text-black focus:shadow-lg rounded';
       skipLink.textContent = document.documentElement.lang === 'ar' ? 'انتقل إلى المحتوى' : 'Skip to content';
       document.body.insertBefore(skipLink, document.body.firstChild);
       

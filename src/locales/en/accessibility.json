@@ -43,5 +43,16 @@
   "mainContent": "Main content",
   "navigation": "Navigation",
   "settings": "Settings",
-  "tools": "Tools"
+  "tools": "Tools",
+  "labelledByDescription": "This control affects {{feature}}",
+  "ariaLiveAnnouncement": "{{feature}} is now {{state}}",
+  "tooltipHelp": "Press Enter to activate",
+  "menuDescription": "Use arrow keys to navigate menu items",
+  "closeBtnLabel": "Close menu",
+  "applySettings": "Apply settings",
+  "resetDefaults": "Reset to defaults",
+  "colorContrast": "Color Contrast",
+  "colorContrastDescription": "Adjust color contrast for better visibility",
+  "keyboardFocus": "Keyboard Focus",
+  "keyboardFocusDescription": "Enhanced visual indicators for keyboard focus"
 }

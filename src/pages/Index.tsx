@@ -72,29 +72,41 @@ const Index = () => {
 
   return (
     <TooltipProvider>
-      <div className={`min-h-screen w-full transition-all duration-500 ${loaded ? 'opacity-100' : 'opacity-0'} ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}>
+      <div 
+        className={`min-h-screen w-full transition-all duration-500 ${loaded ? 'opacity-100' : 'opacity-0'} ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}
+        role="application"
+      >
+        <a 
+          href="#main-content" 
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:p-4 focus:bg-white focus:text-black focus:shadow-lg rounded"
+        >
+          Skip to main content
+        </a>
+        
         <Header />
         
-        {/* Hero Section */}
-        <HeroSection />
-        
-        {/* Network Dashboard Section */}
-        <NetworkDashboard />
-        
-        {/* Network Tools Section */}
-        <NetworkToolsSection />
-        
-        {/* Features Section */}
-        <AnimatedCards />
-        
-        {/* AI Features Section */}
-        <AIFeaturesSection />
-        
-        {/* Settings Section */}
-        <SettingsSection />
-        
-        {/* CTA Section */}
-        <CTASection />
+        <main id="main-content" tabIndex={-1}>
+          {/* Hero Section */}
+          <HeroSection />
+          
+          {/* Network Dashboard Section */}
+          <NetworkDashboard />
+          
+          {/* Network Tools Section */}
+          <NetworkToolsSection />
+          
+          {/* Features Section */}
+          <AnimatedCards />
+          
+          {/* AI Features Section */}
+          <AIFeaturesSection />
+          
+          {/* Settings Section */}
+          <SettingsSection />
+          
+          {/* CTA Section */}
+          <CTASection />
+        </main>
         
         <Footer />
         

@@ -25,17 +25,21 @@ export const ResourceMetricCard = ({
   ariaLabel,
   description
 }: ResourceMetricCardProps) => {
+  // تحسين التعامل مع الألوان لضمان التباين المناسب
+  const safeIconColor = iconColor || "blue";
+  const safeBgFrom = bgColorFrom || "blue";
+  
   // استخدام cn لدمج الفئات بشكل صحيح وتجنب مشاكل الألوان المخصصة مع Tailwind
   const cardClassName = cn(
     "shadow-sm transition-all duration-300 hover:shadow-md focus-within:ring-2",
-    `border-${bgColorFrom}-200`,
-    `focus-within:ring-${iconColor}-500`
+    `border-${safeBgFrom}-200`,
+    `focus-within:ring-${safeIconColor}-500`
   );
   
   const iconContainerClassName = cn(
     "mr-3 p-2 rounded-md",
-    `bg-${bgColorFrom}-100`,
-    `text-${iconColor}-500`
+    `bg-${safeBgFrom}-100`,
+    `text-${safeIconColor}-500`
   );
   
   return (

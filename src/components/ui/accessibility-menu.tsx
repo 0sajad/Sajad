@@ -29,6 +29,48 @@ export function AccessibilityMenu() {
     );
   };
 
+  // إعلان التغييرات لقارئات الشاشة
+  const announceChange = (feature: string, state: boolean) => {
+    const featureName = t(`accessibility.${feature}`);
+    const stateText = state ? t('accessibility.enabled') : t('accessibility.disabled');
+    const announcement = document.createElement('div');
+    announcement.setAttribute('aria-live', 'polite');
+    announcement.className = 'sr-only';
+    announcement.textContent = t('accessibility.ariaLiveAnnouncement', { 
+      feature: featureName, 
+      state: stateText 
+    });
+    document.body.appendChild(announcement);
+    
+    // إزالة الإعلان بعد قراءته
+    setTimeout(() => {
+      if (document.body.contains(announcement)) {
+        document.body.removeChild(announcement);
+      }
+    }, 3000);
+  };
+
+  // وظائف التبديل المحسنة مع الإعلانات
+  const handleToggleHighContrast = (checked: boolean) => {
+    setHighContrast(checked);
+    announceChange('highContrast', checked);
+  };
+
+  const handleToggleLargeText = (checked: boolean) => {
+    setLargeText(checked);
+    announceChange('largeText', checked);
+  };
+
+  const handleToggleReducedMotion = (checked: boolean) => {
+    setReducedMotion(checked);
+    announceChange('reducedMotion', checked);
+  };
+
+  const handleToggleFocusMode = (checked: boolean) => {
+    setFocusMode(checked);
+    announceChange('focusMode', checked);
+  };
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -42,22 +84,50 @@ export function AccessibilityMenu() {
           <Accessibility className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 md:w-96" align="end" sideOffset={16} aria-label={t('accessibility.title')}>
+      <PopoverContent 
+        className="w-80 md:w-96" 
+        align="end" 
+        sideOffset={16} 
+        aria-label={t('accessibility.title')}
+        role="dialog"
+      >
         <div className="space-y-4">
-          <div className="flex items-center">
-            <Accessibility className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" aria-hidden="true" />
-            <h3 className="text-sm font-medium">
-              {t('accessibility.title')}
-            </h3>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <Accessibility className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" aria-hidden="true" />
+              <h3 className="text-sm font-medium" id="a11y-menu-title">
+                {t('accessibility.title')}
+              </h3>
+            </div>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-8 w-8 p-0"
+              onClick={() => setOpen(false)}
+              aria-label={t('accessibility.closeBtnLabel')}
+            >
+              <span aria-hidden="true">×</span>
+            </Button>
           </div>
           
           <Separator />
           
-          <div className="space-y-2" role="group" aria-label={t('accessibility.title')}>
+          <div 
+            className="space-y-2" 
+            role="group" 
+            aria-labelledby="a11y-menu-title"
+            aria-describedby="a11y-menu-desc"
+          >
+            <p id="a11y-menu-desc" className="sr-only">{t('accessibility.menuDescription')}</p>
+            
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2 rtl:space-x-reverse">
                 <Eye className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                <Label htmlFor="a11y-high-contrast" className="text-sm cursor-pointer">
+                <Label 
+                  htmlFor="a11y-high-contrast" 
+                  className="text-sm cursor-pointer"
+                  id="high-contrast-label"
+                >
                   {t('accessibility.highContrast')}
                 </Label>
               </div>
@@ -66,17 +136,23 @@ export function AccessibilityMenu() {
                 <Switch
                   id="a11y-high-contrast"
                   checked={highContrast}
-                  onCheckedChange={setHighContrast}
+                  onCheckedChange={handleToggleHighContrast}
                   aria-checked={highContrast}
-                  aria-label={t('accessibility.highContrast')}
+                  aria-labelledby="high-contrast-label"
+                  aria-describedby="high-contrast-desc"
                 />
               </div>
             </div>
+            <p id="high-contrast-desc" className="sr-only">{t('accessibility.highContrastDescription')}</p>
             
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2 rtl:space-x-reverse">
                 <Type className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                <Label htmlFor="a11y-large-text" className="text-sm cursor-pointer">
+                <Label 
+                  htmlFor="a11y-large-text" 
+                  className="text-sm cursor-pointer"
+                  id="large-text-label"
+                >
                   {t('accessibility.largeText')}
                 </Label>
               </div>
@@ -85,17 +161,23 @@ export function AccessibilityMenu() {
                 <Switch
                   id="a11y-large-text"
                   checked={largeText}
-                  onCheckedChange={setLargeText}
+                  onCheckedChange={handleToggleLargeText}
                   aria-checked={largeText}
-                  aria-label={t('accessibility.largeText')}
+                  aria-labelledby="large-text-label"
+                  aria-describedby="large-text-desc"
                 />
               </div>
             </div>
+            <p id="large-text-desc" className="sr-only">{t('accessibility.largeTextDescription')}</p>
             
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2 rtl:space-x-reverse">
                 <ZoomIn className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                <Label htmlFor="a11y-reduced-motion" className="text-sm cursor-pointer">
+                <Label 
+                  htmlFor="a11y-reduced-motion" 
+                  className="text-sm cursor-pointer"
+                  id="reduced-motion-label"
+                >
                   {t('accessibility.reducedMotion')}
                 </Label>
               </div>
@@ -104,17 +186,23 @@ export function AccessibilityMenu() {
                 <Switch
                   id="a11y-reduced-motion"
                   checked={reducedMotion}
-                  onCheckedChange={setReducedMotion}
+                  onCheckedChange={handleToggleReducedMotion}
                   aria-checked={reducedMotion}
-                  aria-label={t('accessibility.reducedMotion')}
+                  aria-labelledby="reduced-motion-label"
+                  aria-describedby="reduced-motion-desc"
                 />
               </div>
             </div>
+            <p id="reduced-motion-desc" className="sr-only">{t('accessibility.reducedMotionDescription')}</p>
             
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2 rtl:space-x-reverse">
                 <MousePointer2 className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                <Label htmlFor="a11y-focus-mode" className="text-sm cursor-pointer">
+                <Label 
+                  htmlFor="a11y-focus-mode" 
+                  className="text-sm cursor-pointer"
+                  id="focus-mode-label"
+                >
                   {t('accessibility.focusMode')}
                 </Label>
               </div>
@@ -123,12 +211,14 @@ export function AccessibilityMenu() {
                 <Switch
                   id="a11y-focus-mode"
                   checked={focusMode}
-                  onCheckedChange={setFocusMode}
+                  onCheckedChange={handleToggleFocusMode}
                   aria-checked={focusMode}
-                  aria-label={t('accessibility.focusMode')}
+                  aria-labelledby="focus-mode-label"
+                  aria-describedby="focus-mode-desc"
                 />
               </div>
             </div>
+            <p id="focus-mode-desc" className="sr-only">{t('accessibility.focusModeDescription')}</p>
           </div>
           
           <Separator />
@@ -136,13 +226,22 @@ export function AccessibilityMenu() {
           <div className="space-y-2">
             <div className="flex items-center space-x-2 rtl:space-x-reverse">
               <Keyboard className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-              <h4 className="text-sm font-medium">
+              <h4 className="text-sm font-medium" id="shortcuts-heading">
                 {t('accessibility.keyboardShortcuts')}
               </h4>
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p 
+              className="text-xs text-muted-foreground"
+              aria-labelledby="shortcuts-heading"
+            >
               {t('accessibility.keyboardShortcutsDescription')}
             </p>
+            <ul className="text-xs text-muted-foreground space-y-1 ml-6 rtl:mr-6 rtl:ml-0" aria-labelledby="shortcuts-heading">
+              <li>{t('accessibility.altC')}</li>
+              <li>{t('accessibility.altT')}</li>
+              <li>{t('accessibility.altM')}</li>
+              <li>{t('accessibility.altF')}</li>
+            </ul>
           </div>
           
           <Button 

@@ -43,5 +43,16 @@
   "mainContent": "المحتوى الرئيسي",
   "navigation": "التنقل",
   "settings": "الإعدادات",
-  "tools": "الأدوات"
+  "tools": "الأدوات",
+  "labelledByDescription": "يؤثر هذا التحكم على {{feature}}",
+  "ariaLiveAnnouncement": "{{feature}} الآن {{state}}",
+  "tooltipHelp": "اضغط على Enter للتنشيط",
+  "menuDescription": "استخدم مفاتيح الأسهم للتنقل بين عناصر القائمة",
+  "closeBtnLabel": "إغلاق القائمة",
+  "applySettings": "تطبيق الإعدادات",
+  "resetDefaults": "إعادة تعيين الإعدادات الافتراضية",
+  "colorContrast": "تباين الألوان",
+  "colorContrastDescription": "ضبط تباين الألوان لتحسين الرؤية",
+  "keyboardFocus": "تركيز لوحة المفاتيح",
+  "keyboardFocusDescription": "مؤشرات مرئية محسنة لتركيز لوحة المفاتيح"
 }
