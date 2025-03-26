@@ -54,17 +54,29 @@
     "updated": "الإشعارات تحدثت",
     "enabled": "تم تفعيل إشعارات {type}",
     "disabled": "تم إيقاف إشعارات {type}",
+    "allEnabled": "تم تفعيل جميع الإشعارات",
+    "allDisabled": "تم تعطيل جميع الإشعارات",
+    "enableAll": "تفعيل الكل",
+    "disableAll": "تعطيل الكل",
     "types": {
       "system": "إشعارات النظام",
       "security": "تنبيهات الأمان",
       "updates": "التحديثات",
       "aiAssistant": "مساعد الذكاء الاصطناعي",
-      "networkAlerts": "تنبيهات الشبكة"
+      "networkAlerts": "تنبيهات الشبكة",
+      "performance": "تنبيهات الأداء",
+      "securityScans": "فحوصات الأمان",
+      "serverStatus": "حالة الخادم",
+      "networkActivity": "نشاط الشبكة"
     },
     "systemDesc": "إشعارات عن حالة النظام والأحداث المهمة",
     "securityDesc": "تنبيهات عاجلة عن تهديدات الأمان المحتملة",
     "updatesDesc": "إشعارات عن تحديثات النظام والميزات اليديدة",
     "aiAssistantDesc": "رسائل واقتراحات من مساعد الذكاء الاصطناعي",
-    "networkAlertsDesc": "تنبيهات عن مشاكل الشبكة والاتصال"
+    "networkAlertsDesc": "تنبيهات عن مشاكل الشبكة والاتصال",
+    "performanceDesc": "تنبيهات حول أداء النظام والتحسينات",
+    "securityScansDesc": "نتائج فحوصات الأمان الدورية",
+    "serverStatusDesc": "إشعارات عن حالة الخوادم المتصلة",
+    "networkActivityDesc": "إشعارات عن نشاط غير معتاد في الشبكة"
   }
 }

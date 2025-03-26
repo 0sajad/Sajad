@@ -4,7 +4,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SettingsMenu } from "@/components/settings/SettingsMenu";
 import { AdvancedFeatures } from "@/components/settings/AdvancedFeatures";
-import { NotificationSettings } from "@/components/settings/NotificationSettings";
+import { NotificationControl } from "@/components/settings/NotificationControl";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Shield, Zap, Cpu, Server, BrainCircuit, Bell } from "lucide-react";
@@ -66,7 +66,7 @@ const Settings = () => {
                   </p>
                   <Separator className="my-4" />
                   
-                  <NotificationSettings />
+                  <NotificationControl />
                 </div>
               </TabsContent>
               

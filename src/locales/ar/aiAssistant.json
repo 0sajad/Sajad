@@ -1,10 +1,13 @@
 
 {
+  "title": "مساعد الذكاء الاصطناعي",
+  "ready": "جاهز للمساعدة",
   "features": {
     "webDevelopment": "تطوير الويب",
     "security": "الأمان المتقدم",
     "selfImproving": "التحسين الذاتي",
-    "database": "قواعد البيانات"
+    "database": "قواعد البيانات",
+    "codeAnalysis": "تحليل الشيفرة البرمجية"
   },
   "bubbleMessages": {
     "newTools": "أدوات جديدة متوفرة!",
@@ -15,5 +18,9 @@
   "multiLanguage": "دعم متعدد اللغات",
   "multiLanguageDesc": "يدعم جميع لغات البرمجة والتواصل بلغات متعددة",
   "selfDevelopment": "التطوير الذاتي",
-  "selfDevelopmentDesc": "يطور نفسه باستمرار ويتعلم تقنيات جديدة دون تدخل بشري"
+  "selfDevelopmentDesc": "يطور نفسه باستمرار ويتعلم تقنيات جديدة دون تدخل بشري",
+  "continuousLearning": "التعلم المستمر",
+  "learningDesc": "يتعلم باستمرار من البيانات الجديدة وتفاعلات المستخدمين",
+  "selfDevelpment": "التطوير الذاتي",
+  "selfDevelpmentDesc": "يحسن نفسه ويطور قدراته بشكل مستقل"
 }

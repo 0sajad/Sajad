@@ -14,10 +14,9 @@ import HelpCenter from "./pages/HelpCenter";
 import LicenseVerification from "./pages/LicenseVerification";
 import AccessVerification from "./pages/AccessVerification";
 
-// Create a new QueryClient instance outside of the component
-// but inside the function scope of this file
+// ملاحظة: يجب إنشاء مثيل QueryClient داخل المكون ليعمل بشكل صحيح مع هوكس React
 const App = () => {
-  // Create a new QueryClient instance inside the component
+  // إنشاء مثيل جديد من QueryClient في كل مرة يتم فيها تحميل المكون
   const queryClient = new QueryClient();
   
   return (
