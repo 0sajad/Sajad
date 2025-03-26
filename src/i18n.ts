@@ -1,3 +1,4 @@
+
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
@@ -7,36 +8,42 @@ const getLanguageDirection = (language: string): 'rtl' | 'ltr' => {
   return ['ar', 'ar-iq'].includes(language) ? 'rtl' : 'ltr';
 };
 
-const getDefaultNamespace = () => {
-  return 'translation';
-};
-
+// إنشاء كاشف اللغة المخصص
 const languageDetector = new LanguageDetector();
 languageDetector.addDetector({
   name: 'customDetector',
   lookup: () => {
-    // Check for manually set language first
+    console.log("Looking up language...");
+    // البحث عن اللغة المحفوظة أولاً
     const savedLanguage = localStorage.getItem('language');
     if (savedLanguage) {
+      console.log("Found saved language:", savedLanguage);
       return savedLanguage;
     }
     
-    // Otherwise use browser language
+    // استخدام لغة المتصفح
     const browserLanguage = navigator.language;
+    console.log("Browser language:", browserLanguage);
+    
     if (browserLanguage.startsWith('ar')) {
-      // Check if it's Iraqi Arabic dialect
+      // التحقق إذا كانت لهجة عراقية
       if (browserLanguage.includes('iq')) {
+        console.log("Detected Iraqi Arabic dialect");
         return 'ar-iq';
       }
-      // Default to Standard Arabic
+      // لغة عربية قياسية
+      console.log("Detected Standard Arabic");
       return 'ar';
     }
     
-    // Default to English
+    // الافتراضي للغة الإنجليزية
+    console.log("Using default language: English");
     return 'en';
   }
 });
 
+// تهيئة i18next
+console.log("Initializing i18next...");
 i18n
   .use(languageDetector)
   .use(initReactI18next)
@@ -44,7 +51,7 @@ i18n
     resources,
     fallbackLng: 'en',
     lng: localStorage.getItem('language') || 'en',
-    debug: false,
+    debug: true, // تفعيل وضع التصحيح للمساعدة في اكتشاف الأخطاء
     ns: [
       'translation',
       'common',
@@ -59,20 +66,59 @@ i18n
       'settings',
       'securityStatus'
     ],
-    defaultNS: getDefaultNamespace(),
+    defaultNS: 'translation',
     interpolation: {
       escapeValue: false
     },
     react: {
       useSuspense: true
     }
+  }).then(() => {
+    console.log("i18next initialized successfully");
+    console.log("Current language:", i18n.language);
+    console.log("Available languages:", Object.keys(resources));
+    
+    // تعيين اتجاه اللغة
+    const dir = getLanguageDirection(i18n.language);
+    console.log("Setting language direction:", dir);
+    document.documentElement.setAttribute('dir', dir);
+    document.documentElement.setAttribute('lang', i18n.language);
+    
+    // تطبيق فئات CSS للغات RTL
+    if (dir === 'rtl') {
+      document.body.classList.add('rtl-active');
+    } else {
+      document.body.classList.remove('rtl-active');
+    }
+    
+    // إطلاق حدث تغيير اللغة
+    document.dispatchEvent(
+      new CustomEvent('languageFullyChanged', {
+        detail: { language: i18n.language }
+      })
+    );
+  }).catch(error => {
+    console.error("Failed to initialize i18next:", error);
   });
 
+// الاستماع لتغييرات اللغة
 i18n.on('languageChanged', (language) => {
-  document.documentElement.setAttribute('dir', getLanguageDirection(language));
+  console.log("Language changed to:", language);
+  
+  const dir = getLanguageDirection(language);
+  console.log("Updating language direction to:", dir);
+  
+  document.documentElement.setAttribute('dir', dir);
   document.documentElement.setAttribute('lang', language);
 
-  // Trigger a custom event once language is fully changed and applied
+  // تطبيق فئات CSS للغات RTL
+  if (dir === 'rtl') {
+    document.body.classList.add('rtl-active');
+  } else {
+    document.body.classList.remove('rtl-active');
+  }
+
+  // إطلاق حدث عند تغيير اللغة بالكامل
   document.dispatchEvent(
     new CustomEvent('languageFullyChanged', {
       detail: { language }

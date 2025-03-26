@@ -31,6 +31,15 @@ function App() {
   useEffect(() => {
     console.log("App initializing - Current language:", i18n.language);
     
+    // ضبط اتجاه اللغة
+    if (isRTL) {
+      document.documentElement.setAttribute("dir", "rtl");
+      document.body.classList.add('rtl-active');
+    } else {
+      document.documentElement.setAttribute("dir", "ltr");
+      document.body.classList.remove('rtl-active');
+    }
+    
     // محاكاة وقت التحميل
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -38,7 +47,11 @@ function App() {
     }, 1500);
     
     return () => clearTimeout(timer);
-  }, []);
+  }, [i18n.language, isRTL]);
+  
+  useEffect(() => {
+    console.log("RTL state changed:", isRTL);
+  }, [isRTL]);
   
   if (isLoading) {
     return <LoadingScreen />;
