@@ -50,7 +50,7 @@ export function LoadingScreen({ showSpinner = true }: LoadingScreenProps) {
           </div>
         )}
         <h2 className="mt-4 text-2xl font-semibold text-foreground">OCTA-GRAM</h2>
-        <p className="text-muted-foreground">Loading...</p>
+        <p className="text-muted-foreground">جاري التحميل...</p>
         
         {/* شريط تقدم لإظهار حالة التحميل للمستخدم */}
         <div className="w-56 h-1.5 mt-4 bg-gray-200 rounded-full overflow-hidden">

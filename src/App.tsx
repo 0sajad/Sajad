@@ -16,6 +16,7 @@ import { SmartSuspense } from "@/components/ui/smart-suspense";
 
 // استيراد المكونات بشكل كسول لتحسين أداء التحميل الأولي
 const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Index = lazy(() => import("./pages/Index"));
 const AIAssistant = lazy(() => import("./pages/AIAssistant"));
 const Settings = lazy(() => import("./pages/Settings"));
 const License = lazy(() => import("./pages/License"));
@@ -90,6 +91,14 @@ function App() {
                 <Routes>
                   <Route 
                     path="/" 
+                    element={
+                      <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
+                        <Index />
+                      </SmartSuspense>
+                    } 
+                  />
+                  <Route 
+                    path="/dashboard" 
                     element={
                       <SmartSuspense fallback={<LoadingScreen showSpinner={true} />}>
                         <Dashboard />

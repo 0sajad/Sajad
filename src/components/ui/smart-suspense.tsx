@@ -26,13 +26,13 @@ export function SmartSuspense({
     // ضمان عرض Fallback لمدة minLoadTime على الأقل لتجنب الوميض
     const minTimer = setTimeout(() => {
       setIsLoading(false);
-      onLoad?.();
+      if (onLoad) onLoad();
     }, minLoadTime);
     
     // تعيين الحد الأقصى للانتظار
     const maxTimer = setTimeout(() => {
       setIsLoading(false);
-      onLoad?.();
+      if (onLoad) onLoad();
     }, maxLoadTime);
     
     return () => {

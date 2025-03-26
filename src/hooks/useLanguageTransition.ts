@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from "@/components/ui/use-toast";
+import { useAccessibilityAnnouncer } from "@/hooks/useAccessibilityAnnouncer";
 
 /**
  * هوك مخصص لإدارة الانتقالات السلسة عند تغيير اللغة
@@ -9,8 +10,19 @@ import { toast } from "@/components/ui/use-toast";
 export function useLanguageTransition() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const { i18n, t } = useTranslation();
+  const { announce } = useAccessibilityAnnouncer();
   
   useEffect(() => {
+    // تحديث عنوان الصفحة عند تغيير اللغة
+    const updatePageTitle = () => {
+      const baseTitle = "OCTA-GRAM";
+      document.title = i18n.language === "ar" || i18n.language === "ar-iq" 
+        ? `${baseTitle} - منصة إدارة الشبكات المتطورة`
+        : `${baseTitle} - Advanced Network Management Platform`;
+    };
+    
+    updatePageTitle();
+    
     // إضافة مستمع للحدث المخصص languageChanged
     const handleLanguageChange = () => {
       // تطبيق تأثير انتقالي عند تغيير اللغة
@@ -18,6 +30,9 @@ export function useLanguageTransition() {
       setTimeout(() => {
         setIsTransitioning(false);
       }, 500);
+      
+      // تحديث عنوان الصفحة
+      updatePageTitle();
     };
     
     // إضافة مستمع للحدث المخصص languageFullyChanged
@@ -36,6 +51,9 @@ export function useLanguageTransition() {
       } else {
         document.body.classList.remove('rtl-active');
       }
+      
+      // تحديث عنوان الصفحة
+      updatePageTitle();
     };
     
     document.addEventListener('languageChanged', handleLanguageChange);
@@ -66,59 +84,73 @@ export function useLanguageTransition() {
     // تطبيق تأثير انتقالي قبل تغيير اللغة
     setIsTransitioning(true);
     
-    setTimeout(() => {
-      localStorage.setItem("language", language);
-      i18n.changeLanguage(language).then(() => {
-        // إظهار إشعار بتغيير اللغة بناءً على اللغة الجديدة
-        toast({
-          title: getLanguageChangeTitle(language),
-          description: getLanguageChangeDescription(language),
-          duration: 3000
-        });
-        
-        // التأكد من تطبيق اتجاه اللغة الصحيح
-        const isRTL = language === "ar" || language === "ar-iq";
-        document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
-        document.documentElement.setAttribute("lang", language);
-        
-        if (isRTL) {
-          document.body.classList.add('rtl-active');
-        } else {
-          document.body.classList.remove('rtl-active');
-        }
-        
-        // إعادة تطبيق الترجمة على العناصر المخصصة
-        if (document.querySelectorAll('[data-i18n-key]').length > 0) {
-          const elementsWithTranslationKeys = document.querySelectorAll('[data-i18n-key]');
-          elementsWithTranslationKeys.forEach(el => {
-            const key = el.getAttribute('data-i18n-key');
-            if (key) {
-              (el as HTMLElement).innerText = i18n.t(key);
-            }
-          });
-        }
-        
-        // إطلاق حدث لتحديث كافة مكونات الصفحة
-        document.dispatchEvent(new CustomEvent('languageFullyChanged', { detail: { language } }));
-      }).catch((error) => {
-        console.error("خطأ في تغيير اللغة:", error);
-        // إظهار إشعار بفشل تغيير اللغة
-        toast({
-          title: t('common.error', 'Error'),
-          description: t('common.languageChangeError', 'Failed to change language'),
-          variant: "destructive",
-          duration: 3000
-        });
-        setIsTransitioning(false);
-      });
-      
-      // إعادة تفعيل المحتوى بعد انتهاء الانتقال
+    try {
       setTimeout(() => {
-        setIsTransitioning(false);
-        // تطبيق تأثير إعادة التحميل
-        document.dispatchEvent(new CustomEvent('languageChanged', { detail: { language } }));
-      }, 300);
-    }, 150);
+        localStorage.setItem("language", language);
+        i18n.changeLanguage(language).then(() => {
+          // إظهار إشعار بتغيير اللغة بناءً على اللغة الجديدة
+          toast({
+            title: getLanguageChangeTitle(language),
+            description: getLanguageChangeDescription(language),
+            duration: 3000
+          });
+          
+          // الإعلان عن تغيير اللغة لقارئات الشاشة
+          announce(getLanguageChangeDescription(language), "info");
+          
+          // التأكد من تطبيق اتجاه اللغة الصحيح
+          const isRTL = language === "ar" || language === "ar-iq";
+          document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
+          document.documentElement.setAttribute("lang", language);
+          
+          if (isRTL) {
+            document.body.classList.add('rtl-active');
+          } else {
+            document.body.classList.remove('rtl-active');
+          }
+          
+          // إعادة تطبيق الترجمة على العناصر المخصصة
+          if (document.querySelectorAll('[data-i18n-key]').length > 0) {
+            const elementsWithTranslationKeys = document.querySelectorAll('[data-i18n-key]');
+            elementsWithTranslationKeys.forEach(el => {
+              const key = el.getAttribute('data-i18n-key');
+              if (key) {
+                (el as HTMLElement).innerText = i18n.t(key);
+              }
+            });
+          }
+          
+          // تحديث عنوان الصفحة بناءً على اللغة الجديدة
+          const baseTitle = "OCTA-GRAM";
+          document.title = isRTL
+            ? `${baseTitle} - منصة إدارة الشبكات المتطورة`
+            : `${baseTitle} - Advanced Network Management Platform`;
+          
+          // إطلاق حدث لتحديث كافة مكونات الصفحة
+          document.dispatchEvent(new CustomEvent('languageFullyChanged', { detail: { language } }));
+        }).catch((error) => {
+          console.error("خطأ في تغيير اللغة:", error);
+          // إظهار إشعار بفشل تغيير اللغة
+          toast({
+            title: t('common.error', 'خطأ'),
+            description: t('common.languageChangeError', 'فشل في تغيير اللغة'),
+            variant: "destructive",
+            duration: 3000
+          });
+          setIsTransitioning(false);
+        });
+        
+        // إعادة تفعيل المحتوى بعد انتهاء الانتقال
+        setTimeout(() => {
+          setIsTransitioning(false);
+          // تطبيق تأثير إعادة التحميل
+          document.dispatchEvent(new CustomEvent('languageChanged', { detail: { language } }));
+        }, 300);
+      }, 150);
+    } catch (error) {
+      console.error("خطأ غير متوقع في تغيير اللغة:", error);
+      setIsTransitioning(false);
+    }
   };
 
   // دالة مساعدة للحصول على عنوان إشعار تغيير اللغة

@@ -35,7 +35,7 @@ const DeveloperPanel = lazy(() => import("@/components/developer/DeveloperPanel"
 const Index = () => {
   const [loaded, setLoaded] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const { isTransitioning } = useLanguageTransition();
   const { reducedMotion } = useA11y();
   const { announce } = useAccessibilityAnnouncer();
@@ -46,6 +46,7 @@ const Index = () => {
   usePreferenceSync();
 
   useEffect(() => {
+    console.log("Index component mounted");
     setLoaded(true);
     
     // التحقق من اللغة المحفوظة أو استخدام لغة المتصفح
