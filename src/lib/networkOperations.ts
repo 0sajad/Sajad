@@ -1,4 +1,3 @@
-
 /**
  * وحدة عمليات الشبكة
  * توفر وظائف متقدمة لإدارة اتصالات الشبكة وتحسين الأداء
@@ -201,14 +200,34 @@ export async function clearNetworkCache(): Promise<boolean> {
   return false;
 }
 
+// تعريف واجهة NetworkInformation التي تمثل واجهة Network Information API
+interface NetworkInformation {
+  type?: string;
+  effectiveType?: string;
+  downlink?: number;
+  rtt?: number;
+  saveData?: boolean;
+}
+
+// نضيف تعريف لواجهة Navigator لدعم خاصية connection
+interface NavigatorNetworkInformation extends Navigator {
+  connection?: NetworkInformation;
+  mozConnection?: NetworkInformation;
+  webkitConnection?: NetworkInformation;
+}
+
 /**
  * تحليل حالة الاتصال بالشبكة
  * @returns حالة الاتصال الحالية
  */
 export function getNetworkStatus() {
-  const connection = navigator.connection as any || 
-                     (navigator as any).mozConnection || 
-                     (navigator as any).webkitConnection;
+  // نستخدم type assertion لتحويل navigator إلى النوع الموسع
+  const navigatorWithConnection = navigator as NavigatorNetworkInformation;
+  
+  // الآن يمكننا الوصول إلى خاصية connection بأمان
+  const connection = navigatorWithConnection.connection || 
+                     navigatorWithConnection.mozConnection || 
+                     navigatorWithConnection.webkitConnection;
   
   if (!connection) {
     return {
