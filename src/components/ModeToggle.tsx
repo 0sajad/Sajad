@@ -52,8 +52,8 @@ export function ModeToggle() {
           className={cn(
             "relative flex items-center w-[100px] h-[40px] rounded-full p-1 transition-colors duration-300 cursor-pointer shadow-xl hover:shadow-2xl transform hover:scale-105 border border-white/20 backdrop-blur-sm overflow-hidden",
             isDeveloperMode 
-              ? "bg-gradient-to-r from-indigo-600 to-blue-600" 
-              : "bg-gradient-to-r from-indigo-600 to-blue-600"
+              ? "bg-gradient-to-r from-amber-500 to-orange-600" 
+              : "bg-gradient-to-r from-amber-500 to-orange-600"
           )}
         >
           {/* Sliding background */}
