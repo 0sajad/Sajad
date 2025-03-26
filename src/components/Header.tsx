@@ -2,19 +2,13 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ModeToggle } from "./ModeToggle";
-import { Menu, X, Globe } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DesktopNav } from "./nav/DesktopNav";
 import { MobileMenu } from "./nav/MobileMenu";
 import { useTranslation } from 'react-i18next';
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LanguageSwitcher } from "./nav/LanguageSwitcher";
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 interface HeaderProps {
@@ -24,9 +18,7 @@ interface HeaderProps {
 export function Header({ onLanguageChange }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { t, i18n } = useTranslation();
-  const currentLanguage = i18n.language;
-  const isMobile = useIsMobile();
+  const { t } = useTranslation();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -36,21 +28,6 @@ export function Header({ onLanguageChange }: HeaderProps) {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  
-  const handleLanguageChange = (language: string) => {
-    i18n.changeLanguage(language);
-    
-    // تحديث اتجاه الصفحة بناءً على اللغة
-    const isRTL = language === "ar" || language === "ar-iq";
-    const dir = isRTL ? "rtl" : "ltr";
-    document.documentElement.setAttribute("dir", dir);
-    document.documentElement.setAttribute("lang", language);
-    localStorage.setItem("language", language);
-
-    if (onLanguageChange) {
-      onLanguageChange(language);
-    }
-  };
   
   return (
     <TooltipProvider>

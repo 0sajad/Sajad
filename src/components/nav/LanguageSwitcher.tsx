@@ -43,7 +43,13 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
       document.documentElement.setAttribute("dir", "ltr");
       document.body.classList.remove('rtl-active');
     }
-  }, [i18n.language]);
+    
+    // التأكد من أن اللغة مطبقة بشكل صحيح
+    const savedLanguage = localStorage.getItem("language");
+    if (savedLanguage && savedLanguage !== i18n.language) {
+      i18n.changeLanguage(savedLanguage);
+    }
+  }, [i18n.language, i18n]);
 
   // العثور على اللغة الحالية
   const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];

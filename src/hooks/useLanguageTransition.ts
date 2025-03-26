@@ -24,6 +24,18 @@ export function useLanguageTransition() {
     const handleLanguageFullyChanged = () => {
       // تأكيد اكتمال تغيير اللغة بشكل كامل
       setIsTransitioning(false);
+      
+      // إعادة تطبيق اتجاه الصفحة بناءً على اللغة
+      const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
+      document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
+      document.documentElement.setAttribute("lang", i18n.language);
+      
+      // تطبيق CSS للغات RTL
+      if (isRTL) {
+        document.body.classList.add('rtl-active');
+      } else {
+        document.body.classList.remove('rtl-active');
+      }
     };
     
     document.addEventListener('languageChanged', handleLanguageChange);
@@ -33,6 +45,16 @@ export function useLanguageTransition() {
       document.removeEventListener('languageChanged', handleLanguageChange);
       document.removeEventListener('languageFullyChanged', handleLanguageFullyChanged);
     };
+  }, [i18n.language]);
+  
+  // التأكد من أن اللغة المخزنة مطبقة عند بدء التشغيل
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language");
+    if (savedLanguage && savedLanguage !== i18n.language) {
+      setTimeout(() => {
+        i18n.changeLanguage(savedLanguage);
+      }, 100);
+    }
   }, []);
 
   const changeLanguage = (language: string) => {
@@ -63,6 +85,17 @@ export function useLanguageTransition() {
           document.body.classList.add('rtl-active');
         } else {
           document.body.classList.remove('rtl-active');
+        }
+        
+        // إعادة تحميل الصفحة في حالات نادرة جدًا إذا لم تتم ترجمة بعض العناصر
+        if (document.querySelectorAll('[data-i18n-key]').length > 0) {
+          const elementsWithTranslationKeys = document.querySelectorAll('[data-i18n-key]');
+          elementsWithTranslationKeys.forEach(el => {
+            const key = el.getAttribute('data-i18n-key');
+            if (key) {
+              (el as HTMLElement).innerText = i18n.t(key);
+            }
+          });
         }
       }).catch((error) => {
         console.error("خطأ في تغيير اللغة:", error);

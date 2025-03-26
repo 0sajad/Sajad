@@ -26,12 +26,22 @@
       "backup": "نسخ احتياطي للإعدادات"
     },
     "latestUpdates": "آخر التحديثات",
-    "noUpdates": "لا توجد تحديثات جديدة"
+    "noUpdates": "لا توجد تحديثات جديدة",
+    "active": "نشط",
+    "quickActions": "إجراءات سريعة"
   },
   "networkTools": {
     "title": "أدوات الشبكة المتطورة",
     "qualityMonitoring": "مراقبة جودة الشبكة",
     "signalStrength": "قوة الإشارة"
+  },
+  "mobileMenu": {
+    "dashboard": "لوحة التحكم",
+    "tools": "الأدوات",
+    "aiAssistant": "مساعد الذكاء الاصطناعي",
+    "settings": "الإعدادات",
+    "helpCenter": "مركز المساعدة",
+    "login": "تسجيل الدخول"
   },
   "aiFeatures": {
     "title": "ميزات الذكاء الاصطناعي",

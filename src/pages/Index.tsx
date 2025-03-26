@@ -12,11 +12,12 @@ import { FloatingAIAssistant } from "@/components/FloatingAIAssistant";
 import { NetworkToolsSection } from "@/components/network/NetworkToolsSection";
 import { useTranslation } from 'react-i18next';
 import { useLanguageTransition } from "@/hooks/useLanguageTransition";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const Index = () => {
   const [loaded, setLoaded] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
-  const { i18n, t } = useTranslation();
+  const { i18n } = useTranslation();
   const { isTransitioning } = useLanguageTransition();
 
   useEffect(() => {
@@ -63,38 +64,40 @@ const Index = () => {
   }, [i18n]);
 
   return (
-    <div className={`min-h-screen w-full transition-all duration-500 ${loaded ? 'opacity-100' : 'opacity-0'} ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}>
-      <Header />
-      
-      {/* Hero Section */}
-      <HeroSection />
-      
-      {/* Network Dashboard Section */}
-      <NetworkDashboard />
-      
-      {/* Network Tools Section */}
-      <NetworkToolsSection />
-      
-      {/* Features Section */}
-      <AnimatedCards />
-      
-      {/* AI Features Section */}
-      <AIFeaturesSection />
-      
-      {/* Settings Section */}
-      <SettingsSection />
-      
-      {/* CTA Section */}
-      <CTASection />
-      
-      <Footer />
-      
-      {/* Floating AI Assistant */}
-      <FloatingAIAssistant 
-        show={showAIAssistant} 
-        onMaximize={() => window.location.href = '/ai'} 
-      />
-    </div>
+    <TooltipProvider>
+      <div className={`min-h-screen w-full transition-all duration-500 ${loaded ? 'opacity-100' : 'opacity-0'} ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}>
+        <Header />
+        
+        {/* Hero Section */}
+        <HeroSection />
+        
+        {/* Network Dashboard Section */}
+        <NetworkDashboard />
+        
+        {/* Network Tools Section */}
+        <NetworkToolsSection />
+        
+        {/* Features Section */}
+        <AnimatedCards />
+        
+        {/* AI Features Section */}
+        <AIFeaturesSection />
+        
+        {/* Settings Section */}
+        <SettingsSection />
+        
+        {/* CTA Section */}
+        <CTASection />
+        
+        <Footer />
+        
+        {/* Floating AI Assistant */}
+        <FloatingAIAssistant 
+          show={showAIAssistant} 
+          onMaximize={() => window.location.href = '/ai'} 
+        />
+      </div>
+    </TooltipProvider>
   );
 };
 

@@ -1,67 +1,76 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Laptop, Settings, HelpCircle, LayoutDashboard, LogIn } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { MobileNavItem } from "./NavItem";
-import {
-  LayoutDashboard,
-  Wrench,
-  BrainCircuit,
-  Settings,
-  LogIn,
-  HelpCircle
-} from "lucide-react";
 
 interface MobileMenuProps {
   isOpen: boolean;
 }
 
-export const MobileMenu = ({ isOpen }: MobileMenuProps) => {
+export function MobileMenu({ isOpen }: MobileMenuProps) {
   const { t } = useTranslation();
   
   if (!isOpen) return null;
   
   return (
-    <div className="md:hidden bg-white dark:bg-gray-950 w-full border-b border-gray-100 dark:border-gray-800">
-      <div className="flex flex-col p-4 space-y-2">
-        <MobileNavItem 
-          to="/" 
-          icon={<LayoutDashboard size={18} />} 
-          label={t('mobileMenu.dashboard')} 
-        />
+    <div className="md:hidden fixed inset-x-0 top-[70px] z-40 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-lg border-t border-t-gray-200 dark:border-t-gray-800 transition-all">
+      <nav className="container mx-auto px-4 py-3 flex flex-col">
+        <Link
+          to="/"
+          className="flex items-center gap-2 px-4 py-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        >
+          <LayoutDashboard size={18} className="text-muted-foreground" />
+          <span className="text-sm font-medium">{t('mobileMenu.dashboard')}</span>
+        </Link>
         
-        <MobileNavItem 
-          to="#" 
-          icon={<Wrench size={18} />} 
-          label={t('mobileMenu.tools')} 
-        />
+        <Link
+          to="/tools"
+          className="flex items-center gap-2 px-4 py-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        >
+          <Laptop size={18} className="text-muted-foreground" />
+          <span className="text-sm font-medium">{t('mobileMenu.tools')}</span>
+        </Link>
         
-        <MobileNavItem 
-          to="/ai" 
-          icon={<BrainCircuit size={18} />} 
-          label={t('mobileMenu.aiAssistant')} 
-        />
+        <Link
+          to="/ai"
+          className="flex items-center gap-2 px-4 py-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-muted-foreground">
+            <path 
+              d="M12 4.75V6.25M15.25 8L14.25 9M8.75 8L9.75 9M15.25 16L14.25 15M8.75 16L9.75 15M12 17.75V19.25M17.75 12.75H19.25M4.75 12.75H6.25" 
+              stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path 
+              d="M12 15.75C14.0711 15.75 15.75 14.0711 15.75 12C15.75 9.92893 14.0711 8.25 12 8.25C9.92893 8.25 8.25 9.92893 8.25 12C8.25 14.0711 9.92893 15.75 12 15.75Z" 
+              stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <span className="text-sm font-medium">{t('mobileMenu.aiAssistant')}</span>
+        </Link>
         
-        <MobileNavItem 
-          to="/settings" 
-          icon={<Settings size={18} />} 
-          label={t('mobileMenu.settings')} 
-        />
+        <Link
+          to="/settings"
+          className="flex items-center gap-2 px-4 py-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        >
+          <Settings size={18} className="text-muted-foreground" />
+          <span className="text-sm font-medium">{t('mobileMenu.settings')}</span>
+        </Link>
         
-        <MobileNavItem 
-          to="/help-center" 
-          icon={<HelpCircle size={18} />} 
-          label={t('mobileMenu.helpCenter')} 
-        />
+        <Link
+          to="/help"
+          className="flex items-center gap-2 px-4 py-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        >
+          <HelpCircle size={18} className="text-muted-foreground" />
+          <span className="text-sm font-medium">{t('mobileMenu.helpCenter')}</span>
+        </Link>
         
-        <div className="pt-2 border-t border-gray-100 dark:border-gray-800 mt-2">
-          <Button className="w-full">
-            <LogIn size={18} className="mr-2 rtl:ml-2 rtl:mr-0" />
-            <span>{t('mobileMenu.login')}</span>
-          </Button>
-        </div>
-      </div>
+        <Link
+          to="/license"
+          className="flex items-center justify-center gap-2 mt-3 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+        >
+          <LogIn size={16} />
+          <span className="text-sm font-medium">{t('mobileMenu.login')}</span>
+        </Link>
+      </nav>
     </div>
   );
-};
+}
