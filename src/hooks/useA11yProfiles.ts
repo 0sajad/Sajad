@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from '@/components/ui/use-toast';
 import { A11ySettings } from './types/accessibility';
+import { useA11yProfileStorage } from './accessibility/useA11yProfileStorage';
+import { useA11yProfileExport } from './accessibility/useA11yProfileExport';
 
 interface A11yProfile {
   id: string;
@@ -16,47 +18,24 @@ export function useA11yProfiles(
   applySettings?: (settings: A11ySettings) => void
 ) {
   const { t } = useTranslation();
-  
-  const [profiles, setProfiles] = useState<A11yProfile[]>([]);
   const [activeProfile, setActiveProfile] = useState<string | null>(null);
+  
+  // Use the storage hook to manage profiles
+  const { profiles, setProfiles, loadProfiles, saveProfiles } = useA11yProfileStorage();
+  
+  // Use the export/import hook
+  const { exportProfile: exportProfileToFile, importProfile: importProfileFromFile } = useA11yProfileExport();
   
   // Load saved profiles
   useEffect(() => {
-    const savedProfiles = localStorage.getItem('a11y-profiles');
-    if (savedProfiles) {
-      try {
-        const parsedProfiles = JSON.parse(savedProfiles);
-        setProfiles(parsedProfiles);
-      } catch (error) {
-        console.error('Failed to parse saved accessibility profiles', error);
-      }
-    } else {
-      // Create default profile if no profiles are saved
-      const defaultProfile: A11yProfile = {
-        id: 'default',
-        name: t('accessibility.defaultProfileName', 'Default Profile'),
-        settings: {
-          highContrast: false,
-          largeText: false,
-          reducedMotion: false,
-          focusMode: false,
-          colorBlindMode: null,
-          dyslexicFont: false,
-          readingGuide: false,
-          soundFeedback: false
-        }
-      };
-      
-      setProfiles([defaultProfile]);
-      localStorage.setItem('a11y-profiles', JSON.stringify([defaultProfile]));
-    }
+    loadProfiles(t);
     
     // Check for active profile
     const savedActiveProfile = localStorage.getItem('a11y-active-profile');
     if (savedActiveProfile) {
       setActiveProfile(savedActiveProfile);
     }
-  }, [t]);
+  }, [t, loadProfiles]);
   
   // Save current settings as a profile
   const saveCurrentSettings = (name: string) => {
@@ -74,7 +53,7 @@ export function useA11yProfiles(
     
     const updatedProfiles = [...profiles, newProfile];
     setProfiles(updatedProfiles);
-    localStorage.setItem('a11y-profiles', JSON.stringify(updatedProfiles));
+    saveProfiles(updatedProfiles);
     
     setActiveProfile(id);
     localStorage.setItem('a11y-active-profile', id);
@@ -113,7 +92,7 @@ export function useA11yProfiles(
     
     const updatedProfiles = profiles.filter(profile => profile.id !== profileId);
     setProfiles(updatedProfiles);
-    localStorage.setItem('a11y-profiles', JSON.stringify(updatedProfiles));
+    saveProfiles(updatedProfiles);
     
     // If deleted profile was active, set default as active
     if (activeProfile === profileId) {
@@ -139,20 +118,7 @@ export function useA11yProfiles(
     const profileToExport = profiles.find(profile => profile.id === profileId);
     
     if (profileToExport) {
-      const dataStr = JSON.stringify(profileToExport, null, 2);
-      const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(dataStr)}`;
-      
-      const exportFileDefaultName = `a11y-profile-${profileToExport.name.toLowerCase().replace(/\s+/g, '-')}.json`;
-      
-      const linkElement = document.createElement('a');
-      linkElement.setAttribute('href', dataUri);
-      linkElement.setAttribute('download', exportFileDefaultName);
-      linkElement.click();
-      
-      toast({
-        title: t('accessibility.profileExported', 'Profile exported successfully')
-      });
-      
+      exportProfileToFile(profileToExport, t);
       return true;
     }
     
@@ -162,27 +128,18 @@ export function useA11yProfiles(
   // Import a profile
   const importProfile = (jsonData: string) => {
     try {
-      const importedProfile = JSON.parse(jsonData) as A11yProfile;
+      const importedProfile = importProfileFromFile(jsonData, profiles, t);
       
-      // Validate imported profile
-      if (!importedProfile.id || !importedProfile.settings) {
-        throw new Error('Invalid profile format');
+      if (importedProfile) {
+        // Add imported profile to list
+        const updatedProfiles = [...profiles, importedProfile];
+        setProfiles(updatedProfiles);
+        saveProfiles(updatedProfiles);
+        
+        return importedProfile.id;
       }
       
-      // Modify ID to avoid conflicts
-      importedProfile.id = Date.now().toString();
-      
-      // Add imported profile to list
-      const updatedProfiles = [...profiles, importedProfile];
-      setProfiles(updatedProfiles);
-      localStorage.setItem('a11y-profiles', JSON.stringify(updatedProfiles));
-      
-      toast({
-        title: t('accessibility.profileImported', 'Profile imported successfully'),
-        description: importedProfile.name
-      });
-      
-      return importedProfile.id;
+      return null;
     } catch (error) {
       console.error('Failed to import accessibility profile', error);
       
