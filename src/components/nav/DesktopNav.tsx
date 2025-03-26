@@ -43,24 +43,71 @@ export const DesktopNav = () => {
   };
   
   return (
-    <div className="hidden md:flex items-center justify-center flex-grow relative">
-      {/* Developer Logo - Left Side */}
-      <motion.div 
-        className="absolute -left-16 top-1/2 -translate-y-1/2 z-10"
-        animate={{
-          rotate: [0, 10, 0, -10, 0],
-          scale: [1, 1.1, 1]
-        }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-          repeatType: "loop"
-        }}
-      >
-        <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-1.5 rounded-full shadow-md">
+    <div className="hidden md:flex items-center justify-end flex-grow relative">
+      {/* Developer Logo Positioned Above the Nav */}
+      <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 w-[380px] h-[20px] z-10">
+        <motion.div 
+          className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-gray-300/20 dark:border-gray-700/20"
+          animate={{
+            scale: [1, 1.02, 1],
+            opacity: [0.5, 0.7, 0.5],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            repeatType: "reverse"
+          }}
+        />
+        
+        <motion.div 
+          className="absolute inset-0 rounded-full"
+          animate={{
+            boxShadow: [
+              "0 0 0 rgba(139, 92, 246, 0.1)",
+              "0 0 20px rgba(139, 92, 246, 0.3)",
+              "0 0 0 rgba(139, 92, 246, 0.1)"
+            ]
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            repeatType: "reverse"
+          }}
+        />
+        
+        {/* Code Icons for Developer Logo - Left side */}
+        <motion.div 
+          className="absolute -left-6 top-1/2 -translate-y-1/2 bg-gradient-to-r from-blue-500 to-purple-600 text-white p-1.5 rounded-full shadow-md"
+          animate={{
+            rotate: [0, 10, 0, -10, 0],
+            scale: [1, 1.1, 1]
+          }}
+          transition={{
+            duration: 5,
+            repeat: Infinity,
+            repeatType: "loop"
+          }}
+        >
           <Code size={16} />
-        </div>
-      </motion.div>
+        </motion.div>
+        
+        {/* Code Icons for Developer Logo - Right side */}
+        <motion.div 
+          className="absolute -right-6 top-1/2 -translate-y-1/2 bg-gradient-to-r from-purple-600 to-blue-500 text-white p-1.5 rounded-full shadow-md"
+          animate={{
+            rotate: [0, -10, 0, 10, 0],
+            scale: [1, 1.1, 1]
+          }}
+          transition={{
+            duration: 5,
+            repeat: Infinity,
+            repeatType: "loop",
+            delay: 0.5
+          }}
+        >
+          <Code size={16} />
+        </motion.div>
+      </div>
       
       <motion.nav 
         className="flex items-center space-x-7 rtl:space-x-reverse bg-white/20 dark:bg-gray-900/30 backdrop-blur-md px-8 py-2.5 rounded-full border border-gray-200/30 dark:border-gray-700/30 shadow-sm"
@@ -120,25 +167,6 @@ export const DesktopNav = () => {
           />
         </motion.div>
       </motion.nav>
-      
-      {/* Developer Logo - Right Side */}
-      <motion.div 
-        className="absolute -right-16 top-1/2 -translate-y-1/2 z-10"
-        animate={{
-          rotate: [0, -10, 0, 10, 0],
-          scale: [1, 1.1, 1]
-        }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-          repeatType: "loop",
-          delay: 0.5
-        }}
-      >
-        <div className="bg-gradient-to-r from-purple-600 to-blue-500 text-white p-1.5 rounded-full shadow-md">
-          <Code size={16} />
-        </div>
-      </motion.div>
     </div>
   );
 };
