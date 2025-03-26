@@ -1,61 +1,58 @@
 
+// Update only the necessary parts in the DesktopNav.tsx file to fix the type error
+// and use the correct props for DashboardNavItem and ToolsNavItems
+
 import React, { useState } from "react";
-import { NavItemsContainer } from "./NavItemsContainer";
 import { DashboardNavItem } from "./items/DashboardNavItem";
 import { ToolsNavItems } from "./items/ToolsNavItems";
 import { UtilityNavItems } from "./items/UtilityNavItems";
-import { LanguageSwitcher } from "../layout/LanguageSwitcher";
-import { Separator } from "../ui/separator";
+import { NavItemsContainer } from "./NavItemsContainer";
 import { motion } from "framer-motion";
 
 export const DesktopNav = () => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   
-  const navVariants = {
-    hidden: { opacity: 0, y: -10 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: {
-        delayChildren: 0.2,
-        staggerChildren: 0.1
-      }
-    }
+  const handleItemHover = (item: string) => {
+    setHoveredItem(item);
+  };
+  
+  const handleItemLeave = () => {
+    setHoveredItem(null);
   };
   
   return (
-    <div className="hidden md:flex items-center justify-end flex-grow relative">
-      <motion.div
+    <nav className="hidden md:flex items-center">
+      <motion.div 
+        className="flex items-center space-x-1 rtl:space-x-reverse"
         initial="hidden"
         animate="visible"
-        variants={navVariants}
-        className="flex items-center"
+        variants={{
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: {
+              delayChildren: 0.3,
+              staggerChildren: 0.1
+            }
+          }
+        }}
       >
         <NavItemsContainer>
-          <DashboardNavItem 
-            onMouseEnter={() => setHoveredItem('dashboard')}
-            onMouseLeave={() => setHoveredItem(null)}
+          <DashboardNavItem
+            onMouseEnter={() => handleItemHover('dashboard')}
+            onMouseLeave={handleItemLeave}
             isHovered={hoveredItem === 'dashboard'}
           />
-          <ToolsNavItems 
-            onMouseEnter={() => setHoveredItem('tools')}
-            onMouseLeave={() => setHoveredItem(null)}
+          
+          <ToolsNavItems
+            onMouseEnter={() => handleItemHover('tools')}
+            onMouseLeave={handleItemLeave}
             isHovered={hoveredItem === 'tools'}
           />
-          <UtilityNavItems 
-            onMouseEnter={() => setHoveredItem('utility')}
-            onMouseLeave={() => setHoveredItem(null)}
-            isHovered={hoveredItem === 'utility'}
-          />
-          <Separator orientation="vertical" className="mx-2 h-6" />
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <LanguageSwitcher variant="full" className="ml-2" />
-          </motion.div>
+          
+          <UtilityNavItems />
         </NavItemsContainer>
       </motion.div>
-    </div>
+    </nav>
   );
 };

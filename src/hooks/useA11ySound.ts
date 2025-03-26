@@ -1,69 +1,85 @@
 
-import { useState, useEffect } from 'react';
+import { useCallback } from 'react';
+import { useA11yPreferences } from './useA11yPreferences';
 
-/**
- * إدارة تعليقات الصوت لتحسين إمكانية الوصول
- */
+type SoundType = 'success' | 'error' | 'warning' | 'info' | 'language';
+
 export function useA11ySound() {
-  const [soundFeedback, setSoundFeedback] = useState<boolean>(() => {
-    return localStorage.getItem('a11y-sound-feedback') === 'true';
-  });
+  const { soundEnabled } = useA11yPreferences();
   
-  // حفظ الإعدادات عند تغييرها
-  useEffect(() => {
-    localStorage.setItem('a11y-sound-feedback', soundFeedback.toString());
+  // Function to play sound based on type
+  const playSound = useCallback((type: SoundType) => {
+    if (!soundEnabled) return;
     
-    // إضافة سمة البيانات إلى الوثيقة للاستخدام في CSS
-    document.documentElement.setAttribute('data-sound-feedback', soundFeedback.toString());
+    // Create an audio context
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
     
-    // تشغيل صوت تأكيد التغيير إذا تم تفعيل الخاصية
-    if (soundFeedback) {
-      try {
-        const audio = new Audio('/sounds/toggle.mp3');
-        audio.volume = 0.3;
-        audio.play().catch(err => console.error('فشل تشغيل الصوت التأكيدي:', err));
-      } catch (error) {
-        console.error('غير قادر على تشغيل الإشعار الصوتي:', error);
-      }
-    }
-  }, [soundFeedback]);
-  
-  // وظيفة لتشغيل أصوات الإشعارات عند حدوث أحداث مهمة
-  const playNotificationSound = (soundType: 'success' | 'error' | 'warning' | 'info' | 'language' = 'info') => {
-    if (!soundFeedback) return;
+    // Create an oscillator
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
     
-    let soundPath = '/sounds/';
-    switch (soundType) {
+    // Connect the nodes
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    // Set sound parameters based on type
+    switch (type) {
       case 'success':
-        soundPath += 'success.mp3';
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(587.33, audioContext.currentTime); // D5
+        oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + 0.5);
         break;
+        
       case 'error':
-        soundPath += 'error.mp3';
+        oscillator.type = 'square';
+        oscillator.frequency.setValueAtTime(196.00, audioContext.currentTime); // G3
+        oscillator.frequency.setValueAtTime(185.00, audioContext.currentTime + 0.1); // F#3
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + 0.5);
         break;
+        
       case 'warning':
-        soundPath += 'warning.mp3';
+        oscillator.type = 'triangle';
+        oscillator.frequency.setValueAtTime(220.00, audioContext.currentTime); // A3
+        oscillator.frequency.setValueAtTime(220.00, audioContext.currentTime + 0.2); // A3
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + 0.5);
         break;
-      case 'language':
-        soundPath += 'language-change.mp3';
-        break;
+        
       case 'info':
-      default:
-        soundPath += 'notification.mp3';
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(261.63, audioContext.currentTime); // C4
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + 0.3);
+        break;
+        
+      case 'language':
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(349.23, audioContext.currentTime); // F4
+        oscillator.frequency.setValueAtTime(392.00, audioContext.currentTime + 0.15); // G4
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + 0.4);
         break;
     }
     
-    try {
-      const audio = new Audio(soundPath);
-      audio.volume = 0.4;
-      audio.play().catch(err => console.error('فشل تشغيل صوت الإشعار:', err));
-    } catch (error) {
-      console.error('فشل تشغيل صوت الإشعار:', error);
-    }
-  };
+    // Clean up
+    return () => {
+      oscillator.stop();
+      audioContext.close();
+    };
+  }, [soundEnabled]);
   
-  return {
-    soundFeedback,
-    setSoundFeedback,
-    playNotificationSound
-  };
+  return { playSound };
 }

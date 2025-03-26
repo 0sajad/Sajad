@@ -1,169 +1,86 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useA11ySound } from './useA11ySound';
+import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { toast } from "@/components/ui/use-toast";
-import { useA11ySound } from './accessibility/useA11ySound'; 
 
-/**
- * هوك مخصص لإدارة الانتقالات السلسة عند تغيير اللغة
- */
-export function useLanguageTransition() {
+export interface UseLanguageTransitionReturnType {
+  isTransitioning: boolean;
+  changeLanguage: (language: string) => void;
+}
+
+export function useLanguageTransition(): UseLanguageTransitionReturnType {
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const { playSound } = useA11ySound();
   const { i18n, t } = useTranslation();
-  const { playNotificationSound } = useA11ySound();
-  
-  useEffect(() => {
-    // إضافة مستمع للحدث المخصص languageChanged
-    const handleLanguageChange = () => {
-      // تطبيق تأثير انتقالي عند تغيير اللغة
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setIsTransitioning(false);
-      }, 500);
-    };
-    
-    // إضافة مستمع للحدث المخصص languageFullyChanged
-    const handleLanguageFullyChanged = () => {
-      // تأكيد اكتمال تغيير اللغة بشكل كامل
-      setIsTransitioning(false);
-      
-      // إعادة تطبيق اتجاه الصفحة بناءً على اللغة
-      const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
-      document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
-      document.documentElement.setAttribute("lang", i18n.language);
-      
-      // تطبيق CSS للغات RTL
-      if (isRTL) {
-        document.body.classList.add('rtl-active');
-      } else {
-        document.body.classList.remove('rtl-active');
-      }
-    };
-    
-    document.addEventListener('languageChanged', handleLanguageChange);
-    document.addEventListener('languageFullyChanged', handleLanguageFullyChanged);
-    
-    return () => {
-      document.removeEventListener('languageChanged', handleLanguageChange);
-      document.removeEventListener('languageFullyChanged', handleLanguageFullyChanged);
-    };
-  }, [i18n.language]);
-  
-  // التأكد من أن اللغة المخزنة مطبقة عند بدء التشغيل
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem("language");
-    if (savedLanguage && savedLanguage !== i18n.language) {
-      setTimeout(() => {
-        i18n.changeLanguage(savedLanguage);
-      }, 100);
-    }
-  }, []);
 
-  const changeLanguage = (language: string) => {
-    // لا تقم بتغيير اللغة إذا كانت هي نفس اللغة الحالية
-    if (i18n.language === language) {
-      return;
-    }
+  // Function to change the language with transition effects
+  const changeLanguage = useCallback((language: string) => {
+    // التحقق مما إذا كانت اللغة الجديدة هي نفس اللغة الحالية
+    if (i18n.language === language) return;
     
-    // تشغيل صوت تغيير اللغة
-    playNotificationSound('language');
-    
-    // تطبيق تأثير انتقالي قبل تغيير اللغة
+    // بدء الانتقال
     setIsTransitioning(true);
     
+    // تأخير قصير للسماح بتأثير الانتقال
     setTimeout(() => {
-      localStorage.setItem("language", language);
+      // تغيير اللغة
       i18n.changeLanguage(language).then(() => {
-        // إظهار إشعار بتغيير اللغة بناءً على اللغة الجديدة
-        toast({
-          title: getLanguageChangeTitle(language),
-          description: getLanguageChangeDescription(language),
-          duration: 3000
+        // حفظ اللغة في التخزين المحلي
+        localStorage.setItem('language', language);
+        
+        // تعديل اتجاه الصفحة بناءً على اللغة
+        const isRTL = language === 'ar' || language === 'ar-iq';
+        document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+        document.body.className = isRTL ? 'rtl-active' : '';
+        
+        // إطلاق حدث تغيير اللغة بالكامل
+        const event = new CustomEvent('languageFullyChanged', { 
+          detail: { language } 
         });
+        document.dispatchEvent(event);
         
-        // التأكد من تطبيق اتجاه اللغة الصحيح
-        const isRTL = language === "ar" || language === "ar-iq";
-        document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
-        document.documentElement.setAttribute("lang", language);
+        // إشعار تغيير اللغة
+        const languageName = getLanguageName(language);
+        toast.success(t('common.languageChanged', { language: languageName }));
         
-        if (isRTL) {
-          document.body.classList.add('rtl-active');
-        } else {
-          document.body.classList.remove('rtl-active');
-        }
+        // تشغيل صوت إشعار (إذا كان مفعلاً)
+        playSound('success');
         
-        // إعادة تطبيق الترجمة على العناصر المخصصة
-        if (document.querySelectorAll('[data-i18n-key]').length > 0) {
-          const elementsWithTranslationKeys = document.querySelectorAll('[data-i18n-key]');
-          elementsWithTranslationKeys.forEach(el => {
-            const key = el.getAttribute('data-i18n-key');
-            if (key) {
-              (el as HTMLElement).innerText = i18n.t(key);
-            }
-          });
-        }
-      }).catch((error) => {
-        console.error("خطأ في تغيير اللغة:", error);
-        // إظهار إشعار بفشل تغيير اللغة
-        toast({
-          title: t('common.error', 'Error'),
-          description: t('common.languageChangeError', 'Failed to change language'),
-          variant: "destructive",
-          duration: 3000
-        });
+        // إنهاء الانتقال بعد فترة
+        setTimeout(() => {
+          setIsTransitioning(false);
+        }, 500);
+      }).catch(() => {
+        // إشعار خطأ في حالة فشل تغيير اللغة
+        toast.error(t('common.languageChangeError'));
         setIsTransitioning(false);
+        
+        // تشغيل صوت خطأ (إذا كان مفعلاً)
+        playSound('error');
       });
-      
-      // إعادة تفعيل المحتوى بعد انتهاء الانتقال
-      setTimeout(() => {
-        setIsTransitioning(false);
-        // تطبيق تأثير إعادة التحميل
-        document.dispatchEvent(new CustomEvent('languageChanged', { detail: { language } }));
-      }, 300);
-    }, 150);
-  };
-
-  // دالة مساعدة للحصول على عنوان إشعار تغيير اللغة
-  const getLanguageChangeTitle = (language: string): string => {
-    switch (language) {
-      case "ar":
-        return "تم تغيير اللغة";
-      case "ar-iq":
-        return "تم تغيير اللغة";
-      case "ja":
-        return "言語が変更されました";
-      case "zh":
-        return "语言已更改";
-      case "fr":
-        return "Langue modifiée";
+    }, 300);
+  }, [i18n, t, playSound]);
+  
+  // Helper function to get language name
+  const getLanguageName = (code: string): string => {
+    switch (code) {
+      case 'ar':
+        return 'العربية';
+      case 'ar-iq':
+        return 'العربية (العراق)';
+      case 'en':
+        return 'English';
+      case 'fr':
+        return 'Français';
+      case 'ja':
+        return '日本語';
+      case 'zh':
+        return '中文';
       default:
-        return "Language Changed";
+        return code;
     }
   };
 
-  // دالة مساعدة للحصول على وصف إشعار تغيير اللغة
-  const getLanguageChangeDescription = (language: string): string => {
-    switch (language) {
-      case "ar":
-        return "تم التحويل إلى اللغة العربية";
-      case "ar-iq":
-        return "تم التحويل إلى اللهجة العراقية";
-      case "en":
-        return "Switched to English language";
-      case "ja":
-        return "日本語に切り替えました";
-      case "zh":
-        return "切换到中文";
-      case "fr":
-        return "Passé à la langue française";
-      default:
-        return `Switched to ${language}`;
-    }
-  };
-
-  return {
-    isTransitioning,
-    changeLanguage,
-    supportedLanguages: ['en', 'ar', 'ar-iq', 'ja', 'fr', 'zh']
-  };
+  return { isTransitioning, changeLanguage };
 }
