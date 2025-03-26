@@ -22,10 +22,11 @@ export const useMissingTranslations = () => {
     // إضافة مستمع لحدث مفتاح الترجمة المفقود
     const originalMissingKeyHandler = i18n.options.missingKeyHandler;
     
-    i18n.options.missingKeyHandler = (lng, ns, key) => {
-      handleMissingKey(`${ns}:${key}`);
+    // تصحيح نوع المعاملات للتوافق مع i18next
+    i18n.options.missingKeyHandler = (languages: string[], namespace: string, key: string, res: string, options: any, updateMissing: boolean) => {
+      handleMissingKey(`${namespace}:${key}`);
       if (originalMissingKeyHandler) {
-        originalMissingKeyHandler(lng, ns, key);
+        originalMissingKeyHandler(languages, namespace, key, res, options, updateMissing);
       }
     };
 
@@ -40,7 +41,7 @@ export const useMissingTranslations = () => {
   };
 
   const generateTranslationTemplate = () => {
-    const template: Record<string, string> = {};
+    const template: Record<string, Record<string, string>> = {};
     
     missingKeys.forEach(fullKey => {
       const [namespace, key] = fullKey.split(':');
@@ -55,10 +56,56 @@ export const useMissingTranslations = () => {
     return JSON.stringify(template, null, 2);
   };
 
+  // إضافة وظيفة فحص الصفحة بحثًا عن ترجمات مفقودة
+  const scanPageForMissingTranslations = () => {
+    const results = {
+      hardcodedTexts: [] as Array<{text: string, element: HTMLElement}>
+    };
+    
+    // استبعاد بعض العناصر من الفحص (مثل السكريبت، الأنماط، إلخ)
+    const excludedTags = ['SCRIPT', 'STYLE', 'NOSCRIPT', 'CODE', 'PRE'];
+    
+    // الوظيفة التي تفحص العقدة وأبنائها
+    const scanNode = (node: Node) => {
+      // تخطي العقد النصية الفارغة أو التي تحتوي على مسافات فقط
+      if (node.nodeType === Node.TEXT_NODE) {
+        const textContent = node.textContent?.trim();
+        if (textContent && textContent.length > 3) {
+          const parentElement = node.parentElement;
+          
+          if (parentElement && 
+              !excludedTags.includes(parentElement.tagName) && 
+              !parentElement.hasAttribute('data-i18n-ignore')) {
+            
+            results.hardcodedTexts.push({
+              text: textContent,
+              element: parentElement
+            });
+          }
+        }
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        // تخطي العناصر المستبعدة
+        const element = node as HTMLElement;
+        if (excludedTags.includes(element.tagName)) {
+          return;
+        }
+        
+        // فحص العقد الفرعية
+        node.childNodes.forEach(scanNode);
+      }
+    };
+    
+    // بدء الفحص من جسم المستند
+    scanNode(document.body);
+    
+    return results;
+  };
+
   return {
     missingKeys,
     clearMissingKeys,
     generateTranslationTemplate,
+    scanPageForMissingTranslations,
     hasErrors: missingKeys.length > 0
   };
 };

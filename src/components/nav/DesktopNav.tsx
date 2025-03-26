@@ -42,24 +42,15 @@ export const DesktopNav = () => {
     >
       <NavItemsContainer>
         <motion.div variants={itemVariants}>
-          <DashboardNavItem 
-            onHover={() => handleHover('dashboard')} 
-            isHovered={hovered === 'dashboard'} 
-          />
+          <DashboardNavItem />
         </motion.div>
         
         <motion.div variants={itemVariants}>
-          <ToolsNavItems 
-            onHover={() => handleHover('tools')} 
-            isHovered={hovered === 'tools'} 
-          />
+          <ToolsNavItems />
         </motion.div>
         
         <motion.div variants={itemVariants}>
-          <UtilityNavItems 
-            onHover={() => handleHover('utility')} 
-            isHovered={hovered === 'utility'} 
-          />
+          <UtilityNavItems />
         </motion.div>
         
         <motion.div variants={itemVariants}>
