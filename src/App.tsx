@@ -1,8 +1,7 @@
-
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 import { useTranslation } from "react-i18next";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
@@ -25,7 +24,6 @@ import { LoadingScreen } from "./components/LoadingScreen";
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const { i18n } = useTranslation();
-  const isDesktop = useMediaQuery("(min-width: 768px)");
   const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
   
   useEffect(() => {

@@ -45,7 +45,7 @@ export const DesktopNav = () => {
   return (
     <div className="hidden md:flex items-center justify-end flex-grow relative">
       {/* Developer Logo Surrounding the Nav */}
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[320px] h-[70px] -z-10">
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[350px] h-[70px] -z-10">
         <motion.div 
           className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-gray-300/20 dark:border-gray-700/20"
           animate={{
@@ -75,9 +75,9 @@ export const DesktopNav = () => {
           }}
         />
         
-        {/* Code Icon for Developer Logo */}
+        {/* Code Icons for Developer Logo - Left side */}
         <motion.div 
-          className="absolute -left-6 top-1/2 -translate-y-1/2 bg-gradient-to-r from-blue-500 to-purple-600 text-white p-1.5 rounded-full"
+          className="absolute -left-5 top-1/2 -translate-y-1/2 bg-gradient-to-r from-blue-500 to-purple-600 text-white p-1.5 rounded-full"
           animate={{
             rotate: [0, 10, 0, -10, 0],
           }}
@@ -90,8 +90,9 @@ export const DesktopNav = () => {
           <Code size={16} />
         </motion.div>
         
+        {/* Code Icons for Developer Logo - Right side */}
         <motion.div 
-          className="absolute -right-6 top-1/2 -translate-y-1/2 bg-gradient-to-r from-purple-600 to-blue-500 text-white p-1.5 rounded-full"
+          className="absolute -right-5 top-1/2 -translate-y-1/2 bg-gradient-to-r from-purple-600 to-blue-500 text-white p-1.5 rounded-full"
           animate={{
             rotate: [0, -10, 0, 10, 0],
           }}
@@ -107,7 +108,7 @@ export const DesktopNav = () => {
       </div>
       
       <motion.nav 
-        className="flex items-center space-x-5 rtl:space-x-reverse bg-white/10 dark:bg-gray-900/20 backdrop-blur-md px-6 py-2 rounded-full border border-gray-200/20 dark:border-gray-700/20 shadow-sm"
+        className="flex items-center space-x-6 rtl:space-x-reverse bg-white/20 dark:bg-gray-900/30 backdrop-blur-md px-6 py-2.5 rounded-full border border-gray-200/30 dark:border-gray-700/30 shadow-sm"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
