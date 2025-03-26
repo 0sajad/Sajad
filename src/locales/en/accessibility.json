@@ -1,0 +1,21 @@
+
+{
+  "title": "Accessibility",
+  "description": "Customize accessibility settings to enhance your experience",
+  "highContrast": "High Contrast Mode",
+  "highContrastDescription": "Improve contrast for visually impaired users",
+  "largeText": "Large Text",
+  "largeTextDescription": "Increase text size for better readability",
+  "reducedMotion": "Reduced Motion",
+  "reducedMotionDescription": "Reduce or remove animations in the interface",
+  "focusMode": "Focus Mode",
+  "focusModeDescription": "Reduce distractions by highlighting only the current element",
+  "shortcutsTitle": "Keyboard Shortcuts:",
+  "toggleHighContrast": "Toggle high contrast mode",
+  "toggleLargeText": "Toggle large text",
+  "toggleReducedMotion": "Toggle reduced motion",
+  "toggleFocusMode": "Toggle focus mode",
+  "screenReaderSupport": "Screen Reader Support",
+  "colorBlindMode": "Color Blind Mode",
+  "a11ySettings": "Accessibility Settings"
+}

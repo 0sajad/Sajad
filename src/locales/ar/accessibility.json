@@ -1,0 +1,21 @@
+
+{
+  "title": "إمكانية الوصول",
+  "description": "تخصيص إعدادات إمكانية الوصول لتحسين تجربة الاستخدام",
+  "highContrast": "وضع التباين العالي",
+  "highContrastDescription": "تحسين التباين للأشخاص الذين يعانون من ضعف البصر",
+  "largeText": "النص الكبير",
+  "largeTextDescription": "زيادة حجم النص لتسهيل القراءة",
+  "reducedMotion": "تقليل الحركة",
+  "reducedMotionDescription": "تقليل أو إزالة الرسوم المتحركة في الواجهة",
+  "focusMode": "وضع التركيز",
+  "focusModeDescription": "تقليل التشتت من خلال إبراز العنصر الحالي فقط",
+  "shortcutsTitle": "اختصارات لوحة المفاتيح:",
+  "toggleHighContrast": "تبديل وضع التباين العالي",
+  "toggleLargeText": "تبديل النص الكبير",
+  "toggleReducedMotion": "تبديل تقليل الحركة",
+  "toggleFocusMode": "تبديل وضع التركيز",
+  "screenReaderSupport": "دعم قارئ الشاشة",
+  "colorBlindMode": "وضع عمى الألوان",
+  "a11ySettings": "إعدادات إمكانية الوصول"
+}

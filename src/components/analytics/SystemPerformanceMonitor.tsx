@@ -10,9 +10,11 @@ import { CPUMemoryChart } from "./performance/CPUMemoryChart";
 import { DiskTemperatureChart } from "./performance/DiskTemperatureChart";
 import { SystemHealthAssessment } from "./performance/SystemHealthAssessment";
 import { generatePerformanceData, PerformanceDataPoint } from "./performance/utils/performanceUtils";
+import { useA11y } from "@/hooks/useA11y";
 
 export const SystemPerformanceMonitor = () => {
   const { t } = useTranslation();
+  const { reducedMotion } = useA11y();
   const [performanceData, setPerformanceData] = useState<PerformanceDataPoint[]>(generatePerformanceData());
   const [isRefreshing, setIsRefreshing] = useState(false);
   
@@ -50,16 +52,16 @@ export const SystemPerformanceMonitor = () => {
         temperature: Math.floor(Math.random() * 15) + 45,
       });
       setPerformanceData(newData);
-    }, 5000);
+    }, reducedMotion ? 10000 : 5000); // تقليل التحديثات في وضع تقليل الحركة
     
     return () => {
       clearTimeout(initialTimeout);
       clearInterval(interval);
     };
-  }, [performanceData]);
+  }, [performanceData, reducedMotion]);
   
   return (
-    <Card className="border-octaBlue-200 shadow-md animate-fade-in">
+    <Card className="border-octaBlue-200 shadow-md animate-fade-in" aria-label={t('systemMonitor.title', 'مراقبة أداء النظام')}>
       <SystemMonitorHeader onRefresh={refreshData} isRefreshing={isRefreshing} />
       
       <CardContent className="p-6">
@@ -71,6 +73,7 @@ export const SystemPerformanceMonitor = () => {
             value={`${currentValues.cpu}%`}
             bgColorFrom="blue"
             bgColorTo="blue"
+            ariaLabel={t('systemMonitor.cpuUsage', 'استخدام المعالج {value}', { value: `${currentValues.cpu}%` })}
           />
           
           <ResourceMetricCard 
@@ -80,6 +83,7 @@ export const SystemPerformanceMonitor = () => {
             value={`${currentValues.memory}%`}
             bgColorFrom="green"
             bgColorTo="green"
+            ariaLabel={t('systemMonitor.memoryUsage', 'استخدام الذاكرة {value}', { value: `${currentValues.memory}%` })}
           />
           
           <ResourceMetricCard 
@@ -89,6 +93,7 @@ export const SystemPerformanceMonitor = () => {
             value={`${currentValues.disk}%`}
             bgColorFrom="purple"
             bgColorTo="purple"
+            ariaLabel={t('systemMonitor.diskUsage', 'استخدام القرص {value}', { value: `${currentValues.disk}%` })}
           />
           
           <ResourceMetricCard 
@@ -98,12 +103,13 @@ export const SystemPerformanceMonitor = () => {
             value={`${currentValues.temperature}°C`}
             bgColorFrom="amber"
             bgColorTo="amber"
+            ariaLabel={t('systemMonitor.tempReading', 'قراءة درجة الحرارة {value}', { value: `${currentValues.temperature}°C` })}
           />
         </div>
         
         <div className="space-y-6">
-          <CPUMemoryChart performanceData={performanceData} />
-          <DiskTemperatureChart performanceData={performanceData} />
+          <CPUMemoryChart performanceData={performanceData} reducedAnimations={reducedMotion} />
+          <DiskTemperatureChart performanceData={performanceData} reducedAnimations={reducedMotion} />
         </div>
         
         <SystemHealthAssessment />

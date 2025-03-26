@@ -72,3 +72,58 @@
 .large-text .text-sm {
   font-size: 1.1rem !important;
 }
+
+/* وضع تقليل الحركة */
+.reduced-motion * {
+  transition: none !important;
+  animation: none !important;
+  scroll-behavior: auto !important;
+}
+
+/* وضع التركيز */
+.focus-mode .card,
+.focus-mode section {
+  transition: filter 0.2s ease;
+}
+
+.focus-mode .card:not(:hover):not(:focus-within),
+.focus-mode section:not(:hover):not(:focus-within) {
+  filter: grayscale(30%) opacity(90%);
+}
+
+.focus-mode .card:hover,
+.focus-mode .card:focus-within,
+.focus-mode section:hover,
+.focus-mode section:focus-within {
+  filter: none;
+  outline: 2px solid var(--primary);
+}
+
+/* تحسينات للتوافق مع قارئ الشاشة */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* تمييز عناصر التنقل لإمكانية الوصول */
+a:focus, button:focus, input:focus, select:focus, textarea:focus {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* مساعدة في تمييز الروابط والأزرار المتشابهة لضعاف البصر */
+a {
+  text-decoration-thickness: 0.1em;
+  text-underline-offset: 0.15em;
+}
+
+a:hover, a:focus {
+  text-decoration-thickness: 0.2em;
+}
