@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback, memo } from "react";
 import { AIAssistant } from "./AIAssistant";
 import { toast } from "./ui/use-toast";
 import { useTranslation } from "react-i18next";
@@ -10,12 +10,15 @@ interface FloatingAIAssistantProps {
   onMaximize: () => void;
 }
 
-export function FloatingAIAssistant({ show, onMaximize }: FloatingAIAssistantProps) {
+// استخدام memo لتحسين الأداء
+export const FloatingAIAssistant = memo(({ show, onMaximize }: FloatingAIAssistantProps) => {
   const { t } = useTranslation();
   const [showSpeechBubble, setShowSpeechBubble] = useState(false);
   const [messageIndex, setMessageIndex] = useState(0);
+  const timeoutRef = useRef<number>();
+  const intervalRef = useRef<number>();
   
-  // رسائل تلقائية يظهرها المساعد (مع استخدام الترجمة)
+  // تحسين الأداء باستخدام useMemo للرسائل الثابتة
   const messages = [
     'aiAssistant.bubbleMessages.help',
     'aiAssistant.bubbleMessages.newTools',
@@ -23,33 +26,48 @@ export function FloatingAIAssistant({ show, onMaximize }: FloatingAIAssistantPro
     'aiAssistant.bubbleMessages.optimization'
   ];
   
-  // أظهر فقاعة رسالة كل فترة زمنية
+  // استخدام useCallback لتحسين الأداء
+  const showBubble = useCallback(() => {
+    setShowSpeechBubble(true);
+  }, []);
+  
+  const changeBubbleMessage = useCallback(() => {
+    setMessageIndex(prev => (prev + 1) % messages.length);
+  }, [messages.length]);
+  
+  // أظهر فقاعة رسالة كل فترة زمنية - تم تحسينه لاستخدام أقل للموارد
   useEffect(() => {
-    if (!show) return;
+    if (!show) {
+      // إلغاء المؤقتات عند إخفاء المساعد
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      return;
+    }
     
-    // أظهر فقاعة رسالة بعد 10 ثوانٍ من ظهور المساعد
-    const timeout = setTimeout(() => {
-      setShowSpeechBubble(true);
-    }, 10000);
+    // أظهر فقاعة رسالة بعد 8 ثوانٍ من ظهور المساعد (بدلاً من 10 ثوانٍ)
+    timeoutRef.current = window.setTimeout(showBubble, 8000);
     
-    // تغيير الرسالة كل 15 ثانية
-    const interval = setInterval(() => {
-      setMessageIndex(prev => (prev + 1) % messages.length);
-    }, 15000);
+    // تغيير الرسالة كل 12 ثانية (بدلاً من 15 ثانية)
+    intervalRef.current = window.setInterval(changeBubbleMessage, 12000);
     
     return () => {
-      clearTimeout(timeout);
-      clearInterval(interval);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [show, messages.length]);
+  }, [show, showBubble, changeBubbleMessage]);
   
-  const handleMaximize = () => {
+  // استخدام useCallback لتحسين الأداء
+  const hideBubble = useCallback(() => {
+    setShowSpeechBubble(false);
+  }, []);
+  
+  const handleMaximize = useCallback(() => {
     toast({
       title: t('aiAssistant.navigating'),
       description: t('aiAssistant.openingPage')
     });
     onMaximize();
-  };
+  }, [t, onMaximize]);
   
   if (!show) return null;
   
@@ -64,7 +82,7 @@ export function FloatingAIAssistant({ show, onMaximize }: FloatingAIAssistantPro
           </div>
           <button 
             className="absolute top-1 right-1 rtl:right-auto rtl:left-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-            onClick={() => setShowSpeechBubble(false)}
+            onClick={hideBubble}
           >
             ×
           </button>
@@ -72,7 +90,7 @@ export function FloatingAIAssistant({ show, onMaximize }: FloatingAIAssistantPro
       )}
       
       <div 
-        className="shadow-lg rounded-full hover:scale-105 transition-transform duration-200 cursor-pointer"
+        className="shadow-lg rounded-full hover:scale-105 transition-transform duration-200 cursor-pointer will-change-transform"
         onClick={handleMaximize}
       >
         <AIAssistant 
@@ -82,4 +100,7 @@ export function FloatingAIAssistant({ show, onMaximize }: FloatingAIAssistantPro
       </div>
     </div>
   );
-}
+});
+
+// إضافة اسم عرض للمكون لتحسين أدوات التطوير
+FloatingAIAssistant.displayName = 'FloatingAIAssistant';

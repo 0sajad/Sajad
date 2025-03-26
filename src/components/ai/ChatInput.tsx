@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect, useMemo } from "react";
+import React, { useRef, useEffect, useMemo, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Send, Mic, FileUp } from "lucide-react";
@@ -41,21 +41,23 @@ export const ChatInput = ({
     return t('ai.writeSomething', "Write your message here...");
   }, [isRTL, t]);
   
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  // استخدام useCallback لتحسين الأداء
+  const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       if (!isProcessing && (input.trim() || hasContent)) {
         handleSendMessage();
       }
     }
-  };
+  }, [input, isProcessing, hasContent, handleSendMessage]);
   
   // تركيز حقل الإدخال عند تحميل المكون أو بعد معالجة الرسالة - تحسين باستخدام requestAnimationFrame
   useEffect(() => {
     if (inputRef.current && !isProcessing) {
-      requestAnimationFrame(() => {
+      // استخدام setTimeout مع زمن قصير بدلاً من requestAnimationFrame للتسريع
+      setTimeout(() => {
         inputRef.current?.focus();
-      });
+      }, 10);
     }
   }, [isProcessing]);
   
@@ -72,6 +74,11 @@ export const ChatInput = ({
   const sendButtonDisabled = useMemo(() => {
     return isProcessing || (!hasContent && !input.trim());
   }, [isProcessing, hasContent, input]);
+  
+  // استخدام useCallback لتحسين الأداء
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+  }, [setInput]);
   
   return (
     <div {...containerProps}>
@@ -103,7 +110,7 @@ export const ChatInput = ({
       <Input
         placeholder={getPlaceholder}
         value={input}
-        onChange={(e) => setInput(e.target.value)}
+        onChange={handleInputChange}
         onKeyPress={handleKeyPress}
         className="flex-1"
         ref={inputRef}
