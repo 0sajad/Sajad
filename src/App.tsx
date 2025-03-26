@@ -15,9 +15,11 @@ import LicenseVerification from "./pages/LicenseVerification";
 import AccessVerification from "./pages/AccessVerification";
 
 // Create a new QueryClient instance outside of the component
-const queryClient = new QueryClient();
-
+// but inside the function scope of this file
 const App = () => {
+  // Create a new QueryClient instance inside the component
+  const queryClient = new QueryClient();
+  
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
