@@ -105,12 +105,14 @@ export function useKeyboardShortcuts() {
             t('accessibility.enabled', 'enabled') : 
             t('accessibility.disabled', 'disabled');
           
-          announce(
-            t('accessibility.announcementFeaturesToggled', {
-              feature: featureName,
-              state: state
-            }, 'Feature {{feature}} is now {{state}}')
-          );
+          // Fixed interpolation syntax for i18next
+          const message = t('accessibility.announcementFeaturesToggled', {
+            feature: featureName,
+            state: state,
+            defaultValue: `Feature ${featureName} is now ${state}`
+          });
+          
+          announce(message);
         }
       }
     };
@@ -127,5 +129,5 @@ export function useKeyboardShortcuts() {
   }, [highContrast, largeText, reducedMotion, focusMode, setHighContrast, setLargeText, setReducedMotion, setFocusMode, t]);
 
   // باستخدام useMemo لإعادة كائن واحد ثابت لمنع التحديثات غير الضرورية
-  return useMemo(() => ({ announce }), [t]);
+  return useMemo(() => ({ announce }), []);
 }
