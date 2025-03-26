@@ -9,5 +9,11 @@
   "bubbleMessages": {
     "newTools": "新工具可用！",
     "help": "需要帮助吗？"
-  }
+  },
+  "security": "高级安全",
+  "securityDesc": "强大的网络和通信保护，具有先进的威胁分析功能",
+  "multiLanguage": "多语言支持",
+  "multiLanguageDesc": "支持所有编程语言和多种语言的交流",
+  "selfDevelpment": "自我发展",
+  "selfDevelpmentDesc": "不断自我改进并学习新技术，无需人工干预"
 }

@@ -9,5 +9,11 @@
   "bubbleMessages": {
     "newTools": "Nouveaux outils disponibles !",
     "help": "Besoin d'aide ?"
-  }
+  },
+  "security": "Sécurité avancée",
+  "securityDesc": "Protection robuste des réseaux et des communications avec analyse avancée des menaces",
+  "multiLanguage": "Support multilingue",
+  "multiLanguageDesc": "Compatible avec tous les langages de programmation et communication en plusieurs langues",
+  "selfDevelpment": "Auto-développement",
+  "selfDevelpmentDesc": "S'améliore constamment et apprend de nouvelles technologies sans intervention humaine"
 }

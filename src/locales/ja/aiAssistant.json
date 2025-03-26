@@ -9,5 +9,11 @@
   "bubbleMessages": {
     "newTools": "新しいツールが利用可能です！",
     "help": "ヘルプが必要ですか？"
-  }
+  },
+  "security": "高度なセキュリティ",
+  "securityDesc": "高度な脅威分析を備えたネットワークと通信の強力な保護",
+  "multiLanguage": "多言語サポート",
+  "multiLanguageDesc": "すべてのプログラミング言語と多言語でのコミュニケーションをサポート",
+  "selfDevelpment": "自己開発",
+  "selfDevelpmentDesc": "人間の介入なしに継続的に改善し、新しい技術を学習"
 }
