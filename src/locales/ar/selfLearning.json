@@ -1,0 +1,80 @@
+
+{
+  "title": "الذكاء الاصطناعي ذاتي التعلم",
+  "description": "التعلم المستمر والتحسين الذاتي للذكاء الاصطناعي",
+  "disabled": "ميزة الذكاء الاصطناعي ذاتي التعلم غير مفعّلة",
+  "enableInDeveloper": "يمكنك تفعيل هذه الميزة من خلال وضع المطور",
+  "active": "نشط",
+  "paused": "متوقف مؤقتًا",
+  "completed": "مكتمل",
+  "trainingProgress": "التقدم في التدريب",
+  "continuousTraining": "التدريب مستمر على مدار الساعة باستخدام مصادر متنوعة من المعرفة",
+  "recentActivities": "أنشطة التعلم الأخيرة",
+  "moduleProgress": "التقدم",
+  "knowledgeSources": "مصادر المعرفة",
+  "continuousIntegration": "التكامل المستمر",
+  "continuousIntegrationDesc": "يقوم الذكاء الاصطناعي بتحليل ودمج المعرفة الجديدة من مصادر متنوعة باستمرار، مما يسمح له بتطوير قدراته وتحسين أدائه تلقائيًا.",
+  
+  "tabs": {
+    "learning": "التعلم",
+    "modules": "الوحدات",
+    "sources": "المصادر"
+  },
+  
+  "activityTypes": {
+    "learning": "تعلم",
+    "discovery": "اكتشاف",
+    "implementation": "تطبيق"
+  },
+  
+  "activities": {
+    "networkAnalysis": "تحليل أنماط حركة الشبكة لتحسين خوارزميات الاكتشاف",
+    "securityPatterns": "اكتشاف أنماط جديدة من التهديدات الأمنية",
+    "optimizationAlgorithms": "تعلم خوارزميات تحسين أداء الشبكة",
+    "errorPatterns": "تحليل أنماط الأخطاء وإيجاد حلول لها",
+    "language": "تحسين فهم اللغة الطبيعية ومعالجتها",
+    "codeRefactoring": "تطبيق تقنيات إعادة هيكلة الكود لتحسين الأداء",
+    "newProtocols": "اكتشاف بروتوكولات شبكات جديدة",
+    "bugFixes": "تطبيق إصلاحات تلقائية للأخطاء البرمجية",
+    "dataIntegration": "تعلم تقنيات دمج البيانات من مصادر متعددة",
+    "newTools": "تطوير أدوات جديدة بناءً على احتياجات المستخدم"
+  },
+  
+  "moduleTypes": {
+    "core": "أساسي",
+    "extended": "موسع"
+  },
+  
+  "moduleStatus": {
+    "active": "نشط",
+    "paused": "متوقف",
+    "completed": "مكتمل"
+  },
+  
+  "modules": {
+    "networkOptimization": "تحسين الشبكات",
+    "securityProtocols": "بروتوكولات الأمان",
+    "codeAnalysis": "تحليل الكود البرمجي",
+    "naturalLanguage": "معالجة اللغة الطبيعية",
+    "patternsDetection": "اكتشاف الأنماط",
+    "errorCorrection": "تصحيح الأخطاء التلقائي"
+  },
+  
+  "sourceTypes": {
+    "academic": "أكاديمي",
+    "documentation": "توثيق",
+    "code": "كود برمجي",
+    "blog": "مدونات",
+    "standard": "معايير",
+    "security": "أمان"
+  },
+  
+  "sources": {
+    "academicPapers": "أوراق بحثية أكاديمية",
+    "techDocs": "وثائق تقنية",
+    "repositories": "مستودعات كود برمجي",
+    "industryBlogs": "مدونات تقنية متخصصة",
+    "networkStandards": "معايير الشبكات",
+    "securityAdvisories": "تنبيهات أمنية"
+  }
+}
