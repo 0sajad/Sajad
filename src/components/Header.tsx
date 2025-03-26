@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ModeToggle } from "./ModeToggle";
@@ -37,9 +36,9 @@ export function Header({ onLanguageChange }: HeaderProps) {
           isScrolled ? "py-3 bg-white/90 shadow-sm dark:bg-gray-900/90" : "py-5 bg-transparent"
         }`}
       >
-        <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between">
+        <div className="container mx-auto px-8 sm:px-12 flex items-center justify-between">
           <div className="flex items-center">
-            <Link to="/" className="relative mr-6 sm:mr-16 group">
+            <Link to="/" className="relative mr-12 sm:mr-24 group">
               <div className="absolute -inset-1.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
               <div className="relative flex items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/20 dark:border-gray-800/50 shadow-xl">
                 <motion.div
