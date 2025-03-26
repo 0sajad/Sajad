@@ -21,23 +21,17 @@ import { ReadingGuide } from "@/components/ui/accessibility/reading-guide";
 import { KeyboardFocusDetector } from "@/components/ui/accessibility/keyboard-focus-detector";
 import { LiveAnnouncer } from "@/components/ui/accessibility/live-announcer";
 import { useA11y } from "@/hooks/useA11y";
-import { TranslationDebugger } from "@/components/dev/TranslationDebugger";
-import { useMode } from "@/context/ModeContext";
 
 const Index = () => {
   const [loaded, setLoaded] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
-  const { i18n, t } = useTranslation();
+  const { i18n } = useTranslation();
   const { isTransitioning } = useLanguageTransition();
   const { reducedMotion } = useA11y();
-  const { isDeveloperMode } = useMode();
   
-  // استخدام الهوكس الجديدة
+  // Use the new hooks
   useKeyboardShortcuts();
   usePreferenceSync();
-  
-  // التحكم في وقت عرض مساعد الذكاء الاصطناعي
-  const aiAssistantDelay = 3000; // تقليل وقت الانتظار قبل ظهور المساعد
 
   useEffect(() => {
     setLoaded(true);
@@ -46,53 +40,27 @@ const Index = () => {
     const savedLanguage = localStorage.getItem("language");
     if (savedLanguage && savedLanguage !== i18n.language) {
       i18n.changeLanguage(savedLanguage);
-    } else if (!savedLanguage) {
-      // استخدام لغة المتصفح كلغة افتراضية
-      const browserLang = navigator.language.startsWith('ar') ? 'ar' : navigator.language;
-      
-      // التحقق مما إذا كانت اللغة مدعومة
-      const supportedLanguages = ['ar', 'en', 'fr', 'ar-iq', 'ja', 'zh'];
-      const defaultLang = supportedLanguages.includes(browserLang) ? browserLang : 'en';
-      
-      if (defaultLang !== i18n.language) {
-        i18n.changeLanguage(defaultLang);
-      }
     }
     
     // التحقق من اتجاه اللغة وتطبيقه
     const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
     document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
-    document.documentElement.setAttribute("lang", i18n.language);
-    
     if (isRTL) {
       document.body.classList.add('rtl-active');
     } else {
       document.body.classList.remove('rtl-active');
     }
     
-    // إعلان تحميل الصفحة للقارئات
-    setTimeout(() => {
-      if (window.announce) {
-        window.announce(t('accessibility.pageLoaded', 'تم تحميل الصفحة الرئيسية'), 'polite');
-      }
-    }, 1000);
-    
     // عرض مساعد الذكاء الاصطناعي بعد فترة
     const timeout = setTimeout(() => {
       setShowAIAssistant(true);
-      
-      if (window.announce) {
-        window.announce(t('accessibility.aiAssistantReady', 'مساعد الذكاء الاصطناعي جاهز للمساعدة'), 'polite');
-      }
-    }, aiAssistantDelay);
+    }, 5000);
     
     // الاستماع لحدث تغيير اللغة
     const handleLanguageFullChange = () => {
       // إعادة تطبيق الاتجاه
       const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
       document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
-      document.documentElement.setAttribute("lang", i18n.language);
-      
       if (isRTL) {
         document.body.classList.add('rtl-active');
       } else {
@@ -106,7 +74,7 @@ const Index = () => {
       clearTimeout(timeout);
       document.removeEventListener('languageFullyChanged', handleLanguageFullChange);
     };
-  }, [i18n, t]);
+  }, [i18n]);
 
   return (
     <TooltipProvider>
@@ -118,53 +86,50 @@ const Index = () => {
           href="#main-content" 
           className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:p-4 focus:bg-white focus:text-black focus:shadow-lg rounded"
         >
-          {t('accessibility.skipToContent', 'تخطى إلى المحتوى الرئيسي')}
+          Skip to main content
         </a>
         
         <Header />
         
         <main id="main-content" tabIndex={-1}>
-          {/* قسم البداية */}
+          {/* Hero Section */}
           <HeroSection />
           
-          {/* قسم لوحة معلومات الشبكة */}
+          {/* Network Dashboard Section */}
           <NetworkDashboard />
           
-          {/* قسم أدوات الشبكة */}
+          {/* Network Tools Section */}
           <NetworkToolsSection />
           
-          {/* قسم الميزات */}
+          {/* Features Section */}
           <AnimatedCards />
           
-          {/* قسم ميزات الذكاء الاصطناعي */}
+          {/* AI Features Section */}
           <AIFeaturesSection />
           
-          {/* قسم الإعدادات */}
+          {/* Settings Section */}
           <SettingsSection />
           
-          {/* قسم دعوة للعمل */}
+          {/* CTA Section */}
           <CTASection />
         </main>
         
         <Footer />
         
-        {/* مساعد الذكاء الاصطناعي العائم */}
+        {/* Floating AI Assistant */}
         <FloatingAIAssistant 
           show={showAIAssistant} 
           onMaximize={() => window.location.href = '/ai'} 
         />
         
-        {/* عناصر تحكم إمكانية الوصول */}
+        {/* Accessibility Controls */}
         <QuickAccessibilityButton />
 
-        {/* مكونات إمكانية الوصول */}
+        {/* Accessibility Components */}
         <ReadingGuide />
         <KeyboardNavigationMenu />
         <KeyboardFocusDetector />
         <LiveAnnouncer />
-        
-        {/* أداة تصحيح الترجمة لوضع المطور */}
-        {isDeveloperMode && <TranslationDebugger />}
       </div>
     </TooltipProvider>
   );

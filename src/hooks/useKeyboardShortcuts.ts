@@ -1,203 +1,133 @@
 
-import { useEffect, useCallback, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useEffect, useRef, useMemo } from 'react';
 import { useA11y } from './useA11y';
+import { toast } from '@/components/ui/use-toast';
+import { useTranslation } from 'react-i18next';
 
-/**
- * هوك محسن يضيف اختصارات لوحة المفاتيح للتطبيق
- * يتضمن اختصارات للوصول والتنقل وتبديل الميزات
- */
 export function useKeyboardShortcuts() {
-  const {
+  const { 
     highContrast, setHighContrast,
     largeText, setLargeText,
     reducedMotion, setReducedMotion,
-    focusMode, setFocusMode,
-    readingGuide, setReadingGuide,
-    soundFeedback, setSoundFeedback,
-    playNotificationSound
+    focusMode, setFocusMode
   } = useA11y();
-
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   
-  // استخدام مراجع للقيم لتجنب إعادة إنشاء الدوال
-  const stateRef = useRef({
-    highContrast,
-    largeText,
-    reducedMotion,
-    focusMode,
-    readingGuide,
-    soundFeedback
-  });
+  // Create a ref for the screen reader announcer element
+  const announcerRef = useRef<HTMLDivElement | null>(null);
   
-  // تحديث المراجع عند تغير القيم
-  useEffect(() => {
-    stateRef.current = {
-      highContrast,
-      largeText,
-      reducedMotion,
-      focusMode,
-      readingGuide,
-      soundFeedback
-    };
-  }, [highContrast, largeText, reducedMotion, focusMode, readingGuide, soundFeedback]);
-
-  // تبديل ميزة مع إضافة الإعلان الصوتي - تم تحسينه باستخدام useCallback
-  const toggleFeature = useCallback((
-    feature: boolean,
-    setFeature: (val: boolean) => void,
-    featureName: string
-  ) => {
-    const newState = !feature;
-    setFeature(newState);
-
-    if (typeof window !== 'undefined' && window.announce && stateRef.current.soundFeedback) {
-      const state = newState 
-        ? t('accessibility.enabled', 'مفعّل') 
-        : t('accessibility.disabled', 'معطّل');
-      
-      const announcement = t('accessibility.announcementFeaturesToggled', {
-        feature: featureName,
-        state: state,
-        defaultValue: `ميزة {{feature}} الآن {{state}}`
-      });
-      
-      window.announce(announcement, 'polite');
-      
-      // تشغيل صوت لتأكيد التبديل
-      if (newState) {
-        playNotificationSound('success');
-      } else {
-        playNotificationSound('info');
+  // Function to announce to screen readers
+  const announce = (message: string) => {
+    try {
+      // إذا كانت الدالة العامة announce متاحة، فاستخدمها أولاً
+      if (typeof window !== 'undefined' && window.announce) {
+        window.announce(message);
+        return;
       }
-    }
-  }, [t, playNotificationSound]);
-
-  // تعامل مع ضغطات المفاتيح - تم تحسينه للأداء
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    // لا تعمل الاختصارات داخل حقول الإدخال
-    if (
-      e.target instanceof HTMLInputElement ||
-      e.target instanceof HTMLTextAreaElement ||
-      e.target instanceof HTMLSelectElement
-    ) {
-      return;
-    }
-
-    // تحسين الأداء باستخدام شجرة القرارات بدلاً من if المتتالية
-    if (e.altKey) {
-      switch (e.key.toLowerCase()) {
-        case 'c':
-          e.preventDefault();
-          toggleFeature(
-            stateRef.current.highContrast, 
-            setHighContrast, 
-            t('accessibility.highContrast', 'التباين العالي')
-          );
-          break;
-          
-        case 't':
-          e.preventDefault();
-          toggleFeature(
-            stateRef.current.largeText, 
-            setLargeText, 
-            t('accessibility.largeText', 'النص الكبير')
-          );
-          break;
-          
-        case 'm':
-          e.preventDefault();
-          toggleFeature(
-            stateRef.current.reducedMotion, 
-            setReducedMotion, 
-            t('accessibility.reducedMotion', 'تقليل الحركة')
-          );
-          break;
-          
-        case 'f':
-          e.preventDefault();
-          toggleFeature(
-            stateRef.current.focusMode, 
-            setFocusMode, 
-            t('accessibility.focusMode', 'وضع التركيز')
-          );
-          break;
-          
-        case 'g':
-          e.preventDefault();
-          toggleFeature(
-            stateRef.current.readingGuide, 
-            setReadingGuide, 
-            t('accessibility.readingGuide', 'دليل القراءة')
-          );
-          break;
-          
-        case 's':
-          e.preventDefault();
-          toggleFeature(
-            stateRef.current.soundFeedback, 
-            setSoundFeedback, 
-            t('accessibility.soundFeedback', 'التنبيهات الصوتية')
-          );
-          break;
-          
-        case 'l':
-          e.preventDefault();
-          // تحسين تبديل اللغة باستخدام مصفوفة مرجعية
-          const supportedLanguages = ['ar', 'en', 'fr', 'ar-iq', 'ja', 'zh'];
-          const currentIndex = supportedLanguages.indexOf(i18n.language);
-          const nextIndex = (currentIndex + 1) % supportedLanguages.length;
-          const nextLanguage = supportedLanguages[nextIndex];
-          
-          // تغيير اللغة
-          i18n.changeLanguage(nextLanguage).then(() => {
-            if (typeof window !== 'undefined' && window.announce && stateRef.current.soundFeedback) {
-              const langName = getLanguageName(nextLanguage);
-              
-              const announcement = t('accessibility.languageChanged', {
-                language: langName,
-                defaultValue: `تم تغيير اللغة إلى {{language}}`
-              });
-              
-              window.announce(announcement, 'polite');
-              playNotificationSound('success');
-            }
-          });
-          break;
+      
+      if (!announcerRef.current) {
+        // Create the announcer element if it doesn't exist
+        const announcer = document.createElement('div');
+        announcer.className = 'sr-only';
+        announcer.setAttribute('aria-live', 'assertive');
+        announcer.setAttribute('aria-atomic', 'true');
+        document.body.appendChild(announcer);
+        announcerRef.current = announcer;
       }
+      
+      // Update the announcer content
+      announcerRef.current.textContent = message;
+      
+      // Clear the announcer after a delay to prevent duplicate readings
+      setTimeout(() => {
+        if (announcerRef.current) {
+          announcerRef.current.textContent = '';
+        }
+      }, 1000);
+    } catch (error) {
+      console.error('Error announcing message to screen readers:', error);
     }
-  }, [
-    t, i18n, 
-    toggleFeature,
-    setHighContrast,
-    setLargeText,
-    setReducedMotion,
-    setFocusMode,
-    setReadingGuide,
-    setSoundFeedback,
-    playNotificationSound
-  ]);
-
-  useEffect(() => {
-    // تسجيل معالج الحدث باستخدام خيار passive:true لتحسين الأداء
-    document.addEventListener('keydown', handleKeyDown, { passive: false });
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [handleKeyDown]);
-
-  // الحصول على اسم اللغة - تم تحسينه باستخدام كائن بدلاً من switch
-  const getLanguageName = (lang: string): string => {
-    const languageNames: Record<string, string> = {
-      'ar': 'العربية',
-      'ar-iq': 'العراقية',
-      'en': 'English',
-      'fr': 'Français',
-      'ja': '日本語',
-      'zh': '中文'
-    };
-    
-    return languageNames[lang] || lang;
   };
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Only respond to Alt + key combinations
+      if (event.altKey) {
+        let featureName = '';
+        let featureState = false;
+        
+        switch (event.key.toLowerCase()) {
+          case 'c': // Alt + C for High Contrast
+            setHighContrast(!highContrast);
+            featureName = t('accessibility.highContrast', 'High Contrast');
+            featureState = !highContrast;
+            toast({
+              title: highContrast 
+                ? t('accessibility.highContrastDisabled', 'High contrast disabled')
+                : t('accessibility.highContrastEnabled', 'High contrast enabled')
+            });
+            break;
+          case 't': // Alt + T for Large Text
+            setLargeText(!largeText);
+            featureName = t('accessibility.largeText', 'Large Text');
+            featureState = !largeText;
+            toast({
+              title: largeText 
+                ? t('accessibility.largeTextDisabled', 'Large text disabled')
+                : t('accessibility.largeTextEnabled', 'Large text enabled')
+            });
+            break;
+          case 'm': // Alt + M for Reduced Motion
+            setReducedMotion(!reducedMotion);
+            featureName = t('accessibility.reducedMotion', 'Reduced Motion');
+            featureState = !reducedMotion;
+            toast({
+              title: reducedMotion 
+                ? t('accessibility.reducedMotionDisabled', 'Reduced motion disabled')
+                : t('accessibility.reducedMotionEnabled', 'Reduced motion enabled')
+            });
+            break;
+          case 'f': // Alt + F for Focus Mode
+            setFocusMode(!focusMode);
+            featureName = t('accessibility.focusMode', 'Focus Mode');
+            featureState = !focusMode;
+            toast({
+              title: focusMode 
+                ? t('accessibility.focusModeDisabled', 'Focus mode disabled')
+                : t('accessibility.focusModeEnabled', 'Focus mode enabled')
+            });
+            break;
+        }
+        
+        // Announce changes to screen readers if a feature was toggled
+        if (featureName) {
+          const state = featureState ? 
+            t('accessibility.enabled', 'enabled') : 
+            t('accessibility.disabled', 'disabled');
+          
+          // Fixed interpolation syntax for i18next
+          const message = t('accessibility.announcementFeaturesToggled', {
+            feature: featureName,
+            state: state,
+            defaultValue: `Feature ${featureName} is now ${state}`
+          });
+          
+          announce(message);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      // Clean up the announcer element on unmount
+      if (announcerRef.current && document.body.contains(announcerRef.current)) {
+        document.body.removeChild(announcerRef.current);
+      }
+    };
+  }, [highContrast, largeText, reducedMotion, focusMode, setHighContrast, setLargeText, setReducedMotion, setFocusMode, t]);
+
+  // باستخدام useMemo لإعادة كائن واحد ثابت لمنع التحديثات غير الضرورية
+  return useMemo(() => ({ announce }), []);
 }

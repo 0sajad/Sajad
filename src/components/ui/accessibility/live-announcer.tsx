@@ -1,6 +1,5 @@
 
-import React, { useEffect, useRef, useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import React, { useEffect, useRef } from "react";
 
 interface LiveAnnouncerProps {
   politeness?: "polite" | "assertive";
@@ -8,36 +7,25 @@ interface LiveAnnouncerProps {
 
 export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
   const announcerRef = useRef<HTMLDivElement>(null);
-  const { i18n } = useTranslation();
-  
-  // استخدام useMemo لحساب القيم التي لا تتغير كثيرًا
-  const isRTL = useMemo(() => {
-    return i18n.language === "ar" || i18n.language === "ar-iq";
-  }, [i18n.language]);
   
   useEffect(() => {
-    // إنشاء وظيفة الإعلان العالمية - تم تحسينها للأداء
+    // تعريف وظيفة الإعلان العامة
     if (typeof window !== 'undefined') {
-      // تحسين وظيفة الإعلان لتكون أسرع وأكثر كفاءة
       window.announce = (message: string, level: "polite" | "assertive" = "polite") => {
         if (announcerRef.current) {
           try {
-            // استخدام تأخير أقل للحصول على استجابة أسرع
+            // إعادة تعيين المحتوى أولاً لضمان قراءة الإعلان الجديد
             announcerRef.current.textContent = "";
+            
+            // تعيين مستوى الإلحاح
             announcerRef.current.setAttribute("aria-live", level);
             
-            // تقليل التأخير لزيادة السرعة
-            requestAnimationFrame(() => {
+            // إضافة محتوى الإعلان بعد فترة قصيرة للتأكد من قراءته
+            setTimeout(() => {
               if (announcerRef.current) {
                 announcerRef.current.textContent = message;
-                announcerRef.current.setAttribute("lang", i18n.language);
-                announcerRef.current.setAttribute("dir", isRTL ? "rtl" : "ltr");
               }
-            });
-            
-            if (process.env.NODE_ENV === 'development') {
-              console.log(`[LiveAnnouncer] ${level}: ${message}`);
-            }
+            }, 50);
           } catch (error) {
             console.error("Error while announcing:", error);
           }
@@ -45,7 +33,7 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
       };
     }
     
-    // للتنظيف: تفريغ عنصر الإعلان عند إزالة المكون
+    // التنظيف: تفريغ عنصر الإعلان عند إزالة المكون
     return () => {
       if (announcerRef.current) {
         announcerRef.current.textContent = "";
@@ -54,27 +42,20 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
       // إعادة إنشاء دالة announce كدالة فارغة للسلامة
       if (typeof window !== 'undefined') {
         window.announce = (message: string) => {
-          // دالة فارغة للتنظيف
+          console.log("LiveAnnouncer unmounted, but announce was called with:", message);
         };
       }
     };
-  }, [i18n.language, isRTL]);
+  }, []);
   
-  // تحسين الوظائف الأولية
+  // تأكد من تشغيل هذا المكون عند تحميل التطبيق
   useEffect(() => {
     // التحقق من وجود وظيفة الإعلان
     if (typeof window !== 'undefined' && window.announce) {
       // إعلان أولي للتأكد من عمل النظام
-      const initialMessage = isRTL 
-        ? "تم تحميل نظام الإعلانات للوصول" 
-        : "Accessibility announcements system loaded";
-      
-      // استخدام setTimeout بتأخير أقل
-      setTimeout(() => {
-        window.announce(initialMessage, "polite");
-      }, 100); // تقليل التأخير من 500 إلى 100 مللي ثانية
+      window.announce("تم تحميل نظام الإعلانات للوصول", "polite");
     }
-  }, [isRTL]);
+  }, []);
   
   // تنسيق CSS للتأكد من إخفاء العنصر بصريًا مع السماح لقارئات الشاشة بقراءته
   const announcerStyle: React.CSSProperties = {
@@ -97,8 +78,6 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
       aria-atomic="true"
       aria-relevant="additions"
       style={announcerStyle}
-      lang={i18n.language}
-      dir={isRTL ? "rtl" : "ltr"}
     />
   );
 }

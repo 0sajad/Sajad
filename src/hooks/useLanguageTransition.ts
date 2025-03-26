@@ -10,9 +10,6 @@ export function useLanguageTransition() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const { i18n, t } = useTranslation();
   
-  // قائمة اللغات المدعومة
-  const supportedLanguages = ['en', 'ar', 'ar-iq', 'fr', 'ja', 'zh'];
-  
   useEffect(() => {
     // إضافة مستمع للحدث المخصص languageChanged
     const handleLanguageChange = () => {
@@ -100,17 +97,12 @@ export function useLanguageTransition() {
             }
           });
         }
-        
-        // إعلان تغيير اللغة للمستخدمين ذوي الاحتياجات الخاصة
-        if (window.announce) {
-          window.announce(t('accessibility.languageChanged', { language: getLanguageName(language) }), 'polite');
-        }
       }).catch((error) => {
         console.error("خطأ في تغيير اللغة:", error);
         // إظهار إشعار بفشل تغيير اللغة
         toast({
-          title: t('common.error', 'خطأ'),
-          description: t('common.languageChangeError', 'فشل في تغيير اللغة'),
+          title: t('common.error', 'Error'),
+          description: t('common.languageChangeError', 'Failed to change language'),
           variant: "destructive",
           duration: 3000
         });
@@ -163,30 +155,9 @@ export function useLanguageTransition() {
         return `Switched to ${language}`;
     }
   };
-  
-  // دالة مساعدة للحصول على اسم اللغة
-  const getLanguageName = (language: string): string => {
-    switch (language) {
-      case "ar":
-        return "العربية";
-      case "ar-iq":
-        return "العراقية";
-      case "en":
-        return "English";
-      case "ja":
-        return "日本語";
-      case "zh":
-        return "中文";
-      case "fr":
-        return "Français";
-      default:
-        return language;
-    }
-  };
 
   return {
     isTransitioning,
-    changeLanguage,
-    supportedLanguages
+    changeLanguage
   };
 }

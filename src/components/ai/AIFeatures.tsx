@@ -30,8 +30,6 @@ export const AIFeatures = () => {
           <div 
             key={index} 
             className="flex items-start p-3 rounded-lg bg-gradient-to-r from-purple-50 to-blue-50 hover:from-purple-100 hover:to-blue-100 transition-colors cursor-pointer"
-            role="button"
-            aria-label={t(`aiFeatures.${feature.id}`)}
           >
             <div className="p-2 rounded-md bg-white shadow-sm mr-3 rtl:mr-0 rtl:ml-3">
               <feature.icon size={20} className="text-octaBlue-600" />

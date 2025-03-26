@@ -57,7 +57,7 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
                 variant="outline"
                 size={variant === "icon" ? "icon" : "default"}
                 className={`relative ${className} ${isTransitioning ? 'opacity-50' : 'opacity-100'} transition-opacity duration-300`}
-                aria-label={t('common.selectLanguage', 'تغيير اللغة')}
+                aria-label={t('common.selectLanguage', 'Change language')}
               >
                 {variant === "icon" ? (
                   <Globe className="h-4 w-4" />
@@ -72,13 +72,13 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
             </DropdownMenuTrigger>
           </TooltipTrigger>
           <TooltipContent side="bottom">
-            <p>{t('common.selectLanguage', 'تغيير اللغة')}</p>
+            <p>{t('common.selectLanguage', 'Change language')}</p>
           </TooltipContent>
         </Tooltip>
         
         <DropdownMenuContent align="end" className="min-w-[180px]">
           <DropdownMenuLabel>
-            {t('common.language', 'اللغة')}
+            {t('common.language', 'Language')}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           

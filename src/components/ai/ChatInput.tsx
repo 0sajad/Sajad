@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect, useMemo, useCallback } from "react";
+import React, { useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Send, Mic, FileUp } from "lucide-react";
@@ -27,66 +27,43 @@ export const ChatInput = ({
   hasContent
 }: ChatInputProps) => {
   const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
   const inputRef = useRef<HTMLInputElement>(null);
   
-  // استخدام useMemo لتحسين الأداء بحساب القيم مرة واحدة فقط عند تغيير اللغة
-  const isRTL = useMemo(() => {
-    return i18n.language === "ar" || i18n.language === "ar-iq";
-  }, [i18n.language]);
-  
-  const getPlaceholder = useMemo(() => {
-    if (isRTL) {
-      return t('ai.writeSomething', "اكتب رسالتك هنا...");
-    }
-    return t('ai.writeSomething', "Write your message here...");
-  }, [isRTL, t]);
-  
-  // استخدام useCallback لتحسين الأداء
-  const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
+  const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       if (!isProcessing && (input.trim() || hasContent)) {
         handleSendMessage();
       }
     }
-  }, [input, isProcessing, hasContent, handleSendMessage]);
+  };
   
-  // تركيز حقل الإدخال عند تحميل المكون أو بعد معالجة الرسالة - تحسين باستخدام requestAnimationFrame
+  // تركيز حقل الإدخال عند تحميل المكون أو بعد معالجة الرسالة
   useEffect(() => {
     if (inputRef.current && !isProcessing) {
-      // استخدام setTimeout مع زمن قصير بدلاً من requestAnimationFrame للتسريع
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 10);
+      inputRef.current.focus();
     }
   }, [isProcessing]);
   
-  // حساب الخصائص مسبقًا لتحسين الأداء
-  const containerProps = useMemo(() => ({
-    className: "flex gap-2 items-center pb-1",
-    dir: isRTL ? "rtl" : "ltr"
-  }), [isRTL]);
-  
-  const micButtonClass = useMemo(() => {
-    return `${isListening ? 'bg-red-100 text-red-600 hover:bg-red-200' : ''} transition-colors`;
-  }, [isListening]);
-  
-  const sendButtonDisabled = useMemo(() => {
-    return isProcessing || (!hasContent && !input.trim());
-  }, [isProcessing, hasContent, input]);
-  
-  // استخدام useCallback لتحسين الأداء
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
-  }, [setInput]);
+  // تغيير نص placeholder بناءً على اللغة
+  const getPlaceholder = () => {
+    if (isRTL) {
+      return t('ai.writeSomething', "اكتب رسالتك هنا...");
+    }
+    return t('ai.writeSomething', "Write your message here...");
+  };
   
   return (
-    <div {...containerProps}>
+    <div 
+      className="flex gap-2 items-center pb-1" 
+      dir={isRTL ? "rtl" : "ltr"}
+    >
       <Button 
         variant="outline" 
         size="icon"
         onClick={handleVoiceInput}
-        className={micButtonClass}
+        className={`${isListening ? 'bg-red-100 text-red-600 hover:bg-red-200' : ''} transition-colors`}
         title={isListening ? t('ai.stopListening') : t('ai.startListening')}
         aria-label={isListening ? t('ai.stopListening') : t('ai.startListening')}
         type="button"
@@ -108,9 +85,9 @@ export const ChatInput = ({
       </Button>
       
       <Input
-        placeholder={getPlaceholder}
+        placeholder={getPlaceholder()}
         value={input}
-        onChange={handleInputChange}
+        onChange={(e) => setInput(e.target.value)}
         onKeyPress={handleKeyPress}
         className="flex-1"
         ref={inputRef}
@@ -123,7 +100,7 @@ export const ChatInput = ({
       <Button 
         onClick={handleSendMessage} 
         size="icon"
-        disabled={sendButtonDisabled}
+        disabled={isProcessing || (!hasContent && !input.trim())}
         title={t('ai.sendMessage')}
         aria-label={t('ai.sendMessage')}
         type="button"
