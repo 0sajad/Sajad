@@ -2,25 +2,16 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ModeToggle } from "./ModeToggle";
-import { Menu, X, User, Sparkles } from "lucide-react";
+import { Menu, X, User, Shield, Settings, HelpCircle, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DesktopNav } from "./nav/DesktopNav";
-import { MobileMenu } from "./nav/MobileMenu";
 import { useTranslation } from 'react-i18next';
-import { useIsMobile } from "@/hooks/use-mobile";
 import { LanguageSwitcher } from "./nav/LanguageSwitcher";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { toast } from "sonner";
-import { showNotification } from "./ui/notifications";
+import { MobileMenu } from "./nav/MobileMenu";
 
-interface HeaderProps {
-  onLanguageChange?: (language: string) => void;
-}
-
-export function Header({ onLanguageChange }: HeaderProps) {
+export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isLogoHovered, setIsLogoHovered] = useState(false);
   const { t } = useTranslation();
   
   useEffect(() => {
@@ -31,76 +22,92 @@ export function Header({ onLanguageChange }: HeaderProps) {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const handleLogoClick = () => {
-    showNotification({
-      title: t('common.welcomeMessage', "مرحبًا بك في OCTA-GRAM"),
-      type: "info"
-    });
-  };
   
   return (
     <TooltipProvider>
       <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
           isScrolled 
             ? "py-2 bg-black/80 backdrop-blur-xl shadow-lg border-b border-orange-500/20" 
             : "py-3 bg-transparent"
         }`}
       >
         <div className="container mx-auto px-4 flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            <Link 
-              to="/" 
-              className="flex items-center group relative"
-              onMouseEnter={() => setIsLogoHovered(true)}
-              onMouseLeave={() => setIsLogoHovered(false)}
-              onClick={handleLogoClick}
-            >
-              <div className={`flex items-center transition-all duration-500 ${isLogoHovered ? 'scale-105 translate-y-[-2px]' : ''}`}>
-                <div className="relative mr-3 rtl:ml-3 rtl:mr-0">
-                  <div className="absolute inset-0 bg-orange-500 rounded-full blur-md opacity-50 group-hover:opacity-70 animate-pulse transition-all duration-300"></div>
-                  <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-full p-2.5 flex items-center justify-center shadow-lg relative z-10 overflow-hidden transform group-hover:rotate-12 transition-all duration-500 border border-orange-400/30">
-                    <div className="absolute inset-0 bg-orange-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-full"></div>
-                    <Sparkles size={20} className="text-white" />
-                  </div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="flex items-center">
-                    <span className="text-2xl font-extrabold bg-gradient-to-r from-orange-500 to-orange-400 bg-clip-text text-transparent drop-shadow-sm">OCTA-</span>
-                    <span className="text-2xl font-extrabold bg-gradient-to-r from-orange-400 to-orange-500 bg-clip-text text-transparent drop-shadow-sm">GRAM</span>
-                  </div>
-                  <span className="text-xs text-orange-300 tracking-wider font-medium">
-                    {t('header.tagline', 'NETWORK SOLUTIONS')}
-                  </span>
-                </div>
+          <div className="flex items-center space-x-8 rtl:space-x-reverse">
+            <Link to="/" className="flex items-center">
+              <div className="flex items-center">
+                <span className="text-2xl font-bold text-orange-500 flex items-center">
+                  <span className="text-orange-500 mr-1 rtl:ml-1 rtl:mr-0">GRAM-</span>
+                  <span className="text-orange-500">OCTA</span>
+                </span>
               </div>
             </Link>
             
-            <DesktopNav />
+            <nav className="hidden md:flex items-center space-x-6 rtl:space-x-reverse">
+              <Link to="/" className="flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors text-gray-300 hover:text-orange-300">
+                <LayoutDashboard size={18} />
+                <span>{t('header.dashboard')}</span>
+              </Link>
+              
+              <div className="relative group">
+                <button className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-300 hover:text-orange-300 transition-colors">
+                  <span>{t('header.tools')}</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+              </div>
+              
+              <Link to="/ai" className="flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors text-gray-300 hover:text-orange-300">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path 
+                    d="M12 4.75V6.25M15.25 8L14.25 9M8.75 8L9.75 9M15.25 16L14.25 15M8.75 16L9.75 15M12 17.75V19.25M17.75 12.75H19.25M4.75 12.75H6.25" 
+                    stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path 
+                    d="M12 15.75C14.0711 15.75 15.75 14.0711 15.75 12C15.75 9.92893 14.0711 8.25 12 8.25C9.92893 8.25 8.25 9.92893 8.25 12C8.25 14.0711 9.92893 15.75 12 15.75Z" 
+                    stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span>{t('header.aiAssistant')}</span>
+              </Link>
+              
+              <Link to="/settings" className="flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors text-gray-300 hover:text-orange-300">
+                <Settings size={18} />
+                <span>{t('header.settings')}</span>
+              </Link>
+              
+              <Link to="/help-center" className="flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors text-gray-300 hover:text-orange-300">
+                <HelpCircle size={18} />
+                <span>{t('header.helpCenter')}</span>
+              </Link>
+              
+              <Link to="/license" className="flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors text-gray-300 hover:text-orange-300">
+                <Shield size={18} />
+                <span>{t('header.license')}</span>
+              </Link>
+            </nav>
           </div>
           
           <div className="flex items-center space-x-4 rtl:space-x-reverse">
-            <LanguageSwitcher className="transform hover:scale-110 transition-transform rounded-full shadow-md" />
+            <LanguageSwitcher className="shadow-md" />
             
-            <div className="transform hover:scale-105 transition-transform">
+            <div>
               <ModeToggle />
             </div>
             
             <div className="hidden md:block">
               <Button 
                 variant="default"
-                className="bg-gradient-to-r from-purple-600 via-orange-500 to-orange-600 hover:brightness-110 px-6 py-2 text-white shadow-lg hover:shadow-orange-500/20 transition-all duration-300 rounded-full effect-3d"
+                className="bg-orange-500 hover:bg-orange-600 px-4 text-white"
               >
-                <div className="flex items-center gap-2 rtl:flex-row-reverse">
+                <div className="flex items-center gap-2">
                   <User size={16} className="text-white" />
-                  <span className="font-medium">{t('header.login')}</span>
+                  <span>{t('header.login')}</span>
                 </div>
               </Button>
             </div>
             
             <button
-              className="p-2 md:hidden transform hover:scale-110 transition-transform"
+              className="p-2 md:hidden"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label={isMobileMenuOpen ? "إغلاق القائمة" : "فتح القائمة"}
             >

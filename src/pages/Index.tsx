@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -85,7 +84,7 @@ const Index = () => {
         <Header />
         
         {/* Add spacing to prevent content from being hidden under the header */}
-        <div className="pt-24">
+        <div className="pt-16">
           {/* Hero Section */}
           <HeroSection />
           
