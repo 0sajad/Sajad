@@ -2,337 +2,241 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { GlassCard } from "@/components/ui/glass-card";
-import { LanguageSwitcher } from "@/components/nav/LanguageSwitcher";
-import { 
-  Search, 
-  BookOpen, 
-  FileText, 
-  Video, 
-  Code, 
-  HelpCircle, 
-  MessageSquare,
-  Settings,
-  ChevronRight,
-  ExternalLink 
-} from "lucide-react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { cn } from "@/lib/utils";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Search, Book, FileQuestion, PlayCircle, Code, ChevronRight } from "lucide-react";
 
-const HelpCenterMultiLang = () => {
-  const { t } = useTranslation(['common', 'helpCenter']);
+const HelpCenterMultiLang: React.FC = () => {
+  const { t } = useTranslation("helpCenter");
   const [searchQuery, setSearchQuery] = useState("");
-  
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Searching for:", searchQuery);
+    // Implement search functionality
+  };
+
   return (
-    <div className="min-h-screen w-full">
-      <Header />
-      
-      <main className="container mx-auto px-6 py-16">
-        <div className="max-w-4xl mx-auto mb-12">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-            <div>
-              <h1 className="text-4xl font-bold mb-2">{t('helpCenter.title')}</h1>
-              <p className="text-muted-foreground text-lg">{t('helpCenter.description')}</p>
-            </div>
-            <LanguageSwitcher className="shrink-0" />
+    <div className="container mx-auto py-8 px-4">
+      <div className="text-center mb-10">
+        <h1 className="text-3xl font-bold mb-2">{t("title")}</h1>
+        <p className="text-muted-foreground max-w-2xl mx-auto">{t("description")}</p>
+      </div>
+
+      <div className="max-w-3xl mx-auto mb-10">
+        <form onSubmit={handleSearch} className="flex gap-2">
+          <Input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={t("searchPlaceholder")}
+            className="flex-1"
+          />
+          <Button type="submit">
+            <Search className="h-4 w-4 mr-2" />
+            {t("search")}
+          </Button>
+        </form>
+      </div>
+
+      <Tabs defaultValue="guides" className="max-w-5xl mx-auto">
+        <TabsList className="grid grid-cols-4 mb-8">
+          <TabsTrigger value="guides">
+            <Book className="h-4 w-4 mr-2" />
+            {t("guides")}
+          </TabsTrigger>
+          <TabsTrigger value="faq">
+            <FileQuestion className="h-4 w-4 mr-2" />
+            {t("faq")}
+          </TabsTrigger>
+          <TabsTrigger value="videos">
+            <PlayCircle className="h-4 w-4 mr-2" />
+            {t("videos")}
+          </TabsTrigger>
+          <TabsTrigger value="developer">
+            <Code className="h-4 w-4 mr-2" />
+            {t("developerInfo")}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="guides" className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("gettingStarted")}</CardTitle>
+                <CardDescription>{t("gettingStartedDesc")}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2">
+                  <li className="flex items-center">
+                    <ChevronRight className="h-4 w-4 mr-2 text-muted-foreground" />
+                    <span>{t("installationGuide")}</span>
+                  </li>
+                  <li className="flex items-center">
+                    <ChevronRight className="h-4 w-4 mr-2 text-muted-foreground" />
+                    <span>{t("firstTimeSetup")}</span>
+                  </li>
+                  <li className="flex items-center">
+                    <ChevronRight className="h-4 w-4 mr-2 text-muted-foreground" />
+                    <span>{t("basicNavigation")}</span>
+                  </li>
+                </ul>
+                <Button variant="link" className="mt-4 p-0">
+                  {t("readFullGuide")}
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("aiAssistantDesc")}</CardTitle>
+                <CardDescription>{t("aiAssistantDesc")}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2">
+                  <li className="flex items-center">
+                    <ChevronRight className="h-4 w-4 mr-2 text-muted-foreground" />
+                    <span>{t("chatbotUsage")}</span>
+                  </li>
+                  <li className="flex items-center">
+                    <ChevronRight className="h-4 w-4 mr-2 text-muted-foreground" />
+                    <span>{t("fileAnalysis")}</span>
+                  </li>
+                  <li className="flex items-center">
+                    <ChevronRight className="h-4 w-4 mr-2 text-muted-foreground" />
+                    <span>{t("networkPredictions")}</span>
+                  </li>
+                </ul>
+                <Button variant="link" className="mt-4 p-0">
+                  {t("readFullGuide")}
+                </Button>
+              </CardContent>
+            </Card>
           </div>
-          
-          <div className="relative max-w-2xl mx-auto mt-8">
-            <Search className="absolute left-3 rtl:right-3 rtl:left-auto top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-            <Input 
-              className="pl-10 rtl:pr-10 rtl:pl-4 py-6" 
-              placeholder={t('helpCenter.searchPlaceholder')}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+        </TabsContent>
+
+        <TabsContent value="faq">
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("frequentlyAskedQuestions")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="item-1">
+                  <AccordionTrigger>{t("faq1")}</AccordionTrigger>
+                  <AccordionContent>{t("faq1Answer")}</AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-2">
+                  <AccordionTrigger>{t("faq2")}</AccordionTrigger>
+                  <AccordionContent>{t("faq2Answer")}</AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-3">
+                  <AccordionTrigger>{t("faq3")}</AccordionTrigger>
+                  <AccordionContent>{t("faq3Answer")}</AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-4">
+                  <AccordionTrigger>{t("faq4")}</AccordionTrigger>
+                  <AccordionContent>{t("faq4Answer")}</AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-5">
+                  <AccordionTrigger>{t("faq5")}</AccordionTrigger>
+                  <AccordionContent>{t("faq5Answer")}</AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="videos">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("gettingStartedVideo")}</CardTitle>
+                <CardDescription>{t("gettingStartedVideoDesc")}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="aspect-video bg-muted rounded-md flex items-center justify-center">
+                  <PlayCircle className="h-12 w-12 text-muted-foreground opacity-50" />
+                </div>
+                <Button variant="outline" className="w-full mt-4">
+                  {t("viewAll")}
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("aiAssistantVideo")}</CardTitle>
+                <CardDescription>{t("aiAssistantVideoDesc")}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="aspect-video bg-muted rounded-md flex items-center justify-center">
+                  <PlayCircle className="h-12 w-12 text-muted-foreground opacity-50" />
+                </div>
+                <Button variant="outline" className="w-full mt-4">
+                  {t("viewAll")}
+                </Button>
+              </CardContent>
+            </Card>
           </div>
-        </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
-          <div className="lg:col-span-2">
-            <Tabs defaultValue="guides">
-              <TabsList className="mb-6">
-                <TabsTrigger value="guides" className="flex items-center gap-2">
-                  <BookOpen size={16} />
-                  <span>{t('helpCenter.guides')}</span>
-                </TabsTrigger>
-                <TabsTrigger value="faq" className="flex items-center gap-2">
-                  <HelpCircle size={16} />
-                  <span>{t('helpCenter.faq')}</span>
-                </TabsTrigger>
-                <TabsTrigger value="videos" className="flex items-center gap-2">
-                  <Video size={16} />
-                  <span>{t('helpCenter.videos')}</span>
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="guides" className="space-y-6">
+        </TabsContent>
+
+        <TabsContent value="developer">
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("developerInformation")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h2 className="text-2xl font-semibold mb-4">{t('helpCenter.gettingStarted')}</h2>
-                  <p className="text-muted-foreground mb-6">{t('helpCenter.gettingStartedDesc')}</p>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <GuideCategory 
-                      title={t('helpCenter.userGuides')}
-                      icon={<BookOpen className="h-5 w-5 text-blue-500" />}
-                      items={[
-                        t('helpCenter.installationGuide'),
-                        t('helpCenter.firstTimeSetup'),
-                        t('helpCenter.basicNavigation')
-                      ]}
-                    />
-                    
-                    <GuideCategory 
-                      title={t('helpCenter.networkManagementDesc')}
-                      icon={<Settings className="h-5 w-5 text-purple-500" />}
-                      items={[
-                        t('helpCenter.deviceManagement'),
-                        t('helpCenter.troubleshooting'),
-                        t('helpCenter.performanceOptimization')
-                      ]}
-                    />
-                    
-                    <GuideCategory 
-                      title={t('helpCenter.qualityMonitoringDesc')}
-                      icon={<FileText className="h-5 w-5 text-amber-500" />}
-                      items={[
-                        t('helpCenter.signalMeasurement'),
-                        t('helpCenter.speedTesting'),
-                        t('helpCenter.latencyAnalysis')
-                      ]}
-                    />
-                    
-                    <GuideCategory 
-                      title={t('helpCenter.aiAssistantDesc')}
-                      icon={<MessageSquare className="h-5 w-5 text-red-500" />}
-                      items={[
-                        t('helpCenter.chatbotUsage'),
-                        t('helpCenter.fileAnalysis'),
-                        t('helpCenter.networkPredictions')
-                      ]}
-                    />
-                  </div>
+                  <h3 className="font-medium mb-2">{t("additionalResources")}</h3>
+                  <ul className="space-y-2">
+                    <li className="flex items-center">
+                      <ChevronRight className="h-4 w-4 mr-2 text-muted-foreground" />
+                      <span>{t("documentation")}</span>
+                    </li>
+                    <li className="flex items-center">
+                      <ChevronRight className="h-4 w-4 mr-2 text-muted-foreground" />
+                      <span>{t("apiReference")}</span>
+                    </li>
+                    <li className="flex items-center">
+                      <ChevronRight className="h-4 w-4 mr-2 text-muted-foreground" />
+                      <span>{t("communityForums")}</span>
+                    </li>
+                  </ul>
                 </div>
                 
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-medium">{t('helpCenter.guides')}</h3>
-                    <Button variant="link" className="flex items-center gap-1 text-sm">
-                      {t('helpCenter.readFullGuide')}
-                      <ChevronRight size={16} />
+                  <h3 className="font-medium mb-2">{t("licenseManagement")}</h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">{t("currentLicense")}:</span>
+                      <span>{t("licenseStatus")}</span>
+                    </div>
+                    <Button variant="outline" size="sm" className="w-full">
+                      {t("manageLicense")}
                     </Button>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <GuideLink title={t('helpCenter.installationGuide')} />
-                    <GuideLink title={t('helpCenter.deviceManagement')} />
-                    <GuideLink title={t('helpCenter.troubleshooting')} />
-                    <GuideLink title={t('helpCenter.speedTesting')} />
-                  </div>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="faq">
-                <div>
-                  <h2 className="text-2xl font-semibold mb-6">{t('helpCenter.frequentlyAskedQuestions')}</h2>
-                  
-                  <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="item-1">
-                      <AccordionTrigger>{t('helpCenter.faq1')}</AccordionTrigger>
-                      <AccordionContent>
-                        {t('helpCenter.faq1Answer')}
-                      </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="item-2">
-                      <AccordionTrigger>{t('helpCenter.faq2')}</AccordionTrigger>
-                      <AccordionContent>
-                        {t('helpCenter.faq2Answer')}
-                      </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="item-3">
-                      <AccordionTrigger>{t('helpCenter.faq3')}</AccordionTrigger>
-                      <AccordionContent>
-                        {t('helpCenter.faq3Answer')}
-                      </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="item-4">
-                      <AccordionTrigger>{t('helpCenter.faq4')}</AccordionTrigger>
-                      <AccordionContent>
-                        {t('helpCenter.faq4Answer')}
-                      </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="item-5">
-                      <AccordionTrigger>{t('helpCenter.faq5')}</AccordionTrigger>
-                      <AccordionContent>
-                        {t('helpCenter.faq5Answer')}
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="videos">
-                <div>
-                  <h2 className="text-2xl font-semibold mb-6">{t('helpCenter.videoTutorials')}</h2>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <VideoCard 
-                      title={t('helpCenter.gettingStartedVideo')}
-                      description={t('helpCenter.gettingStartedVideoDesc')}
-                    />
-                    <VideoCard 
-                      title={t('helpCenter.networkAnalysisVideo')}
-                      description={t('helpCenter.networkAnalysisVideoDesc')}
-                    />
-                    <VideoCard 
-                      title={t('helpCenter.troubleshootingVideo')}
-                      description={t('helpCenter.troubleshootingVideoDesc')}
-                    />
-                    <VideoCard 
-                      title={t('helpCenter.aiAssistantVideo')}
-                      description={t('helpCenter.aiAssistantVideoDesc')}
-                    />
-                  </div>
-                </div>
-              </TabsContent>
-            </Tabs>
-          </div>
-          
-          <div>
-            <GlassCard className="p-6">
-              <h3 className="text-xl font-semibold mb-4">{t('helpCenter.developerInformation')}</h3>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">{t('helpCenter.developerName')}</p>
-                  <p className="font-medium">OCTA-GRAM Team</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">{t('helpCenter.developerRole')}</p>
-                  <p className="font-medium">Network Solutions</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">{t('helpCenter.additionalResources')}</p>
-                  <div className="space-y-1 mt-2">
-                    <a href="#" className="flex items-center gap-1 text-sm text-primary hover:underline">
-                      <span>{t('helpCenter.documentation')}</span>
-                      <ExternalLink size={12} />
-                    </a>
-                    <a href="#" className="flex items-center gap-1 text-sm text-primary hover:underline">
-                      <span>{t('helpCenter.apiReference')}</span>
-                      <ExternalLink size={12} />
-                    </a>
-                    <a href="#" className="flex items-center gap-1 text-sm text-primary hover:underline">
-                      <span>{t('helpCenter.communityForums')}</span>
-                      <ExternalLink size={12} />
-                    </a>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">{t('helpCenter.licenseManagement')}</p>
-                  <p className="font-medium mt-1">{t('helpCenter.currentLicense')}: <span className="text-green-500">{t('helpCenter.licenseStatus')}</span></p>
-                  <Button variant="outline" size="sm" className="mt-2">
-                    {t('helpCenter.manageLicense')}
-                  </Button>
                 </div>
               </div>
-            </GlassCard>
-            
-            <GlassCard className="p-6 mt-6">
-              <h3 className="text-xl font-semibold mb-3">{t('helpCenter.stillNeedHelp')}</h3>
-              <p className="text-muted-foreground text-sm mb-4">
-                {t('helpCenter.contactSupport')}
-              </p>
-              <div className="space-y-2">
-                <Button className="w-full" variant="default">
-                  {t('helpCenter.openSupportTicket')}
-                </Button>
-                <Button className="w-full" variant="outline">
-                  {t('helpCenter.emailSupport')}
-                </Button>
+
+              <div className="mt-8 border-t pt-6">
+                <h3 className="font-medium mb-2">{t("stillNeedHelp")}</h3>
+                <p className="text-muted-foreground text-sm mb-4">{t("contactSupport")}</p>
+                <div className="flex gap-2">
+                  <Button variant="outline">{t("openSupportTicket")}</Button>
+                  <Button variant="outline">{t("emailSupport")}</Button>
+                </div>
               </div>
-            </GlassCard>
-          </div>
-        </div>
-      </main>
-      
-      <Footer />
-    </div>
-  );
-};
-
-// Props for the GuideCategory component
-interface GuideCategoryProps {
-  title: string;
-  icon: React.ReactNode;
-  items: string[];
-}
-
-// GuideCategory component
-const GuideCategory = ({ title, icon, items }: GuideCategoryProps) => {
-  return (
-    <div className="border rounded-lg p-4 hover:border-primary/40 hover:bg-accent/50 transition-colors">
-      <div className="flex items-center mb-2">
-        {icon}
-        <h4 className="font-medium ml-2 rtl:mr-2 rtl:ml-0">{title}</h4>
-      </div>
-      <ul className="text-sm text-muted-foreground space-y-1">
-        {items.map((item, index) => (
-          <li key={index} className="flex items-center">
-            <ChevronRight size={14} className="mr-1 rtl:ml-1 rtl:mr-0 text-primary" />
-            <span>{item}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-// Props for the GuideLink component
-interface GuideLinkProps {
-  title: string;
-}
-
-// GuideLink component
-const GuideLink = ({ title }: GuideLinkProps) => {
-  return (
-    <a 
-      href="#" 
-      className="flex items-center p-3 border rounded-md hover:bg-accent/50 hover:border-primary/40 transition-colors"
-    >
-      <FileText className="h-5 w-5 text-primary mr-3 rtl:ml-3 rtl:mr-0" />
-      <span className="font-medium">{title}</span>
-    </a>
-  );
-};
-
-// Props for the VideoCard component
-interface VideoCardProps {
-  title: string;
-  description: string;
-}
-
-// VideoCard component
-const VideoCard = ({ title, description }: VideoCardProps) => {
-  return (
-    <div className={cn(
-      "border rounded-lg p-4 hover:border-primary/40 hover:bg-accent/50 transition-colors"
-    )}>
-      <div className="aspect-video bg-muted rounded-md flex items-center justify-center mb-3">
-        <Video className="h-8 w-8 text-muted-foreground" />
-      </div>
-      <h4 className="font-medium">{title}</h4>
-      <p className="text-sm text-muted-foreground mt-1">
-        {description}
-      </p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

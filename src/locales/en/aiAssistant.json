@@ -1,28 +1,31 @@
 
 {
   "title": "AI Assistant",
-  "subtitle": "Your personal network guide",
-  "description": "Get instant help, recommendations, and automation for your network",
-  "greeting": "Hello! How can I help with your network today?",
-  "placeholder": "Ask me anything about your network...",
-  "suggestions": {
-    "optimize": "How can I optimize my Wi-Fi signal?",
-    "secure": "Is my network secure?",
-    "troubleshoot": "Why is my internet connection slow?",
-    "device": "How do I connect a new device?"
+  "ready": "Ready",
+  "learning": "Learning",
+  "processing": "Processing",
+  "protecting": "Protecting",
+  "navigating": "Navigating",
+  "openingPage": "Opening AI Assistant page",
+  "features": {
+    "selfImproving": "Self Improving",
+    "security": "Security",
+    "codeAnalysis": "Code Analysis",
+    "webDevelopment": "Web Development",
+    "database": "Database"
   },
-  "responses": {
-    "analyzing": "Analyzing your network...",
-    "optimizing": "Finding optimization solutions...",
-    "securing": "Checking security status...",
-    "troubleshooting": "Diagnosing connection issues..."
-  },
-  "settings": {
-    "voice": "Voice Interaction",
-    "proactive": "Proactive Assistance",
-    "learning": "Learning Mode",
-    "privacy": "Privacy Mode"
-  },
-  "selfDevelopment": "Self-Development",
-  "selfDevelopmentDesc": "AI assistant continuously learns from interactions to provide better support"
+  "continuousLearning": "Continuous Learning",
+  "learningDesc": "Continuous improvement of capabilities",
+  "security": "Security & Protection",
+  "securityDesc": "Network monitoring and security",
+  "multiLanguage": "Multi Language",
+  "multiLanguageDesc": "Support for many languages and dialects",
+  "selfDevelopment": "Self Development",
+  "selfDevelopmentDesc": "Automatically develop new functions",
+  "bubbleMessages": {
+    "help": "Need help? I'm here to assist you!",
+    "newTools": "New tools are available! Click to learn more.",
+    "security": "Security settings updated. Want to review?",
+    "optimization": "There are opportunities to optimize network performance!"
+  }
 }

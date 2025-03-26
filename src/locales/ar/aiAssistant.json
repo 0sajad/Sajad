@@ -1,46 +1,31 @@
 
 {
-  "title": "مساعد الذكاء الاصطناعي من OCTA-GRAM",
-  "subtitle": "مساعدك الشخصي للشبكات والأمان",
-  "placeholder": "اسأل أي سؤال عن شبكتك...",
-  "sendMessage": "إرسال",
-  "listening": "جاري الاستماع...",
-  "startListening": "ابدأ الاستماع",
-  "stopListening": "إيقاف الاستماع",
-  "processing": "جاري المعالجة...",
-  "typing": "جاري الكتابة...",
-  "error": "عذراً، حدث خطأ ما. يرجى المحاولة مرة أخرى.",
-  "welcomeMessage": "مرحباً! أنا مساعدك الذكي من OCTA-GRAM. كيف يمكنني مساعدتك اليوم؟",
-  "suggestedQuestions": {
-    "title": "أسئلة مقترحة",
-    "questions": [
-      "كيف يمكنني تحسين أداء الشبكة؟",
-      "ما هي أفضل إعدادات الأمان؟",
-      "كيف أقوم بإعداد شبكة مقسمة؟",
-      "كيف يمكنني حل مشاكل الاتصال؟"
-    ]
-  },
+  "title": "المساعد الذكي",
+  "ready": "جاهز",
+  "learning": "يتعلم",
+  "processing": "يعالج",
+  "protecting": "يحمي",
+  "navigating": "جاري الانتقال",
+  "openingPage": "جاري فتح صفحة المساعد الذكي",
   "features": {
-    "selfImproving": "نظام ذكاء اصطناعي ذاتي التحسين",
-    "selfImprovingDesc": "الذكاء الاصطناعي يحلل أنماط الشبكة باستمرار ويتعلم منها ويحسن نفسه تلقائياً"
+    "selfImproving": "تحسين ذاتي",
+    "security": "حماية",
+    "codeAnalysis": "تحليل الكود",
+    "webDevelopment": "تطوير الويب",
+    "database": "قواعد البيانات"
   },
-  "continuousLearning": "التعلم المستمر",
-  "learningDesc": "يتعلم من كل تفاعل ويحسن استجاباته بمرور الوقت",
-  "security": "الأمان المتقدم",
-  "securityDesc": "يساعد في تحديد وحل مشكلات الأمان الشبكية",
-  "multiLanguage": "دعم متعدد اللغات",
-  "multiLanguageDesc": "يدعم التفاعل بلغات متعددة لخدمة المستخدمين حول العالم",
-  "tryNow": "جرب الآن",
-  "whatCanIHelp": "كيف يمكنني مساعدتك؟",
-  "networkAssistant": "مساعد الشبكة",
-  "securityAdvisor": "مستشار الأمان",
-  "troubleshooter": "حلال المشكلات",
-  "performanceOptimizer": "محسن الأداء",
-  "uploadFiles": "رفع ملفات",
-  "actions": {
-    "analyze": "تحليل",
-    "optimize": "تحسين",
-    "secure": "تأمين",
-    "monitor": "مراقبة"
+  "continuousLearning": "تعلم مستمر",
+  "learningDesc": "تحسين مستمر للقدرات والأداء",
+  "security": "الحماية والأمان",
+  "securityDesc": "مراقبة وتأمين الشبكة",
+  "multiLanguage": "متعدد اللغات",
+  "multiLanguageDesc": "دعم للعديد من اللغات واللهجات",
+  "selfDevelopment": "تطوير ذاتي",
+  "selfDevelopmentDesc": "تطوير وظائف جديدة تلقائيًا",
+  "bubbleMessages": {
+    "help": "هل تحتاج إلى مساعدة؟ أنا هنا لمساعدتك!",
+    "newTools": "هناك أدوات جديدة متاحة! انقر لمعرفة المزيد.",
+    "security": "تم تحديث إعدادات الأمان. هل ترغب في المراجعة؟",
+    "optimization": "هناك فرص لتحسين أداء الشبكة!"
   }
 }
