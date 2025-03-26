@@ -52,8 +52,8 @@ export function ModeToggle() {
           className={cn(
             "relative flex items-center w-[100px] h-[40px] rounded-full p-1 transition-colors duration-300 cursor-pointer shadow-xl hover:shadow-2xl transform hover:scale-105 border border-white/20 backdrop-blur-sm overflow-hidden",
             isDeveloperMode 
-              ? "bg-gradient-to-r from-purple-600 to-blue-600" 
-              : "bg-gradient-to-r from-blue-600 to-purple-600"
+              ? "bg-gradient-to-r from-indigo-600 to-purple-600" 
+              : "bg-gradient-to-r from-indigo-500 to-purple-700"
           )}
         >
           {/* Sliding background */}
@@ -68,7 +68,7 @@ export function ModeToggle() {
           <div className="relative flex w-full z-10">
             <div className={cn(
               "flex-1 flex items-center justify-center z-10 text-xs font-medium transition-colors duration-300",
-              isDeveloperMode ? "text-white/60" : "text-octaBlue-600 dark:text-white"
+              isDeveloperMode ? "text-white/60" : "text-purple-900 dark:text-white"
             )}>
               <User size={16} className="mr-1" />
               <span className="text-[10px]">عميل</span>

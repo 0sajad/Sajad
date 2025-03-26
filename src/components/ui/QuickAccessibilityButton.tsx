@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { AccessibilityMenu } from "@/components/ui/accessibility";
@@ -71,7 +72,7 @@ export function QuickAccessibilityButton() {
                   size="icon"
                   className={`relative shadow-md hover:shadow-lg bg-gradient-to-r ${
                     isInitiallyVisible && activeFeatures === 0 ? 'animate-pulse' : ''
-                  } from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-700 border border-blue-200 dark:border-gray-600 transition-all duration-300 focus:ring-2 focus:ring-blue-400 dark:focus:ring-gray-400`}
+                  } from-indigo-50 to-purple-100 dark:from-gray-800 dark:to-purple-900/30 border border-purple-200 dark:border-purple-800/40 transition-all duration-300 focus:ring-2 focus:ring-purple-400 dark:focus:ring-purple-700`}
                   aria-label={t('accessibility.a11ySettings')}
                   aria-haspopup="menu"
                   aria-expanded="false"
@@ -83,10 +84,10 @@ export function QuickAccessibilityButton() {
                     }
                   }}
                 >
-                  <Accessibility className="h-4 w-4" />
+                  <Accessibility className="h-4 w-4 text-purple-700 dark:text-purple-400" />
                   {activeFeatures > 0 && (
                     <motion.div 
-                      className="absolute -top-2 -right-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center" 
+                      className="absolute -top-2 -right-2 w-5 h-5 bg-purple-600 rounded-full flex items-center justify-center" 
                       aria-hidden="true"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
@@ -99,9 +100,9 @@ export function QuickAccessibilityButton() {
                 </Button>
               </motion.div>
             </TooltipTrigger>
-            <TooltipContent side="right" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0">
+            <TooltipContent side="right" className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-0">
               <p className="text-sm">{t('accessibility.a11ySettings')}</p>
-              <p className="text-xs text-blue-100">{t('accessibility.clickToCustomize')}</p>
+              <p className="text-xs text-indigo-100">{t('accessibility.clickToCustomize')}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

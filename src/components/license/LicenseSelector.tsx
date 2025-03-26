@@ -18,12 +18,12 @@ export function LicenseSelector({ value, onChange }: LicenseSelectorProps) {
         onClick={() => onChange("client")}
         className={`flex flex-col items-center justify-center p-4 rounded-lg border transition-all ${
           value === "client"
-            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+            ? "border-purple-500 bg-purple-50 dark:bg-purple-900/20"
             : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
         }`}
       >
-        <User className={`w-8 h-8 mb-2 ${value === "client" ? "text-blue-500" : "text-gray-500"}`} />
-        <span className={value === "client" ? "font-medium text-blue-600" : "text-gray-700 dark:text-gray-300"}>
+        <User className={`w-8 h-8 mb-2 ${value === "client" ? "text-purple-500" : "text-gray-500"}`} />
+        <span className={value === "client" ? "font-medium text-purple-600" : "text-gray-700 dark:text-gray-300"}>
           {t('clientVersion')}
         </span>
         <span className="text-xs text-gray-500 mt-1">CLT-...</span>
@@ -34,12 +34,12 @@ export function LicenseSelector({ value, onChange }: LicenseSelectorProps) {
         onClick={() => onChange("developer")}
         className={`flex flex-col items-center justify-center p-4 rounded-lg border transition-all ${
           value === "developer"
-            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+            ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20"
             : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
         }`}
       >
-        <Code className={`w-8 h-8 mb-2 ${value === "developer" ? "text-blue-500" : "text-gray-500"}`} />
-        <span className={value === "developer" ? "font-medium text-blue-600" : "text-gray-700 dark:text-gray-300"}>
+        <Code className={`w-8 h-8 mb-2 ${value === "developer" ? "text-indigo-500" : "text-gray-500"}`} />
+        <span className={value === "developer" ? "font-medium text-indigo-600" : "text-gray-700 dark:text-gray-300"}>
           {t('developerVersion')}
         </span>
         <span className="text-xs text-gray-500 mt-1">DEV-...</span>
