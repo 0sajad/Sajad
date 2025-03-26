@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef, useCallback, memo } from "react";
 import { AIAssistant } from "./AIAssistant";
 import { toast } from "./ui/use-toast";
 import { useTranslation } from "react-i18next";
-import { BrainCircuit, MessageSquare } from "lucide-react";
+import { BrainCircuit, MessageSquare, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface FloatingAIAssistantProps {
@@ -16,10 +16,11 @@ export const FloatingAIAssistant = memo(({ show, onMaximize }: FloatingAIAssista
   const { t } = useTranslation();
   const [showSpeechBubble, setShowSpeechBubble] = useState(false);
   const [messageIndex, setMessageIndex] = useState(0);
-  const timeoutRef = useRef<number>();
-  const intervalRef = useRef<number>();
+  const [isPulsing, setIsPulsing] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const intervalRef = useRef<ReturnType<typeof setTimeout>>();
   
-  // استخدام useMemo للرسائل الثابتة - نستخدم مصفوفة ثابتة بدلاً من ذلك لتبسيط الكود
+  // استخدام مصفوفة ثابتة للرسائل
   const messages = [
     'aiAssistant.bubbleMessages.help',
     'aiAssistant.bubbleMessages.newTools',
@@ -36,26 +37,35 @@ export const FloatingAIAssistant = memo(({ show, onMaximize }: FloatingAIAssista
     setMessageIndex(prev => (prev + 1) % messages.length);
   }, [messages.length]);
   
+  const startPulsing = useCallback(() => {
+    setIsPulsing(true);
+    setTimeout(() => setIsPulsing(false), 2000);
+  }, []);
+  
   // أظهر فقاعة رسالة كل فترة زمنية - تم تحسينه لاستخدام أقل للموارد
   useEffect(() => {
     if (!show) {
       // إلغاء المؤقتات عند إخفاء المساعد
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (intervalRef.current) clearTimeout(intervalRef.current);
       return;
     }
     
-    // أظهر فقاعة رسالة بعد 8 ثوانٍ من ظهور المساعد
-    timeoutRef.current = window.setTimeout(showBubble, 8000);
+    // بدء نبض الزر لجذب الانتباه بعد فترة قصيرة
+    const pulsingTimeout = setTimeout(startPulsing, 4000);
     
-    // تغيير الرسالة كل 12 ثانية
-    intervalRef.current = window.setInterval(changeBubbleMessage, 12000);
+    // أظهر فقاعة رسالة بعد فترة من ظهور المساعد
+    timeoutRef.current = setTimeout(showBubble, 6000);
+    
+    // تغيير الرسالة كل 10 ثوانٍ
+    intervalRef.current = setInterval(changeBubbleMessage, 10000);
     
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (intervalRef.current) clearTimeout(intervalRef.current);
+      clearTimeout(pulsingTimeout);
     };
-  }, [show, showBubble, changeBubbleMessage]);
+  }, [show, showBubble, changeBubbleMessage, startPulsing]);
   
   // استخدام useCallback لتحسين الأداء
   const hideBubble = useCallback(() => {
@@ -87,22 +97,22 @@ export const FloatingAIAssistant = memo(({ show, onMaximize }: FloatingAIAssista
           >
             <div className="absolute bottom-[-8px] right-4 rtl:right-auto rtl:left-4 w-4 h-4 bg-white dark:bg-gray-800 transform rotate-45"></div>
             <div className="flex items-start gap-2">
-              <MessageSquare size={16} className="text-octaBlue-600 mt-0.5" />
+              <MessageSquare size={16} className="text-octaBlue-600 mt-0.5 shrink-0" />
               <p className="text-sm">{t(messages[messageIndex])}</p>
             </div>
             <button 
-              className="absolute top-1 right-1 rtl:right-auto rtl:left-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              className="absolute top-1 right-1 rtl:right-auto rtl:left-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               onClick={hideBubble}
               aria-label={t('common.close')}
             >
-              ×
+              <X size={14} />
             </button>
           </motion.div>
         )}
       </AnimatePresence>
       
       <motion.div 
-        className="shadow-lg rounded-full cursor-pointer will-change-transform"
+        className={`shadow-lg rounded-full cursor-pointer will-change-transform ${isPulsing ? 'animate-pulse' : ''}`}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={handleMaximize}

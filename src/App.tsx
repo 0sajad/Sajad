@@ -10,14 +10,26 @@ import { ModeProvider } from "@/context/ModeContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AnimatePresence } from "framer-motion";
 
-// استخدام التحميل الكسول (Lazy Loading) لتسريع تحميل الصفحة الرئيسية
+// استخدام التحميل الكسول (Lazy Loading) مع معالجة الأخطاء
 import { LoadingScreen } from "./components/LoadingScreen";
 
-// تحسين استدعاء المكونات باستخدام التنويع الصحيح للـ lazy loading
-const Dashboard = lazy(() => import("./pages/Dashboard").catch(() => {
-  console.error("Error loading Dashboard component");
-  return import("./pages/NotFound");
+// تحسين استدعاء المكونات باستخدام التحميل الكسول
+const Dashboard = lazy(() => import("./pages/Dashboard").catch((error) => {
+  console.error("Error loading Dashboard component:", error);
+  return import("./pages/Index"); // استخدام صفحة Index كبديل في حالة الفشل
 }));
+
+// تحميل مسبق للمكونات الأكثر استخداماً
+const preloadComponent = (component) => {
+  try {
+    const preload = () => component();
+    preload();
+  } catch (e) {
+    console.error("Preload error:", e);
+  }
+};
+
+// تحميل مكونات إضافية بشكل كسول
 const Index = lazy(() => import("./pages/Index"));
 const AIAssistant = lazy(() => import(/* webpackPreload: true */ "./pages/AIAssistant"));
 const Settings = lazy(() => import("./pages/Settings"));
@@ -26,7 +38,7 @@ const FiberOptic = lazy(() => import("./pages/FiberOptic"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const HelpCenter = lazy(() => import("./pages/HelpCenter"));
 
-// مكون محسن للتحميل داخل Suspense مع تأثيرات انتقالية سلسة
+// مكون محسن للتحميل مع تأثيرات انتقالية
 const PageLoader = () => (
   <div className="flex items-center justify-center min-h-screen animate-fade-in">
     <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
@@ -58,21 +70,18 @@ function App() {
   }, []);
   
   useEffect(() => {
-    // استخدام أفضل الممارسات للتحميل السريع
+    // تحميل مسبق للمكونات الأساسية
     if ('requestIdleCallback' in window) {
       (window as any).requestIdleCallback(() => {
         // تحميل مسبق للصفحات الرئيسية في وقت الخمول
-        Promise.all([
-          import("./pages/Dashboard"),
-          import("./pages/AIAssistant")
-        ]).catch(err => {
-          console.error("Error preloading components:", err);
-        });
+        preloadComponent(() => import("./pages/Dashboard"));
+        preloadComponent(() => import("./pages/Index"));
+        preloadComponent(() => import("./pages/AIAssistant"));
       });
     }
     
-    // تقليل وقت التحميل للتأكد من عرض المحتوى بسرعة أكبر
-    const timer = setTimeout(completeLoading, 400); // تقليل وقت التحميل من 500 إلى 400 مللي ثانية
+    // تقليل وقت التحميل
+    const timer = setTimeout(completeLoading, 300); // تقليل وقت التحميل لتسريع تجربة المستخدم
     
     return () => clearTimeout(timer);
   }, [completeLoading]);
