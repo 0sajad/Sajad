@@ -49,7 +49,8 @@ export function SmartSuspense({
           duration: 1.5,
           repeat: Infinity,
           ease: "linear",
-          duration: reducedMotion ? 0 : 1.5
+          // Fix the duplicate duration property by removing this one
+          // duration: reducedMotion ? 0 : 1.5
         }}
       >
         <Loader2 className="h-8 w-8 text-primary" />
