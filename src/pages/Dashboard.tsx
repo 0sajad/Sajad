@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useMode } from "@/context/ModeContext";
 import { DeveloperPanel } from "@/components/developer/DeveloperPanel";
@@ -20,6 +21,9 @@ import { ClientToolbox } from "@/components/client/ClientToolbox";
 import { NetworkStats } from "@/components/client/NetworkStats";
 import { SystemMonitor } from "@/components/client/SystemMonitor";
 import { FloatingAIAssistant } from "@/components/FloatingAIAssistant";
+import { NetworkQualityGauge } from "@/components/analytics/NetworkQualityGauge";
+import { RealTimeMonitoring } from "@/components/analytics/RealTimeMonitoring";
+import { AdvancedNetworkAnalytics } from "@/components/analytics/AdvancedNetworkAnalytics";
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -170,7 +174,7 @@ const Dashboard = () => {
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-lg flex items-center">
-                    <Tool className="mr-2 h-5 w-5 text-blue-500" />
+                    <Wrench className="mr-2 h-5 w-5 text-blue-500" />
                     {t('dashboard.quickActions', 'إجراءات سريعة')}
                   </CardTitle>
                 </CardHeader>
@@ -225,7 +229,7 @@ const Dashboard = () => {
               <Card className="border-octaBlue-200">
                 <CardHeader className="bg-gradient-to-r from-octaBlue-50 to-octaBlue-100 rounded-t-lg">
                   <CardTitle className="text-lg flex items-center">
-                    <Shield className="mr-2 h-5 w-5 text-octaBlue-600" />
+                    <ShieldCheck className="mr-2 h-5 w-5 text-octaBlue-600" />
                     {t('dashboard.securityStatus', 'حالة الأمان')}
                   </CardTitle>
                 </CardHeader>
@@ -264,7 +268,7 @@ const Dashboard = () => {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="border rounded-md p-3 flex flex-col items-center">
                       <div className="p-2 rounded-full bg-green-50 mb-2">
-                        <Shield className="h-6 w-6 text-green-600" />
+                        <ShieldCheck className="h-6 w-6 text-green-600" />
                       </div>
                       <span className="text-sm font-medium">{t('dashboard.firewallStatus', 'جدار الحماية')}</span>
                       <Badge variant="outline" className="bg-green-50 text-green-700 mt-1">
@@ -317,7 +321,6 @@ const Dashboard = () => {
         {showAIAssistant && (
           <FloatingAIAssistant
             show={showAIAssistant}
-            onClose={() => setShowAIAssistant(false)}
             onMaximize={() => window.location.href = '/ai'}
           />
         )}
