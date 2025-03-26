@@ -116,10 +116,9 @@ export function Header({ onLanguageChange }: HeaderProps) {
                     }}
                   >
                     <motion.animateMotion
-                      path={heartbeatPath}
-                      rotate="auto"
-                      repeatCount="indefinite"
                       dur="1.5s"
+                      repeatCount="indefinite"
+                      path={heartbeatPath}
                     />
                   </motion.circle>
                   
@@ -154,20 +153,22 @@ export function Header({ onLanguageChange }: HeaderProps) {
               </motion.div>
               
               <div className="absolute -inset-1.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-              <div className="relative flex items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-sm px-3 py-2 xs:px-4 xs:py-2 rounded-lg border border-white/20 dark:border-gray-800/50 shadow-xl">
+              <div className="relative flex items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-sm px-6 py-2 xs:px-8 xs:py-2 rounded-lg border border-white/20 dark:border-gray-800/50 shadow-xl">
                 <motion.div
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
-                  className="text-xl xs:text-2xl font-bold"
+                  className="text-xl xs:text-2xl font-bold flex items-center justify-center w-full"
                 >
-                  <span className="bg-gradient-to-br from-blue-500 via-purple-500 to-octaBlue-500 bg-clip-text text-transparent">OCTA</span>
-                  <span className="relative mx-1">
-                    <span className="absolute -top-0.5 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent"></span>
-                    <span className="absolute -bottom-0.5 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent"></span>
-                    -
-                  </span>
-                  <span className="bg-gradient-to-tr from-purple-600 to-octaBlue-500 bg-clip-text text-transparent">GRAM</span>
+                  <div className="flex flex-col items-center">
+                    <span className="bg-gradient-to-br from-blue-500 via-purple-500 to-octaBlue-500 bg-clip-text text-transparent">OCTA</span>
+                    <div className="relative w-full flex justify-center">
+                      <span className="absolute -top-0.5 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent"></span>
+                      <span className="absolute -bottom-0.5 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent"></span>
+                      <span className="mx-1">-</span>
+                    </div>
+                    <span className="bg-gradient-to-tr from-purple-600 to-octaBlue-500 bg-clip-text text-transparent">GRAM</span>
+                  </div>
                   
                   <motion.div 
                     className="absolute -z-10 inset-0 rounded-lg opacity-30"
