@@ -26,10 +26,14 @@ export const NavItem = ({ to, label, icon, active, className }: NavItemProps) =>
                 : "text-gray-300 hover:text-orange-300",
               className
             )}
-            whileHover={{ y: -2 }}
+            whileHover={{ y: -1 }}
             transition={{ type: "spring", stiffness: 500, damping: 15 }}
           >
-            {icon && <span className="transition-transform group-hover:scale-110">{icon}</span>}
+            {icon && (
+              <span className="transition-transform group-hover:scale-110">
+                {icon}
+              </span>
+            )}
             <span>{label}</span>
             
             <motion.div 

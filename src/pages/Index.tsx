@@ -84,26 +84,29 @@ const Index = () => {
       <div className={`min-h-screen w-full transition-all duration-500 ${loaded ? 'opacity-100' : 'opacity-0'} ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}>
         <Header />
         
-        {/* Hero Section */}
-        <HeroSection />
-        
-        {/* Network Dashboard Section */}
-        <NetworkDashboard />
-        
-        {/* Network Tools Section */}
-        <NetworkToolsSection />
-        
-        {/* Features Section */}
-        <AnimatedCards />
-        
-        {/* AI Features Section */}
-        <AIFeaturesSection />
-        
-        {/* Settings Section */}
-        <SettingsSection />
-        
-        {/* CTA Section */}
-        <CTASection />
+        {/* Add spacing to prevent content from being hidden under the header */}
+        <div className="pt-24">
+          {/* Hero Section */}
+          <HeroSection />
+          
+          {/* Network Dashboard Section */}
+          <NetworkDashboard />
+          
+          {/* Network Tools Section */}
+          <NetworkToolsSection />
+          
+          {/* Features Section */}
+          <AnimatedCards />
+          
+          {/* AI Features Section */}
+          <AIFeaturesSection />
+          
+          {/* Settings Section */}
+          <SettingsSection />
+          
+          {/* CTA Section */}
+          <CTASection />
+        </div>
         
         <Footer />
         

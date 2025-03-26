@@ -22,7 +22,7 @@ export const NavDropdown = ({ label, icon, items }: NavDropdownProps) => {
       <motion.button
         className="flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium text-gray-300 hover:text-orange-300 transition-all"
         onClick={() => setIsOpen(!isOpen)}
-        whileHover={{ y: -2 }}
+        whileHover={{ y: -1 }}
         transition={{ type: "spring", stiffness: 500, damping: 15 }}
       >
         {icon && <span className="transition-transform hover:scale-110">{icon}</span>}
