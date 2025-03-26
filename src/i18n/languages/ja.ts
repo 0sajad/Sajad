@@ -1,40 +1,20 @@
-
-// استيراد ملفات اليابانية المقسمة
-import jaHeader from '../../locales/ja/header.json';
-import jaMobileMenu from '../../locales/ja/mobileMenu.json';
-import jaHero from '../../locales/ja/hero.json';
-import jaSettings from '../../locales/ja/settings.json';
-import jaCta from '../../locales/ja/cta.json';
-import jaFooter from '../../locales/ja/footer.json';
-import jaAiFeatures from '../../locales/ja/aiFeatures.json';
-import jaSecurityStatus from '../../locales/ja/securityStatus.json';
-import jaNetworkTools from '../../locales/ja/networkTools.json';
-import jaHelpCenter from '../../locales/ja/helpCenter.json';
-import jaAi from '../../locales/ja/ai.json';
-import jaAiAssistant from '../../locales/ja/aiAssistant.json';
-import jaConfig from '../../locales/ja/config.json';
-import jaCommonExtra from '../../locales/ja/common.json';
-
+// Japanese language resources
 export function loadJapaneseResources() {
-  // دمج ملفات اليابانية في كائن واحد
-  const jaCommon = {
-    header: jaHeader,
-    mobileMenu: jaMobileMenu,
-    hero: jaHero,
-    settings: jaSettings,
-    cta: jaCta,
-    footer: jaFooter,
-    aiFeatures: jaAiFeatures,
-    securityStatus: jaSecurityStatus,
-    networkTools: jaNetworkTools,
-    helpCenter: jaHelpCenter,
-    ai: jaAi,
-    aiAssistant: jaAiAssistant,
-    ...jaConfig,
-    ...jaCommonExtra
-  };
-
   return {
-    common: jaCommon
+    translation: { /* Japanese translations will be added here */ },
+    common: require('../../locales/ja/common.json'),
+    ai: require('../../locales/ja/ai.json'),
+    aiAssistant: require('../../locales/ja/aiAssistant.json'),
+    aiFeatures: require('../../locales/ja/aiFeatures.json'),
+    cta: require('../../locales/ja/cta.json'),
+    footer: require('../../locales/ja/footer.json'),
+    header: require('../../locales/ja/header.json'),
+    helpCenter: require('../../locales/ja/helpCenter.json'),
+    hero: require('../../locales/ja/hero.json'),
+    mobileMenu: require('../../locales/ja/mobileMenu.json'),
+    networkTools: require('../../locales/ja/networkTools.json'),
+    securityStatus: require('../../locales/ja/securityStatus.json'),
+    settings: require('../../locales/ja/settings.json'),
+    config: require('../../locales/ja/config.json')
   };
 }

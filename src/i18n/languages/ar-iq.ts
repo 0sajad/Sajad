@@ -1,44 +1,24 @@
 
-// استيراد ملفات ar-iq المقسمة
-import arIqHeader from '../../locales/ar-iq/header.json';
-import arIqMobileMenu from '../../locales/ar-iq/mobileMenu.json';
-import arIqHero from '../../locales/ar-iq/hero.json';
-import arIqSettings from '../../locales/ar-iq/settings.json';
-import arIqCta from '../../locales/ar-iq/cta.json';
-import arIqFooter from '../../locales/ar-iq/footer.json';
-import arIqAiFeatures from '../../locales/ar-iq/aiFeatures.json';
-import arIqSecurityStatus from '../../locales/ar-iq/securityStatus.json';
-import arIqNetworkTools from '../../locales/ar-iq/networkTools.json';
-import arIqHelpCenter from '../../locales/ar-iq/helpCenter.json';
-import arIqAi from '../../locales/ar-iq/ai.json';
-import arIqAiAssistant from '../../locales/ar-iq/aiAssistant.json';
-import arIqConfig from '../../locales/ar-iq/config.json';
-import arIqLicense from '../../locales/ar-iq/license.json';
-import arIqAccess from '../../locales/ar-iq/access.json';
-import arIqCommon from '../../locales/ar-iq/common.json';
-
+// Iraqi Arabic language resources
 export function loadIraqiArabicResources() {
-  // دمج ملفات ar-iq في كائن واحد
-  const combined = {
-    ...arIqHeader,
-    ...arIqCommon,
-    mobileMenu: arIqMobileMenu,
-    hero: arIqHero,
-    settings: arIqSettings,
-    cta: arIqCta,
-    footer: arIqFooter,
-    aiFeatures: arIqAiFeatures,
-    securityStatus: arIqSecurityStatus,
-    networkTools: arIqNetworkTools,
-    helpCenter: arIqHelpCenter,
-    ai: arIqAi,
-    aiAssistant: arIqAiAssistant,
-    ...arIqConfig
-  };
-
   return {
-    common: combined,
-    license: arIqLicense,
-    access: arIqAccess
+    translation: require('../../locales/ar-iq/translation.json'),
+    common: require('../../locales/ar-iq/common.json'),
+    network: require('../../locales/ar-iq/network.json'),
+    dashboard: require('../../locales/ar-iq/dashboard.json'),
+    ai: require('../../locales/ar-iq/ai.json'),
+    aiAssistant: require('../../locales/ar-iq/aiAssistant.json'),
+    aiFeatures: require('../../locales/ar-iq/aiFeatures.json'),
+    helpCenter: require('../../locales/ar-iq/helpCenter.json'),
+    communicationTools: require('../../locales/ar-iq/communicationTools.json'),
+    license: require('../../locales/ar-iq/license.json'),
+    cta: require('../../locales/ar-iq/cta.json'),
+    header: require('../../locales/ar-iq/header.json'),
+    footer: require('../../locales/ar-iq/footer.json'),
+    hero: require('../../locales/ar-iq/hero.json'),
+    access: require('../../locales/ar-iq/access.json'),
+    mobileMenu: require('../../locales/ar-iq/mobileMenu.json'),
+    settings: require('../../locales/ar-iq/settings.json'),
+    securityStatus: require('../../locales/ar-iq/securityStatus.json')
   };
 }

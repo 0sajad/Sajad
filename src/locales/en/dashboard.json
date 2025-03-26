@@ -1,0 +1,11 @@
+
+{
+  "title": "Dashboard",
+  "overview": "Network Overview",
+  "metrics": "Key Metrics",
+  "devices": "Connected Devices",
+  "activity": "Recent Activity",
+  "performance": "Network Performance",
+  "alerts": "Alerts",
+  "reports": "Reports"
+}

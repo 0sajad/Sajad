@@ -1,25 +1,13 @@
-
-// استيراد ملفات الفرنسية
-import frCommon from '../../locales/fr/common.json';
-import frConfig from '../../locales/fr/config.json';
-import frAi from '../../locales/fr/ai.json';
-import frAiAssistant from '../../locales/fr/aiAssistant.json';
-import frCta from '../../locales/fr/cta.json';
-import frSettings from '../../locales/fr/settings.json';
-import frNetworkTools from '../../locales/fr/networkTools.json';
-
+// French language resources
 export function loadFrenchResources() {
   return {
-    common: {
-      ...frCommon,
-      ai: frAi,
-      aiAssistant: frAiAssistant,
-      cta: frCta,
-      networkTools: frNetworkTools,
-      ...frConfig
-    },
-    license: {},
-    access: {},
-    settings: frSettings
+    translation: { /* French translations will be added here */ },
+    common: require('../../locales/fr/common.json'),
+    network: require('../../locales/fr/network.json'),
+    ai: require('../../locales/fr/ai.json'),
+    aiAssistant: require('../../locales/fr/aiAssistant.json'),
+    networkTools: require('../../locales/fr/networkTools.json'),
+    cta: require('../../locales/fr/cta.json'),
+    settings: require('../../locales/fr/settings.json')
   };
 }

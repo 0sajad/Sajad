@@ -1,27 +1,18 @@
 
-// استيراد ملفات الإنجليزية
-import enCommon from '../../locales/en/common.json';
-import enLicense from '../../locales/en/license.json';
-import enAccess from '../../locales/en/access.json';
-import enNetworkTools from '../../locales/en/networkTools.json';
-import enSettings from '../../locales/en/settings.json';
-import enAi from '../../locales/en/ai.json';
-import enAiAssistant from '../../locales/en/aiAssistant.json';
-import enConfig from '../../locales/en/config.json';
-import enCta from '../../locales/en/cta.json';
-
+// English language resources
 export function loadEnglishResources() {
   return {
-    common: {
-      ...enCommon,
-      ai: enAi,
-      aiAssistant: enAiAssistant,
-      cta: enCta,
-      networkTools: enNetworkTools,
-      ...enConfig
-    },
-    license: enLicense,
-    access: enAccess,
-    settings: enSettings
+    translation: require('../../locales/en/translation.json'),
+    common: require('../../locales/en/common.json'),
+    network: require('../../locales/en/network.json'),
+    dashboard: require('../../locales/en/dashboard.json'),
+    ai: require('../../locales/en/ai.json'),
+    aiAssistant: require('../../locales/en/aiAssistant.json'),
+    aiFeatures: require('../../locales/en/aiFeatures.json'),
+    helpCenter: require('../../locales/en/helpCenter.json'),
+    communicationTools: require('../../locales/en/communicationTools.json'),
+    cta: require('../../locales/en/cta.json'),
+    license: require('../../locales/en/license.json'),
+    settings: require('../../locales/en/settings.json')
   };
 }

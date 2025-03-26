@@ -1,24 +1,12 @@
-
-// استيراد ملفات الصينية
-import zhCommon from '../../locales/zh/common.json';
-import zhConfig from '../../locales/zh/config.json';
-import zhAi from '../../locales/zh/ai.json';
-import zhAiAssistant from '../../locales/zh/aiAssistant.json';
-import zhCta from '../../locales/zh/cta.json';
-import zhNetworkTools from '../../locales/zh/networkTools.json';
-
+// Chinese language resources
 export function loadChineseResources() {
   return {
-    common: {
-      ...zhCommon,
-      ai: zhAi,
-      aiAssistant: zhAiAssistant,
-      cta: zhCta,
-      networkTools: zhNetworkTools,
-      ...zhConfig
-    },
-    license: {},
-    access: {},
-    settings: {}
+    translation: { /* Chinese translations will be added here */ },
+    common: require('../../locales/zh/common.json'),
+    ai: require('../../locales/zh/ai.json'),
+    aiAssistant: require('../../locales/zh/aiAssistant.json'),
+    cta: require('../../locales/zh/cta.json'),
+    networkTools: require('../../locales/zh/networkTools.json'),
+    config: require('../../locales/zh/config.json')
   };
 }

@@ -1,28 +1,19 @@
 
-// استيراد ملفات العربية
-import arCommon from '../../locales/ar/common.json';
-import arLicense from '../../locales/ar/license.json';
-import arAccess from '../../locales/ar/access.json';
-import arAi from '../../locales/ar/ai.json';
-import arAiAssistant from '../../locales/ar/aiAssistant.json';
-import arConfig from '../../locales/ar/config.json';
-import arCta from '../../locales/ar/cta.json';
-import arNetworkTools from '../../locales/ar/networkTools.json';
-
+// Arabic language resources
 export function loadArabicResources() {
-  // دمج ملفات العربية في كائن واحد
-  const arCombined = {
-    ...arCommon,
-    ai: arAi,
-    aiAssistant: arAiAssistant,
-    cta: arCta,
-    networkTools: arNetworkTools,
-    ...arConfig
-  };
-
   return {
-    common: arCombined,
-    license: arLicense,
-    access: arAccess
+    translation: require('../../locales/ar/translation.json'),
+    common: require('../../locales/ar/common.json'),
+    network: require('../../locales/ar/network.json'),
+    dashboard: require('../../locales/ar/dashboard.json'),
+    ai: require('../../locales/ar/ai.json'),
+    aiAssistant: require('../../locales/ar/aiAssistant.json'),
+    aiFeatures: require('../../locales/ar/aiFeatures.json'),
+    helpCenter: require('../../locales/ar/helpCenter.json'),
+    communicationTools: require('../../locales/ar/communicationTools.json'),
+    cta: require('../../locales/ar/cta.json'),
+    license: require('../../locales/ar/license.json'),
+    access: require('../../locales/ar/access.json'),
+    config: require('../../locales/ar/config.json')
   };
 }
