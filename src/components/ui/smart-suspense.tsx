@@ -46,7 +46,6 @@ export function SmartSuspense({
       <motion.div
         animate={{ rotate: 360 }}
         transition={{
-          duration: 1.5,
           repeat: Infinity,
           ease: "linear",
           duration: reducedMotion ? 0 : 1.5
