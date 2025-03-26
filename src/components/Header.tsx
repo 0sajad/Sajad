@@ -8,12 +8,14 @@ import { DesktopNav } from "./nav/DesktopNav";
 import { MobileMenu } from "./nav/MobileMenu";
 import { useTranslation } from 'react-i18next';
 import { useIsMobile } from "@/hooks/use-mobile";
+import { LanguageSwitcher } from "./nav/LanguageSwitcher";
 import { 
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 interface HeaderProps {
   onLanguageChange?: (language: string) => void;
@@ -51,88 +53,46 @@ export function Header({ onLanguageChange }: HeaderProps) {
   };
   
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md transition-all duration-300 ${
-        isScrolled ? "py-3 bg-white/90 shadow-sm dark:bg-gray-900/90" : "py-5 bg-transparent"
-      }`}
-    >
-      <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between">
-        <div className="flex items-center">
-          <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-octaBlue-600 to-octaBlue-800 bg-clip-text text-transparent mr-4 sm:mr-12">
-            OCTA-GRAM
-          </Link>
+    <TooltipProvider>
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md transition-all duration-300 ${
+          isScrolled ? "py-3 bg-white/90 shadow-sm dark:bg-gray-900/90" : "py-5 bg-transparent"
+        }`}
+      >
+        <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between">
+          <div className="flex items-center">
+            <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-octaBlue-600 to-octaBlue-800 bg-clip-text text-transparent mr-4 sm:mr-12">
+              OCTA-GRAM
+            </Link>
+            
+            <DesktopNav />
+          </div>
           
-          <DesktopNav />
+          <div className="flex items-center">
+            <LanguageSwitcher className="mr-2" />
+            
+            <div className="mr-4">
+              <ModeToggle />
+            </div>
+            
+            <div className="hidden md:block">
+              <Button size="sm">
+                {t('header.login')}
+              </Button>
+            </div>
+            
+            <button
+              className="p-2 md:hidden"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label={isMobileMenuOpen ? "إغلاق القائمة" : "فتح القائمة"}
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
         
-        <div className="flex items-center">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="mr-2">
-                <Globe size={isMobile ? 18 : 20} />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 z-50">
-              <DropdownMenuItem 
-                className={currentLanguage === "ar" ? "bg-gray-100 dark:bg-gray-800" : ""}
-                onClick={() => handleLanguageChange("ar")}
-              >
-                العربية
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                className={currentLanguage === "ar-iq" ? "bg-gray-100 dark:bg-gray-800" : ""}
-                onClick={() => handleLanguageChange("ar-iq")}
-              >
-                العراقية
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                className={currentLanguage === "en" ? "bg-gray-100 dark:bg-gray-800" : ""}
-                onClick={() => handleLanguageChange("en")}
-              >
-                English
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                className={currentLanguage === "ja" ? "bg-gray-100 dark:bg-gray-800" : ""}
-                onClick={() => handleLanguageChange("ja")}
-              >
-                日本語
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                className={currentLanguage === "zh" ? "bg-gray-100 dark:bg-gray-800" : ""}
-                onClick={() => handleLanguageChange("zh")}
-              >
-                中文
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                className={currentLanguage === "fr" ? "bg-gray-100 dark:bg-gray-800" : ""}
-                onClick={() => handleLanguageChange("fr")}
-              >
-                Français
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          
-          <div className="mr-4">
-            <ModeToggle />
-          </div>
-          
-          <div className="hidden md:block">
-            <Button size="sm">
-              {t('header.login')}
-            </Button>
-          </div>
-          
-          <button
-            className="p-2 md:hidden"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label={isMobileMenuOpen ? "إغلاق القائمة" : "فتح القائمة"}
-          >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-      </div>
-      
-      <MobileMenu isOpen={isMobileMenuOpen} />
-    </header>
+        <MobileMenu isOpen={isMobileMenuOpen} />
+      </header>
+    </TooltipProvider>
   );
 }
