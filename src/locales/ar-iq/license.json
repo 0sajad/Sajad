@@ -1,18 +1,40 @@
 
 {
-  "verification": "التحقق من الترخيص",
-  "enterKeyToActivate": "يرجى إدخال مفتاح ترخيص صالح للوصول إلى OCTA-GRAM",
-  "enterKeyHere": "أدخل مفتاح الترخيص هنا",
-  "keyFormat": "يجب أن يبدأ مفتاح الترخيص بـ -CLT للعملاء أو -DEV للمطورين",
-  "clientVersion": "نسخة العميل",
-  "developerVersion": "نسخة المطور",
-  "requiredMessage": "مفتاح الترخيص مطلوب لتشغيل OCTA-GRAM. إذا لم يكن لديك مفتاح، يرجى التواصل مع الدعم",
-  "developerPermissions": "نسخة المطور تمنحك صلاحية تنفيذ التحديثات للعملاء",
-  "verifyKey": "التحقق من المفتاح",
-  "verifying": "جاري التحقق...",
-  "verificationSuccess": "تم التحقق بنجاح",
-  "verificationFailed": "فشل التحقق",
-  "accessGranted": "تم منح الوصول بنجاح",
-  "invalidKey": "مفتاح الترخيص الذي أدخلته غير صالح",
-  "returnToHome": "العودة إلى الصفحة الرئيسية"
+  "title": "إدارة الترخيص",
+  "description": "عرض وإدارة تراخيص منتج أوكتاجرام",
+  "currentLicense": "الترخيص الحالي",
+  "licenseDetails": "تفاصيل الترخيص",
+  "licenseKey": "مفتاح الترخيص",
+  "licenseType": "نوع الترخيص",
+  "licenseStatus": "حالة الترخيص",
+  "expiryDate": "تاريخ الانتهاء",
+  "licenseFeatures": "ميزات الترخيص",
+  "activateLicense": "تفعيل الترخيص",
+  "deactivateLicense": "إلغاء تفعيل الترخيص",
+  "renewLicense": "تجديد الترخيص",
+  "upgradeLicense": "ترقية الترخيص",
+  "enterLicenseKey": "أدخل مفتاح الترخيص",
+  "activate": "تفعيل",
+  "cancel": "إلغاء",
+  "licenseTypes": {
+    "trial": "تجريبي",
+    "basic": "أساسي",
+    "professional": "احترافي",
+    "enterprise": "مؤسسي"
+  },
+  "licenseStatuses": {
+    "active": "نشط",
+    "expired": "منتهي",
+    "invalid": "غير صالح",
+    "suspended": "معلق"
+  },
+  "features": {
+    "aiAssistant": "مساعد الذكاء الاصطناعي",
+    "securityScan": "فحص الأمان",
+    "networkMonitoring": "مراقبة الشبكة",
+    "deepInspection": "الفحص العميق",
+    "advancedAnalytics": "تحليلات متقدمة",
+    "multiUser": "متعدد المستخدمين",
+    "prioritySupport": "دعم ذو أولوية"
+  }
 }

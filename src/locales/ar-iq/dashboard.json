@@ -1,34 +1,19 @@
 
 {
   "title": "لوحة التحكم",
-  "welcome": "مرحباً بك في لوحة تحكم أوكتا-جرام",
-  "systemStatus": "حالة النظام",
-  "status": "الحالة",
-  "active": "نشط",
-  "quickActions": "إجراءات سريعة",
-  "selectAction": "اختر إجراءً",
-  "actions": {
-    "scan": "فحص الشبكة",
-    "optimize": "تحسين الأداء",
-    "backup": "نسخ احتياطي للإعدادات",
-    "security": "فحص الأمان",
-    "debug": "تصحيح الاتصال"
-  },
-  "latestUpdates": "آخر التحديثات",
-  "noUpdates": "لا توجد تحديثات جديدة",
-  "securityUpdate": "تحديث أمان متوفر",
-  "performanceOptimized": "تم تحسين الأداء",
+  "description": "مراقبة ملخص النظام والبيانات الرئيسية",
   "uptime": "وقت التشغيل",
   "lastCheck": "آخر فحص",
   "minutesAgo": "دقائق مضت",
-  "quickScan": "فحص سريع",
-  "systemScan": "فحص النظام",
-  "scanStarted": "بدأ فحص الشبكة. ستتوفر النتائج قريباً.",
-  "optimize": "تحسين",
-  "optimizeStarted": "بدأت عملية تحسين الشبكة.",
+  "actions": {
+    "security": "فحص الأمان",
+    "debug": "تصحيح الاتصال"
+  },
   "execute": "تنفيذ",
   "schedule": "جدولة",
-  "systemPerformance": "النظام",
+  "securityUpdate": "تحديث أمني متاح",
+  "performanceOptimized": "تم تحسين الأداء",
+  "systemPerformance": "أداء النظام",
   "devices": "الأجهزة",
   "security": "الأمان"
 }
