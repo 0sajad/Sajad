@@ -29,5 +29,14 @@
   "deviceList": "قائمة الأجهزة",
   "connectedDevices": "الأجهزة المتصلة",
   "disconnectedDevices": "الأجهزة غير المتصلة",
-  "unknownDevice": "جهاز غير معروف"
+  "unknownDevice": "جهاز غير معروف",
+  "wirelessDevices": "أجهزة لاسلكية",
+  "wiredDevices": "أجهزة سلكية",
+  "mobileDevices": "موبايلات",
+  "laptops": "لابتوبات",
+  "scanNetwork": "افحص الشبكة",
+  "lastScan": "آخر فحص",
+  "minutes": "دقيقة",
+  "hours": "ساعة",
+  "ago": "قبل"
 }

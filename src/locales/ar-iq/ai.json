@@ -18,5 +18,16 @@
     "wifiIssue": "الواي فاي ضعيف شنو الحل؟",
     "securityCheck": "شلون أتأكد من أمان الشبكة؟",
     "deviceConnection": "ماكدر اوصل جهاز يديد للشبكة"
-  }
+  },
+  "requestProcessed": "تم معالجة الطلب",
+  "aiProcessedRequest": "قام الذكاء الاصطناعي بمعالجة طلبك بنجاح",
+  "listeningStarted": "دا أسمعك",
+  "speakNow": "كدر تحجي هسه...",
+  "voiceRecognized": "سمعت صوتك",
+  "voiceProcessed": "تم معالجة الأمر الصوتي",
+  "mockedVoiceInput": "تحليل أداء الشبكة وإصلاح المشاكل",
+  "fileUploaded": "رفعت الملفات: ",
+  "fileAnalyzed": "استلمت وحللت الملفات بنجاح. تريد شي ثاني؟",
+  "fileProcessed": "تم معالجة الملفات",
+  "fileProcessedDesc": "تم تحليل الملفات بنجاح"
 }

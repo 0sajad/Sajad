@@ -9,5 +9,11 @@
   "welcomeMessage": "يا هلا بيك بعالم إدارة الشبكات الذكية",
   "networkStatus": "حالة الشبكة",
   "online": "متصل",
-  "offline": "منفصل"
+  "offline": "منفصل",
+  "speedTest": "فحص السرعة",
+  "startNow": "ابدأ هسه",
+  "signalStrength": "قوة الإشارة",
+  "excellent": "ممتاز",
+  "securityLevel": "مستوى الأمان",
+  "securityProtected": "محمي كلش زين"
 }

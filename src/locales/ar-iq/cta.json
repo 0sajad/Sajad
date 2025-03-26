@@ -11,5 +11,11 @@
     "security": "أمان عالي",
     "support": "دعم 24/7",
     "tools": "أدوات شبكة احترافية"
-  }
+  },
+  "limitedOffer": "عرض محدود",
+  "discountText": "خصم 30% للاشتراكات السنوية",
+  "subscriptionOptions": "خيارات الاشتراك",
+  "monthlyPlan": "اشتراك شهري",
+  "yearlyPlan": "اشتراك سنوي",
+  "savings": "توفر هواي فلوس"
 }
