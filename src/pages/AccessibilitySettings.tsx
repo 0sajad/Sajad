@@ -67,9 +67,9 @@ export default function AccessibilitySettings() {
     hasBackups 
   } = useProfileStorage();
   
-  const { exportSettings, importSettings, showImportDialog } = useProfileImportExport();
+  const { exportSettings, importSettings } = useProfileImportExport();
   
-  const { loadProfile, getActiveProfile } = useProfileActivation(
+  const { loadProfile } = useProfileActivation(
     setHighContrast,
     setLargeText,
     setReducedMotion,
@@ -125,6 +125,28 @@ export default function AccessibilitySettings() {
     }
   };
   
+  // Function to show file dialog for import
+  const showImportDialog = async () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    
+    return new Promise<File | null>((resolve) => {
+      input.onchange = (e) => {
+        const target = e.target as HTMLInputElement;
+        const files = target.files;
+        
+        if (files && files.length > 0) {
+          resolve(files[0]);
+        } else {
+          resolve(null);
+        }
+      };
+      
+      input.click();
+    });
+  };
+  
   const handleImportProfile = async () => {
     try {
       const file = await showImportDialog();
@@ -162,6 +184,11 @@ export default function AccessibilitySettings() {
     if (success) {
       announce(t('accessibility.backupRestoredAnnouncement', 'تمت استعادة النسخة الاحتياطية بنجاح'), 'success');
     }
+  };
+  
+  // Helper function to get active profile name
+  const getActiveProfile = () => {
+    return localStorage.getItem('a11yActiveProfile');
   };
 
   return (

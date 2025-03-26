@@ -1,160 +1,74 @@
 
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "react-i18next";
-import { Keyboard, Info } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
-interface ShortcutItem {
-  key: string;
-  label: string;
-  description?: string;
-  category?: string;
-}
+// نوع لتمثيل اختصار لوحة المفاتيح
+export type KeyboardShortcut = {
+  key: string;        // زر أو مجموعة أزرار الاختصار
+  description: string; // وصف الإجراء الذي يتم تنفيذه
+  category?: string;   // فئة الاختصار (اختياري)
+};
+
+// الاختصارات الافتراضية لإمكانية الوصول
+export const defaultA11yShortcuts: KeyboardShortcut[] = [
+  { key: "Alt+C", description: "accessibility.toggleHighContrast", category: "display" },
+  { key: "Alt+T", description: "accessibility.toggleLargeText", category: "display" },
+  { key: "Alt+M", description: "accessibility.toggleReducedMotion", category: "motion" },
+  { key: "Alt+F", description: "accessibility.toggleFocusMode", category: "display" },
+  { key: "Alt+D", description: "accessibility.toggleDyslexicFont", category: "text" },
+  { key: "Alt+R", description: "accessibility.toggleReadingGuide", category: "reading" },
+  { key: "Alt+?", description: "accessibility.showKeyboardShortcuts", category: "help" }
+];
 
 interface KeyboardShortcutsListProps {
-  shortcuts: ShortcutItem[];
-  enableHint?: boolean;
+  shortcuts: KeyboardShortcut[]; // قائمة الاختصارات للعرض
+  title?: string;               // عنوان اختياري
+  description?: string;         // وصف اختياري
+  enableHint?: boolean;         // عرض تلميح حول كيفية استخدام الاختصارات
+  badgeVariant?: "default" | "secondary"; // نوع شارة الاختصار
 }
 
+/**
+ * مكون لعرض قائمة اختصارات لوحة المفاتيح
+ */
 export function KeyboardShortcutsList({
   shortcuts,
-  enableHint = true
+  title,
+  description,
+  enableHint = true,
+  badgeVariant = "default"
 }: KeyboardShortcutsListProps) {
   const { t } = useTranslation();
   
-  // تجميع الاختصارات حسب الفئة
-  const groupedShortcuts: Record<string, ShortcutItem[]> = {};
-  shortcuts.forEach(shortcut => {
-    const category = shortcut.category || t('accessibility.general', 'عام');
-    if (!groupedShortcuts[category]) {
-      groupedShortcuts[category] = [];
-    }
-    groupedShortcuts[category].push(shortcut);
-  });
-  
-  // تنسيق مفتاح الاختصار
-  const formatKey = (key: string) => {
-    return key.split('+').map(k => (
-      <kbd key={k} className="px-2 py-0.5 text-xs bg-muted rounded border border-border mx-0.5">
-        {k.trim()}
-      </kbd>
-    ));
-  };
-
   return (
     <Card className="w-full">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base font-medium flex items-center">
-          <Keyboard className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" aria-hidden="true" />
-          {t('accessibility.keyboardShortcuts', 'اختصارات لوحة المفاتيح')}
-        </CardTitle>
-      </CardHeader>
+      {(title || description) && (
+        <CardHeader>
+          {title && <CardTitle>{t(title, title)}</CardTitle>}
+          {description && <CardDescription>{t(description, description)}</CardDescription>}
+        </CardHeader>
+      )}
       
       <CardContent className="space-y-4">
-        {enableHint && (
-          <Alert variant="outline" className="py-2">
-            <Info className="h-4 w-4" />
-            <AlertDescription className="text-xs">
-              {t('accessibility.shortcutsNote', 'اضغط على Alt + ؟ في أي وقت لعرض هذه الاختصارات')}
-            </AlertDescription>
-          </Alert>
-        )}
+        <div className="space-y-2">
+          {shortcuts.map((shortcut, index) => (
+            <div key={index} className="flex justify-between items-center">
+              <span className="text-sm">{t(shortcut.description, shortcut.description)}</span>
+              <Badge variant={badgeVariant} className="ml-2">
+                {shortcut.key}
+              </Badge>
+            </div>
+          ))}
+        </div>
         
-        <ScrollArea className="h-[300px] pr-4">
-          <div className="space-y-6">
-            {Object.entries(groupedShortcuts).map(([category, categoryShortcuts]) => (
-              <div key={category} className="space-y-2">
-                <h3 className="text-sm font-medium text-muted-foreground">{category}</h3>
-                
-                <div className="space-y-2">
-                  {categoryShortcuts.map((shortcut) => (
-                    <div key={shortcut.key} className="flex justify-between items-start py-1 border-b border-border/30 last:border-0">
-                      <div>
-                        <p className="text-sm">{shortcut.label}</p>
-                        {shortcut.description && (
-                          <p className="text-xs text-muted-foreground mt-0.5">{shortcut.description}</p>
-                        )}
-                      </div>
-                      <div className="flex items-center">{formatKey(shortcut.key)}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
+        {enableHint && (
+          <p className="text-xs text-muted-foreground mt-4">
+            {t('accessibility.keyboardShortcutsHint', 'اضغط على اختصار لوحة المفاتيح المطلوب لتنشيط الميزة المقابلة.')}
+          </p>
+        )}
       </CardContent>
     </Card>
   );
 }
-
-// قائمة الاختصارات الافتراضية
-export const defaultA11yShortcuts: ShortcutItem[] = [
-  { 
-    key: 'Alt+C', 
-    label: 'تبديل وضع التباين العالي',
-    category: 'إمكانية الوصول'
-  },
-  { 
-    key: 'Alt+T', 
-    label: 'تبديل حجم النص الكبير',
-    category: 'إمكانية الوصول'
-  },
-  { 
-    key: 'Alt+M', 
-    label: 'تبديل تقليل الحركة',
-    category: 'إمكانية الوصول'
-  },
-  { 
-    key: 'Alt+F', 
-    label: 'تبديل وضع التركيز',
-    category: 'إمكانية الوصول'
-  },
-  { 
-    key: 'Alt+D', 
-    label: 'تبديل خط عسر القراءة',
-    category: 'إمكانية الوصول'
-  },
-  { 
-    key: 'Alt+R', 
-    label: 'تبديل دليل القراءة',
-    category: 'إمكانية الوصول'
-  },
-  { 
-    key: 'Alt+?', 
-    label: 'عرض اختصارات لوحة المفاتيح',
-    category: 'المساعدة'
-  },
-  { 
-    key: 'Alt+/', 
-    label: 'فتح قائمة إمكانية الوصول',
-    category: 'المساعدة'
-  },
-  { 
-    key: 'Tab', 
-    label: 'التنقل بين العناصر',
-    category: 'التنقل'
-  },
-  { 
-    key: 'Shift+Tab', 
-    label: 'التنقل للخلف بين العناصر',
-    category: 'التنقل'
-  },
-  { 
-    key: 'Enter', 
-    label: 'تنشيط العنصر المحدد',
-    category: 'التنقل'
-  },
-  { 
-    key: 'Space', 
-    label: 'تنشيط/تحديد العنصر المحدد',
-    category: 'التنقل'
-  },
-  { 
-    key: 'Esc', 
-    label: 'إغلاق/إلغاء',
-    category: 'التنقل'
-  }
-];

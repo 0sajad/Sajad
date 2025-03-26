@@ -93,7 +93,7 @@ const AppWrapper = () => {
       document.body.appendChild(liveAnnouncer);
       
       // إضافة هوك للإعلان عن التغييرات لقارئات الشاشة
-      window.announce = (message: string, priority: 'polite' | 'assertive' = 'polite') => {
+      window.announce = function(message: string, priority: 'polite' | 'assertive' = 'polite') {
         const announcer = document.getElementById('liveAnnouncer');
         if (announcer) {
           announcer.setAttribute('aria-live', priority);
@@ -155,7 +155,7 @@ const AppWrapper = () => {
 // إضافة أنواع عالمية للإعلانات
 declare global {
   interface Window {
-    announce: (message: string, priority?: 'polite' | 'assertive') => void;
+    announce(message: string, priority?: 'polite' | 'assertive'): void;
   }
 }
 

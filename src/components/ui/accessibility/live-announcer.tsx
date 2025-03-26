@@ -26,13 +26,6 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
         }, 50);
       }
     };
-    
-    return () => {
-      // إزالة وظيفة الإعلان عند إزالة المكون
-      if (window.announce) {
-        delete window.announce;
-      }
-    };
   }, []);
   
   return (
@@ -49,6 +42,6 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
 // إضافة تعريف الأنواع لوظيفة الإعلان العالمية
 declare global {
   interface Window {
-    announce?: (message: string, level?: "polite" | "assertive") => void;
+    announce(message: string, level?: "polite" | "assertive"): void;
   }
 }
