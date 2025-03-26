@@ -17,5 +17,13 @@
   "toggleFocusMode": "تبديل وضع التركيز",
   "screenReaderSupport": "دعم قارئ الشاشة",
   "colorBlindMode": "وضع عمى الألوان",
-  "a11ySettings": "إعدادات إمكانية الوصول"
+  "a11ySettings": "إعدادات إمكانية الوصول",
+  "highContrastEnabled": "تم تفعيل وضع التباين العالي",
+  "highContrastDisabled": "تم تعطيل وضع التباين العالي",
+  "largeTextEnabled": "تم تفعيل النص الكبير",
+  "largeTextDisabled": "تم تعطيل النص الكبير",
+  "reducedMotionEnabled": "تم تفعيل تقليل الحركة",
+  "reducedMotionDisabled": "تم تعطيل تقليل الحركة",
+  "focusModeEnabled": "تم تفعيل وضع التركيز",
+  "focusModeDisabled": "تم تعطيل وضع التركيز"
 }

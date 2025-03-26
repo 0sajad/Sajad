@@ -13,12 +13,19 @@ import { NetworkToolsSection } from "@/components/network/NetworkToolsSection";
 import { useTranslation } from 'react-i18next';
 import { useLanguageTransition } from "@/hooks/useLanguageTransition";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { QuickAccessibilityButton } from "@/components/ui/QuickAccessibilityButton";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { usePreferenceSync } from "@/hooks/usePreferenceSync";
 
 const Index = () => {
   const [loaded, setLoaded] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const { i18n } = useTranslation();
   const { isTransitioning } = useLanguageTransition();
+  
+  // Use the new hooks
+  useKeyboardShortcuts();
+  usePreferenceSync();
 
   useEffect(() => {
     setLoaded(true);
@@ -96,6 +103,9 @@ const Index = () => {
           show={showAIAssistant} 
           onMaximize={() => window.location.href = '/ai'} 
         />
+        
+        {/* Accessibility Controls */}
+        <QuickAccessibilityButton />
       </div>
     </TooltipProvider>
   );

@@ -1,33 +1,43 @@
 
 import React from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { LucideIcon } from "lucide-react";
 
-interface ResourceMetricCardProps {
+export interface ResourceMetricCardProps {
   icon: LucideIcon;
-  iconColor: string;
   label: string;
-  value: string | number;
+  value: string;
+  iconColor: string;
   bgColorFrom: string;
   bgColorTo: string;
+  ariaLabel?: string; // Add optional ariaLabel prop
 }
 
 export const ResourceMetricCard = ({ 
   icon: Icon, 
-  iconColor, 
   label, 
   value, 
+  iconColor, 
   bgColorFrom, 
-  bgColorTo 
+  bgColorTo,
+  ariaLabel
 }: ResourceMetricCardProps) => {
   return (
-    <div className={`p-4 rounded-lg bg-gradient-to-br from-${bgColorFrom}-50 to-${bgColorTo}-100`}>
-      <div className="flex items-center">
-        <Icon className={`text-${iconColor}-500 mr-2 h-8 w-8`} />
-        <div>
-          <p className="text-sm text-muted-foreground">{label}</p>
-          <p className="text-2xl font-bold">{value}</p>
+    <Card 
+      className={`border-${bgColorFrom}-200 shadow-sm`}
+      aria-label={ariaLabel || label}
+    >
+      <CardContent className="p-4">
+        <div className="flex items-center">
+          <div className={`mr-3 p-2 rounded-md bg-${bgColorFrom}-100 text-${iconColor}-500`}>
+            <Icon className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-sm text-muted-foreground font-medium">{label}</p>
+            <p className="text-lg font-bold">{value}</p>
+          </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };

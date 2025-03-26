@@ -1,62 +1,64 @@
 
+// First check the original CPUMemoryChart props to extend them
 import React from "react";
-import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslation } from "react-i18next";
+import { PerformanceDataPoint } from "./utils/performanceUtils";
 
-interface PerformanceDataPoint {
-  time: string;
-  cpu: number;
-  memory: number;
-  disk: number;
-  temperature: number;
-}
-
-interface CPUMemoryChartProps {
+export interface CPUMemoryChartProps {
   performanceData: PerformanceDataPoint[];
+  reducedAnimations?: boolean; // Add this prop
 }
 
-export const CPUMemoryChart = ({ performanceData }: CPUMemoryChartProps) => {
+export const CPUMemoryChart: React.FC<CPUMemoryChartProps> = ({ 
+  performanceData,
+  reducedAnimations = false
+}) => {
+  const { t } = useTranslation();
+  
   return (
-    <div>
-      <h3 className="text-lg font-medium mb-4">CPU & Memory Usage</h3>
-      <div className="h-[250px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={performanceData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis dataKey="time" />
-            <YAxis />
-            <Tooltip 
-              content={({ active, payload, label }) => {
-                if (active && payload && payload.length) {
-                  return (
-                    <div className="bg-white p-3 border rounded shadow-sm">
-                      <p className="font-bold">Time: {label}</p>
-                      <p className="text-blue-600">CPU: {payload[0].value}%</p>
-                      <p className="text-green-600">Memory: {payload[1].value}%</p>
-                    </div>
-                  );
-                }
-                return null;
-              }}
-            />
-            <Legend />
-            <Area 
-              type="monotone" 
-              dataKey="cpu" 
-              name="CPU" 
-              stroke="#3b82f6" 
-              fill="#93c5fd" 
-              activeDot={{ r: 8 }} 
-            />
-            <Area 
-              type="monotone" 
-              dataKey="memory" 
-              name="Memory" 
-              stroke="#10b981" 
-              fill="#6ee7b7" 
-            />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
+    <Card className="border-octaBlue-200 shadow-sm">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-md font-medium">{t('systemMonitor.cpuMemoryChart', 'CPU & Memory Usage')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="h-[200px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart
+              data={performanceData}
+              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#eaeaea" />
+              <XAxis dataKey="time" stroke="#888888" />
+              <YAxis stroke="#888888" />
+              <Tooltip 
+                contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.9)", borderRadius: "8px", border: "1px solid #eaeaea" }}
+                isAnimationActive={!reducedAnimations}
+              />
+              <Legend />
+              <Area 
+                type="monotone" 
+                dataKey="cpu" 
+                name={t('systemMonitor.cpu', 'CPU')} 
+                stroke="#3b82f6" 
+                fill="#3b82f6" 
+                fillOpacity={0.2} 
+                isAnimationActive={!reducedAnimations}
+              />
+              <Area 
+                type="monotone" 
+                dataKey="memory" 
+                name={t('systemMonitor.memory', 'Memory')} 
+                stroke="#10b981" 
+                fill="#10b981" 
+                fillOpacity={0.2} 
+                isAnimationActive={!reducedAnimations}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </CardContent>
+    </Card>
   );
 };

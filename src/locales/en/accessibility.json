@@ -17,5 +17,13 @@
   "toggleFocusMode": "Toggle focus mode",
   "screenReaderSupport": "Screen Reader Support",
   "colorBlindMode": "Color Blind Mode",
-  "a11ySettings": "Accessibility Settings"
+  "a11ySettings": "Accessibility Settings",
+  "highContrastEnabled": "High Contrast Mode Enabled",
+  "highContrastDisabled": "High Contrast Mode Disabled",
+  "largeTextEnabled": "Large Text Enabled",
+  "largeTextDisabled": "Large Text Disabled",
+  "reducedMotionEnabled": "Reduced Motion Enabled",
+  "reducedMotionDisabled": "Reduced Motion Disabled",
+  "focusModeEnabled": "Focus Mode Enabled",
+  "focusModeDisabled": "Focus Mode Disabled"
 }
