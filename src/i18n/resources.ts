@@ -16,7 +16,9 @@ export type ResourceKey =
   | 'helpCenter'
   | 'securityStatus'
   | 'footer'
-  | 'hero';
+  | 'hero'
+  | 'header'
+  | 'mobileMenu';
 
 export interface TranslationResources {
   [key: string]: {
