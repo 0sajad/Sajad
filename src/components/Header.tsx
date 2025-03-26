@@ -1,15 +1,12 @@
+
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { ModeToggle } from "./ModeToggle";
-import { Menu, X, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { DesktopNav } from "./nav/DesktopNav";
 import { MobileMenu } from "./nav/MobileMenu";
-import { useTranslation } from 'react-i18next';
+import { DesktopNav } from "./nav/DesktopNav";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { LanguageSwitcher } from "./nav/LanguageSwitcher";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { motion, AnimatePresence } from "framer-motion";
+import { Logo } from "./header/Logo";
+import { HeaderActions } from "./header/HeaderActions";
 
 interface HeaderProps {
   onLanguageChange?: (language: string) => void;
@@ -18,7 +15,6 @@ interface HeaderProps {
 export function Header({ onLanguageChange }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { t } = useTranslation();
   const isMobile = useIsMobile();
   
   useEffect(() => {
@@ -41,8 +37,6 @@ export function Header({ onLanguageChange }: HeaderProps) {
     return () => window.removeEventListener("resize", handleResize);
   }, [isMobileMenuOpen]);
   
-  const heartbeatPath = "M0,10 L5,10 L7,2 L9,18 L11,0 L13,10 L15,5 L17,10 L20,10";
-  
   return (
     <TooltipProvider>
       <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md transition-all duration-300 ${
@@ -50,182 +44,14 @@ export function Header({ onLanguageChange }: HeaderProps) {
       }`}>
         <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between">
           <div className="flex items-center">
-            <Link to="/" className="relative mr-4 sm:mr-16 group">
-              <div className="absolute -inset-1.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-              <div className="relative flex items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-sm px-6 py-2 xs:px-8 xs:py-2 rounded-lg border border-white/20 dark:border-gray-800/50 shadow-xl">
-                <motion.div
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="text-xl xs:text-2xl font-bold flex items-center justify-center w-full"
-                >
-                  <div className="flex flex-col items-center">
-                    <span className="bg-gradient-to-br from-blue-500 via-purple-500 to-octaBlue-500 bg-clip-text text-transparent">OCTA</span>
-                    <div className="relative w-full flex justify-center">
-                      <span className="absolute -top-0.5 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent"></span>
-                      <span className="absolute -bottom-0.5 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent"></span>
-                      <span className="mx-1">-</span>
-                    </div>
-                    <span className="bg-gradient-to-tr from-purple-600 to-octaBlue-500 bg-clip-text text-transparent">GRAM</span>
-                  </div>
-                  
-                  <motion.div 
-                    className="absolute -right-16 top-1/2 -translate-y-1/2 h-8 w-14"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <svg width="60" height="20" viewBox="0 0 60 20" className="overflow-visible">
-                      <motion.path
-                        d={heartbeatPath}
-                        stroke="rgba(14, 165, 233, 0.8)"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        fill="none"
-                        initial={{ pathLength: 0, opacity: 0 }}
-                        animate={{ 
-                          pathLength: 1, 
-                          opacity: 1,
-                          stroke: [
-                            "rgba(14, 165, 233, 0.8)",
-                            "rgba(139, 92, 246, 0.8)",
-                            "rgba(14, 165, 233, 0.8)"
-                          ]
-                        }}
-                        transition={{
-                          pathLength: { 
-                            duration: 1.5, 
-                            repeat: Infinity,
-                            repeatType: "loop",
-                            ease: "easeInOut"
-                          },
-                          opacity: { duration: 0.5 },
-                          stroke: {
-                            duration: 2,
-                            repeat: Infinity,
-                            repeatType: "reverse"
-                          }
-                        }}
-                      />
-                      
-                      <motion.circle
-                        r="1.5"
-                        fill="#0EA5E9"
-                        initial={{ opacity: 0 }}
-                        animate={{ 
-                          opacity: 1,
-                          fill: [
-                            "#0EA5E9",
-                            "#8B5CF6",
-                            "#0EA5E9"
-                          ]
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          repeatType: "reverse"
-                        }}
-                      >
-                        <animateMotion
-                          dur="1.5s"
-                          repeatCount="indefinite"
-                          path={heartbeatPath}
-                        />
-                      </motion.circle>
-                      
-                      <motion.path
-                        d={heartbeatPath}
-                        stroke="rgba(14, 165, 233, 0.3)"
-                        strokeWidth="3"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        fill="none"
-                        initial={{ opacity: 0 }}
-                        animate={{ 
-                          opacity: 1,
-                          stroke: [
-                            "rgba(14, 165, 233, 0.3)",
-                            "rgba(139, 92, 246, 0.3)",
-                            "rgba(14, 165, 233, 0.3)"
-                          ]
-                        }}
-                        transition={{
-                          opacity: { duration: 0.5 },
-                          stroke: {
-                            duration: 2,
-                            repeat: Infinity,
-                            repeatType: "reverse"
-                          }
-                        }}
-                        style={{ filter: "blur(4px)" }}
-                      />
-                    </svg>
-                  </motion.div>
-                  
-                  <motion.div 
-                    className="absolute -z-10 inset-0 rounded-lg opacity-30"
-                    animate={{
-                      boxShadow: [
-                        "0 0 0 rgba(79, 70, 229, 0)",
-                        "0 0 20px rgba(79, 70, 229, 0.5)",
-                        "0 0 0 rgba(79, 70, 229, 0)"
-                      ]
-                    }}
-                    transition={{ 
-                      duration: 2,
-                      repeat: Infinity,
-                      repeatType: "reverse"
-                    }}
-                  />
-                </motion.div>
-              </div>
-            </Link>
-            
+            <Logo />
             <DesktopNav />
           </div>
           
-          <div className="flex items-center space-x-2 sm:space-x-4 md:space-x-6 rtl:space-x-reverse">
-            <LanguageSwitcher className="transform hover:scale-110 transition-transform shadow-xl rounded-full mr-6 sm:mr-8" />
-            
-            <div className="transform hover:scale-105 transition-transform">
-              <ModeToggle />
-            </div>
-            
-            <div className="hidden md:block">
-              <Button 
-                size="lg" 
-                variant="gradient"
-                className="px-6 md:px-8 py-2.5 shadow-xl hover:shadow-2xl transform hover:translate-y-[-3px] transition-all rounded-full"
-              >
-                <div className="flex items-center gap-2.5 rtl:flex-row-reverse">
-                  <div className="bg-white/30 p-1.5 rounded-full">
-                    <User size={16} className="text-white" />
-                  </div>
-                  <span className="font-medium">{t('header.login')}</span>
-                </div>
-              </Button>
-            </div>
-            
-            <motion.button
-              className="p-2 md:hidden transform hover:scale-110 transition-transform"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              whileTap={{ scale: 0.9 }}
-              aria-label={isMobileMenuOpen ? "إغلاق القائمة" : "فتح القائمة"}
-            >
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={isMobileMenuOpen ? "close" : "open"}
-                  initial={{ opacity: 0, rotate: isMobileMenuOpen ? -90 : 90 }}
-                  animate={{ opacity: 1, rotate: 0 }}
-                  exit={{ opacity: 0, rotate: isMobileMenuOpen ? 90 : -90 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                </motion.div>
-              </AnimatePresence>
-            </motion.button>
-          </div>
+          <HeaderActions 
+            isMobileMenuOpen={isMobileMenuOpen}
+            setIsMobileMenuOpen={setIsMobileMenuOpen}
+          />
         </div>
         
         <AnimatePresence>
