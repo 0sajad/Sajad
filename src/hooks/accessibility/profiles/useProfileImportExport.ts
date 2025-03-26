@@ -2,7 +2,7 @@
 import { A11ySettings } from '../../types/accessibility';
 import { toast } from '@/components/ui/use-toast';
 import { useTranslation } from 'react-i18next';
-import { Download, Upload, Check } from 'lucide-react';
+import { Download, Check } from 'lucide-react';
 
 /**
  * Hook for handling profile import and export functionality
@@ -37,9 +37,9 @@ export function useProfileImportExport() {
       
       // عرض إشعار نجاح التصدير
       toast({
-        title: t('accessibility.exportSuccess', 'تم تصدير الإعدادات بنجاح'),
-        description: t('accessibility.exportSuccessDescription', 'تم حفظ ملف الإعدادات على جهازك'),
-        icon: <Download className="h-4 w-4 text-green-500" />
+          title: t('accessibility.exportSuccess', 'تم تصدير الإعدادات بنجاح'),
+          description: t('accessibility.exportSuccessDescription', 'تم حفظ ملف الإعدادات على جهازك'),
+          icon: <Download className="h-4 w-4 text-green-500" />
       });
       
       return true;
@@ -84,9 +84,9 @@ export function useProfileImportExport() {
           
           // عرض إشعار نجاح الاستيراد
           toast({
-            title: t('accessibility.importSuccess', 'تم استيراد الإعدادات بنجاح'),
-            description: t('accessibility.importSuccessDescription', 'تم تطبيق الإعدادات المستوردة'),
-            icon: <Check className="h-4 w-4 text-green-500" />
+              title: t('accessibility.importSuccess', 'تم استيراد الإعدادات بنجاح'),
+              description: t('accessibility.importSuccessDescription', 'تم تطبيق الإعدادات المستوردة'),
+              icon: <Check className="h-4 w-4 text-green-500" />
           });
           
           resolve(settings as A11ySettings);

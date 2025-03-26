@@ -55,11 +55,11 @@ export function useProfileActivation(
       
       // إشعار بنجاح تحميل الملف الشخصي
       toast({
-        title: t('accessibility.profileLoaded', 'تم تحميل الملف الشخصي'),
-        description: enabledFeatures.length > 0 
-          ? t('accessibility.enabledFeatures', 'الميزات المفعلة: {features}', { features: enabledFeatures.join('، ') })
-          : t('accessibility.noFeaturesEnabled', 'لا توجد ميزات مفعلة في هذا الملف'),
-        icon: <Accessibility className="h-4 w-4 text-primary" />
+          title: t('accessibility.profileLoaded', 'تم تحميل الملف الشخصي'),
+          description: enabledFeatures.length > 0 
+            ? t('accessibility.enabledFeatures', 'الميزات المفعلة: {features}', { features: enabledFeatures.join('، ') })
+            : t('accessibility.noFeaturesEnabled', 'لا توجد ميزات مفعلة في هذا الملف'),
+          icon: <Accessibility className="h-4 w-4 text-primary" />
       });
       
       // إعلان للقارئات الشاشية
