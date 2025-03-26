@@ -26,14 +26,14 @@ export function ModeToggle() {
 
   return (
     <TooltipProvider>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         {isDeveloperMode && (
           <Tooltip>
             <TooltipTrigger asChild>
               <Button 
                 size="sm" 
                 variant="outline" 
-                className="h-[36px] bg-green-50 text-green-600 hover:bg-green-100"
+                className="h-[36px] bg-green-50 text-green-600 hover:bg-green-100 shadow-md hover:shadow-green-500/30 transform hover:translate-y-[-2px] transition-all"
                 onClick={applyConfiguration}
                 disabled={isSyncing}
               >
@@ -50,7 +50,7 @@ export function ModeToggle() {
         <div 
           onClick={handleToggle}
           className={cn(
-            "relative flex items-center w-[90px] h-[36px] rounded-full p-1 transition-colors duration-300 cursor-pointer",
+            "relative flex items-center w-[90px] h-[36px] rounded-full p-1 transition-colors duration-300 cursor-pointer shadow-md hover:shadow-lg transform hover:scale-105 transition-transform",
             isDeveloperMode ? "bg-octaBlue-600" : "bg-gray-200"
           )}
         >

@@ -67,7 +67,7 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
               <Button
                 variant="outline"
                 size="icon"
-                className={`relative ${className} ${isTransitioning ? 'opacity-50' : 'opacity-100'} transition-opacity duration-300`}
+                className={`relative ${className} ${isTransitioning ? 'opacity-50' : 'opacity-100'} transition-opacity duration-300 shadow-md hover:shadow-lg transform hover:scale-110 hover:translate-y-[-2px] transition-all`}
                 aria-label={t('common.selectLanguage', 'تغيير اللغة')}
                 data-testid="language-switcher"
               >
@@ -80,7 +80,7 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
             <p>{t('common.selectLanguage', 'تغيير اللغة')}</p>
           </TooltipContent>
         </Tooltip>
-        <DropdownMenuContent align="end" className="z-50 min-w-[180px] bg-background border border-border shadow-lg">
+        <DropdownMenuContent align="end" className="z-50 min-w-[180px] bg-background border border-border shadow-lg rounded-lg">
           <DropdownMenuLabel className="text-center font-medium">
             {t('common.language', 'اللغة')}
           </DropdownMenuLabel>
@@ -88,7 +88,7 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
           {languages.map((lang) => (
             <DropdownMenuItem
               key={lang.code}
-              className={`flex items-center justify-between px-4 py-2 cursor-pointer ${
+              className={`flex items-center justify-between px-4 py-2 cursor-pointer transform hover:translate-y-[-1px] transition-transform ${
                 i18n.language === lang.code ? 'bg-muted/50' : ''
               }`}
               onClick={() => changeLanguage(lang.code)}

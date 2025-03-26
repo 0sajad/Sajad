@@ -38,28 +38,31 @@ export function Header({ onLanguageChange }: HeaderProps) {
       >
         <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between">
           <div className="flex items-center">
-            <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-octaBlue-600 to-octaBlue-800 bg-clip-text text-transparent mr-4 sm:mr-12">
+            <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-octaBlue-600 to-octaBlue-800 bg-clip-text text-transparent mr-6 sm:mr-16 transform hover:scale-105 transition-transform shadow-lg hover:shadow-octaBlue-500/30">
               OCTA-GRAM
             </Link>
             
             <DesktopNav />
           </div>
           
-          <div className="flex items-center space-x-4 rtl:space-x-reverse">
-            <LanguageSwitcher className="mr-2 rtl:ml-2 rtl:mr-0" />
+          <div className="flex items-center space-x-6 rtl:space-x-reverse">
+            <LanguageSwitcher className="mr-2 rtl:ml-2 rtl:mr-0 transform hover:scale-110 transition-transform shadow-md rounded-full" />
             
-            <div className="mr-4 rtl:ml-4 rtl:mr-0">
+            <div className="mr-6 rtl:ml-6 rtl:mr-0 transform hover:scale-110 transition-transform">
               <ModeToggle />
             </div>
             
             <div className="hidden md:block">
-              <Button size="sm" className="px-5 py-2">
+              <Button 
+                size="sm" 
+                className="px-6 py-2 shadow-md hover:shadow-lg transform hover:scale-105 transition-all hover:translate-y-[-2px]"
+              >
                 {t('header.login')}
               </Button>
             </div>
             
             <button
-              className="p-2 md:hidden"
+              className="p-2 md:hidden transform hover:scale-110 transition-transform"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label={isMobileMenuOpen ? "إغلاق القائمة" : "فتح القائمة"}
             >

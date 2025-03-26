@@ -86,13 +86,36 @@
   animation: float 3s ease-in-out infinite;
 }
 
+/* 3D Effect Utilities */
+.effect-3d {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  transition: transform 0.3s ease;
+}
+
+.effect-3d:hover {
+  transform: translateY(-5px) rotateX(5deg) rotateY(5deg);
+}
+
+.shadow-3d {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1),
+              0 6px 6px rgba(0, 0, 0, 0.1),
+              0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+.shadow-3d:hover {
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15),
+              0 10px 10px rgba(0, 0, 0, 0.1),
+              0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
 /* UI Components */
 .action-button {
-  @apply bg-gradient-to-r from-octaBlue-600 to-octaBlue-800 text-white px-6 py-3 rounded-full font-medium transition-all duration-300 hover:shadow-lg hover:shadow-octaBlue-800/20 active:scale-95 flex items-center justify-center;
+  @apply bg-gradient-to-r from-octaBlue-600 to-octaBlue-800 text-white px-6 py-3 rounded-full font-medium transition-all duration-300 hover:shadow-lg hover:shadow-octaBlue-800/20 active:scale-95 flex items-center justify-center transform hover:translate-y-[-3px];
 }
 
 .secondary-button {
-  @apply bg-white border border-gray-300 text-gray-800 px-6 py-3 rounded-full font-medium transition-all duration-300 hover:bg-gray-50 hover:shadow-sm active:scale-95 flex items-center justify-center;
+  @apply bg-white border border-gray-300 text-gray-800 px-6 py-3 rounded-full font-medium transition-all duration-300 hover:bg-gray-50 hover:shadow-md active:scale-95 flex items-center justify-center transform hover:translate-y-[-2px];
 }
 
 /* Panel Headers */
