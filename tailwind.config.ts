@@ -8,8 +8,23 @@ const config = {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
+	],
+  safelist: [
+    "animate-fade-in",
+    "animate-float",
+    "from-blue-400",
+    "to-blue-600",
+    "from-purple-400",
+    "to-purple-600",
+    "from-green-400",
+    "to-green-600",
+    "from-red-400",
+    "to-red-600",
+    "from-amber-400",
+    "to-amber-600",
+    "from-teal-400",
+    "to-teal-600",
   ],
-  prefix: "",
   theme: {
     container: {
       center: true,
@@ -19,36 +34,27 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        tajawal: ['Tajawal', 'sans-serif'],
+      },
       colors: {
-        octaBlue: {
-          50: "#E3F2FD",
-          100: "#BBDEFB",
-          200: "#90CAF9",
-          300: "#64B5F6",
-          400: "#42A5F5",
-          500: "#2196F3",
-          600: "#1E88E5",
-          700: "#1976D2",
-          800: "#1565C0",
-          900: "#0D47A1",
-        },
-        goldAccent: {
-          50: "#FFF8E1",
-          100: "#FFECB3",
-          200: "#FFE082",
-          300: "#FFD54F",
-          400: "#FFCA28",
-          500: "#FFC107",
-          600: "#FFB300",
-          700: "#FFA000",
-          800: "#FF8F00",
-          900: "#FF6F00",
-        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        octaBlue: {
+          50: "#e6f1ff",
+          100: "#cce3ff",
+          200: "#99c8ff",
+          300: "#66adff",
+          400: "#3392ff",
+          500: "#0077ff",
+          600: "#005ece",
+          700: "#00469b",
+          800: "#002e68",
+          900: "#001735",
+        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -85,58 +91,18 @@ const config = {
       },
       keyframes: {
         "accordion-down": {
-          from: { height: 0 },
+          from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
           from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: 0 },
+          to: { height: "0" },
         },
-        "fade-in": {
-          "0%": {
-            opacity: "0",
-            transform: "translateY(10px)"
-          },
-          "100%": {
-            opacity: "1",
-            transform: "translateY(0)"
-          }
-        },
-        "fade-out": {
-          "0%": {
-            opacity: "1",
-            transform: "translateY(0)"
-          },
-          "100%": {
-            opacity: "0",
-            transform: "translateY(10px)"
-          }
-        },
-        "float": {
-          "0%, 100%": {
-            transform: "translateY(0)"
-          },
-          "50%": {
-            transform: "translateY(-10px)"
-          }
-        },
-        "pulse-slow": {
-          "0%, 100%": {
-            opacity: "1"
-          },
-          "50%": {
-            opacity: "0.7"
-          }
-        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "fade-in": "fade-in 0.5s ease-out forwards",
-        "fade-out": "fade-out 0.5s ease-out forwards",
-        "float": "float 3s ease-in-out infinite",
-        "pulse-slow": "pulse-slow 3s ease-in-out infinite"
-      }
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

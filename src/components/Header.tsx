@@ -10,7 +10,6 @@ import { useTranslation } from 'react-i18next';
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LanguageSwitcher } from "./nav/LanguageSwitcher";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AppLogo } from "./ui/app-logo";
 
 interface HeaderProps {
   onLanguageChange?: (language: string) => void;
@@ -39,37 +38,22 @@ export function Header({ onLanguageChange }: HeaderProps) {
       >
         <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between">
           <div className="flex items-center">
-            <Link to="/" className="mr-4 sm:mr-12">
-              <AppLogo size="md" showText={true} />
+            <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-octaBlue-600 to-octaBlue-800 bg-clip-text text-transparent mr-4 sm:mr-12">
+              OCTA-GRAM
             </Link>
             
             <DesktopNav />
           </div>
           
-          <div className="flex items-center gap-6">
+          <div className="flex items-center">
             <LanguageSwitcher className="mr-2" />
             
             <div className="mr-4">
               <ModeToggle />
             </div>
             
-            <div className="hidden md:flex items-center gap-4">
-              <Link 
-                to="/developer"
-                className="py-2 px-5 rounded-md bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 font-medium transform transition-all hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 relative after:absolute after:inset-0 after:bg-black/5 after:opacity-0 hover:after:opacity-100 after:transition-opacity border border-gray-200 dark:border-gray-700"
-              >
-                <span className="flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                  </svg>
-                  {t('header.developer')}
-                </span>
-              </Link>
-              
-              <Button 
-                size="sm" 
-                className="px-5 py-2 font-medium shadow-[0_4px_0_0_rgba(0,0,0,0.2)] hover:shadow-[0_2px_0_0_rgba(0,0,0,0.2)] active:shadow-none hover:-translate-y-0.5 active:translate-y-1 transition-all duration-200"
-              >
+            <div className="hidden md:block">
+              <Button size="sm">
                 {t('header.login')}
               </Button>
             </div>

@@ -18,56 +18,5 @@
   "performanceTips": "نصائح تحسين الأداء",
   "autoSupport": "دعم فني تلقائي",
   "running": "قيد التشغيل",
-  "ready": "جاهز",
-  "speedTest": "اختبار السرعة",
-  "startTest": "بدء الاختبار",
-  "testResult": "نتيجة الاختبار",
-  "excellent": "ممتاز",
-  "good": "جيد",
-  "fair": "مقبول",
-  "poor": "ضعيف",
-  "deviceList": "قائمة الأجهزة",
-  "connectedDevices": "الأجهزة المتصلة",
-  "disconnectedDevices": "الأجهزة غير المتصلة",
-  "unknownDevice": "جهاز غير معروف",
-  "wirelessDevices": "أجهزة لاسلكية",
-  "wiredDevices": "أجهزة سلكية",
-  "mobileDevices": "أجهزة محمولة",
-  "laptops": "أجهزة حاسوب محمولة",
-  "scanNetwork": "فحص الشبكة",
-  "lastScan": "آخر فحص",
-  "minutes": "دقيقة",
-  "hours": "ساعة",
-  "ago": "منذ",
-  "tools": {
-    "analytics": "التحليلات المتقدمة",
-    "diagnostics": "أدوات التشخيص",
-    "optimizer": "محسن الشبكة",
-    "security": "فحص الأمان",
-    "monitoring": "المراقبة المستمرة"
-  },
-  "performance": {
-    "title": "أداء الشبكة",
-    "current": "الحالي",
-    "average": "المتوسط",
-    "peak": "الذروة",
-    "improving": "يتحسن",
-    "degrading": "يتدهور",
-    "stable": "مستقر"
-  },
-  "charts": {
-    "hourly": "آخر ساعة",
-    "daily": "آخر يوم",
-    "weekly": "آخر أسبوع",
-    "monthly": "آخر شهر"
-  },
-  "securityStatus": {
-    "title": "حالة الأمان",
-    "secure": "آمن",
-    "warning": "تحذير",
-    "critical": "خطر",
-    "threats": "تهديدات محتملة",
-    "scan": "فحص الشبكة",
-    "lastScan": "آخر فحص"
-  }
+  "ready": "جاهز"
 }

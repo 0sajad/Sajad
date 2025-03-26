@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from "@/components/ui/use-toast";
@@ -10,11 +11,8 @@ export function useLanguageTransition() {
   const { i18n, t } = useTranslation();
   
   useEffect(() => {
-    console.log("useLanguageTransition hook initialized with language:", i18n.language);
-    
     // إضافة مستمع للحدث المخصص languageChanged
     const handleLanguageChange = () => {
-      console.log("Language change detected");
       // تطبيق تأثير انتقالي عند تغيير اللغة
       setIsTransitioning(true);
       setTimeout(() => {
@@ -24,7 +22,6 @@ export function useLanguageTransition() {
     
     // إضافة مستمع للحدث المخصص languageFullyChanged
     const handleLanguageFullyChanged = () => {
-      console.log("Language fully changed event received");
       // تأكيد اكتمال تغيير اللغة بشكل كامل
       setIsTransitioning(false);
       
@@ -44,27 +41,27 @@ export function useLanguageTransition() {
     document.addEventListener('languageChanged', handleLanguageChange);
     document.addEventListener('languageFullyChanged', handleLanguageFullyChanged);
     
-    // التأكد من أن اللغة المخزنة مطبقة عن�� بدء التشغيل
-    const savedLanguage = localStorage.getItem("language");
-    if (savedLanguage) {
-      console.log("Found saved language:", savedLanguage);
-    }
-    
     return () => {
       document.removeEventListener('languageChanged', handleLanguageChange);
       document.removeEventListener('languageFullyChanged', handleLanguageFullyChanged);
-      console.log("useLanguageTransition hook cleanup");
     };
   }, [i18n.language]);
+  
+  // التأكد من أن اللغة المخزنة مطبقة عند بدء التشغيل
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language");
+    if (savedLanguage && savedLanguage !== i18n.language) {
+      setTimeout(() => {
+        i18n.changeLanguage(savedLanguage);
+      }, 100);
+    }
+  }, []);
 
   const changeLanguage = (language: string) => {
     // لا تقم بتغيير اللغة إذا كانت هي نفس اللغة الحالية
     if (i18n.language === language) {
-      console.log("Language is already set to:", language);
       return;
     }
-    
-    console.log("Changing language to:", language);
     
     // تطبيق تأثير انتقالي قبل تغيير اللغة
     setIsTransitioning(true);
@@ -72,8 +69,6 @@ export function useLanguageTransition() {
     setTimeout(() => {
       localStorage.setItem("language", language);
       i18n.changeLanguage(language).then(() => {
-        console.log("Language successfully changed to:", language);
-        
         // إظهار إشعار بتغيير اللغة بناءً على اللغة الجديدة
         toast({
           title: getLanguageChangeTitle(language),

@@ -11,14 +11,13 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { AlertTriangle, Wrench } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { FeatureManagement } from "./FeatureManagement";
 import { UiConfiguration } from "./UiConfiguration";
 import { NetworkControls } from "./NetworkControls";
 import { SecuritySettings } from "./SecuritySettings";
 import { LanguageTools } from "./LanguageTools";
-import { DeveloperTools } from "./DeveloperTools";
 
 export function DeveloperPanel() {
   const { isDeveloperMode, mode } = useMode();
@@ -42,7 +41,7 @@ export function DeveloperPanel() {
             </CardDescription>
           </div>
           <div className="bg-octaBlue-600 text-white text-xs px-3 py-1 rounded-full">
-            {t('developer.panel.version', 'الإصدار')} 2.6.0
+            {t('developer.panel.version', 'الإصدار')} 2.5.0
           </div>
         </div>
       </CardHeader>
@@ -56,7 +55,7 @@ export function DeveloperPanel() {
         </div>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-2">
-          <TabsList className="w-full justify-start grid grid-cols-6 mb-6">
+          <TabsList className="w-full justify-start grid grid-cols-5 mb-6">
             <TabsTrigger value="features" className="font-tajawal">
               {t('developer.tabs.features', 'الميزات')}
             </TabsTrigger>
@@ -71,10 +70,6 @@ export function DeveloperPanel() {
             </TabsTrigger>
             <TabsTrigger value="languages" className="font-tajawal">
               {t('developer.tabs.languages', 'اللغات')}
-            </TabsTrigger>
-            <TabsTrigger value="tools" className="font-tajawal flex items-center">
-              <Wrench className="w-3.5 h-3.5 mr-1" />
-              {t('developer.tabs.tools', 'الأدوات')}
             </TabsTrigger>
           </TabsList>
           
@@ -96,10 +91,6 @@ export function DeveloperPanel() {
           
           <TabsContent value="languages">
             <LanguageTools />
-          </TabsContent>
-          
-          <TabsContent value="tools">
-            <DeveloperTools />
           </TabsContent>
         </Tabs>
       </CardContent>

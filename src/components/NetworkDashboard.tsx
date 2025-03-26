@@ -1,29 +1,23 @@
 
 import React from "react";
 import { useNetworkStats } from "@/hooks/useNetworkStats";
-import { NetworkStatusCard } from "./NetworkStatusCard";
-import { ConnectedDevicesCard } from "./ConnectedDevicesCard";
-import { DataTransferCard } from "./DataTransferCard";
-import { NetworkSpeedCard } from "./NetworkSpeedCard";
-import { NetworkPerformanceCard } from "./NetworkPerformanceCard";
-import { SecurityStatusCard } from "./SecurityStatusCard";
-import { useTranslation } from "react-i18next";
+import { NetworkStatusCard } from "./network/NetworkStatusCard";
+import { ConnectedDevicesCard } from "./network/ConnectedDevicesCard";
+import { DataTransferCard } from "./network/DataTransferCard";
+import { NetworkSpeedCard } from "./network/NetworkSpeedCard";
+import { NetworkPerformanceCard } from "./network/NetworkPerformanceCard";
+import { SecurityStatusCard } from "./network/SecurityStatusCard";
 
 export function NetworkDashboard() {
   const networkStats = useNetworkStats();
-  const { t, i18n } = useTranslation("dashboard");
-  const currentLanguage = i18n.language;
-  const isRTL = currentLanguage === "ar" || currentLanguage === "ar-iq";
 
   return (
     <section id="dashboard" className="pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-12 animate-fade-in">
-          <h2 className={`text-3xl md:text-4xl font-bold mb-4 ${isRTL ? 'font-tajawal' : ''}`}>
-            {t('title')}
-          </h2>
-          <p className={`text-muted-foreground max-w-2xl mx-auto ${isRTL ? 'font-tajawal' : ''}`}>
-            {t('overview')}
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-tajawal">لوحة مراقبة الشبكة</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto font-tajawal">
+            تحليل ومراقبة أداء الشبكة والأجهزة المتصلة في الوقت الفعلي
           </p>
         </div>
 

@@ -10,14 +10,13 @@ import { ModeProvider } from "@/context/ModeContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 // Pages
-import Index from "./pages/Index";
+import Dashboard from "./pages/Dashboard";
 import AIAssistant from "./pages/AIAssistant";
 import Settings from "./pages/Settings";
 import License from "./pages/License";
 import FiberOptic from "./pages/FiberOptic";
 import NotFound from "./pages/NotFound";
 import HelpCenter from "./pages/HelpCenter";
-import CommunicationTools from "./pages/CommunicationTools";
 
 // Components
 import { LoadingScreen } from "./components/LoadingScreen";
@@ -29,29 +28,13 @@ function App() {
   const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
   
   useEffect(() => {
-    console.log("App initializing - Current language:", i18n.language);
-    
-    // ضبط اتجاه اللغة
-    if (isRTL) {
-      document.documentElement.setAttribute("dir", "rtl");
-      document.body.classList.add('rtl-active');
-    } else {
-      document.documentElement.setAttribute("dir", "ltr");
-      document.body.classList.remove('rtl-active');
-    }
-    
-    // محاكاة وقت التحميل
+    // Simulate loading time
     const timer = setTimeout(() => {
       setIsLoading(false);
-      console.log("App loaded successfully");
     }, 1500);
     
     return () => clearTimeout(timer);
-  }, [i18n.language, isRTL]);
-  
-  useEffect(() => {
-    console.log("RTL state changed:", isRTL);
-  }, [isRTL]);
+  }, []);
   
   if (isLoading) {
     return <LoadingScreen />;
@@ -67,13 +50,12 @@ function App() {
           )}>
             <Router>
               <Routes>
-                <Route path="/" element={<Index />} />
+                <Route path="/" element={<Dashboard />} />
                 <Route path="/ai" element={<AIAssistant />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/license" element={<License />} />
                 <Route path="/fiber-optic" element={<FiberOptic />} />
                 <Route path="/help-center" element={<HelpCenter />} />
-                <Route path="/communication-tools" element={<CommunicationTools />} />
                 <Route path="/404" element={<NotFound />} />
                 <Route path="*" element={<Navigate to="/404" replace />} />
               </Routes>

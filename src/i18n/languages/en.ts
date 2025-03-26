@@ -1,30 +1,27 @@
 
-import translation from '../../locales/en/translation.json';
-import common from '../../locales/en/common.json';
-import network from '../../locales/en/network.json';
-import dashboard from '../../locales/en/dashboard.json';
-import ai from '../../locales/en/ai.json';
-import aiAssistant from '../../locales/en/aiAssistant.json';
-import aiFeatures from '../../locales/en/aiFeatures.json';
-import helpCenter from '../../locales/en/helpCenter.json';
-import communicationTools from '../../locales/en/communicationTools.json';
-import networkTools from '../../locales/en/networkTools.json';
-import settings from '../../locales/en/settings.json';
-import securityStatus from '../../locales/en/securityStatus.json';
+// استيراد ملفات الإنجليزية
+import enCommon from '../../locales/en/common.json';
+import enLicense from '../../locales/en/license.json';
+import enAccess from '../../locales/en/access.json';
+import enNetworkTools from '../../locales/en/networkTools.json';
+import enSettings from '../../locales/en/settings.json';
+import enAi from '../../locales/en/ai.json';
+import enAiAssistant from '../../locales/en/aiAssistant.json';
+import enConfig from '../../locales/en/config.json';
+import enCta from '../../locales/en/cta.json';
 
 export function loadEnglishResources() {
   return {
-    translation,
-    common,
-    network,
-    dashboard,
-    ai,
-    aiAssistant,
-    aiFeatures,
-    helpCenter,
-    communicationTools,
-    networkTools,
-    settings,
-    securityStatus
+    common: {
+      ...enCommon,
+      ai: enAi,
+      aiAssistant: enAiAssistant,
+      cta: enCta,
+      networkTools: enNetworkTools,
+      ...enConfig
+    },
+    license: enLicense,
+    access: enAccess,
+    settings: enSettings
   };
 }

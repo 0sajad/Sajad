@@ -1,247 +1,176 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --tajawal-font: 'Tajawal', sans-serif;
-}
-
-/* Direction-specific styles */
-html[dir="rtl"] .rtl-mirror {
-  transform: scaleX(-1);
-}
-
-html[dir="rtl"] .rtl-swap-margins > * {
-  margin-left: var(--margin-right, 0);
-  margin-right: var(--margin-left, 0);
-}
-
-/* لتحسين دعم اتجاه RTL */
-html[dir="rtl"] .rtl-reverse-flex {
-  flex-direction: row-reverse;
-}
-
-html[dir="rtl"] .rtl-text-right {
-  text-align: right;
-}
-
-html[dir="rtl"] .rtl-right {
-  right: auto;
-  left: 0;
-}
-
-html[dir="rtl"] .rtl-left {
-  left: auto;
-  right: 0;
-}
-
-/* Custom tailwind utilities */
-@layer utilities {
-  .animate-spin-slow {
-    animation: spin 10s linear infinite;
-  }
-  
-  .direction-aware-p {
-    @apply rtl:pr-0 rtl:pl-3 ltr:pl-0 ltr:pr-3;
-  }
-  
-  .text-balance {
-    text-wrap: balance;
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
   }
 
-  .rtl-aware-ml {
-    @apply rtl:mr-2 rtl:ml-0 ltr:ml-2 ltr:mr-0;
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
   }
-  
-  .rtl-aware-mr {
-    @apply rtl:ml-2 rtl:mr-0 ltr:mr-2 ltr:ml-0;
-  }
-  
-  .rtl-aware-pl {
-    @apply rtl:pr-2 rtl:pl-0 ltr:pl-2 ltr:pr-0;
-  }
-  
-  .rtl-aware-pr {
-    @apply rtl:pl-2 rtl:pr-0 ltr:pr-2 ltr:pl-0;
-  }
-  
-  .rtl-aware-rounded {
-    @apply rtl:rounded-r-none rtl:rounded-l-md ltr:rounded-l-none ltr:rounded-r-md;
-  }
-  
-  .animate-fade-in {
-    animation: fadeIn 0.5s ease-out forwards;
-  }
-  
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
+
+  /* Arabic font support */
+  html[lang="ar"], .font-tajawal {
+    font-family: 'Tajawal', sans-serif;
   }
 }
 
-/* Ensure float directions are properly handled in RTL */
-.rtl-active .float-right {
-  float: left !important;
-}
-
-.rtl-active .float-left {
-  float: right !important;
-}
-
-/* Import Tajawal font for Arabic */
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap');
-
-/* Font classes */
-.font-tajawal {
-  font-family: var(--tajawal-font);
-}
-
-/* Custom styling for specific components */
-.modeToggle {
-  transition: all 0.3s ease;
-}
-
-.navbar-link {
-  position: relative;
-  display: inline-block;
-}
-
-.navbar-link::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  transform: scaleX(0);
-  height: 2px;
-  bottom: -4px;
-  left: 0;
-  background-color: currentColor;
-  transform-origin: bottom right;
-  transition: transform 0.25s ease-out;
-}
-
-.navbar-link:hover::after {
-  transform: scaleX(1);
-  transform-origin: bottom left;
-}
-
-/* Add cool glass card effects */
-.glass-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-}
-
-/* Animated background gradients */
-.animated-gradient {
-  background: linear-gradient(-45deg, #3490dc, #6574cd, #9561e2, #2779bd);
-  background-size: 400% 400%;
-  animation: gradient 15s ease infinite;
-}
-
-/* Action buttons */
-.action-button {
-  @apply px-5 py-3 bg-octaBlue-600 hover:bg-octaBlue-700 text-white rounded-md font-medium shadow-lg transition-all duration-200 hover:-translate-y-0.5;
-}
-
-.secondary-button {
-  @apply px-5 py-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md font-medium shadow transition-all duration-200 hover:-translate-y-0.5;
-}
-
-/* Animation keyframes */
-@keyframes gradient {
-  0% {
-    background-position: 0% 50%;
+@layer base {
+  * {
+    @apply border-border;
   }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
+  body {
+    @apply bg-background text-foreground;
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Custom Animations */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes float {
-  0% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-  100% {
-    transform: translateY(0px);
-  }
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
 }
 
-/* Add styles for the app logo animation */
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.animate-fade-in {
+  animation: fade-in 0.8s ease-out forwards;
 }
 
-/* Pulse animation for developer mode elements */
-@keyframes pulse-gold {
-  0%, 100% {
-    opacity: 0.6;
-  }
-  50% {
-    opacity: 1;
-  }
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }
 
-.pulse-gold {
-  animation: pulse-gold 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+/* UI Components */
+.action-button {
+  @apply bg-gradient-to-r from-octaBlue-600 to-octaBlue-800 text-white px-6 py-3 rounded-full font-medium transition-all duration-300 hover:shadow-lg hover:shadow-octaBlue-800/20 active:scale-95 flex items-center justify-center;
 }
 
-/* Dark mode adjustments */
-.dark .glass-card {
-  background: rgba(30, 41, 59, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.secondary-button {
+  @apply bg-white border border-gray-300 text-gray-800 px-6 py-3 rounded-full font-medium transition-all duration-300 hover:bg-gray-50 hover:shadow-sm active:scale-95 flex items-center justify-center;
 }
 
-/* Custom scrollbar for the app */
+/* Panel Headers */
+.panel-heading {
+  @apply text-lg font-semibold;
+}
+
+.panel-subheading {
+  @apply text-sm text-muted-foreground mt-1;
+}
+
+/* RTL Support */
+[dir="rtl"] .rtl\:space-x-reverse > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
+
+/* Direction-specific margins for RTL support */
+.rtl-space-x-reverse > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
+
+/* Custom scrollbar for webkit browsers */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c5c5c5;
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: rgba(0, 0, 0, 0.3);
 }
 
-.dark ::-webkit-scrollbar-track {
-  background: #1e293b;
+/* RTL specific adjustments */
+[dir="rtl"] .ml-1, [dir="rtl"] .ml-2, [dir="rtl"] .ml-3, [dir="rtl"] .ml-4 {
+  margin-left: 0;
 }
 
-.dark ::-webkit-scrollbar-thumb {
-  background: #475569;
+[dir="rtl"] .mr-1, [dir="rtl"] .mr-2, [dir="rtl"] .mr-3, [dir="rtl"] .mr-4 {
+  margin-right: 0;
 }
 
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+[dir="rtl"] .rtl\:ml-1 {
+  margin-left: 0.25rem;
+}
+
+[dir="rtl"] .rtl\:ml-2 {
+  margin-left: 0.5rem;
+}
+
+[dir="rtl"] .rtl\:ml-3 {
+  margin-left: 0.75rem;
+}
+
+[dir="rtl"] .rtl\:ml-4 {
+  margin-left: 1rem;
+}
+
+[dir="rtl"] .rtl\:mr-1 {
+  margin-right: 0.25rem;
+}
+
+[dir="rtl"] .rtl\:mr-2 {
+  margin-right: 0.5rem;
+}
+
+[dir="rtl"] .rtl\:mr-3 {
+  margin-right: 0.75rem;
+}
+
+[dir="rtl"] .rtl\:mr-4 {
+  margin-right: 1rem;
 }
