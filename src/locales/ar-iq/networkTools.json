@@ -18,5 +18,16 @@
   "performanceTips": "نصائح تحسين الأداء",
   "autoSupport": "الدعم التلقائي",
   "running": "يعمل هسه",
-  "ready": "جاهز"
+  "ready": "جاهز",
+  "speedTest": "فحص السرعة",
+  "startTest": "ابدأ الفحص",
+  "testResult": "نتيجة الفحص",
+  "excellent": "ممتاز",
+  "good": "زين",
+  "fair": "مقبول",
+  "poor": "ضعيف",
+  "deviceList": "قائمة الأجهزة",
+  "connectedDevices": "الأجهزة المتصلة",
+  "disconnectedDevices": "الأجهزة غير المتصلة",
+  "unknownDevice": "جهاز غير معروف"
 }
