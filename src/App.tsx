@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -10,17 +10,24 @@ import { ModeProvider } from "@/context/ModeContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AnimatePresence } from "framer-motion";
 
-// Pages
-import Dashboard from "./pages/Dashboard";
-import AIAssistant from "./pages/AIAssistant";
-import Settings from "./pages/Settings";
-import License from "./pages/License";
-import FiberOptic from "./pages/FiberOptic";
-import NotFound from "./pages/NotFound";
-import HelpCenter from "./pages/HelpCenter";
-
-// Components
+// استخدام التحميل الكسول (Lazy Loading) لتسريع تحميل الصفحة الرئيسية
 import { LoadingScreen } from "./components/LoadingScreen";
+
+// تحميل الصفحات بطريقة كسولة لتحسين الأداء
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const AIAssistant = lazy(() => import("./pages/AIAssistant"));
+const Settings = lazy(() => import("./pages/Settings"));
+const License = lazy(() => import("./pages/License"));
+const FiberOptic = lazy(() => import("./pages/FiberOptic"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const HelpCenter = lazy(() => import("./pages/HelpCenter"));
+
+// مكون بسيط للتحميل داخل Suspense
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
+  </div>
+);
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -31,7 +38,7 @@ function App() {
     // تقليل وقت التحميل للتأكد من عرض المحتوى بسرعة أكبر
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 800);
+    }, 500); // تقليل وقت التحميل من 800 إلى 500 مللي ثانية
     
     return () => clearTimeout(timer);
   }, []);
@@ -50,16 +57,18 @@ function App() {
           )}>
             <Router>
               <AnimatePresence mode="wait">
-                <Routes>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/ai" element={<AIAssistant />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="/license" element={<License />} />
-                  <Route path="/fiber-optic" element={<FiberOptic />} />
-                  <Route path="/help-center" element={<HelpCenter />} />
-                  <Route path="/404" element={<NotFound />} />
-                  <Route path="*" element={<Navigate to="/404" replace />} />
-                </Routes>
+                <Suspense fallback={<PageLoader />}>
+                  <Routes>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/ai" element={<AIAssistant />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/license" element={<License />} />
+                    <Route path="/fiber-optic" element={<FiberOptic />} />
+                    <Route path="/help-center" element={<HelpCenter />} />
+                    <Route path="/404" element={<NotFound />} />
+                    <Route path="*" element={<Navigate to="/404" replace />} />
+                  </Routes>
+                </Suspense>
               </AnimatePresence>
             </Router>
             <Toaster />

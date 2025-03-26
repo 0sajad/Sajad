@@ -1,32 +1,40 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 
 export function LoadingScreen() {
   const [progress, setProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
 
-  useEffect(() => {
-    // زيادة شريط التقدم تدريجياً لإعطاء المستخدم مؤشراً بصرياً أن التطبيق يتم تحميله
-    const interval = setInterval(() => {
-      setProgress(prevProgress => {
-        const newProgress = prevProgress + 5;
-        return newProgress > 100 ? 100 : newProgress;
-      });
-    }, 50);
+  // استخدام useMemo لتقليل عمليات الحساب المتكررة
+  const progressStyle = useMemo(() => ({
+    width: `${progress}%`
+  }), [progress]);
 
-    // التأكد من أن شاشة التحميل تظهر لمدة لا تقل عن 500 مللي ثانية
-    const visibilityTimer = setTimeout(() => {
-      if (progress >= 100) {
-        setIsVisible(false);
+  useEffect(() => {
+    // تحسين شريط التقدم ليكون أسرع
+    let startTime = performance.now();
+    const duration = 400; // تقليل المدة من 500 إلى 400 مللي ثانية
+
+    const updateProgress = () => {
+      const elapsedTime = performance.now() - startTime;
+      const newProgress = Math.min(100, (elapsedTime / duration) * 100);
+      setProgress(newProgress);
+
+      if (newProgress < 100) {
+        requestAnimationFrame(updateProgress);
+      } else {
+        // التأكد من أن شاشة التحميل تختفي عند اكتمال التقدم
+        setTimeout(() => setIsVisible(false), 100);
       }
-    }, 500);
+    };
+
+    requestAnimationFrame(updateProgress);
 
     return () => {
-      clearInterval(interval);
-      clearTimeout(visibilityTimer);
+      setIsVisible(false);
     };
-  }, [progress]);
+  }, []);
 
   if (!isVisible) return null;
 
@@ -44,13 +52,13 @@ export function LoadingScreen() {
           )} />
         </div>
         <h2 className="mt-4 text-2xl font-semibold text-foreground">OCTA-GRAM</h2>
-        <p className="text-muted-foreground">Loading...</p>
+        <p className="text-muted-foreground">جاري التحميل...</p>
         
-        {/* شريط تقدم لإظهار حالة التحميل للمستخدم */}
+        {/* شريط تقدم لإظهار حالة التحميل للمستخدم - تم تحسينه للأداء */}
         <div className="w-56 h-1.5 mt-4 bg-gray-200 rounded-full overflow-hidden">
           <div 
             className="h-full bg-primary rounded-full transition-all duration-300 ease-out"
-            style={{ width: `${progress}%` }}
+            style={progressStyle}
           />
         </div>
       </div>

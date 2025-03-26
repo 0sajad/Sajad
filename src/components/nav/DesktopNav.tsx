@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { NavItemsContainer } from "./NavItemsContainer";
 import { DashboardNavItem } from "./items/DashboardNavItem";
 import { ToolsNavItems } from "./items/ToolsNavItems";
@@ -8,19 +8,16 @@ import { useTranslation } from "react-i18next";
 
 export const DesktopNav = () => {
   const { i18n } = useTranslation();
-  const [isRTL, setIsRTL] = useState(i18n.language === "ar" || i18n.language === "ar-iq");
+  
+  // استخدام useMemo بدلاً من useState مع useEffect لتسريع التحميل
+  const isRTL = useMemo(() => {
+    return i18n.language === "ar" || i18n.language === "ar-iq";
+  }, [i18n.language]);
   
   useEffect(() => {
-    // تحديث اتجاه القائمة عند تغيير اللغة
-    const updateDirection = () => {
-      setIsRTL(i18n.language === "ar" || i18n.language === "ar-iq");
-    };
-    
-    updateDirection();
-    
-    // الاستماع لتغييرات اللغة
+    // الاستماع لتغييرات اللغة بطريقة أكثر كفاءة
     const handleLanguageChange = () => {
-      updateDirection();
+      // سيتم إعادة تقييم isRTL تلقائيًا بسبب تغيير i18n.language
     };
     
     document.addEventListener('languageChanged', handleLanguageChange);
@@ -28,10 +25,15 @@ export const DesktopNav = () => {
     return () => {
       document.removeEventListener('languageChanged', handleLanguageChange);
     };
-  }, [i18n.language]);
+  }, []);
+  
+  // استخدام useMemo لحساب الأنماط والخصائص مرة واحدة فقط عند تغيير isRTL
+  const navClasses = useMemo(() => {
+    return `hidden md:flex items-center justify-end flex-grow relative ${isRTL ? 'flex-row-reverse' : ''}`;
+  }, [isRTL]);
   
   return (
-    <div className={`hidden md:flex items-center justify-end flex-grow relative ${isRTL ? 'flex-row-reverse' : ''}`}>
+    <div className={navClasses}>
       <NavItemsContainer>
         <DashboardNavItem />
         <ToolsNavItems />

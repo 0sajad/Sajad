@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Send, Mic, FileUp } from "lucide-react";
@@ -27,8 +27,19 @@ export const ChatInput = ({
   hasContent
 }: ChatInputProps) => {
   const { t, i18n } = useTranslation();
-  const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
   const inputRef = useRef<HTMLInputElement>(null);
+  
+  // استخدام useMemo لتحسين الأداء بحساب القيم مرة واحدة فقط عند تغيير اللغة
+  const isRTL = useMemo(() => {
+    return i18n.language === "ar" || i18n.language === "ar-iq";
+  }, [i18n.language]);
+  
+  const getPlaceholder = useMemo(() => {
+    if (isRTL) {
+      return t('ai.writeSomething', "اكتب رسالتك هنا...");
+    }
+    return t('ai.writeSomething', "Write your message here...");
+  }, [isRTL, t]);
   
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -39,31 +50,36 @@ export const ChatInput = ({
     }
   };
   
-  // تركيز حقل الإدخال عند تحميل المكون أو بعد معالجة الرسالة
+  // تركيز حقل الإدخال عند تحميل المكون أو بعد معالجة الرسالة - تحسين باستخدام requestAnimationFrame
   useEffect(() => {
     if (inputRef.current && !isProcessing) {
-      inputRef.current.focus();
+      requestAnimationFrame(() => {
+        inputRef.current?.focus();
+      });
     }
   }, [isProcessing]);
   
-  // تغيير نص placeholder بناءً على اللغة
-  const getPlaceholder = () => {
-    if (isRTL) {
-      return t('ai.writeSomething', "اكتب رسالتك هنا...");
-    }
-    return t('ai.writeSomething', "Write your message here...");
-  };
+  // حساب الخصائص مسبقًا لتحسين الأداء
+  const containerProps = useMemo(() => ({
+    className: "flex gap-2 items-center pb-1",
+    dir: isRTL ? "rtl" : "ltr"
+  }), [isRTL]);
+  
+  const micButtonClass = useMemo(() => {
+    return `${isListening ? 'bg-red-100 text-red-600 hover:bg-red-200' : ''} transition-colors`;
+  }, [isListening]);
+  
+  const sendButtonDisabled = useMemo(() => {
+    return isProcessing || (!hasContent && !input.trim());
+  }, [isProcessing, hasContent, input]);
   
   return (
-    <div 
-      className="flex gap-2 items-center pb-1" 
-      dir={isRTL ? "rtl" : "ltr"}
-    >
+    <div {...containerProps}>
       <Button 
         variant="outline" 
         size="icon"
         onClick={handleVoiceInput}
-        className={`${isListening ? 'bg-red-100 text-red-600 hover:bg-red-200' : ''} transition-colors`}
+        className={micButtonClass}
         title={isListening ? t('ai.stopListening') : t('ai.startListening')}
         aria-label={isListening ? t('ai.stopListening') : t('ai.startListening')}
         type="button"
@@ -85,7 +101,7 @@ export const ChatInput = ({
       </Button>
       
       <Input
-        placeholder={getPlaceholder()}
+        placeholder={getPlaceholder}
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyPress={handleKeyPress}
@@ -100,7 +116,7 @@ export const ChatInput = ({
       <Button 
         onClick={handleSendMessage} 
         size="icon"
-        disabled={isProcessing || (!hasContent && !input.trim())}
+        disabled={sendButtonDisabled}
         title={t('ai.sendMessage')}
         aria-label={t('ai.sendMessage')}
         type="button"

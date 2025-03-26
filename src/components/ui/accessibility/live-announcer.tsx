@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 interface LiveAnnouncerProps {
@@ -10,39 +10,37 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
   const announcerRef = useRef<HTMLDivElement>(null);
   const { i18n } = useTranslation();
   
+  // استخدام useMemo لحساب القيم التي لا تتغير كثيرًا
+  const isRTL = useMemo(() => {
+    return i18n.language === "ar" || i18n.language === "ar-iq";
+  }, [i18n.language]);
+  
   useEffect(() => {
-    // تعريف وظيفة الإعلان العامة
+    // إنشاء وظيفة الإعلان العالمية - تم تحسينها للأداء
     if (typeof window !== 'undefined') {
+      // تحسين وظيفة الإعلان لتكون أسرع وأكثر كفاءة
       window.announce = (message: string, level: "polite" | "assertive" = "polite") => {
         if (announcerRef.current) {
           try {
-            // إعادة تعيين المحتوى أولاً لضمان قراءة الإعلان الجديد
+            // استخدام تأخير أقل للحصول على استجابة أسرع
             announcerRef.current.textContent = "";
-            
-            // تعيين مستوى الإلحاح
             announcerRef.current.setAttribute("aria-live", level);
             
-            // إضافة محتوى الإعلان بعد فترة قصيرة للتأكد من قراءته
-            setTimeout(() => {
+            // تقليل التأخير لزيادة السرعة
+            requestAnimationFrame(() => {
               if (announcerRef.current) {
                 announcerRef.current.textContent = message;
-                
-                // إضافة سمة اللغة للإعلان
                 announcerRef.current.setAttribute("lang", i18n.language);
-                
-                // التأكد من اتجاه النص الصحيح
-                const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
                 announcerRef.current.setAttribute("dir", isRTL ? "rtl" : "ltr");
               }
-            }, 50);
+            });
             
-            // سجل الإعلان في وحدة التحكم للتصحيح
-            console.log(`[LiveAnnouncer] ${level}: ${message}`);
+            if (process.env.NODE_ENV === 'development') {
+              console.log(`[LiveAnnouncer] ${level}: ${message}`);
+            }
           } catch (error) {
             console.error("Error while announcing:", error);
           }
-        } else {
-          console.warn("[LiveAnnouncer] Announcer element not found in DOM");
         }
       };
     }
@@ -56,25 +54,27 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
       // إعادة إنشاء دالة announce كدالة فارغة للسلامة
       if (typeof window !== 'undefined') {
         window.announce = (message: string) => {
-          console.log("LiveAnnouncer unmounted, but announce was called with:", message);
+          // دالة فارغة للتنظيف
         };
       }
     };
-  }, [i18n.language]);
+  }, [i18n.language, isRTL]);
   
-  // تأكد من تشغيل هذا المكون عند تحميل التطبيق
+  // تحسين الوظائف الأولية
   useEffect(() => {
     // التحقق من وجود وظيفة الإعلان
     if (typeof window !== 'undefined' && window.announce) {
       // إعلان أولي للتأكد من عمل النظام
-      const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
       const initialMessage = isRTL 
         ? "تم تحميل نظام الإعلانات للوصول" 
         : "Accessibility announcements system loaded";
       
-      window.announce(initialMessage, "polite");
+      // استخدام setTimeout بتأخير أقل
+      setTimeout(() => {
+        window.announce(initialMessage, "polite");
+      }, 100); // تقليل التأخير من 500 إلى 100 مللي ثانية
     }
-  }, [i18n.language]);
+  }, [isRTL]);
   
   // تنسيق CSS للتأكد من إخفاء العنصر بصريًا مع السماح لقارئات الشاشة بقراءته
   const announcerStyle: React.CSSProperties = {
@@ -98,7 +98,7 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
       aria-relevant="additions"
       style={announcerStyle}
       lang={i18n.language}
-      dir={i18n.language === "ar" || i18n.language === "ar-iq" ? "rtl" : "ltr"}
+      dir={isRTL ? "rtl" : "ltr"}
     />
   );
 }
