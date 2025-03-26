@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LanguageSwitcher } from "./nav/LanguageSwitcher";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AppLogo } from "./ui/app-logo";
 
 interface HeaderProps {
   onLanguageChange?: (language: string) => void;
@@ -38,8 +39,8 @@ export function Header({ onLanguageChange }: HeaderProps) {
       >
         <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between">
           <div className="flex items-center">
-            <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-octaBlue-600 to-octaBlue-800 bg-clip-text text-transparent mr-4 sm:mr-12">
-              OCTA-GRAM
+            <Link to="/" className="mr-4 sm:mr-12">
+              <AppLogo size="md" showText={true} />
             </Link>
             
             <DesktopNav />

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { HeroSection } from "@/components/sections/HeroSection";
-import { NetworkDashboard } from "@/components/NetworkDashboard";
+import { NetworkDashboard } from "@/components/network/NetworkDashboard";
 import { AnimatedCards } from "@/components/AnimatedCards";
 import { AIFeaturesSection } from "@/components/sections/AIFeaturesSection";
 import { SettingsSection } from "@/components/sections/SettingsSection";
