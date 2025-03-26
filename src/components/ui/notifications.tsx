@@ -37,14 +37,12 @@ export const showNotification = ({
   };
 
   return toast({
-    // The error is here - we need to pass the title as a string or ReactNode
-    // not inside a div element which makes it a ReactElement
     title: title,
     description: description,
     duration: duration,
     variant: "default",
     className: `toast-3d bg-gradient-to-r ${gradients[type]} text-white`,
-    icon: icons[type], // Pass icon separately instead of embedding in the title
+    icon: icons[type], // Pass icon separately
     action: action && (
       <Button
         variant="elegant"

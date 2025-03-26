@@ -21,7 +21,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
           cancelButton:
             "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
           title: "text-base font-semibold data-[type=success]:group-[.toast]:text-white data-[type=error]:group-[.toast]:text-white",
-          // The iconThumb property is causing the error, so let's remove it
+          // The iconThumb property has been completely removed
         },
       }}
       {...props}
