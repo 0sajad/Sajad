@@ -20,10 +20,18 @@ export function useLanguageTransition() {
       }, 500);
     };
     
+    // إضافة مستمع للحدث المخصص languageFullyChanged
+    const handleLanguageFullyChanged = () => {
+      // تأكيد اكتمال تغيير اللغة بشكل كامل
+      setIsTransitioning(false);
+    };
+    
     document.addEventListener('languageChanged', handleLanguageChange);
+    document.addEventListener('languageFullyChanged', handleLanguageFullyChanged);
     
     return () => {
       document.removeEventListener('languageChanged', handleLanguageChange);
+      document.removeEventListener('languageFullyChanged', handleLanguageFullyChanged);
     };
   }, []);
 
@@ -42,7 +50,8 @@ export function useLanguageTransition() {
         // إظهار إشعار بتغيير اللغة بناءً على اللغة الجديدة
         toast({
           title: getLanguageChangeTitle(language),
-          description: getLanguageChangeDescription(language)
+          description: getLanguageChangeDescription(language),
+          duration: 3000
         });
         
         // التأكد من تطبيق اتجاه اللغة الصحيح
@@ -55,12 +64,16 @@ export function useLanguageTransition() {
         } else {
           document.body.classList.remove('rtl-active');
         }
-
-        // إعادة تحميل التطبيق بآمان بعد تغيير اللغة لضمان تطبيق جميع الترجمات
-        setTimeout(() => {
-          // بدلاً من إعادة تحميل الصفحة، نقوم بتطبيق تحديث مخصص
-          document.dispatchEvent(new CustomEvent('languageFullyChanged', { detail: { language } }));
-        }, 100);
+      }).catch((error) => {
+        console.error("خطأ في تغيير اللغة:", error);
+        // إظهار إشعار بفشل تغيير اللغة
+        toast({
+          title: t('common.error', 'Error'),
+          description: t('common.languageChangeError', 'Failed to change language'),
+          variant: "destructive",
+          duration: 3000
+        });
+        setIsTransitioning(false);
       });
       
       // إعادة تفعيل المحتوى بعد انتهاء الانتقال

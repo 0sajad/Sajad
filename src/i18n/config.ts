@@ -45,7 +45,9 @@ i18n
       return key.trim();
     },
     appendNamespaceToMissingKey: true,
-    partialBundledLanguages: true
+    partialBundledLanguages: true,
+    // تحسين المعالجة المتزامنة للترجمات
+    initImmediate: false
   });
 
 // تطبيق اتجاه اللغة الصحيح عند تغيير اللغة
@@ -83,6 +85,11 @@ i18n.on('languageChanged', (lng) => {
     document.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: lng } }));
   }, 0);
   
+  // تأخير إضافي للتأكد من تطبيق جميع التغييرات
+  setTimeout(() => {
+    document.dispatchEvent(new CustomEvent('languageFullyChanged', { detail: { language: lng } }));
+  }, 300);
+  
   // تحسين أسلوب تنظيف ذاكرة التخزين المؤقت للمفاتيح عند تغيير اللغة
   if (translationKeyDetector) {
     setTimeout(() => {
@@ -110,6 +117,29 @@ i18n.on('failedLoading', (lng, ns, msg) => {
   setTimeout(() => {
     i18n.reloadResources([lng], [ns]);
   }, 1000);
+});
+
+// إضافة تعامل أفضل مع المفاتيح المفقودة
+i18n.on('missingKey', (lng, ns, key) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn(`مفتاح ترجمة مفقود: ${key} في مجال: ${ns} للغة: ${lng}`);
+  }
+  
+  // محاولة استخدام مفتاح من لغة أخرى
+  const fallbacks = i18n.options.fallbackLng;
+  if (typeof fallbacks === 'object' && fallbacks && lng in fallbacks) {
+    const fallbackLngs = fallbacks[lng];
+    if (Array.isArray(fallbackLngs) && fallbackLngs.length > 0) {
+      for (const fallbackLng of fallbackLngs) {
+        if (i18n.exists(key, { lng: fallbackLng, ns })) {
+          return i18n.t(key, { lng: fallbackLng, ns });
+        }
+      }
+    }
+  }
+  
+  // إذا لم يتم العثور على المفتاح في اللغات الاحتياطية، عرض المفتاح نفسه
+  return key;
 });
 
 export default i18n;

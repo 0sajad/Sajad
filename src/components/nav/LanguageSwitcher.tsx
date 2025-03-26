@@ -59,24 +59,30 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
           size="icon"
           className={`relative ${className} ${isTransitioning ? 'opacity-50' : 'opacity-100'} transition-opacity duration-300`}
           aria-label={t('common.selectLanguage', 'Select Language')}
+          data-testid="language-switcher"
         >
           <Globe className="h-4 w-4" />
           <span className="sr-only">{t('common.language', 'Language')}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel className="text-center">
+      <DropdownMenuContent align="end" className="z-50 min-w-[180px] bg-background border border-border shadow-lg">
+        <DropdownMenuLabel className="text-center font-medium">
           {t('common.language', 'Language')}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {languages.map((lang) => (
           <DropdownMenuItem
             key={lang.code}
-            className="flex items-center justify-between"
+            className={`flex items-center justify-between px-4 py-2 cursor-pointer ${
+              i18n.language === lang.code ? 'bg-muted/50' : ''
+            }`}
             onClick={() => changeLanguage(lang.code)}
+            data-testid={`language-option-${lang.code}`}
           >
             <span>{lang.nativeName}</span>
-            {i18n.language === lang.code && <Check className="h-4 w-4 ml-2 rtl:mr-2 rtl:ml-0" />}
+            {i18n.language === lang.code && (
+              <Check className="h-4 w-4 ml-2 rtl:mr-2 rtl:ml-0 text-primary" />
+            )}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
