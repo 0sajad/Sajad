@@ -10,31 +10,67 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
   
   useEffect(() => {
     // تعريف وظيفة الإعلان العامة
-    window.announce = (message: string, level: "polite" | "assertive" = "polite") => {
-      if (announcerRef.current) {
-        // إعادة تعيين المحتوى أولاً لضمان قراءة الإعلان الجديد
-        announcerRef.current.textContent = "";
-        
-        // تعيين مستوى الإلحاح
-        announcerRef.current.setAttribute("aria-live", level);
-        
-        // إضافة محتوى الإعلان بعد فترة قصيرة للتأكد من قراءته
-        setTimeout(() => {
-          if (announcerRef.current) {
-            announcerRef.current.textContent = message;
+    if (typeof window !== 'undefined') {
+      window.announce = (message: string, level: "polite" | "assertive" = "polite") => {
+        if (announcerRef.current) {
+          try {
+            // إعادة تعيين المحتوى أولاً لضمان قراءة الإعلان الجديد
+            announcerRef.current.textContent = "";
+            
+            // تعيين مستوى الإلحاح
+            announcerRef.current.setAttribute("aria-live", level);
+            
+            // إضافة محتوى الإعلان بعد فترة قصيرة للتأكد من قراءته
+            setTimeout(() => {
+              if (announcerRef.current) {
+                announcerRef.current.textContent = message;
+              }
+            }, 50);
+          } catch (error) {
+            console.error("Error while announcing:", error);
           }
-        }, 50);
+        }
+      };
+    }
+    
+    // التنظيف: تفريغ عنصر الإعلان عند إزالة المكون
+    return () => {
+      if (announcerRef.current) {
+        announcerRef.current.textContent = "";
       }
     };
   }, []);
   
+  // تأكد من تشغيل هذا المكون عند تحميل التطبيق
+  useEffect(() => {
+    // التحقق من وجود وظيفة الإعلان
+    if (typeof window !== 'undefined' && window.announce) {
+      // إعلان أولي للتأكد من عمل النظام
+      window.announce("تم تحميل نظام الإعلانات للوصول", "polite");
+    }
+  }, []);
+  
+  // تنسيق CSS للتأكد من إخفاء العنصر بصريًا مع السماح لقارئات الشاشة بقراءته
+  const announcerStyle: React.CSSProperties = {
+    position: 'absolute',
+    width: '1px',
+    height: '1px',
+    padding: '0',
+    margin: '-1px',
+    overflow: 'hidden',
+    clip: 'rect(0, 0, 0, 0)',
+    whiteSpace: 'nowrap',
+    border: '0'
+  };
+  
   return (
     <div 
       ref={announcerRef} 
-      className="live-announcer" 
+      className="live-announcer sr-only" 
       aria-live={politeness}
       aria-atomic="true"
       aria-relevant="additions"
+      style={announcerStyle}
     />
   );
 }

@@ -16,12 +16,23 @@ import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 export const SystemPerformanceMonitor = () => {
   const { t } = useTranslation();
   const { reducedMotion } = useA11y();
-  const { announce } = useKeyboardShortcuts();
+  const keyboardShortcuts = useKeyboardShortcuts();
   const [performanceData, setPerformanceData] = useState<PerformanceDataPoint[]>(generatePerformanceData());
   const [isRefreshing, setIsRefreshing] = useState(false);
   
   // Current values (last in the array)
   const currentValues = performanceData[performanceData.length - 1];
+  
+  // مساعدة آمنة للإعلان لقارئات الشاشة
+  const safeAnnounce = (message: string) => {
+    // التحقق من وجود الدالة announce قبل استخدامها
+    if (keyboardShortcuts && typeof keyboardShortcuts.announce === 'function') {
+      keyboardShortcuts.announce(message);
+    } else if (window.announce) {
+      // استخدام window.announce كخطة بديلة
+      window.announce(message);
+    }
+  };
   
   const refreshData = () => {
     setIsRefreshing(true);
@@ -31,16 +42,16 @@ export const SystemPerformanceMonitor = () => {
       description: t('systemMonitor.collectingMetrics', 'Collecting system metrics...')
     });
     
-    // Announce to screen readers
-    announce(t('systemMonitor.refreshing', 'Refreshing Data') + '. ' + 
+    // استخدام الدالة الآمنة للإعلان
+    safeAnnounce(t('systemMonitor.refreshing', 'Refreshing Data') + '. ' + 
              t('systemMonitor.collectingMetrics', 'Collecting system metrics...'));
     
     setTimeout(() => {
       setPerformanceData(generatePerformanceData());
       setIsRefreshing(false);
       
-      // Announce when complete
-      announce(t('systemMonitor.dataRefreshed', 'System data has been refreshed'));
+      // استخدام الدالة الآمنة للإعلان
+      safeAnnounce(t('systemMonitor.dataRefreshed', 'System data has been refreshed'));
     }, 1000);
   };
   

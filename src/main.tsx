@@ -101,7 +101,10 @@ const AppWrapper = () => {
           
           // مسح الرسالة بعد قراءتها
           setTimeout(() => {
-            announcer.textContent = '';
+            // التحقق من وجود العنصر قبل محاولة تحديثه
+            if (announcer && document.body.contains(announcer)) {
+              announcer.textContent = '';
+            }
           }, 3000);
         }
       };
@@ -119,11 +122,13 @@ const AppWrapper = () => {
       
       // إعلام قارئات الشاشة أن التطبيق قد اكتمل تحميله
       setTimeout(() => {
-        window.announce(
-          document.documentElement.lang === 'ar' 
-            ? 'تم تحميل التطبيق بنجاح' 
-            : 'Application loaded successfully'
-        );
+        if (window.announce) {
+          window.announce(
+            document.documentElement.lang === 'ar' 
+              ? 'تم تحميل التطبيق بنجاح' 
+              : 'Application loaded successfully'
+          );
+        }
         
         // عرض إشعار ترحيبي خفيف
         setTimeout(() => {
