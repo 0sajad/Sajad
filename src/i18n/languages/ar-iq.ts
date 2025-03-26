@@ -13,11 +13,15 @@ import arIqHelpCenter from '../../locales/ar-iq/helpCenter.json';
 import arIqAi from '../../locales/ar-iq/ai.json';
 import arIqAiAssistant from '../../locales/ar-iq/aiAssistant.json';
 import arIqConfig from '../../locales/ar-iq/config.json';
+import arIqLicense from '../../locales/ar-iq/license.json';
+import arIqAccess from '../../locales/ar-iq/access.json';
+import arIqCommon from '../../locales/ar-iq/common.json';
 
 export function loadIraqiArabicResources() {
   // دمج ملفات ar-iq في كائن واحد
-  const arIqCommon = {
+  const combined = {
     ...arIqHeader,
+    ...arIqCommon,
     mobileMenu: arIqMobileMenu,
     hero: arIqHero,
     settings: arIqSettings,
@@ -33,6 +37,8 @@ export function loadIraqiArabicResources() {
   };
 
   return {
-    common: arIqCommon
+    common: combined,
+    license: arIqLicense,
+    access: arIqAccess
   };
 }

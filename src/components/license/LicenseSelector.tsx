@@ -9,7 +9,7 @@ interface LicenseSelectorProps {
 }
 
 export function LicenseSelector({ value, onChange }: LicenseSelectorProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('license');
   
   return (
     <div className="grid grid-cols-2 gap-4">
@@ -22,9 +22,9 @@ export function LicenseSelector({ value, onChange }: LicenseSelectorProps) {
             : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
         }`}
       >
-        <User className={`w-6 h-6 mb-2 ${value === "client" ? "text-blue-500" : "text-gray-500"}`} />
+        <User className={`w-8 h-8 mb-2 ${value === "client" ? "text-blue-500" : "text-gray-500"}`} />
         <span className={value === "client" ? "font-medium text-blue-600" : "text-gray-700 dark:text-gray-300"}>
-          {t('license.clientVersion')}
+          {t('clientVersion')}
         </span>
         <span className="text-xs text-gray-500 mt-1">CLT-...</span>
       </button>
@@ -38,9 +38,9 @@ export function LicenseSelector({ value, onChange }: LicenseSelectorProps) {
             : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
         }`}
       >
-        <Code className={`w-6 h-6 mb-2 ${value === "developer" ? "text-blue-500" : "text-gray-500"}`} />
+        <Code className={`w-8 h-8 mb-2 ${value === "developer" ? "text-blue-500" : "text-gray-500"}`} />
         <span className={value === "developer" ? "font-medium text-blue-600" : "text-gray-700 dark:text-gray-300"}>
-          {t('license.developerVersion')}
+          {t('developerVersion')}
         </span>
         <span className="text-xs text-gray-500 mt-1">DEV-...</span>
       </button>

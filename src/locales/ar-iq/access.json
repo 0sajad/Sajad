@@ -1,0 +1,12 @@
+
+{
+  "verification": "التحقق من الوصول",
+  "enterAccessKey": "أدخل مفتاح الوصول",
+  "authenticate": "تسجيل الدخول",
+  "authenticating": "جاري التحقق...",
+  "developerMode": "وضع المطور",
+  "authSuccess": "تم التحقق بنجاح",
+  "authFailed": "فشل التحقق",
+  "accessGranted": "تم منح الوصول بنجاح",
+  "invalidKey": "مفتاح الوصول الذي أدخلته غير صالح"
+}

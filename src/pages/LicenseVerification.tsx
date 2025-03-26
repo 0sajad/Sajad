@@ -59,18 +59,18 @@ const LicenseVerification = () => {
         <div className="max-w-md w-full mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
           {/* شعار الدرع */}
           <div className="flex justify-center mb-6">
-            <div className="bg-blue-500 p-8 rounded-full">
+            <div className="bg-blue-500 p-4 rounded-full">
               <Shield className="w-12 h-12 text-white" />
             </div>
           </div>
           
           {/* عنوان الصفحة */}
-          <h1 className="text-3xl font-bold text-center mb-4">
+          <h1 className="text-2xl font-bold text-center mb-4">
             {t('verification')}
           </h1>
           
           {/* الوصف */}
-          <p className="text-gray-600 dark:text-gray-300 text-center mb-8">
+          <p className="text-gray-600 dark:text-gray-300 text-center mb-6 text-sm">
             {t('enterKeyToActivate')}
           </p>
           
@@ -83,14 +83,14 @@ const LicenseVerification = () => {
                 onChange={(e) => setLicenseKey(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder={t('enterKeyHere')}
-                className="pl-10 pr-4 rtl:pl-4 rtl:pr-10"
+                className="pl-10 pr-4 rtl:pl-4 rtl:pr-10 h-12"
               />
-              <Key className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-3 h-4 w-4 text-gray-500`} />
+              <Key className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500`} />
             </div>
             
             <div className="mt-2 text-sm text-blue-600 flex items-center">
               <span className="mr-1 rtl:ml-1 rtl:mr-0">⚡</span>
-              {t('keyFormat')}: XXX-XXXX-XXXX-XXXX
+              XXX-XXXX-XXXX-XXXX
             </div>
           </div>
           
@@ -103,8 +103,8 @@ const LicenseVerification = () => {
           </div>
           
           {/* معلومات إضافية */}
-          <div className="mb-8 text-center text-gray-600 dark:text-gray-300">
-            <p className="mb-4">{t('requiredMessage')}</p>
+          <div className="mb-6 text-center text-gray-600 dark:text-gray-300 text-sm">
+            <p className="mb-3">{t('requiredMessage')}</p>
             
             <div className="flex items-center justify-center text-blue-600">
               <Download className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
@@ -114,7 +114,7 @@ const LicenseVerification = () => {
           
           {/* زر التحقق */}
           <Button 
-            className="w-full"
+            className="w-full py-6 text-lg"
             onClick={handleVerify}
             disabled={isVerifying || licenseKey.length === 0}
           >
