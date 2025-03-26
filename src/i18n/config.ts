@@ -129,32 +129,44 @@ i18n.on('missingKey', (lng, ns, key) => {
   const fallbacks = i18n.options.fallbackLng;
   if (typeof fallbacks === 'object' && fallbacks) {
     // تحويل fallbacks إلى نوع معروف لـ TypeScript
-    const fallbackLngsObject = fallbacks as Record<string, string[] | readonly string[]>;
+    const fallbackLngsObject = fallbacks as Record<string, string[] | string>;
     const lngStr = lng as string;
     
     // التحقق مما إذا كانت اللغة موجودة في كائن اللغات الاحتياطية
     if (lngStr in fallbackLngsObject) {
       const fallbackLngs = fallbackLngsObject[lngStr];
       
-      // استخدام معالجة مناسبة للنوع readonly string[]
+      // معالجة المصفوفات بشكل صحيح
       if (Array.isArray(fallbackLngs)) {
-        for (let i = 0; i < fallbackLngs.length; i++) {
-          const fallbackLng = fallbackLngs[i];
-          // استخدام .toString() بدلاً من الإلقاء المباشر إلى String
-          if (i18n.exists(key, { lng: fallbackLng.toString(), ns })) {
-            return i18n.t(key, { lng: fallbackLng.toString(), ns });
+        for (const fallbackLng of fallbackLngs) {
+          if (typeof fallbackLng === 'string') {
+            if (i18n.exists(key, { lng: fallbackLng, ns })) {
+              return i18n.t(key, { lng: fallbackLng, ns });
+            }
           }
+        }
+      } else if (typeof fallbackLngs === 'string') {
+        // معالجة حالة القيمة المفردة
+        if (i18n.exists(key, { lng: fallbackLngs, ns })) {
+          return i18n.t(key, { lng: fallbackLngs, ns });
         }
       }
     }
     
     // إذا لم نجد في اللغات الاحتياطية المحددة، جرب اللغات الاحتياطية الافتراضية
-    const defaultFallbacks = fallbackLngsObject['default'];
-    if (Array.isArray(defaultFallbacks)) {
-      for (let i = 0; i < defaultFallbacks.length; i++) {
-        const defaultFallbackLng = defaultFallbacks[i];
-        if (i18n.exists(key, { lng: defaultFallbackLng.toString(), ns })) {
-          return i18n.t(key, { lng: defaultFallbackLng.toString(), ns });
+    if ('default' in fallbackLngsObject) {
+      const defaultFallbacks = fallbackLngsObject['default'];
+      if (Array.isArray(defaultFallbacks)) {
+        for (const fallbackLng of defaultFallbacks) {
+          if (typeof fallbackLng === 'string') {
+            if (i18n.exists(key, { lng: fallbackLng, ns })) {
+              return i18n.t(key, { lng: fallbackLng, ns });
+            }
+          }
+        }
+      } else if (typeof defaultFallbacks === 'string') {
+        if (i18n.exists(key, { lng: defaultFallbacks, ns })) {
+          return i18n.t(key, { lng: defaultFallbacks, ns });
         }
       }
     }
