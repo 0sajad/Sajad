@@ -3,13 +3,13 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { resources } from './resources';
-import { TranslationKeyDetector } from './utils/TranslationKeyDetector';
+import translationKeyDetector from './utils/TranslationKeyDetector';
 
 // تهيئة i18next
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
-  .use(TranslationKeyDetector) // إضافة كاشف مفتاح الترجمة
+  .use(translationKeyDetector) // إضافة كاشف مفتاح الترجمة
   .init({
     resources,
     lng: localStorage.getItem('language') || 'ar', // اللغة الافتراضية

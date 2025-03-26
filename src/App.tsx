@@ -14,9 +14,9 @@ import HelpCenter from "./pages/HelpCenter";
 import LicenseVerification from "./pages/LicenseVerification";
 import AccessVerification from "./pages/AccessVerification";
 
-// ملاحظة: يجب إنشاء مثيل QueryClient داخل المكون ليعمل بشكل صحيح مع هوكس React
+// إنشاء مكون التطبيق الرئيسي
 const App = () => {
-  // إنشاء مثيل جديد من QueryClient في كل مرة يتم فيها تحميل المكون
+  // إنشاء مثيل جديد من QueryClient داخل المكون
   const queryClient = new QueryClient();
   
   return (

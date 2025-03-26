@@ -1,13 +1,20 @@
 
+import { Module, NewableModule } from 'i18next';
+
 /**
  * كاشف مفتاح الترجمة - وحدة لتتبع وتسجيل مفاتيح الترجمة المفقودة
  */
-export class TranslationKeyDetector {
-  type = 'postProcessor';
-  name = 'translationKeyDetector';
+export class TranslationKeyDetector implements Module {
+  type: string;
+  name: string;
   
   // تخزين المفاتيح المفقودة لكل لغة ومساحة أسماء
   private missingKeys: Record<string, Record<string, Set<string>>> = {};
+  
+  constructor() {
+    this.type = 'postProcessor';
+    this.name = 'translationKeyDetector';
+  }
   
   // تهيئة الكاشف
   init() {
