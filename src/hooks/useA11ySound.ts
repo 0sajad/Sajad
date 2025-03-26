@@ -5,7 +5,7 @@ import { useA11yPreferences } from './useA11yPreferences';
 type SoundType = 'success' | 'error' | 'warning' | 'info' | 'language';
 
 export function useA11ySound() {
-  const { soundFeedback } = useA11yPreferences();
+  const { soundFeedback, setSoundFeedback } = useA11yPreferences();
   
   // Function to play sound based on type
   const playSound = useCallback((type: SoundType) => {
