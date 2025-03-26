@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { InfoCircle } from "lucide-react";
+import { Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export function FeatureManagement() {
@@ -162,7 +162,7 @@ export function FeatureManagement() {
           
           {groupIndex === 0 && (
             <CardFooter className="bg-blue-50 p-3 flex items-start">
-              <InfoCircle className="text-blue-500 mr-2 mt-0.5 h-4 w-4 shrink-0" />
+              <Info className="text-blue-500 mr-2 mt-0.5 h-4 w-4 shrink-0" />
               <p className="text-xs text-blue-700 font-tajawal">
                 {t('developer.features.coreNotice', 'الميزات الأساسية لا يمكن تعطيلها لضمان عمل النظام بشكل صحيح')}
               </p>
