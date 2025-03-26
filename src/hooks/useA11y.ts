@@ -5,7 +5,8 @@ import { useA11yText } from './accessibility/useA11yText';
 import { useA11ySound } from './accessibility/useA11ySound';
 import { useSystemPreferences } from './accessibility/useA11yPreferences';
 import { useA11yKeyboard } from './accessibility/useA11yKeyboard';
-import { useA11yProfiles } from './accessibility/useA11yProfiles';
+// Fix the import path - import from the root hooks directory where useA11yProfiles.ts exists
+import { useA11yProfiles } from './useA11yProfiles';
 
 /**
  * هوك مساعد لتحسين إمكانية الوصول في التطبيق
