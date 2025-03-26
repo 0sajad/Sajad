@@ -77,7 +77,7 @@ export const DesktopNav = () => {
         
         {/* Code Icons for Developer Logo - Left side */}
         <motion.div 
-          className="absolute -left-6 top-1/2 -translate-y-1/2 bg-gradient-to-r from-blue-500 to-purple-600 text-white p-1.5 rounded-full shadow-md"
+          className="absolute -left-6 top-[20px] -translate-y-1/2 bg-gradient-to-r from-blue-500 to-purple-600 text-white p-1.5 rounded-full shadow-md"
           animate={{
             rotate: [0, 10, 0, -10, 0],
             scale: [1, 1.1, 1]
@@ -93,7 +93,7 @@ export const DesktopNav = () => {
         
         {/* Code Icons for Developer Logo - Right side */}
         <motion.div 
-          className="absolute -right-6 top-1/2 -translate-y-1/2 bg-gradient-to-r from-purple-600 to-blue-500 text-white p-1.5 rounded-full shadow-md"
+          className="absolute -right-6 top-[20px] -translate-y-1/2 bg-gradient-to-r from-purple-600 to-blue-500 text-white p-1.5 rounded-full shadow-md"
           animate={{
             rotate: [0, -10, 0, 10, 0],
             scale: [1, 1.1, 1]
