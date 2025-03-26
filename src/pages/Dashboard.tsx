@@ -8,9 +8,6 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AdvancedNetworkAnalytics } from "@/components/analytics/AdvancedNetworkAnalytics";
-import { NetworkQualityGauge } from "@/components/analytics/NetworkQualityGauge";
-import { RealTimeMonitoring } from "@/components/analytics/RealTimeMonitoring";
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -27,7 +24,7 @@ const Dashboard = () => {
         <h1 className="text-2xl font-bold mb-6">{t('dashboard.title', 'Dashboard')}</h1>
         <p className="text-muted-foreground mb-8">{t('dashboard.welcome', 'Welcome to OCTA-GRAM Dashboard')}</p>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-lg">{t('dashboard.systemStatus', 'System Status')}</CardTitle>
@@ -70,24 +67,6 @@ const Dashboard = () => {
               </p>
             </CardContent>
           </Card>
-        </div>
-        
-        {/* إضافة شبكة الرسومات والأدوات التحليلية المتقدمة */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <NetworkQualityGauge 
-            qualityScore={87} 
-            latency={24} 
-            packetLoss={0.5} 
-            jitter={1.2} 
-          />
-          <div className="md:col-span-2">
-            <RealTimeMonitoring />
-          </div>
-        </div>
-        
-        {/* تحليلات الشبكة المتقدمة */}
-        <div className="mb-8">
-          <AdvancedNetworkAnalytics />
         </div>
       </div>
     </TooltipProvider>
