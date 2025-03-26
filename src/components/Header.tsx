@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ModeToggle } from "./ModeToggle";
@@ -31,7 +30,6 @@ export function Header({ onLanguageChange }: HeaderProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
   
-  // إغلاق القائمة عند تغيير حجم الشاشة
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768 && isMobileMenuOpen) {
@@ -69,7 +67,6 @@ export function Header({ onLanguageChange }: HeaderProps) {
                   </span>
                   <span className="bg-gradient-to-tr from-purple-600 to-octaBlue-500 bg-clip-text text-transparent">GRAM</span>
                   
-                  {/* Subtle glowing circle behind the logo */}
                   <motion.div 
                     className="absolute -z-10 inset-0 rounded-lg opacity-30"
                     animate={{
@@ -93,7 +90,7 @@ export function Header({ onLanguageChange }: HeaderProps) {
           </div>
           
           <div className="flex items-center space-x-2 sm:space-x-4 md:space-x-6 rtl:space-x-reverse">
-            <LanguageSwitcher className="transform hover:scale-110 transition-transform shadow-xl rounded-full mr-1 sm:mr-2" />
+            <LanguageSwitcher className="transform hover:scale-110 transition-transform shadow-xl rounded-full mr-3 sm:mr-4" />
             
             <div className="transform hover:scale-105 transition-transform">
               <ModeToggle />
