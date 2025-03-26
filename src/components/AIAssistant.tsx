@@ -164,9 +164,9 @@ export function AIAssistant({ minimized = false, onMaximize }: AIAssistantProps)
           <div className="flex-1 rounded-md bg-gray-50 p-2">
             <div className="flex items-center mb-1">
               <Zap size={12} className="text-amber-500 mr-1 rtl:mr-0 rtl:ml-1" />
-              <span className="text-xs font-medium">{t('aiAssistant.selfDevelpment')}</span>
+              <span className="text-xs font-medium">{t('aiAssistant.selfDevelopment')}</span>
             </div>
-            <p className="text-xs text-muted-foreground">{t('aiAssistant.selfDevelpmentDesc')}</p>
+            <p className="text-xs text-muted-foreground">{t('aiAssistant.selfDevelopmentDesc')}</p>
           </div>
         </div>
       </div>
