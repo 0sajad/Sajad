@@ -145,6 +145,14 @@ a:hover, a:focus {
   font-family: 'Arial', 'Helvetica', sans-serif !important;
 }
 
+/* خط مساعد لذوي عسر القراءة */
+.dyslexia-font {
+  font-family: 'OpenDyslexic', 'Comic Sans MS', 'Arial', sans-serif !important;
+  letter-spacing: 0.15em !important;
+  word-spacing: 0.25em !important;
+  line-height: 1.8 !important;
+}
+
 /* مؤشر مخصص أكبر للرؤية */
 .custom-cursor {
   cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" fill="white" stroke="black"/><circle cx="12" cy="12" r="2" fill="black"/></svg>') 12 12, auto !important;
@@ -163,20 +171,22 @@ a:hover, a:focus {
   filter: url('#tritanopia-filter') !important;
 }
 
-/* إضافة SVG filters للتراشيح اللونية (يحتاج إلى إضافتها في HTML) */
-/* مثال: 
-<svg style="display:none">
-  <filter id="deuteranopia-filter">
-    <feColorMatrix type="matrix" values="0.625 0.375 0 0 0 0.7 0.3 0 0 0 0 0.3 0.7 0 0 0 0 0 1 0"/>
-  </filter>
-  <filter id="protanopia-filter">
-    <feColorMatrix type="matrix" values="0.567 0.433 0 0 0 0.558 0.442 0 0 0 0 0.242 0.758 0 0 0 0 0 1 0"/>
-  </filter>
-  <filter id="tritanopia-filter">
-    <feColorMatrix type="matrix" values="0.95 0.05 0 0 0 0 0.433 0.567 0 0 0 0.475 0.525 0 0 0 0 0 1 0"/>
-  </filter>
-</svg>
-*/
+/* وضع الألوان المعكوسة */
+.invert-colors {
+  filter: invert(100%) !important;
+}
+
+/* وضع أحادي اللون */
+.monochrome {
+  filter: grayscale(100%) !important;
+}
+
+/* تسطير الروابط */
+.underline-links a {
+  text-decoration: underline !important;
+  text-decoration-thickness: 0.15em !important;
+  text-underline-offset: 0.2em !important;
+}
 
 /* تحسينات للمساعدة في القراءة */
 .reading-guide {
@@ -196,4 +206,77 @@ a:hover, a:focus {
   width: 1px;
   overflow: hidden;
   clip: rect(1px, 1px, 1px, 1px);
+}
+
+/* مساحات حول العناصر أكبر للنقر بسهولة */
+.easy-click a,
+.easy-click button,
+.easy-click input[type="checkbox"],
+.easy-click input[type="radio"] {
+  min-height: 44px !important;
+  min-width: 44px !important;
+  padding: 0.5rem !important;
+}
+
+/* وضع الوصول السريع بلوحة المفاتيح - إظهار الاختصارات */
+.keyboard-mode [data-keyboard-shortcut]::after {
+  content: attr(data-keyboard-shortcut);
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-family: monospace;
+}
+
+/* دعم للوضع الداكن بتباين عالي للرؤية المحسنة */
+.dark-high-contrast {
+  --background: #000000;
+  --foreground: #ffffff;
+  --card: #121212;
+  --card-foreground: #ffffff;
+  --border: #ffff00;
+  --input: #121212;
+  --primary: #ffff00;
+  --secondary: #ffffff;
+  --accent: #ffff00;
+  --ring: #ff8c00;
+}
+
+/* إضافة الدعم لشاشات القراءة المحمولة */
+@media (max-width: 768px) {
+  .large-text {
+    font-size: 1.3rem !important;
+  }
+  
+  .large-text h1 {
+    font-size: 2.6rem !important;
+  }
+  
+  a, button, input, select {
+    padding: 0.6rem !important;
+  }
+  
+  .focus-mode .card:not(:hover):not(:focus-within),
+  .focus-mode section:not(:hover):not(:focus-within) {
+    filter: grayscale(40%) opacity(85%);
+  }
+}
+
+/* تنسيق مخصص لإشعارات قارئ الشاشة */
+.screen-reader-announcement {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+  pointer-events: none;
+  z-index: -1;
 }

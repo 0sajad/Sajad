@@ -6,6 +6,7 @@ import { useA11y } from "@/hooks/useA11y";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Accessibility } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
 
 export function QuickAccessibilityButton() {
   const { highContrast, largeText, reducedMotion, focusMode } = useA11y();
@@ -27,10 +28,13 @@ export function QuickAccessibilityButton() {
   };
   
   return (
-    <div 
+    <motion.div 
       className="fixed bottom-4 left-4 z-50 md:bottom-6 md:left-6 rtl:left-auto rtl:right-4 rtl:md:right-6"
       role="region"
       aria-label={t('accessibility.a11ySettings')}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 1.5, duration: 0.5 }}
     >
       <TooltipProvider>
         <Tooltip>
@@ -46,22 +50,25 @@ export function QuickAccessibilityButton() {
             >
               <Accessibility className="h-4 w-4" />
               {activeFeatures > 0 && (
-                <div 
+                <motion.div 
                   className="absolute -top-2 -right-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center" 
                   aria-hidden="true"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", damping: 12 }}
                 >
                   <span className="text-xs text-white font-bold">{activeFeatures}</span>
-                </div>
+                </motion.div>
               )}
               <span id="a11y-settings-desc" className="sr-only">{getActiveFeaturesText()}</span>
             </Button>
           </TooltipTrigger>
-          <TooltipContent side="right">
-            <p>{t('accessibility.a11ySettings')}</p>
+          <TooltipContent side="right" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0">
+            <p className="text-sm">{t('accessibility.a11ySettings')}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
       <AccessibilityMenu />
-    </div>
+    </motion.div>
   );
 }

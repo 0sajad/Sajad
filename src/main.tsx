@@ -6,10 +6,12 @@ import './index.css';
 import './components/ui/a11y-styles.css'; 
 import './i18n';
 import { LoadingScreen } from './components/LoadingScreen';
+import { toast } from '@/components/ui/use-toast';
 
 // مكون الغلاف للتعامل مع التهيئة
 const AppWrapper = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isKeyboardUser, setIsKeyboardUser] = useState(false);
 
   useEffect(() => {
     // التعامل مع إعداد إمكانية الوصول والتفضيلات
@@ -21,6 +23,14 @@ const AppWrapper = () => {
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
       if (prefersReducedMotion.matches) {
         document.body.classList.add('reduced-motion');
+        localStorage.setItem('reducedMotion', 'true');
+      }
+      
+      // التحقق من تفضيلات التباين المحسن
+      const prefersContrastMore = window.matchMedia('(prefers-contrast: more)');
+      if (prefersContrastMore.matches && localStorage.getItem('highContrast') === null) {
+        document.body.classList.add('high-contrast');
+        localStorage.setItem('highContrast', 'true');
       }
       
       // إعداد المحتوى الرئيسي لقارئات الشاشة
@@ -55,9 +65,21 @@ const AppWrapper = () => {
       `;
       document.body.appendChild(svgFilters);
       
+      // اكتشاف مستخدمي لوحة المفاتيح
+      const handleFirstTab = (e) => {
+        if (e.key === 'Tab') {
+          document.body.classList.add('keyboard-user');
+          setIsKeyboardUser(true);
+          window.removeEventListener('keydown', handleFirstTab);
+        }
+      };
+      
+      window.addEventListener('keydown', handleFirstTab);
+      
       // محاكاة اكتمال التحميل
       const timer = setTimeout(() => {
         setIsLoading(false);
+        
         // إعلام قارئات الشاشة أن التطبيق قد اكتمل تحميله
         const announcer = document.createElement('div');
         announcer.setAttribute('aria-live', 'polite');
@@ -71,13 +93,26 @@ const AppWrapper = () => {
             document.body.removeChild(announcer);
           }
         }, 1000);
+        
+        // عرض إشعار ترحيبي خفيف
+        setTimeout(() => {
+          toast({
+            title: document.documentElement.lang === 'ar' ? 'مرحبًا بك!' : 'Welcome!',
+            description: document.documentElement.lang === 'ar' 
+              ? 'استخدم زر إمكانية الوصول في أسفل اليسار لتخصيص تجربتك'
+              : 'Use the accessibility button at the bottom left to customize your experience'
+          });
+        }, 1500);
       }, 800);
       
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(timer);
+        window.removeEventListener('keydown', handleFirstTab);
+      };
     }
   }, []);
 
-  return isLoading ? <LoadingScreen /> : <App />;
+  return isLoading ? <LoadingScreen /> : <App isKeyboardUser={isKeyboardUser} />;
 };
 
 createRoot(document.getElementById("root")!).render(
