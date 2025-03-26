@@ -23,44 +23,40 @@ export function useA11yKeyboard(
     const handleKeyDown = (e: KeyboardEvent) => {
       // Alt + C to toggle high contrast
       if (e.altKey && e.key === 'c') {
-        setHighContrast(prev => !prev);
+        setHighContrast(!highContrast);
       }
       
       // Alt + T to toggle large text
       if (e.altKey && e.key === 't') {
-        setLargeText(prev => !prev);
+        setLargeText(!largeText);
       }
       
       // Alt + M to toggle reduced motion
       if (e.altKey && e.key === 'm') {
-        setReducedMotion(prev => !prev);
+        setReducedMotion(!reducedMotion);
       }
       
       // Alt + F to toggle focus mode
       if (e.altKey && e.key === 'f') {
-        setFocusMode(prev => !prev);
+        setFocusMode(!focusMode);
       }
       
       // Alt + D to toggle dyslexic font
       if (e.altKey && e.key === 'd') {
-        setDyslexicFont(prev => !prev);
+        setDyslexicFont(!dyslexicFont);
       }
       
       // Alt + R to toggle reading guide
       if (e.altKey && e.key === 'r') {
-        setReadingGuide(prev => !prev);
+        setReadingGuide(!readingGuide);
       }
     };
     
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [
-    setHighContrast, 
-    setLargeText, 
-    setReducedMotion, 
-    setFocusMode, 
-    setDyslexicFont, 
-    setReadingGuide
+    highContrast, largeText, reducedMotion, focusMode, dyslexicFont, readingGuide,
+    setHighContrast, setLargeText, setReducedMotion, setFocusMode, setDyslexicFont, setReadingGuide
   ]);
 
   return null;

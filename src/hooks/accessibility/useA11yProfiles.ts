@@ -1,5 +1,8 @@
 
 import { A11ySettings } from '../types/accessibility';
+import { useProfileStorage } from './profiles/useProfileStorage';
+import { useProfileImportExport } from './profiles/useProfileImportExport';
+import { useProfileActivation } from './profiles/useProfileActivation';
 
 /**
  * Functions to manage accessibility profiles
@@ -22,7 +25,25 @@ export function useA11yProfiles(
   setReadingGuide: (value: boolean) => void,
   setSoundFeedback: (value: boolean) => void
 ) {
-  // Save and import accessibility settings
+  // Storage operations
+  const { saveProfile, getProfiles, deleteProfile } = useProfileStorage();
+  
+  // Import/Export operations
+  const { exportSettings, importSettings } = useProfileImportExport();
+  
+  // Profile activation
+  const { loadProfile } = useProfileActivation(
+    setHighContrast,
+    setLargeText,
+    setReducedMotion,
+    setFocusMode,
+    setColorBlindMode,
+    setDyslexicFont,
+    setReadingGuide,
+    setSoundFeedback
+  );
+  
+  // Save current settings as a profile
   const saveA11yProfile = (profileName: string) => {
     const profile: A11ySettings = {
       highContrast,
@@ -35,37 +56,20 @@ export function useA11yProfiles(
       soundFeedback
     };
     
-    const profiles = JSON.parse(localStorage.getItem('a11yProfiles') || '{}');
-    profiles[profileName] = profile;
-    localStorage.setItem('a11yProfiles', JSON.stringify(profiles));
-    
-    return profileName;
+    return saveProfile(profileName, profile);
   };
   
+  // Load a profile by name
   const loadA11yProfile = (profileName: string) => {
-    const profiles = JSON.parse(localStorage.getItem('a11yProfiles') || '{}');
-    const profile = profiles[profileName];
-    
-    if (profile) {
-      setHighContrast(profile.highContrast);
-      setLargeText(profile.largeText);
-      setReducedMotion(profile.reducedMotion);
-      setFocusMode(profile.focusMode);
-      setColorBlindMode(profile.colorBlindMode);
-      setDyslexicFont(profile.dyslexicFont);
-      setReadingGuide(profile.readingGuide);
-      setSoundFeedback(profile.soundFeedback);
-      
-      return true;
-    }
-    
-    return false;
+    return loadProfile(profileName, getProfiles);
   };
   
+  // Get all saved profiles
   const getA11yProfiles = () => {
-    return JSON.parse(localStorage.getItem('a11yProfiles') || '{}');
+    return getProfiles();
   };
   
+  // Export current settings
   const exportA11ySettings = () => {
     const settings: A11ySettings = {
       highContrast,
@@ -78,44 +82,28 @@ export function useA11yProfiles(
       soundFeedback
     };
     
-    const blob = new Blob([JSON.stringify(settings)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'a11y-settings.json';
-    a.click();
-    
-    URL.revokeObjectURL(url);
+    exportSettings(settings);
   };
   
-  const importA11ySettings = (file: File): Promise<boolean> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
+  // Import settings from a file
+  const importA11ySettings = async (file: File): Promise<boolean> => {
+    try {
+      const settings = await importSettings(file);
       
-      reader.onload = (event) => {
-        try {
-          const settings: A11ySettings = JSON.parse(event.target?.result as string);
-          
-          setHighContrast(settings.highContrast);
-          setLargeText(settings.largeText);
-          setReducedMotion(settings.reducedMotion);
-          setFocusMode(settings.focusMode);
-          setColorBlindMode(settings.colorBlindMode);
-          setDyslexicFont(settings.dyslexicFont);
-          setReadingGuide(settings.readingGuide || false);
-          setSoundFeedback(settings.soundFeedback || false);
-          
-          resolve(true);
-        } catch (error) {
-          reject(error);
-        }
-      };
+      setHighContrast(settings.highContrast);
+      setLargeText(settings.largeText);
+      setReducedMotion(settings.reducedMotion);
+      setFocusMode(settings.focusMode);
+      setColorBlindMode(settings.colorBlindMode);
+      setDyslexicFont(settings.dyslexicFont);
+      setReadingGuide(settings.readingGuide || false);
+      setSoundFeedback(settings.soundFeedback || false);
       
-      reader.onerror = () => reject(new Error('فشل قراءة الملف'));
-      
-      reader.readAsText(file);
-    });
+      return true;
+    } catch (error) {
+      console.error('Failed to import settings:', error);
+      return false;
+    }
   };
   
   return {
