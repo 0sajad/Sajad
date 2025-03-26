@@ -16,5 +16,7 @@
   "aiChatbot": "AIチャットボット",
   "networkTroubleshooting": "ネットワークトラブルシューティング",
   "performanceTips": "パフォーマンス向上のヒント",
-  "autoSupport": "自動サポート"
+  "autoSupport": "自動サポート",
+  "running": "実行中",
+  "ready": "準備完了"
 }

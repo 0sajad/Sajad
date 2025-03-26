@@ -1,0 +1,22 @@
+
+{
+  "title": "Network Tools",
+  "qualityMonitoring": "Network Quality Monitoring",
+  "signalStrength": "Signal Strength",
+  "internetSpeed": "Internet Speed",
+  "download": "Download",
+  "upload": "Upload",
+  "ping": "Ping",
+  "networkManagement": "Network Management",
+  "faultMonitoring": "Fault Monitoring",
+  "deviceManagement": "Device Management",
+  "simulationSystems": "Simulation Systems",
+  "testEnvironment": "Test Environment",
+  "dataTransmission": "Data Transmission Simulation",
+  "aiChatbot": "AI Chatbot",
+  "networkTroubleshooting": "Network Troubleshooting",
+  "performanceTips": "Performance Tips",
+  "autoSupport": "Auto Support",
+  "running": "Running",
+  "ready": "Ready"
+}

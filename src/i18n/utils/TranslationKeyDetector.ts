@@ -12,6 +12,7 @@ export class TranslationKeyDetector implements Module {
   // Store missing keys for each language and namespace
   // تخزين المفاتيح المفقودة لكل لغة ومساحة أسماء
   private missingKeys: Record<string, Record<string, Set<string>>> = {};
+  private keyCache: Record<string, boolean> = {}; // Cache for performance
   
   // Initialize the detector
   // تهيئة الكاشف
@@ -25,11 +26,21 @@ export class TranslationKeyDetector implements Module {
   // Process translation and check for missing keys
   // معالجة الترجمة والتحقق من المفاتيح المفقودة
   process(value: string, key: string, options: any, translator: any) {
+    // Skip processing if in production
+    if (process.env.NODE_ENV === 'production') {
+      return value;
+    }
+    
+    // Generate cache key
+    const cacheKey = `${options?.lng || 'unknown'}.${options?.ns || 'unknown'}.${key}`;
+    
     // If the value is the key itself (sign of a missing key)
     // إذا كانت القيمة هي المفتاح نفسه (علامة على مفتاح مفقود)
-    if (value === key && options && options.lng && options.ns) {
+    if (value === key && options && options.lng && options.ns && !this.keyCache[cacheKey]) {
       this.addMissingKey(options.lng, options.ns, key);
+      this.keyCache[cacheKey] = true;
     }
+    
     return value;
   }
   
@@ -72,6 +83,7 @@ export class TranslationKeyDetector implements Module {
   // إعادة تعيين قائمة المفاتيح المفقودة
   resetMissingKeys() {
     this.missingKeys = {};
+    this.keyCache = {};
   }
   
   // Generate a report on missing keys
@@ -100,9 +112,10 @@ export class TranslationKeyDetector implements Module {
   
   // Export statistics about missing keys
   // تصدير إحصائيات حول المفاتيح المفقودة
-  getStatistics(): { total: number, byLanguage: Record<string, number> } {
+  getStatistics(): { total: number, byLanguage: Record<string, number>, byNamespace: Record<string, number> } {
     let total = 0;
     const byLanguage: Record<string, number> = {};
+    const byNamespace: Record<string, number> = {};
     
     Object.keys(this.missingKeys).forEach(lang => {
       let langCount = 0;
@@ -110,11 +123,14 @@ export class TranslationKeyDetector implements Module {
         const count = this.missingKeys[lang][ns].size;
         langCount += count;
         total += count;
+        
+        // Accumulate by namespace
+        byNamespace[ns] = (byNamespace[ns] || 0) + count;
       });
       byLanguage[lang] = langCount;
     });
     
-    return { total, byLanguage };
+    return { total, byLanguage, byNamespace };
   }
 }
 
