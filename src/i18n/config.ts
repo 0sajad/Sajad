@@ -19,7 +19,7 @@ import enSystemMonitor from '@/locales/en/systemMonitor.json';
 import enHelpCenter from '@/locales/en/helpCenter.json';
 
 import arCommon from '@/locales/ar/common.json';
-import arSecurityDashboard from '@/locales/ar/securityDashboard.json' || {};
+import arSecurityDashboard from '@/locales/ar/securityDashboard.json';
 import arNetworkTools from '@/locales/ar/networkTools.json';
 import arAi from '@/locales/ar/ai.json';
 import arAiAssistant from '@/locales/ar/aiAssistant.json';
@@ -49,7 +49,7 @@ import arIqHeader from '@/locales/ar-iq/header.json';
 import arIqMobileMenu from '@/locales/ar-iq/mobileMenu.json';
 
 import jaCommon from '@/locales/ja/common.json';
-import jaSecurityDashboard from '@/locales/ja/securityDashboard.json' || {};
+import jaSecurityDashboard from '@/locales/ja/securityDashboard.json';
 import jaNetworkTools from '@/locales/ja/networkTools.json';
 import jaAi from '@/locales/ja/ai.json';
 import jaAiAssistant from '@/locales/ja/aiAssistant.json';
@@ -95,7 +95,7 @@ const resources = {
   },
   ar: {
     common: arCommon,
-    securityDashboard: arSecurityDashboard || {},
+    securityDashboard: arSecurityDashboard,
     networkTools: arNetworkTools,
     ai: arAi,
     aiAssistant: arAiAssistant,
@@ -127,7 +127,7 @@ const resources = {
   },
   ja: {
     common: jaCommon,
-    securityDashboard: jaSecurityDashboard || {},
+    securityDashboard: jaSecurityDashboard,
     networkTools: jaNetworkTools,
     ai: jaAi,
     aiAssistant: jaAiAssistant,
