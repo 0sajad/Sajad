@@ -130,13 +130,17 @@ i18n.on('missingKey', (lng, ns, key) => {
   if (typeof fallbacks === 'object' && fallbacks && lng in fallbacks) {
     // تحويل fallbacks إلى نوع معروف لـ TypeScript
     const fallbackLngsObject = fallbacks as Record<string, string[]>;
-    const fallbackLngs = fallbackLngsObject[lng];
+    const fbLng = lng as string;
     
-    if (Array.isArray(fallbackLngs)) {
-      for (let i = 0; i < fallbackLngs.length; i++) {
-        const fallbackLng = fallbackLngs[i];
-        if (i18n.exists(key, { lng: fallbackLng, ns })) {
-          return i18n.t(key, { lng: fallbackLng, ns });
+    if (fbLng in fallbackLngsObject) {
+      const fallbackLngs = fallbackLngsObject[fbLng];
+      
+      if (Array.isArray(fallbackLngs)) {
+        for (let i = 0; i < fallbackLngs.length; i++) {
+          const fallbackLng = fallbackLngs[i];
+          if (i18n.exists(key, { lng: fallbackLng, ns })) {
+            return i18n.t(key, { lng: fallbackLng, ns });
+          }
         }
       }
     }
