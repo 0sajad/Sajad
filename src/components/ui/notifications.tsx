@@ -1,7 +1,7 @@
 
 import React from "react";
-import { toast } from "@/hooks/use-toast";
-import { AlertTriangle, BellRing, CheckCircle, Info, X } from "lucide-react";
+import { toast } from "sonner";
+import { AlertTriangle, CheckCircle, Info, X } from "lucide-react";
 import { Button } from "./button";
 
 interface NotificationProps {
@@ -36,22 +36,27 @@ export const showNotification = ({
     info: "from-orange-500 to-amber-500",
   };
 
-  return toast({
-    title: title,
-    description: description,
-    duration: duration,
-    variant: "default",
-    className: `toast-3d bg-gradient-to-r ${gradients[type]} text-white`,
-    icon: icons[type], // Pass icon separately
-    action: action && (
-      <Button
-        variant="elegant"
-        size="sm"
-        onClick={action.onClick}
-        className="mt-2"
-      >
-        {action.label}
-      </Button>
-    ),
-  });
+  return toast(
+    <div className="flex flex-col">
+      <div className="flex items-center gap-2">
+        {icons[type]}
+        <span className="font-medium">{title}</span>
+      </div>
+      {description && <p className="text-sm text-white/90">{description}</p>}
+      {action && (
+        <Button
+          variant="elegant"
+          size="sm"
+          onClick={action.onClick}
+          className="mt-2"
+        >
+          {action.label}
+        </Button>
+      )}
+    </div>,
+    {
+      duration: duration,
+      className: `bg-gradient-to-r ${gradients[type]} text-white toast-3d`,
+    }
+  );
 };

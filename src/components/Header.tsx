@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LanguageSwitcher } from "./nav/LanguageSwitcher";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 interface HeaderProps {
   onLanguageChange?: (language: string) => void;
@@ -32,11 +32,7 @@ export function Header({ onLanguageChange }: HeaderProps) {
   }, []);
 
   const handleLogoClick = () => {
-    toast({
-      title: t('common.welcome'),
-      description: t('common.welcomeMessage', "مرحبًا بك في OCTA-GRAM"),
-      className: "toast-3d",
-    });
+    toast(t('common.welcomeMessage', "مرحبًا بك في GRAM-OCTA"));
   };
   
   return (
@@ -50,22 +46,20 @@ export function Header({ onLanguageChange }: HeaderProps) {
           <div className="flex items-center">
             <Link 
               to="/" 
-              className="flex items-center mr-14 sm:mr-28 transform hover:scale-105 transition-transform shadow-lg hover:shadow-amber-500/30"
+              className="flex items-center mr-14 sm:mr-28 transform transition-transform"
               onMouseEnter={() => setIsLogoHovered(true)}
               onMouseLeave={() => setIsLogoHovered(false)}
               onClick={handleLogoClick}
             >
               <div className="flex items-center">
-                <div 
-                  className={`relative bg-gradient-to-r from-orange-400 to-amber-500 text-white rounded-full p-2.5 shadow-xl mr-3 rtl:ml-3 rtl:mr-0 transition-all duration-500 ${
-                    isLogoHovered ? 'scale-110 rotate-[360deg]' : ''
-                  }`}
-                >
-                  <LayoutGrid size={22} className="text-white" />
-                </div>
-                <div className="flex flex-col md:flex-row items-start md:items-center">
-                  <span className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-amber-600 bg-clip-text text-transparent mr-1">OCTA-</span>
-                  <span className="text-2xl font-bold bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">GRAM</span>
+                <div className="flex flex-row-reverse items-center">
+                  <div className="bg-orange-500 rounded-full p-2 flex items-center justify-center ml-2 rtl:mr-2 rtl:ml-0">
+                    <LayoutGrid size={22} className="text-white" />
+                  </div>
+                  <div className="flex flex-row items-start">
+                    <span className="text-2xl font-bold text-orange-500 mr-1">GRAM-</span>
+                    <span className="text-2xl font-bold text-orange-500">OCTA</span>
+                  </div>
                 </div>
               </div>
             </Link>
