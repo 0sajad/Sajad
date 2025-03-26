@@ -133,7 +133,6 @@ i18n.on('missingKey', (lng, ns, key) => {
     const fallbackLngs = fallbackLngsObject[lng];
     
     if (Array.isArray(fallbackLngs)) {
-      // استخدم for loop بدلاً من for...of لتجنب مشاكل TypeScript مع readonly arrays
       for (let i = 0; i < fallbackLngs.length; i++) {
         const fallbackLng = fallbackLngs[i];
         if (i18n.exists(key, { lng: fallbackLng, ns })) {

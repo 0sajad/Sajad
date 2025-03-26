@@ -1,64 +1,64 @@
-
-import React, { Suspense, lazy } from "react";
+import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslation } from "react-i18next";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { cn } from "@/lib/utils";
 
-// استخدام التحميل الكسول للصفحات
-const Index = lazy(() => import("./pages/Index"));
-const NotFound = lazy(() => import("./pages/NotFound"));
-const AI = lazy(() => import("./pages/AI"));
-const Settings = lazy(() => import("./pages/Settings"));
-const FiberOptic = lazy(() => import("./pages/FiberOptic"));
-const HelpCenter = lazy(() => import("./pages/HelpCenter"));
-const LicenseVerification = lazy(() => import("./pages/LicenseVerification"));
-const AccessVerification = lazy(() => import("./pages/AccessVerification"));
+// Pages
+import Dashboard from "./pages/Dashboard";
+import AIAssistant from "./pages/AIAssistant";
+import Settings from "./pages/Settings";
+import License from "./pages/License";
+import FiberOptic from "./pages/FiberOptic";
+import NotFound from "./pages/NotFound";
+import HelpCenter from "./pages/HelpCenter";
 
-// مكون التحميل
-const PageLoader = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="space-y-4 w-full max-w-md">
-      <Skeleton className="h-12 w-full" />
-      <Skeleton className="h-64 w-full" />
-      <div className="flex space-x-4 rtl:space-x-reverse">
-        <Skeleton className="h-8 w-full" />
-        <Skeleton className="h-8 w-full" />
-      </div>
-    </div>
-  </div>
-);
+// Components
+import { LoadingScreen } from "./components/LoadingScreen";
 
-// إنشاء مكون التطبيق الرئيسي
-const App = () => {
-  // إنشاء مثيل جديد من QueryClient داخل المكون
-  const queryClient = new QueryClient();
+function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  const { i18n } = useTranslation();
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
+  
+  useEffect(() => {
+    // Simulate loading time
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
   
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
+    <ThemeProvider defaultTheme="system" storageKey="octa-gram-theme">
+      <div className={cn(
+        "min-h-screen bg-background font-sans antialiased",
+        isRTL ? "rtl" : "ltr"
+      )}>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/ai" element={<AIAssistant />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/license" element={<License />} />
+            <Route path="/fiber-optic" element={<FiberOptic />} />
+            <Route path="/help-center" element={<HelpCenter />} />
+            <Route path="/404" element={<NotFound />} />
+            <Route path="*" element={<Navigate to="/404" replace />} />
+          </Routes>
+        </Router>
         <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/ai" element={<AI />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/fiber-optic" element={<FiberOptic />} />
-              <Route path="/help-center" element={<HelpCenter />} />
-              <Route path="/license" element={<LicenseVerification />} />
-              <Route path="/access" element={<AccessVerification />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+      </div>
+    </ThemeProvider>
   );
-};
+}
 
 export default App;
