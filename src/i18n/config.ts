@@ -128,7 +128,7 @@ i18n.on('missingKey', (lng, ns, key) => {
   // محاولة استخدام مفتاح من لغة أخرى
   const fallbacks = i18n.options.fallbackLng;
   if (typeof fallbacks === 'object' && fallbacks && lng in fallbacks) {
-    const fallbackLngs = fallbacks[lng];
+    const fallbackLngs = fallbacks[lng as keyof typeof fallbacks];
     if (Array.isArray(fallbackLngs) && fallbackLngs.length > 0) {
       for (const fallbackLng of fallbackLngs) {
         if (i18n.exists(key, { lng: fallbackLng, ns })) {
@@ -143,4 +143,3 @@ i18n.on('missingKey', (lng, ns, key) => {
 });
 
 export default i18n;
-
