@@ -140,6 +140,7 @@ i18n.on('missingKey', (lng, ns, key) => {
       if (Array.isArray(fallbackLngs)) {
         for (let i = 0; i < fallbackLngs.length; i++) {
           const fallbackLng = fallbackLngs[i];
+          // استخدام .toString() بدلاً من الإلقاء المباشر إلى String
           if (i18n.exists(key, { lng: fallbackLng.toString(), ns })) {
             return i18n.t(key, { lng: fallbackLng.toString(), ns });
           }

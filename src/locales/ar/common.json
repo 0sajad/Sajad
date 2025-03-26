@@ -19,6 +19,10 @@
     "login": "تسجيل الدخول"
   },
   "dashboard": {
+    "title": "لوحة التحكم",
+    "welcome": "مرحباً بك في لوحة تحكم أوكتا-جرام",
+    "systemStatus": "حالة النظام",
+    "status": "الحالة",
     "selectAction": "اختر إجراء",
     "actions": {
       "scan": "فحص الشبكة",
@@ -33,7 +37,9 @@
   "networkTools": {
     "title": "أدوات الشبكة المتطورة",
     "qualityMonitoring": "مراقبة جودة الشبكة",
-    "signalStrength": "قوة الإشارة"
+    "signalStrength": "قوة الإشارة",
+    "networkManagement": "إدارة الشبكة",
+    "simulationSystems": "أنظمة المحاكاة"
   },
   "mobileMenu": {
     "dashboard": "لوحة التحكم",
@@ -56,6 +62,39 @@
     "advancedLearning": "تعلم متقدم",
     "advancedLearningDesc": "تعلم مستمر من التفاعلات",
     "exploreAI": "استكشف مساعد الذكاء الاصطناعي"
+  },
+  "settings": {
+    "notifications": {
+      "title": "الإشعارات",
+      "description": "تحكم في إشعارات النظام التي تريد تلقيها",
+      "updated": "تم تحديث الإشعارات",
+      "enabled": "تم تفعيل إشعارات {{type}}",
+      "disabled": "تم تعطيل إشعارات {{type}}",
+      "allEnabled": "تم تفعيل جميع الإشعارات",
+      "allDisabled": "تم تعطيل جميع الإشعارات",
+      "enableAll": "تفعيل الكل",
+      "disableAll": "تعطيل الكل",
+      "types": {
+        "system": "إشعارات النظام",
+        "security": "إشعارات الأمان",
+        "updates": "التحديثات",
+        "aiAssistant": "مساعد الذكاء الاصطناعي",
+        "networkAlerts": "تنبيهات الشبكة",
+        "performance": "الأداء",
+        "securityScans": "فحوصات الأمان",
+        "serverStatus": "حالة الخادم",
+        "networkActivity": "نشاط الشبكة"
+      },
+      "systemDesc": "إشعارات عامة عن حالة النظام",
+      "securityDesc": "تنبيهات عن مشاكل الأمان والاختراقات المحتملة",
+      "updatesDesc": "إشعارات عن تحديثات وتطويرات النظام",
+      "aiAssistantDesc": "اقتراحات وتنبيهات من مساعد الذكاء الاصطناعي",
+      "networkAlertsDesc": "تنبيهات عن مشاكل الشبكة الحرجة",
+      "performanceDesc": "تنبيهات متعلقة بأداء النظام",
+      "securityScansDesc": "نتائج فحوصات الأمان الدورية",
+      "serverStatusDesc": "تنبيهات عن حالة خوادم النظام",
+      "networkActivityDesc": "ملخصات نشاط الشبكة غير العادي"
+    }
   },
   "error": "خطأ",
   "languageChangeError": "فشل تغيير اللغة"

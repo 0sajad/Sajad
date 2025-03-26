@@ -87,7 +87,7 @@ export function useLanguageTransition() {
           document.body.classList.remove('rtl-active');
         }
         
-        // إعادة تحميل الصفحة في حالات نادرة جدًا إذا لم تتم ترجمة بعض العناصر
+        // إعادة تطبيق الترجمة على العناصر المخصصة
         if (document.querySelectorAll('[data-i18n-key]').length > 0) {
           const elementsWithTranslationKeys = document.querySelectorAll('[data-i18n-key]');
           elementsWithTranslationKeys.forEach(el => {
