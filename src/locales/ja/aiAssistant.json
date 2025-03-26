@@ -1,19 +1,28 @@
 
 {
-  "features": {
-    "webDevelopment": "ウェブ開発",
-    "security": "高度なセキュリティ",
-    "selfImproving": "自己改善",
-    "database": "データベース"
+  "title": "AIアシスタント",
+  "subtitle": "あなた専用のネットワークガイド",
+  "description": "ネットワークに関する即時サポート、推奨事項、自動化を提供します",
+  "greeting": "こんにちは！今日はネットワークについてどのようにお手伝いできますか？",
+  "placeholder": "ネットワークについて何でも質問してください...",
+  "suggestions": {
+    "optimize": "Wi-Fi信号を最適化するにはどうすればよいですか？",
+    "secure": "私のネットワークは安全ですか？",
+    "troubleshoot": "インターネット接続が遅いのはなぜですか？",
+    "device": "新しいデバイスを接続するにはどうすればよいですか？"
   },
-  "bubbleMessages": {
-    "newTools": "新しいツールが利用可能です！",
-    "help": "ヘルプが必要ですか？"
+  "responses": {
+    "analyzing": "ネットワークを分析しています...",
+    "optimizing": "最適化ソリューションを見つけています...",
+    "securing": "セキュリティ状態を確認しています...",
+    "troubleshooting": "接続問題を診断しています..."
   },
-  "security": "高度なセキュリティ",
-  "securityDesc": "高度な脅威分析を備えたネットワークと通信の強力な保護",
-  "multiLanguage": "多言語サポート",
-  "multiLanguageDesc": "すべてのプログラミング言語と多言語でのコミュニケーションをサポート",
+  "settings": {
+    "voice": "音声インタラクション",
+    "proactive": "積極的なアシスタンス",
+    "learning": "学習モード",
+    "privacy": "プライバシーモード"
+  },
   "selfDevelopment": "自己開発",
-  "selfDevelopmentDesc": "人間の介入なしに継続的に改善し、新しい技術を学習"
+  "selfDevelopmentDesc": "AIアシスタントは、より良いサポートを提供するために対話から継続的に学習します"
 }

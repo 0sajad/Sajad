@@ -1,0 +1,28 @@
+
+{
+  "title": "AI Assistant",
+  "subtitle": "Your personal network guide",
+  "description": "Get instant help, recommendations, and automation for your network",
+  "greeting": "Hello! How can I help with your network today?",
+  "placeholder": "Ask me anything about your network...",
+  "suggestions": {
+    "optimize": "How can I optimize my Wi-Fi signal?",
+    "secure": "Is my network secure?",
+    "troubleshoot": "Why is my internet connection slow?",
+    "device": "How do I connect a new device?"
+  },
+  "responses": {
+    "analyzing": "Analyzing your network...",
+    "optimizing": "Finding optimization solutions...",
+    "securing": "Checking security status...",
+    "troubleshooting": "Diagnosing connection issues..."
+  },
+  "settings": {
+    "voice": "Voice Interaction",
+    "proactive": "Proactive Assistance",
+    "learning": "Learning Mode",
+    "privacy": "Privacy Mode"
+  },
+  "selfDevelopment": "Self-Development",
+  "selfDevelopmentDesc": "AI assistant continuously learns from interactions to provide better support"
+}

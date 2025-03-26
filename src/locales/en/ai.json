@@ -1,0 +1,24 @@
+
+{
+  "title": "AI Network Assistant",
+  "subtitle": "Your intelligent network companion",
+  "description": "Using advanced AI algorithms to optimize and secure your network",
+  "features": {
+    "analysis": "Network Analysis",
+    "optimization": "Performance Optimization",
+    "security": "Security Enhancement",
+    "troubleshooting": "Automated Troubleshooting"
+  },
+  "actions": {
+    "analyze": "Analyze Network",
+    "optimize": "Optimize Performance",
+    "secure": "Enhance Security",
+    "troubleshoot": "Fix Issues"
+  },
+  "stats": {
+    "analyzed": "Networks Analyzed",
+    "optimized": "Performance Improvements",
+    "secured": "Security Threats Blocked",
+    "fixed": "Issues Resolved"
+  }
+}

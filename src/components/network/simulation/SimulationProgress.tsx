@@ -17,7 +17,7 @@ export const SimulationProgress = ({ isRunning, progress }: SimulationProgressPr
       <div className="mb-2 flex justify-between items-center">
         <label className="text-sm font-medium">{t('networkTools.testEnvironment')}</label>
         <Badge variant={isRunning ? 'default' : 'secondary'}>
-          {isRunning ? t('networkTools.running', 'Running') : t('networkTools.ready', 'Ready')}
+          {isRunning ? t('networkTools.running') : t('networkTools.ready')}
         </Badge>
       </div>
       <Progress value={progress} />
