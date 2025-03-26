@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from "@/components/ui/use-toast";
+import { useA11ySound } from './accessibility/useA11ySound'; 
 
 /**
  * هوك مخصص لإدارة الانتقالات السلسة عند تغيير اللغة
@@ -9,6 +10,7 @@ import { toast } from "@/components/ui/use-toast";
 export function useLanguageTransition() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const { i18n, t } = useTranslation();
+  const { playNotificationSound } = useA11ySound();
   
   useEffect(() => {
     // إضافة مستمع للحدث المخصص languageChanged
@@ -62,6 +64,9 @@ export function useLanguageTransition() {
     if (i18n.language === language) {
       return;
     }
+    
+    // تشغيل صوت تغيير اللغة
+    playNotificationSound('language');
     
     // تطبيق تأثير انتقالي قبل تغيير اللغة
     setIsTransitioning(true);
@@ -158,6 +163,7 @@ export function useLanguageTransition() {
 
   return {
     isTransitioning,
-    changeLanguage
+    changeLanguage,
+    supportedLanguages: ['en', 'ar', 'ar-iq', 'ja', 'fr', 'zh']
   };
 }
