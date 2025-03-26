@@ -138,7 +138,8 @@ i18n.on('missingKey', (lng, ns, key) => {
       
       if (Array.isArray(fallbackLngs)) {
         for (let i = 0; i < fallbackLngs.length; i++) {
-          const fallbackLng = fallbackLngs[i];
+          // Fix for TS2352: explicitly handle readonly string[] by casting to string
+          const fallbackLng = String(fallbackLngs[i]);
           if (i18n.exists(key, { lng: fallbackLng, ns })) {
             // الحصول على الترجمة من اللغة الاحتياطية
             return i18n.t(key, { lng: fallbackLng, ns });
@@ -151,7 +152,8 @@ i18n.on('missingKey', (lng, ns, key) => {
     const defaultFallbacks = fallbackLngsObject['default'];
     if (Array.isArray(defaultFallbacks)) {
       for (let i = 0; i < defaultFallbacks.length; i++) {
-        const defaultFallbackLng = defaultFallbacks[i] as string;
+        // Fix for TS2352: explicitly handle readonly string[] by casting to string
+        const defaultFallbackLng = String(defaultFallbacks[i]);
         if (i18n.exists(key, { lng: defaultFallbackLng, ns })) {
           return i18n.t(key, { lng: defaultFallbackLng, ns });
         }
