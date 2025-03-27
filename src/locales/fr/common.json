@@ -12,7 +12,8 @@
     "settings": "Paramètres",
     "helpCenter": "Centre d'aide",
     "license": "Licence",
-    "login": "Connexion"
+    "login": "Connexion",
+    "fiberOptic": "Fibre optique"
   },
   "notFound": {
     "message": "Oups ! Page introuvable",

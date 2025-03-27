@@ -5,8 +5,8 @@
   "common": {
     "selectLanguage": "تغيير اللغة",
     "language": "اللغة",
-    "enableAutoDarkMode": "تفعيل الوضع الليلي التلقائي",
-    "disableAutoDarkMode": "تعطيل الوضع الليلي التلقائي",
+    "enableAutoDarkMode": "فعّل الوضع الليلي التلقائي",
+    "disableAutoDarkMode": "عطل الوضع الليلي التلقائي",
     "darkMode": "الوضع الليلي",
     "lightMode": "الوضع النهاري",
     "autoMode": "الوضع التلقائي"
@@ -21,7 +21,8 @@
     "settings": "الإعدادات",
     "helpCenter": "مركز المساعدة",
     "license": "الترخيص",
-    "login": "تسجيل الدخول"
+    "login": "تسجيل الدخول",
+    "fiberOptic": "الألياف الضوئية"
   },
   "dashboard": {
     "title": "لوحة التحكم",
