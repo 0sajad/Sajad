@@ -1,97 +1,166 @@
 
-import React, { useState, useEffect } from 'react';
-import { useA11y } from '@/hooks/useA11y';
-import { toast } from 'sonner';
+import React, { useCallback, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Command, CommandItem, CommandEmpty, CommandGroup, CommandList } from "@/components/ui/command";
+import { Label } from "@/components/ui/label";
+import { useA11y } from "@/hooks/useA11y";
+import { useConfig } from "@/hooks/useConfig";
+import { Keyboard, Search, Zap } from "lucide-react";
 
-export function KeyboardNavigationMenu() {
-  const [isVisible, setIsVisible] = useState(false);
-  const [commands, setCommands] = useState<Array<{key: string, description: string}>>([]);
-  const { 
-    announce,
-    playSound
-  } = useA11y();
+export const KeyboardNavigationMenu = () => {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const { playSound } = useA11y();
+  const { isFeatureEnabled } = useConfig();
+  const isEnabled = isFeatureEnabled('keyboardNavigation', true);
+
+  const handleKeyPress = useCallback((e: KeyboardEvent) => {
+    // Alt + / to open keyboard navigation menu
+    if (e.altKey && e.key === "/") {
+      e.preventDefault();
+      setOpen((prev) => !prev);
+      playSound("info");
+    }
+
+    // Escape key to close
+    if (e.key === "Escape" && open) {
+      setOpen(false);
+    }
+  }, [open, playSound]);
+
+  const handleCommandSelect = (command: string) => {
+    setOpen(false);
+    playSound("success");
+    
+    switch (command) {
+      case "dashboard":
+        window.location.href = "/";
+        break;
+      case "aiAssistant":
+        window.location.href = "/ai";
+        break;
+      case "settings":
+        window.location.href = "/settings";
+        break;
+      case "help":
+        window.location.href = "/help-center";
+        break;
+      case "toggleDarkMode":
+        document.documentElement.classList.toggle("dark");
+        break;
+      default:
+        console.log(`Command selected: ${command}`);
+    }
+  };
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === '?' && (e.ctrlKey || e.metaKey)) {
-        e.preventDefault();
-        toggleMenu();
-      }
-
-      if (e.key === 'Escape' && isVisible) {
-        setIsVisible(false);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
+    if (!isEnabled) return;
     
+    window.addEventListener("keydown", handleKeyPress);
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("keydown", handleKeyPress);
     };
-  }, [isVisible]);
+  }, [handleKeyPress, isEnabled]);
 
-  useEffect(() => {
-    // Only fetch commands when menu is visible
-    if (isVisible) {
-      fetchKeyboardCommands();
-    }
-  }, [isVisible]);
-
-  const fetchKeyboardCommands = () => {
-    // This would typically come from a configuration or API
-    // Here we're mocking the list of commands
-    const availableCommands = [
-      { key: 'Ctrl + ?', description: 'Show/hide keyboard shortcuts' },
-      { key: 'Alt + C', description: 'Toggle high contrast mode' },
-      { key: 'Alt + L', description: 'Toggle large text mode' },
-      { key: 'Alt + M', description: 'Toggle reduced motion' },
-      { key: 'Alt + F', description: 'Toggle focus mode' },
-      { key: 'Alt + D', description: 'Toggle dyslexic font' },
-      { key: 'Alt + R', description: 'Toggle reading guide' },
-      { key: 'Ctrl + Alt + S', description: 'Toggle screen reader optimization' },
-      { key: 'Esc', description: 'Close menus or dialogs' }
-    ];
-    
-    setCommands(availableCommands);
-  };
-
-  const toggleMenu = () => {
-    setIsVisible(!isVisible);
-    
-    if (!isVisible) {
-      announce('Keyboard shortcuts panel opened', 'polite');
-      playSound('info');
-    } else {
-      announce('Keyboard shortcuts panel closed', 'polite');
-    }
-  };
-
-  if (!isVisible) return null;
+  if (!isEnabled) return null;
 
   return (
-    <div 
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center"
-      onClick={() => setIsVisible(false)}
-    >
-      <div 
-        className="bg-background border rounded-lg shadow-lg p-6 max-w-md w-full max-h-[80vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 className="text-xl font-bold mb-4">Keyboard Shortcuts</h2>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="sm:max-w-[500px] shadow-2xl">
+        <DialogHeader>
+          <DialogTitle className="flex items-center">
+            <Keyboard className="w-5 h-5 mr-2" />
+            Keyboard Navigation
+          </DialogTitle>
+        </DialogHeader>
         
-        <div className="space-y-2">
-          {commands.map((command, index) => (
-            <div key={index} className="flex justify-between items-center py-2 border-b last:border-0">
-              <span className="text-muted-foreground">{command.description}</span>
-              <kbd className="px-2 py-1 bg-muted rounded text-sm font-mono">{command.key}</kbd>
-            </div>
-          ))}
+        <div className="p-2">
+          <div className="flex items-center px-2">
+            <Search className="h-4 w-4 opacity-70 mr-2" />
+            <input
+              className="flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+              placeholder="Type a command or search..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
         </div>
         
-        <p className="text-sm text-muted-foreground mt-4">
-          Press Esc to close this panel
-        </p>
-      </div>
-    </div>
+        <ScrollArea className="h-72">
+          <Command>
+            <CommandList>
+              <CommandEmpty>No results found.</CommandEmpty>
+              
+              <CommandGroup heading="Navigation">
+                <CommandItem 
+                  onSelect={() => handleCommandSelect("dashboard")}
+                  className="flex items-center justify-between cursor-pointer"
+                >
+                  <div className="flex items-center">Go to Dashboard</div>
+                  <div className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">Alt+D</div>
+                </CommandItem>
+                <CommandItem 
+                  onSelect={() => handleCommandSelect("aiAssistant")}
+                  className="flex items-center justify-between cursor-pointer"
+                >
+                  <div className="flex items-center">Open AI Assistant</div>
+                  <div className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">Alt+A</div>
+                </CommandItem>
+                <CommandItem 
+                  onSelect={() => handleCommandSelect("settings")}
+                  className="flex items-center justify-between cursor-pointer"
+                >
+                  <div className="flex items-center">Open Settings</div>
+                  <div className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">Alt+S</div>
+                </CommandItem>
+                <CommandItem 
+                  onSelect={() => handleCommandSelect("help")}
+                  className="flex items-center justify-between cursor-pointer"
+                >
+                  <div className="flex items-center">Help Center</div>
+                  <div className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">Alt+H</div>
+                </CommandItem>
+              </CommandGroup>
+              
+              <CommandGroup heading="Actions">
+                <CommandItem 
+                  onSelect={() => handleCommandSelect("toggleDarkMode")}
+                  className="flex items-center justify-between cursor-pointer"
+                >
+                  <div className="flex items-center">Toggle Dark Mode</div>
+                  <div className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">Alt+T</div>
+                </CommandItem>
+                <CommandItem 
+                  onSelect={() => handleCommandSelect("runScan")}
+                  className="flex items-center justify-between cursor-pointer"
+                >
+                  <div className="flex items-center">Run Network Scan</div>
+                  <div className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">Alt+R</div>
+                </CommandItem>
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </ScrollArea>
+        
+        <div className="px-1 pt-2 pb-1 border-t">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-1">
+              <Zap className="h-3 w-3" />
+              <Label className="text-xs">Tip: Press <kbd className="bg-muted px-1 rounded">Alt+/</kbd> anytime to open this menu</Label>
+            </div>
+            <Button 
+              size="sm" 
+              variant="ghost" 
+              onClick={() => setOpen(false)}
+              className="text-xs h-7"
+            >
+              Close
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
-}
+};
