@@ -30,7 +30,7 @@ export function useA11y() {
   } = useA11yText();
   
   // Sound-related accessibility settings
-  const { soundFeedback, setSoundFeedback, playNotificationSound } = useA11ySound();
+  const { soundFeedback, setSoundFeedback, playSound } = useA11ySound();
   
   // Monitor system preferences
   useSystemPreferences(setReducedMotion);
@@ -87,7 +87,7 @@ export function useA11y() {
       
       // Play sound notification if enabled
       if (soundFeedback) {
-        playNotificationSound('notification');
+        playSound('info'); // Changed from 'notification' to 'info'
       }
       
       // Remove after announcement is processed
@@ -107,7 +107,7 @@ export function useA11y() {
     dyslexicFont, setDyslexicFont,
     readingGuide, setReadingGuide,
     soundFeedback, setSoundFeedback,
-    playNotificationSound,
+    playSound, // Changed from playNotificationSound to playSound
     
     // Screen reader announcement
     announce,
