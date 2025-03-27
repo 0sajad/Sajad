@@ -1,11 +1,22 @@
 
 {
-  "direction": "rtl",
-  "language": "ar-iq",
-  "errors": {
-    "pageNotFound": "هاي الصفحة مو موجودة!",
-    "returnHome": "ارجع للصفحة الرئيسية",
-    "goToDashboard": "روح للوحة التحكم"
+  "networkTools": {
+    "title": "أدوات الشبكة المتطورة",
+    "qualityMonitoring": "مراقبة جودة الشبكة",
+    "signalStrength": "قوة الإشارة"
   },
-  "languageChanged": "تم تبديل اللغة إلى {{language}}"
+  "aiFeatures": {
+    "title": "ميزات الذكاء الاصطناعي",
+    "selfImproving": "نظام ذكاء اصطناعي ذاتي التحسين",
+    "selfImprovingDesc": "نظام ذكاء يحلل أنماط الشبكة ويتعلم منها باستمرار",
+    "multiLanguage": "دعم متعدد اللغات",
+    "multiLanguageDesc": "يدعم جميع لغات البرمجة",
+    "fileHandling": "معالجة الملفات",
+    "fileHandlingDesc": "يعالج جميع أنواع الملفات والوسائط",
+    "autonomousDev": "تطوير ذاتي",
+    "autonomousDevDesc": "يطور أدوات جديدة بدون تدخل",
+    "advancedLearning": "تعلم متقدم",
+    "advancedLearningDesc": "تعلم مستمر من التفاعلات",
+    "exploreAI": "استكشف مساعد الذكاء الاصطناعي"
+  }
 }
