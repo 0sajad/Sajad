@@ -1,5 +1,7 @@
 
 {
+  "direction": "ltr",
+  "language": "zh",
   "header": {
     "dashboard": "仪表板",
     "tools": "工具",
@@ -9,184 +11,12 @@
     "aiAssistant": "AI助手",
     "settings": "设置",
     "helpCenter": "帮助中心",
-    "login": "登录",
-    "logout": "退出",
-    "profile": "个人资料",
-    "language": "语言",
-    "theme": "主题",
-    "light": "浅色",
-    "dark": "深色",
-    "system": "系统"
-  },
-  "mobileMenu": {
-    "dashboard": "仪表板",
-    "tools": "工具",
-    "aiAssistant": "AI助手",
-    "settings": "设置",
-    "helpCenter": "帮助中心",
+    "license": "许可证",
     "login": "登录"
   },
-  "footer": {
-    "copyright": "© 2023 OCTA-GRAM. 保留所有权利。",
-    "terms": "服务条款",
-    "privacy": "隐私政策",
-    "contact": "联系我们"
-  },
-  "hero": {
-    "title": "优化您的网络体验",
-    "subtitle": "专业的网络监控和分析工具",
-    "getStarted": "开始使用",
-    "learnMore": "了解更多"
-  },
-  "features": {
-    "title": "高级功能",
-    "subtitle": "探索我们平台的强大功能",
-    "networkMonitoring": {
-      "title": "网络监控",
-      "description": "实时监控您的网络性能和连接设备"
-    },
-    "speedTesting": {
-      "title": "速度测试",
-      "description": "精确测量您的上传和下载速度"
-    },
-    "securityAnalysis": {
-      "title": "安全分析",
-      "description": "检测并修复网络中的潜在安全漏洞"
-    },
-    "advancedReporting": {
-      "title": "高级报告",
-      "description": "生成详细的网络性能和使用情况报告"
-    }
-  },
-  "networkDashboard": {
-    "title": "网络控制面板",
-    "status": "网络状态",
-    "speed": "连接速度",
-    "devices": "连接设备",
-    "data": "数据传输",
-    "security": "安全状态",
-    "healthy": "健康",
-    "issues": "问题",
-    "critical": "严重",
-    "download": "下载",
-    "upload": "上传",
-    "ping": "延迟",
-    "mbps": "Mbps",
-    "ms": "毫秒",
-    "active": "活动",
-    "inactive": "非活动",
-    "transferred": "已传输",
-    "secure": "安全",
-    "warning": "警告",
-    "danger": "危险"
-  },
-  "networkTools": {
-    "title": "网络工具",
-    "subtitle": "使用我们强大的工具优化您的网络",
-    "qualityMonitoring": "质量监控",
-    "networkManagement": "网络管理",
-    "simulationSystems": "模拟系统",
-    "chatWithAI": "与AI交谈",
-    "askQuestion": "提问...",
-    "sending": "发送中...",
-    "viewMore": "查看更多"
-  },
-  "settings": {
-    "title": "设置",
-    "description": "自定义您的应用程序体验",
-    "generalSettings": "常规设置",
-    "uiSettings": "界面设置",
-    "networkSettings": "网络设置",
-    "displayOptions": "显示选项",
-    "animations": "动画",
-    "updates": "更新",
-    "languageRegion": "语言/地区",
-    "elementDensity": "元素密度",
-    "theme": "主题",
-    "uiScale": "界面缩放",
-    "toolbars": "工具栏",
-    "connection": "连接选项",
-    "proxySupport": "代理支持",
-    "connectionLimits": "连接限制",
-    "networkScanner": "网络扫描仪",
-    "supported": "支持",
-    "customizable": "可自定义",
-    "automatic": "自动",
-    "languages": "多语言",
-    "adjustable": "可调整",
-    "lightDark": "亮/暗",
-    "scale": "比例",
-    "advanced": "高级",
-    "httpSocks": "HTTP/SOCKS",
-    "configurable": "可配置",
-    "proFeature": "专业功能"
-  },
-  "ai": {
-    "title": "AI助手",
-    "subtitle": "由先进的人工智能提供支持",
-    "chat": "开始聊天",
-    "features": "AI功能",
-    "analysis": "网络分析",
-    "optimization": "性能优化",
-    "troubleshooting": "故障排除",
-    "recommendations": "个性化建议"
-  },
-  "cta": {
-    "title": "准备好改善您的网络体验了吗？",
-    "subtitle": "立即开始使用我们强大的工具",
-    "button": "免费试用"
-  },
-  "helpCenter": {
-    "title": "帮助中心",
-    "subtitle": "查找有关如何使用我们的应用程序的帮助",
-    "search": "搜索帮助文章...",
-    "categories": "类别",
-    "popular": "热门文章",
-    "recent": "最近更新",
-    "contact": "联系支持",
-    "faq": "常见问题",
-    "gettingStarted": "入门指南",
-    "tutorials": "教程",
-    "troubleshooting": "故障排除",
-    "networkGuide": "网络指南",
-    "advanced": "高级功能",
-    "viewAll": "查看全部",
-    "askQuestion": "提问",
-    "guides": {
-      "title": "指南",
-      "description": "详细了解我们的产品和功能",
-      "basic": "基础教程",
-      "intermediate": "中级教程",
-      "advanced": "高级教程",
-      "videos": "视频教程"
-    },
-    "faqSection": {
-      "title": "常见问题",
-      "question1": "如何开始使用网络监控工具？",
-      "answer1": "要开始使用，请登录您的账户并导航到仪表板。从那里，您可以访问所有可用的网络监控工具。",
-      "question2": "我可以同时监控多个网络吗？",
-      "answer2": "是的，我们的平台允许您同时监控多个网络。只需在设置中添加每个网络的详细信息。",
-      "question3": "如何解读网络性能图表？",
-      "answer3": "网络性能图表显示了一段时间内的下载和上传速度，以及网络延迟。绿色区域表示良好性能，而红色区域表示可能存在问题。",
-      "question4": "我忘记了密码，该怎么办？",
-      "answer4": "如果您忘记了密码，请点击登录页面上的'忘记密码'链接。我们将向您发送重置密码的说明。",
-      "question5": "应用程序支持哪些语言？",
-      "answer5": "我们的应用程序目前支持英语、阿拉伯语、法语、日语、中文以及伊拉克方言。"
-    },
-    "resources": {
-      "title": "资源",
-      "videos": "视频教程",
-      "documentation": "文档",
-      "apiReference": "API参考",
-      "communityForums": "社区论坛",
-      "supportCenter": "支持中心"
-    },
-    "developerInfo": {
-      "title": "开发者信息",
-      "name": "开发者姓名",
-      "role": "开发者角色",
-      "contact": "联系方式",
-      "resources": "其他资源"
-    }
+  "notFound": {
+    "message": "哎呀！找不到页面",
+    "returnHome": "返回仪表板",
+    "redirecting": "3秒后重定向到仪表板..."
   }
 }

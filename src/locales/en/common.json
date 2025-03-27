@@ -11,5 +11,10 @@
     "helpCenter": "Help Center",
     "license": "License",
     "login": "Log In"
+  },
+  "notFound": {
+    "message": "Oops! Page not found",
+    "returnHome": "Return to Dashboard",
+    "redirecting": "Redirecting to dashboard in 3 seconds..."
   }
 }

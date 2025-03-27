@@ -52,7 +52,7 @@ export function KeyboardShortcuts() {
           aria-expanded={isOpen}
         >
           <div className="flex items-center gap-2">
-            <Keyboard className="h-4 w-4 text-muted-foreground" />
+            <Keyboard className="h-4 w-4 mr-2" />
             <span>{t('settings.accessibility.shortcutsTitle', 'اختصارات لوحة المفاتيح')}</span>
           </div>
           <div className="rounded-full bg-primary/10 p-1">

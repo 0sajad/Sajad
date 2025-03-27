@@ -1,22 +1,64 @@
 
 {
+  "direction": "rtl",
+  "language": "ar-iq",
+  "common": {
+    "selectLanguage": "تغيير اللغة",
+    "language": "اللغة",
+    "enableAutoDarkMode": "فعّل الوضع الليلي التلقائي",
+    "disableAutoDarkMode": "عطل الوضع الليلي التلقائي",
+    "darkMode": "الوضع الليلي",
+    "lightMode": "الوضع النهاري",
+    "autoMode": "الوضع التلقائي"
+  },
+  "header": {
+    "dashboard": "لوحة التحكم",
+    "tools": "الأدوات",
+    "networkScanner": "فاحص الشبكة",
+    "wifiAnalyzer": "محلل واي فاي",
+    "trafficAnalyzer": "محلل حركة المرور",
+    "aiAssistant": "مساعد الذكاء الصناعي",
+    "settings": "الإعدادات",
+    "helpCenter": "مركز المساعدة",
+    "license": "الترخيص",
+    "login": "تسجيل الدخول"
+  },
+  "dashboard": {
+    "title": "لوحة التحكم",
+    "welcome": "أهلاً بيك بلوحة تحكم أوكتا-كرام",
+    "systemStatus": "حالة النظام",
+    "status": "الحالة",
+    "selectAction": "إختار إجراء",
+    "actions": {
+      "scan": "فحص الشبكة",
+      "optimize": "تحسين الأداء",
+      "backup": "نسخ احتياطي للإعدادات"
+    },
+    "latestUpdates": "آخر التحديثات",
+    "noUpdates": "ماكو تحديثات جديدة",
+    "active": "شغال",
+    "quickActions": "إجراءات سريعة"
+  },
   "networkTools": {
     "title": "أدوات الشبكة المتطورة",
     "qualityMonitoring": "مراقبة جودة الشبكة",
-    "signalStrength": "قوة الإشارة"
+    "signalStrength": "قوة الإشارة",
+    "networkManagement": "إدارة الشبكة",
+    "simulationSystems": "أنظمة المحاكاة"
   },
-  "aiFeatures": {
-    "title": "ميزات الذكاء الاصطناعي",
-    "selfImproving": "نظام ذكاء اصطناعي ذاتي التحسين",
-    "selfImprovingDesc": "نظام ذكاء يحلل أنماط الشبكة ويتعلم منها باستمرار",
-    "multiLanguage": "دعم متعدد اللغات",
-    "multiLanguageDesc": "يدعم جميع لغات البرمجة",
-    "fileHandling": "معالجة الملفات",
-    "fileHandlingDesc": "يعالج جميع أنواع الملفات والوسائط",
-    "autonomousDev": "تطوير ذاتي",
-    "autonomousDevDesc": "يطور أدوات جديدة بدون تدخل",
-    "advancedLearning": "تعلم متقدم",
-    "advancedLearningDesc": "تعلم مستمر من التفاعلات",
-    "exploreAI": "استكشف مساعد الذكاء الاصطناعي"
-  }
+  "mobileMenu": {
+    "dashboard": "لوحة التحكم",
+    "tools": "الأدوات",
+    "aiAssistant": "مساعد الذكاء الصناعي",
+    "settings": "الإعدادات",
+    "helpCenter": "مركز المساعدة",
+    "login": "تسجيل الدخول"
+  },
+  "notFound": {
+    "message": "اوبس! الصفحة مو موجودة",
+    "returnHome": "ارجع للوحة التحكم",
+    "redirecting": "راح نوديك للوحة التحكم بعد 3 ثواني..."
+  },
+  "error": "خطأ",
+  "languageChangeError": "فشل بتغيير اللغة"
 }
