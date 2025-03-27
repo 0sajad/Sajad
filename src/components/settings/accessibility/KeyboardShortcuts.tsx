@@ -16,7 +16,7 @@ export function KeyboardShortcuts() {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(false);
   const { toast } = useToast();
-  const { announce, soundFeedback, playNotificationSound } = useA11y();
+  const { announce } = useA11y();
   
   const shortcuts = [
     { key: 'Alt + C', description: t('settings.accessibility.toggleHighContrast', 'تبديل وضع التباين العالي') },
@@ -37,11 +37,6 @@ export function KeyboardShortcuts() {
     
     // Announce to screen readers
     announce(t('settings.accessibility.shortcutTestSuccess', 'تم تجربة الاختصار بنجاح') + ': ' + shortcutKey);
-    
-    // Play notification sound if enabled
-    if (soundFeedback && playNotificationSound) {
-      playNotificationSound('success');
-    }
   };
 
   return (
