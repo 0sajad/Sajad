@@ -1,28 +1,28 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { useA11ySound } from './useA11ySound';
+import { useA11y } from './useA11y';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 
 export interface UseLanguageTransitionReturnType {
   isTransitioning: boolean;
   changeLanguage: (language: string) => void;
-  supportedLanguages: Array<{code: string, name: string, nativeName: string}>;
+  supportedLanguages: Array<{code: string, name: string, nativeName: string, flag: string}>;
 }
 
 export function useLanguageTransition(): UseLanguageTransitionReturnType {
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const { playSound } = useA11ySound();
+  const { playNotificationSound, soundFeedback, announce } = useA11y();
   const { i18n, t } = useTranslation();
 
   // Supported languages
   const supportedLanguages = [
-    { code: 'ar', name: 'Arabic', nativeName: 'العربية' },
-    { code: 'ar-iq', name: 'Iraqi Arabic', nativeName: 'العراقية' },
-    { code: 'en', name: 'English', nativeName: 'English' },
-    { code: 'fr', name: 'French', nativeName: 'Français' },
-    { code: 'ja', name: 'Japanese', nativeName: '日本語' },
-    { code: 'zh', name: 'Chinese', nativeName: '中文' },
+    { code: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦' },
+    { code: 'ar-iq', name: 'Iraqi Arabic', nativeName: 'العراقية', flag: '🇮🇶' },
+    { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸' },
+    { code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷' },
+    { code: 'ja', name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
+    { code: 'zh', name: 'Chinese', nativeName: '中文', flag: '🇨🇳' },
   ];
 
   // Function to change the language with transition effects
@@ -55,8 +55,13 @@ export function useLanguageTransition(): UseLanguageTransitionReturnType {
         const languageName = getLanguageName(language);
         toast.success(t('common.languageChanged', { language: languageName }));
         
+        // Announce language change for screen readers
+        announce(t('common.languageChanged', { language: languageName }), 'polite');
+        
         // تشغيل صوت إشعار (إذا كان مفعلاً)
-        playSound('language');
+        if (soundFeedback && playNotificationSound) {
+          playNotificationSound('language');
+        }
         
         // إنهاء الانتقال بعد فترة
         setTimeout(() => {
@@ -67,30 +72,21 @@ export function useLanguageTransition(): UseLanguageTransitionReturnType {
         toast.error(t('common.languageChangeError'));
         setIsTransitioning(false);
         
+        // Announce error for screen readers
+        announce(t('common.languageChangeError'), 'assertive');
+        
         // تشغيل صوت خطأ (إذا كان مفعلاً)
-        playSound('error');
+        if (soundFeedback && playNotificationSound) {
+          playNotificationSound('error');
+        }
       });
     }, 300);
-  }, [i18n, t, playSound]);
+  }, [i18n, t, playNotificationSound, soundFeedback, announce]);
   
   // Helper function to get language name
   const getLanguageName = (code: string): string => {
-    switch (code) {
-      case 'ar':
-        return 'العربية';
-      case 'ar-iq':
-        return 'العربية (العراق)';
-      case 'en':
-        return 'English';
-      case 'fr':
-        return 'Français';
-      case 'ja':
-        return '日本語';
-      case 'zh':
-        return '中文';
-      default:
-        return code;
-    }
+    const language = supportedLanguages.find(lang => lang.code === code);
+    return language ? language.nativeName : code;
   };
 
   return { isTransitioning, changeLanguage, supportedLanguages };

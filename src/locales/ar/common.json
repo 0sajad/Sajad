@@ -21,7 +21,8 @@
     "settings": "الإعدادات",
     "helpCenter": "مركز المساعدة",
     "license": "الترخيص",
-    "login": "تسجيل الدخول"
+    "login": "تسجيل الدخول",
+    "fiberOptic": "الألياف الضوئية"
   },
   "dashboard": {
     "title": "لوحة التحكم",
@@ -52,7 +53,8 @@
     "aiAssistant": "مساعد الذكاء الاصطناعي",
     "settings": "الإعدادات",
     "helpCenter": "مركز المساعدة",
-    "login": "تسجيل الدخول"
+    "login": "تسجيل الدخول",
+    "fiberOptic": "الألياف الضوئية"
   },
   "aiFeatures": {
     "title": "ميزات الذكاء الاصطناعي",
@@ -117,5 +119,11 @@
     "highContrast": "تباين عالي",
     "textToSpeech": "تحويل النص إلى كلام",
     "largeText": "نص كبير"
-  }
+  },
+  "errors": {
+    "pageNotFound": "عفواً! الصفحة غير موجودة",
+    "returnHome": "العودة إلى الصفحة الرئيسية",
+    "goToDashboard": "الانتقال إلى لوحة التحكم"
+  },
+  "languageChanged": "تم تغيير اللغة إلى {{language}}"
 }
