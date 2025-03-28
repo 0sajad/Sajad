@@ -1,0 +1,103 @@
+
+/**
+ * أنماط خاصة بدعم اللغة العربية واتجاه RTL
+ */
+
+/* تطبيق تغييرات الاتجاه بناءً على الفئة rtl-active */
+.rtl-active {
+  direction: rtl;
+  text-align: right;
+}
+
+/* إصلاح توجيه الأيقونات في RTL */
+.rtl-active .icon-auto-flip {
+  transform: scaleX(-1);
+}
+
+/* تحسين الهوامش والحشوات لدعم RTL */
+.rtl-active .rtl-swap-padding {
+  padding-right: var(--padding-left, 0);
+  padding-left: var(--padding-right, 0);
+}
+
+.rtl-active .rtl-swap-margin {
+  margin-right: var(--margin-left, 0);
+  margin-left: var(--margin-right, 0);
+}
+
+/* تحسين العرض الناعم للنص العربي */
+.rtl-active {
+  font-feature-settings: "kern", "liga", "clig", "calt", "rlig";
+  text-rendering: optimizeLegibility;
+}
+
+/* دعم النص العربي العراقي */
+.font-iraqi-arabic {
+  font-family: var(--font-iraqi), var(--font-arabic), Arial, sans-serif;
+}
+
+/* دعم سمات كاشيدا للنص العربي */
+.kashida-enabled {
+  text-justify: kashida;
+  text-align-last: justify;
+}
+
+/* تحسين تباعد الأحرف للنص العربي */
+.rtl-active p, 
+.rtl-active h1, 
+.rtl-active h2, 
+.rtl-active h3, 
+.rtl-active h4, 
+.rtl-active h5, 
+.rtl-active h6 {
+  letter-spacing: -0.01em;
+}
+
+/* تحسين محاذاة عناصر واجهة المستخدم في RTL */
+.rtl-active .rtl-reverse-flex {
+  flex-direction: row-reverse;
+}
+
+.rtl-active .rtl-reverse-grid {
+  direction: rtl;
+}
+
+/* إصلاح مشاكل الظلال في RTL */
+.rtl-active .rtl-shadow-fix {
+  box-shadow: var(--shadow-right, none) var(--shadow-left, none);
+}
+
+/* إصلاح مشاكل الحدود في RTL */
+.rtl-active .rtl-border-fix {
+  border-right: var(--border-left, none);
+  border-left: var(--border-right, none);
+}
+
+/* تحسين تجربة الزيارة في RTL */
+@media (prefers-reduced-motion: no-preference) {
+  .rtl-active .focus-visible:focus {
+    transition: outline-offset 0.1s ease;
+    outline-offset: 2px;
+  }
+}
+
+/* إصلاح أنماط القوائم في RTL */
+.rtl-active ul, 
+.rtl-active ol {
+  padding-right: 1.5rem;
+  padding-left: 0;
+}
+
+/* تحسين واجهة المستخدم لإعدادات إمكانية الوصول في RTL */
+.rtl-active .accessibility-toggle-group {
+  flex-direction: row-reverse;
+}
+
+.rtl-active .accessibility-option-label {
+  text-align: right;
+}
+
+/* تأثيرات التحول الناعمة للغة العربية */
+.rtl-active .rtl-transition {
+  transition: all 0.3s ease-in-out;
+}
