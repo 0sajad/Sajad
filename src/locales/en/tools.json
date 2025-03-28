@@ -1,0 +1,81 @@
+
+{
+  "title": "Data Analysis Tools",
+  "description": "Advanced tools for network and communications data analysis",
+  "categories": {
+    "storage": {
+      "title": "Storage & Databases",
+      "description": "Tools for storing and managing big data"
+    },
+    "analysis": {
+      "title": "Analysis & Monitoring",
+      "description": "Tools for analyzing and monitoring system performance"
+    },
+    "network": {
+      "title": "Network Analysis",
+      "description": "Specialized tools for analyzing network traffic"
+    },
+    "ai": {
+      "title": "Artificial Intelligence",
+      "description": "AI and machine learning tools"
+    },
+    "integration": {
+      "title": "Integration & Processing",
+      "description": "Tools for data integration and processing"
+    },
+    "security": {
+      "title": "Security & Protection",
+      "description": "Tools for securing and protecting data and systems"
+    }
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "loading": "Loading",
+    "error": "Error"
+  },
+  "activate": "Activate",
+  "deactivate": "Deactivate",
+  "expand": "Details",
+  "collapse": "Collapse",
+  "activateAll": "Activate All",
+  "deactivateAll": "Deactivate All",
+  "totalTools": "Total Tools",
+  "integration": "Integration & Statistics",
+  "loadStatus": "Load Status",
+  "dependencies": "Dependencies",
+  "dependsOn": "Depends on",
+  "noDependencies": "No dependencies",
+  "addNewTools": "Add New Tools",
+  "addNewToolsDesc": "Discover and add new tools to enhance system capabilities",
+  "cloudIntegrations": "Cloud Integrations",
+  "cloudIntegrationsDesc": "Add services from AWS, Azure, Google Cloud and more.",
+  "customApis": "Custom APIs",
+  "customApisDesc": "Create custom APIs to connect to your own services.",
+  "scriptAutomation": "Script Automation",
+  "scriptAutomationDesc": "Create and manage Python and R scripts for automated analysis.",
+  "integrationReport": "Integration Report",
+  "integrationScore": "Integration Score",
+  "activeCategoriesHeader": "Active Categories",
+  "dataTypesHeader": "Supported Data Types",
+  "dataTypes": {
+    "logs": "System Logs",
+    "network": "Network Data",
+    "metrics": "Performance Metrics",
+    "structured": "Structured Data",
+    "search": "Search Data",
+    "security": "Security Data"
+  },
+  "details": {
+    "info": "Tool Information",
+    "category": "Category",
+    "version": "Version",
+    "api": "API",
+    "status": "Status",
+    "integration": "Integration",
+    "devControls": "Developer Controls",
+    "reload": "Reload",
+    "debug": "Debug",
+    "configure": "Configure"
+  }
+}

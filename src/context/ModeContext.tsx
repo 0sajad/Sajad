@@ -17,6 +17,7 @@ interface ModeContextType {
   isSyncing: boolean;
 }
 
+// الميزات الافتراضية
 const defaultFeatures = {
   // الميزات الأساسية
   networkMonitoring: true,
@@ -37,6 +38,20 @@ const defaultFeatures = {
   signalBooster: false,
   darkWebProtection: false,
   deviceHeat: false,
+  
+  // ميزات أدوات تحليل البيانات
+  dataAnalysis: true,
+  elasticsearchIntegration: true,
+  prometheusMonitoring: true,
+  influxDBIntegration: true,
+  aiAnalytics: false,
+  kafkaStreaming: true,
+  sparkProcessing: false,
+  securityAnalysis: false,
+  networkPacketAnalysis: true,
+  cloudIntegration: false,
+  customScripting: false,
+  dataVisualization: true
 };
 
 const ModeContext = createContext<ModeContextType | undefined>(undefined);
@@ -167,6 +182,21 @@ export const ModeProvider = ({ children }: { children: React.ReactNode }) => {
       return { 
         valid: false, 
         message: "الواجهة ثلاثية الأبعاد تتطلب تفعيل خريطة التأخير"
+      };
+    }
+    
+    // التحقق من تكاملات أدوات تحليل البيانات
+    if (config.aiAnalytics && !config.elasticsearchIntegration) {
+      return {
+        valid: false,
+        message: "تحليل الذكاء الاصطناعي يتطلب تكامل Elasticsearch"
+      };
+    }
+    
+    if (config.cloudIntegration && !config.dataAnalysis) {
+      return {
+        valid: false,
+        message: "تكامل السحابة يتطلب تحليل البيانات"
       };
     }
     

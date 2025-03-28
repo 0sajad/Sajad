@@ -1,0 +1,81 @@
+
+{
+  "title": "أدوات تحليل البيانات",
+  "description": "أدوات متقدمة لتحليل بيانات الشبكة والاتصالات",
+  "categories": {
+    "storage": {
+      "title": "التخزين وقواعد البيانات",
+      "description": "أدوات تخزين وإدارة البيانات الكبيرة"
+    },
+    "analysis": {
+      "title": "التحليل والمراقبة",
+      "description": "أدوات لتحليل ومراقبة أداء النظام"
+    },
+    "network": {
+      "title": "تحليل الشبكات",
+      "description": "أدوات متخصصة في تحليل حركة مرور الشبكة"
+    },
+    "ai": {
+      "title": "الذكاء الاصطناعي",
+      "description": "أدوات الذكاء الاصطناعي والتعلم الآلي"
+    },
+    "integration": {
+      "title": "التكامل والمعالجة",
+      "description": "أدوات لتكامل ومعالجة البيانات"
+    },
+    "security": {
+      "title": "الأمان والحماية",
+      "description": "أدوات لتأمين وحماية البيانات والأنظمة"
+    }
+  },
+  "status": {
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "loading": "جاري التحميل",
+    "error": "خطأ"
+  },
+  "activate": "تفعيل",
+  "deactivate": "إيقاف",
+  "expand": "تفاصيل",
+  "collapse": "طي",
+  "activateAll": "تفعيل الكل",
+  "deactivateAll": "إيقاف الكل",
+  "totalTools": "إجمالي الأدوات",
+  "integration": "التكامل والإحصائيات",
+  "loadStatus": "حالة التحميل",
+  "dependencies": "الاعتماديات",
+  "dependsOn": "يعتمد على",
+  "noDependencies": "لا توجد اعتماديات",
+  "addNewTools": "إضافة أدوات جديدة",
+  "addNewToolsDesc": "اكتشف وأضف أدوات جديدة لتعزيز قدرات النظام",
+  "cloudIntegrations": "تكاملات سحابية",
+  "cloudIntegrationsDesc": "إضافة خدمات من AWS، Azure، Google Cloud وغيرها.",
+  "customApis": "واجهات API مخصصة",
+  "customApisDesc": "إنشاء واجهات برمجة مخصصة للاتصال بخدماتك الخاصة.",
+  "scriptAutomation": "أتمتة النصوص البرمجية",
+  "scriptAutomationDesc": "إنشاء وإدارة نصوص Python و R للتحليل الآلي.",
+  "integrationReport": "تقرير التكامل",
+  "integrationScore": "درجة التكامل",
+  "activeCategoriesHeader": "الفئات النشطة",
+  "dataTypesHeader": "أنواع البيانات المدعومة",
+  "dataTypes": {
+    "logs": "سجلات النظام",
+    "network": "بيانات الشبكة",
+    "metrics": "مقاييس الأداء",
+    "structured": "بيانات منظمة",
+    "search": "بيانات البحث",
+    "security": "بيانات الأمان"
+  },
+  "details": {
+    "info": "معلومات الأداة",
+    "category": "الفئة",
+    "version": "الإصدار",
+    "api": "واجهة برمجة التطبيقات",
+    "status": "الحالة",
+    "integration": "التكامل",
+    "devControls": "إعدادات المطور",
+    "reload": "إعادة تحميل",
+    "debug": "فحص",
+    "configure": "تكوين"
+  }
+}
