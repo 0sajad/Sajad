@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { useA11yCore } from './accessibility/useA11yCore';
@@ -125,41 +126,21 @@ export function useA11y(): UseA11yReturnType {
     }
   };
   
-  // Function to announce messages to screen readers
+  // Function that uses the global announce function but adds our sound effects
   const announce = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info') => {
     try {
       if (soundFeedback) {
         playSound(type as SoundType);
       }
       
-      // Check if window.announce is available (global helper)
+      // Use the global announce function if available
       if (typeof window !== 'undefined' && window.announce) {
-        window.announce(message);
+        window.announce(message, type === 'error' ? 'assertive' : 'polite');
         return;
       }
       
-      // Create an announcement element if one doesn't exist
-      const announcementId = 'a11y-announcer';
-      let announcer = document.getElementById(announcementId);
-      
-      if (!announcer) {
-        announcer = document.createElement('div');
-        announcer.id = announcementId;
-        announcer.setAttribute('aria-live', 'polite');
-        announcer.setAttribute('aria-atomic', 'true');
-        announcer.className = 'sr-only';
-        document.body.appendChild(announcer);
-      }
-      
-      // Update the content to trigger screen reader announcement
-      announcer.textContent = message;
-      
-      // Clear after a delay to prevent repeated announcements
-      setTimeout(() => {
-        if (announcer && document.body.contains(announcer)) {
-          announcer.textContent = '';
-        }
-      }, 3000);
+      // Fallback if global announce is not available
+      console.warn('Global announce function not available');
     } catch (error) {
       console.error('Error announcing message:', error);
     }

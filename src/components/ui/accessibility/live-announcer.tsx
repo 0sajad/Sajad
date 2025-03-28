@@ -9,18 +9,18 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
   const announcerRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
-    // تعريف وظيفة الإعلان العامة
+    // Define global announce function
     if (typeof window !== 'undefined') {
       window.announce = (message: string, level: "polite" | "assertive" = "polite") => {
         if (announcerRef.current) {
           try {
-            // إعادة تعيين المحتوى أولاً لضمان قراءة الإعلان الجديد
+            // Reset content first to ensure new announcement is read
             announcerRef.current.textContent = "";
             
-            // تعيين مستوى الإلحاح
+            // Set urgency level
             announcerRef.current.setAttribute("aria-live", level);
             
-            // إضافة محتوى الإعلان بعد فترة قصيرة للتأكد من قراءته
+            // Add announcement content after a short delay to ensure it's read
             setTimeout(() => {
               if (announcerRef.current) {
                 announcerRef.current.textContent = message;
@@ -33,13 +33,13 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
       };
     }
     
-    // التنظيف: تفريغ عنصر الإعلان عند إزالة المكون
+    // Cleanup: clear announcer element when component is removed
     return () => {
       if (announcerRef.current) {
         announcerRef.current.textContent = "";
       }
       
-      // إعادة إنشاء دالة announce كدالة فارغة للسلامة
+      // Reset announce function to empty function for safety
       if (typeof window !== 'undefined') {
         window.announce = (message: string) => {
           console.log("LiveAnnouncer unmounted, but announce was called with:", message);
@@ -48,16 +48,16 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
     };
   }, []);
   
-  // تأكد من تشغيل هذا المكون عند تحميل التطبيق
+  // Ensure this component runs on app load
   useEffect(() => {
-    // التحقق من وجود وظيفة الإعلان
+    // Check if announce function exists
     if (typeof window !== 'undefined' && window.announce) {
-      // إعلان أولي للتأكد من عمل النظام
+      // Initial announcement to ensure system works
       window.announce("تم تحميل نظام الإعلانات للوصول", "polite");
     }
   }, []);
   
-  // تنسيق CSS للتأكد من إخفاء العنصر بصريًا مع السماح لقارئات الشاشة بقراءته
+  // CSS styling to ensure element is visually hidden but available to screen readers
   const announcerStyle: React.CSSProperties = {
     position: 'absolute',
     width: '1px',
