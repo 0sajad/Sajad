@@ -8,8 +8,10 @@ import { NetworkSpeedCard } from "./network/NetworkSpeedCard";
 import { NetworkPerformanceCard } from "./network/NetworkPerformanceCard";
 import { SecurityStatusCard } from "./network/SecurityStatusCard";
 import { ErrorBoundary } from "./ui/error/ErrorBoundary";
+import { useTranslation } from "react-i18next";
 
 export function NetworkDashboard() {
+  const { t } = useTranslation();
   const networkStats = useNetworkStats();
 
   return (
@@ -17,9 +19,11 @@ export function NetworkDashboard() {
       <section id="dashboard" className="pt-24 pb-16">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-12 animate-fade-in">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 font-tajawal">لوحة مراقبة الشبكة</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 font-tajawal">
+              {t('networkDashboard.title', 'لوحة مراقبة الشبكة')}
+            </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto font-tajawal">
-              تحليل ومراقبة أداء الشبكة والأجهزة المتصلة في الوقت الفعلي
+              {t('networkDashboard.description', 'تحليل ومراقبة أداء الشبكة والأجهزة المتصلة في الوقت الفعلي')}
             </p>
           </div>
 

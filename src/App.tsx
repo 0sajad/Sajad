@@ -11,7 +11,8 @@ import { AnimatePresence } from "framer-motion";
 import { GlobalErrorBoundary } from "./components/ui/error/GlobalErrorBoundary";
 import { LiveAnnouncer } from "./components/ui/accessibility/LiveAnnouncer";
 import { FallbackErrorPage } from "./components/error/FallbackErrorPage";
-import { ErrorBoundary } from "./components/ui/ErrorBoundary";
+import { ErrorBoundary } from "./components/ui/error/ErrorBoundary";
+import { LoadingScreen } from "./components/LoadingScreen";
 
 // Pages
 import Dashboard from "./pages/Dashboard";
@@ -22,9 +23,6 @@ import FiberOptic from "./pages/FiberOptic";
 import NotFound from "./pages/NotFound";
 import HelpCenter from "./pages/HelpCenter";
 import Index from "./pages/Index";
-
-// Components
-import { LoadingScreen } from "./components/LoadingScreen";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -54,7 +52,7 @@ function App() {
               isRTL ? "rtl" : "ltr"
             )}>
               <Router>
-                <ErrorBoundary fallback={<FallbackErrorPage />}>
+                <ErrorBoundary fallback={<FallbackErrorPage />} showDialog>
                   <AnimatePresence mode="wait">
                     <Routes>
                       <Route path="/" element={<Dashboard />} />
