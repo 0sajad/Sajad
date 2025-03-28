@@ -1,7 +1,8 @@
 
 import { useState, useEffect } from 'react';
 
-interface SectionVisibilityState {
+// Update the interface to include an index signature for dynamic access
+export interface SectionVisibilityState {
   header: boolean;
   hero: boolean;
   features: boolean;
@@ -11,6 +12,7 @@ interface SectionVisibilityState {
   cta: boolean;
   footer: boolean;
   pageLoaded: boolean;
+  [key: string]: boolean; // Add index signature
 }
 
 /**

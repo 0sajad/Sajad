@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { toast, ToastAction, ToastActionElement } from '@/components/ui/toast';
+import { ToastAction } from '@/components/ui/toast';
+import { useToast } from '@/hooks/use-toast';
 import { useA11y } from '@/hooks/useA11y';
 import { useTranslation } from 'react-i18next';
 
@@ -41,6 +42,7 @@ export const EnhancedToast = {
     playNotificationSound(type);
     
     // إظهار النخب المرئي
+    const { toast } = useToast();
     return toast({
       title,
       description,

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { ToastAction } from '@/components/ui/toast';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import { useA11y } from '@/hooks/useA11y';
 
@@ -20,6 +20,7 @@ type NotificationToastProps = {
  * نظام إشعارات محسن يدعم إمكانية الوصول وردود الصوت
  */
 export function useNotificationToast() {
+  const { toast } = useToast();
   const { t } = useTranslation();
   const { soundFeedback, playNotificationSound, announce } = useA11y();
   
@@ -35,7 +36,9 @@ export function useNotificationToast() {
     
     // تشغيل صوت إشعار إذا كان مفعلاً
     if (soundFeedback) {
-      playNotificationSound(type);
+      // Map the type to match the expected sound types
+      const soundType = type === 'default' ? 'notification' : type;
+      playNotificationSound(soundType as 'success' | 'error' | 'warning' | 'info' | 'notification');
     }
     
     // عرض الإشعار المرئي
@@ -47,7 +50,7 @@ export function useNotificationToast() {
             {action.label}
           </ToastAction>
         : undefined,
-      variant: type === 'default' ? 'default' : type === 'destructive' ? 'destructive' : 'default',
+      variant: type === 'error' ? 'destructive' : 'default',
       duration: duration,
     });
   };

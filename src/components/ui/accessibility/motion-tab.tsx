@@ -3,7 +3,7 @@ import React from "react";
 import { TabsContent } from "@/components/ui/tabs";
 import { useTranslation } from "react-i18next";
 import { AccessibilityToggle } from "./accessibility-toggle";
-import { MousePointerSquare, Pause, Focus } from "lucide-react";
+import { MousePointer, Pause, Focus } from "lucide-react";
 
 interface MotionTabProps {
   reducedMotion: boolean;
@@ -52,7 +52,7 @@ export function MotionTab({
         id="cursor-size-toggle"
         label={t('accessibility.largerCursor', 'مؤشر أكبر')}
         description={t('accessibility.largerCursorDesc', 'زيادة حجم مؤشر الماوس')}
-        icon={MousePointerSquare}
+        icon={MousePointer}
         checked={document.body.classList.contains('large-cursor')}
         onChange={(checked) => {
           if (checked) {

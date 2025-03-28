@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AccessibilityIcon, TextIcon, EyeIcon, MousePointerSquare, KeySquare } from "lucide-react";
+import { AccessibilityIcon, TextIcon, EyeIcon, MousePointer, KeySquare } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 interface AccessibilityTabsProps {
@@ -27,7 +27,7 @@ export function AccessibilityTabs({ children, defaultTab = "display" }: Accessib
           <span className="sr-only">{t('accessibility.text', 'نص')}</span>
         </TabsTrigger>
         <TabsTrigger value="motion" aria-label={t('accessibility.motion', 'حركة')}>
-          <MousePointerSquare className="h-4 w-4" />
+          <MousePointer className="h-4 w-4" />
           <span className="sr-only">{t('accessibility.motion', 'حركة')}</span>
         </TabsTrigger>
         <TabsTrigger value="keyboard" aria-label={t('accessibility.keyboard', 'لوحة المفاتيح')}>
