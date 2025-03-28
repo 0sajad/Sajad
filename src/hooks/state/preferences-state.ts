@@ -1,57 +1,62 @@
 
-import { StateCreator } from 'zustand';
-import { AppState, PreferencesState, AppPreferences } from './types';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
-/**
- * القيم الافتراضية لتفضيلات التطبيق
- */
+export interface AppPreferences {
+  language: string;
+  theme: 'light' | 'dark' | 'system';
+  fontSize: 'normal' | 'large' | 'x-large';
+  animationsEnabled: boolean;
+  highContrast: boolean;
+  notificationsEnabled: boolean;
+  autoRefresh: boolean;
+  refreshRate: number;
+  compactMode: boolean;
+  developerMode: boolean;
+  analyticsEnabled: boolean;
+  colorBlindMode: 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'achromatopsia';
+  dyslexicFont: boolean;
+  readingGuide: boolean;
+  soundFeedback: boolean;
+}
+
 export const defaultPreferences: AppPreferences = {
-  theme: 'system',
   language: 'ar',
-  notifications: true,
-  telemetry: false,
-  animations: true,
-  fullWidthLayout: false,
-  compactMode: false,
-  soundEffects: false,
+  theme: 'system',
+  fontSize: 'normal',
+  animationsEnabled: true,
   highContrast: false,
-  largeText: false,
-  reducedMotion: false,
-  focusMode: false,
-  arabicNumerals: false,
-  autoSave: true,
   notificationsEnabled: true,
-  syncSystemPreferences: true,
-  // إضافة الخصائص الجديدة
+  autoRefresh: true,
+  refreshRate: 30,
+  compactMode: false,
+  developerMode: false,
+  analyticsEnabled: true,
+  colorBlindMode: 'none',
   dyslexicFont: false,
   readingGuide: false,
-  soundFeedback: false,
-  colorBlindMode: 'none'
+  soundFeedback: false
 };
 
-/**
- * مخزن حالة التفضيلات
- * يحتوي على الوظائف المتعلقة بإدارة تفضيلات التطبيق
- */
-export const createPreferencesSlice: StateCreator<
-  AppState,
-  [],
-  [],
-  PreferencesState
-> = (set) => ({
-  // تفضيلات التطبيق
-  theme: 'system',
-  language: 'ar',
-  notificationsEnabled: true,
-  animations: true,
-  compactMode: false,
-  preferences: defaultPreferences,
-  
-  // وظائف تعديل التفضيلات
-  setPreference: (key, value) => set((state) => ({
-    preferences: {
-      ...state.preferences,
-      [key]: value
+export const usePreferences = create(
+  persist<{
+    preferences: AppPreferences;
+    setPreference: <K extends keyof AppPreferences>(key: K, value: AppPreferences[K]) => void;
+    resetPreferences: () => void;
+  }>(
+    (set) => ({
+      preferences: { ...defaultPreferences },
+      setPreference: <K extends keyof AppPreferences>(key: K, value: AppPreferences[K]) => 
+        set((state) => ({
+          preferences: {
+            ...state.preferences,
+            [key]: value
+          }
+        })),
+      resetPreferences: () => set({ preferences: { ...defaultPreferences } })
+    }),
+    {
+      name: 'octa-preferences',
     }
-  })),
-});
+  )
+);

@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { AIChatbot } from "../ai/AIChatbot";
 import { useTranslation } from "react-i18next";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,10 +9,28 @@ import { NetworkManagement } from "./NetworkManagement";
 import { ErrorBoundary } from "../ui/error/ErrorBoundary";
 import { useOfflineMode } from "@/hooks/useOfflineMode";
 import { ErrorMessage } from "../ui/error/ErrorMessage";
+import { 
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle 
+} from "@/components/ui/card";
+import { Badge } from "../ui/badge";
+import { 
+  Database, 
+  Network, 
+  BrainCircuit, 
+  BarChart, 
+  Search,
+  Cpu
+} from "lucide-react";
+import { useMode } from "@/context/ModeContext";
 
 export function NetworkToolsSection() {
   const { t } = useTranslation();
   const { isOnline } = useOfflineMode();
+  const { features } = useMode();
+  const [activeToolsTab, setActiveToolsTab] = useState("network-tools");
   
   // عرض رسالة الخطأ عندما يكون المستخدم غير متصل بالإنترنت
   if (!isOnline) {
@@ -77,13 +95,143 @@ export function NetworkToolsSection() {
               </Tabs>
             </div>
             
-            <ErrorBoundary>
-              <AIChatbot />
-            </ErrorBoundary>
+            <div className="flex flex-col gap-6">
+              <ErrorBoundary>
+                <AIChatbot />
+              </ErrorBoundary>
+              
+              <ErrorBoundary>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg flex items-center justify-between">
+                      <span>أدوات التحليل المتوفرة</span>
+                      <Badge variant="outline">
+                        {features?.advancedSecurity ? 'متقدم' : 'أساسي'}
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <Tabs value={activeToolsTab} onValueChange={setActiveToolsTab}>
+                      <TabsList className="w-full mb-3">
+                        <TabsTrigger value="network-tools">
+                          <Network className="w-3 h-3 mr-1" />
+                          الشبكة
+                        </TabsTrigger>
+                        <TabsTrigger value="ai-tools">
+                          <BrainCircuit className="w-3 h-3 mr-1" />
+                          الذكاء الاصطناعي
+                        </TabsTrigger>
+                        <TabsTrigger value="data-tools">
+                          <Database className="w-3 h-3 mr-1" />
+                          البيانات
+                        </TabsTrigger>
+                      </TabsList>
+                      
+                      <TabsContent value="network-tools" className="space-y-2">
+                        <ToolItem 
+                          name="Wireshark/TShark" 
+                          status="متصل" 
+                          icon={<Network className="w-3.5 h-3.5" />} 
+                          enabled={true}
+                        />
+                        <ToolItem 
+                          name="NetFlow Analyzer" 
+                          status="متصل" 
+                          icon={<BarChart className="w-3.5 h-3.5" />} 
+                          enabled={true}
+                        />
+                        <ToolItem 
+                          name="ntopng" 
+                          status="غير متصل" 
+                          icon={<Network className="w-3.5 h-3.5" />} 
+                          enabled={features?.advancedSecurity || false}
+                        />
+                      </TabsContent>
+                      
+                      <TabsContent value="ai-tools" className="space-y-2">
+                        <ToolItem 
+                          name="TensorFlow" 
+                          status="متصل" 
+                          icon={<BrainCircuit className="w-3.5 h-3.5" />} 
+                          enabled={features?.aiAssistant || false}
+                        />
+                        <ToolItem 
+                          name="Scikit-learn" 
+                          status="متصل" 
+                          icon={<BrainCircuit className="w-3.5 h-3.5" />} 
+                          enabled={true}
+                        />
+                        <ToolItem 
+                          name="AWS SageMaker" 
+                          status="جاري التحميل" 
+                          icon={<Cpu className="w-3.5 h-3.5" />} 
+                          enabled={features?.advancedSecurity || false}
+                        />
+                      </TabsContent>
+                      
+                      <TabsContent value="data-tools" className="space-y-2">
+                        <ToolItem 
+                          name="Elasticsearch" 
+                          status="متصل" 
+                          icon={<Search className="w-3.5 h-3.5" />} 
+                          enabled={true}
+                        />
+                        <ToolItem 
+                          name="InfluxDB" 
+                          status="متصل" 
+                          icon={<Database className="w-3.5 h-3.5" />} 
+                          enabled={true}
+                        />
+                        <ToolItem 
+                          name="Apache Kafka" 
+                          status="متصل" 
+                          icon={<Cpu className="w-3.5 h-3.5" />} 
+                          enabled={features?.dnsOptimization || false}
+                        />
+                      </TabsContent>
+                    </Tabs>
+                  </CardContent>
+                </Card>
+              </ErrorBoundary>
+            </div>
           </div>
         </div>
       </section>
     </ErrorBoundary>
+  );
+}
+
+// Component for individual tool item
+function ToolItem({ 
+  name, 
+  status, 
+  icon, 
+  enabled 
+}: { 
+  name: string; 
+  status: string; 
+  icon: React.ReactNode; 
+  enabled: boolean;
+}) {
+  return (
+    <div className={`rounded-md p-2 flex items-center justify-between ${
+      enabled ? 'bg-gray-50 dark:bg-gray-800/40' : 'bg-gray-100/50 dark:bg-gray-800/20 opacity-60'
+    }`}>
+      <div className="flex items-center">
+        <div className={`p-1.5 rounded-md mr-2 ${
+          enabled ? 'bg-octaBlue-100 dark:bg-octaBlue-900/20' : 'bg-gray-200 dark:bg-gray-700'
+        }`}>
+          {icon}
+        </div>
+        <span className="text-sm font-medium">{name}</span>
+      </div>
+      <Badge variant={
+        status === 'متصل' ? 'outline' : 
+        status === 'جاري التحميل' ? 'secondary' : 'destructive'
+      } className="text-xs">
+        {status}
+      </Badge>
+    </div>
   );
 }
 
