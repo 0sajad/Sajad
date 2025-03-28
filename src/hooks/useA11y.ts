@@ -1,11 +1,18 @@
 
 import { useCallback, useEffect, useState } from 'react';
+import { ColorBlindMode } from './accessibility/useA11yColor';
 
 // واجهة الخيارات المتعلقة بإمكانية الوصول
 interface A11yOptions {
   soundFeedback?: boolean;
   highContrast?: boolean;
   reducedMotion?: boolean;
+  largeText?: boolean;
+  focusMode?: boolean;
+  readingGuide?: boolean;
+  dyslexicFont?: boolean;
+  colorBlindMode?: ColorBlindMode;
+  keyboardNavigationVisible?: boolean;
 }
 
 /**
@@ -13,16 +20,59 @@ interface A11yOptions {
  */
 export function useA11y(options?: A11yOptions) {
   // الإعدادات الافتراضية
-  const [highContrast, setHighContrast] = useState(options?.highContrast || false);
-  const [soundFeedback, setSoundFeedback] = useState(options?.soundFeedback || false);
+  const [highContrast, _setHighContrast] = useState(options?.highContrast || false);
+  const [largeText, _setLargeText] = useState(options?.largeText || false);
+  const [soundFeedback, _setSoundFeedback] = useState(options?.soundFeedback || false);
+  const [focusMode, _setFocusMode] = useState(options?.focusMode || false);
+  const [readingGuide, _setReadingGuide] = useState(options?.readingGuide || false);
+  const [dyslexicFont, _setDyslexicFont] = useState(options?.dyslexicFont || false);
+  const [colorBlindMode, _setColorBlindMode] = useState<ColorBlindMode>(options?.colorBlindMode || 'none');
+  const [keyboardNavigationVisible, _setKeyboardNavigationVisible] = useState(options?.keyboardNavigationVisible || false);
   
   // التحقق من reducedMotion من النظام
-  const [reducedMotion, setReducedMotion] = useState(() => {
+  const [reducedMotion, _setReducedMotion] = useState(() => {
     if (typeof window !== 'undefined') {
       return window.matchMedia('(prefers-reduced-motion: reduce)').matches || options?.reducedMotion || false;
     }
     return options?.reducedMotion || false;
   });
+
+  // وظائف مستقرة لتعيين الحالة لمنع إعادة التصيير غير الضرورية
+  const setHighContrast = useCallback((value: boolean) => {
+    _setHighContrast(value);
+  }, []);
+
+  const setLargeText = useCallback((value: boolean) => {
+    _setLargeText(value);
+  }, []);
+
+  const setReducedMotion = useCallback((value: boolean) => {
+    _setReducedMotion(value);
+  }, []);
+
+  const setFocusMode = useCallback((value: boolean) => {
+    _setFocusMode(value);
+  }, []);
+
+  const setReadingGuide = useCallback((value: boolean) => {
+    _setReadingGuide(value);
+  }, []);
+
+  const setDyslexicFont = useCallback((value: boolean) => {
+    _setDyslexicFont(value);
+  }, []);
+
+  const setColorBlindMode = useCallback((value: ColorBlindMode) => {
+    _setColorBlindMode(value);
+  }, []);
+
+  const setSoundFeedback = useCallback((value: boolean) => {
+    _setSoundFeedback(value);
+  }, []);
+
+  const setKeyboardNavigationVisible = useCallback((value: boolean) => {
+    _setKeyboardNavigationVisible(value);
+  }, []);
 
   // مراقبة تغييرات prefers-reduced-motion
   useEffect(() => {
@@ -31,7 +81,7 @@ export function useA11y(options?: A11yOptions) {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     
     const handleChange = (e: MediaQueryListEvent) => {
-      setReducedMotion(e.matches);
+      _setReducedMotion(e.matches);
     };
     
     // استمع للتغييرات
@@ -64,9 +114,6 @@ export function useA11y(options?: A11yOptions) {
   const playNotificationSound = useCallback((type: 'success' | 'error' | 'warning' | 'info' | 'notification') => {
     if (!soundFeedback || typeof window === 'undefined') return;
     
-    // قد تكون هنا منطق لتشغيل أصوات مختلفة بناءً على النوع
-    console.log(`Playing ${type} sound`);
-    
     // محاكاة تشغيل الصوت
     const audio = new Audio();
     
@@ -96,20 +143,42 @@ export function useA11y(options?: A11yOptions) {
 
   // تبديل التباين العالي
   const toggleHighContrast = useCallback(() => {
-    setHighContrast(prev => !prev);
+    _setHighContrast(prev => !prev);
   }, []);
 
   // تبديل ردود الصوت
   const toggleSoundFeedback = useCallback(() => {
-    setSoundFeedback(prev => !prev);
+    _setSoundFeedback(prev => !prev);
   }, []);
 
   return {
+    // الحالة
     highContrast,
+    largeText,
     reducedMotion,
+    focusMode,
     soundFeedback,
+    readingGuide,
+    dyslexicFont,
+    colorBlindMode,
+    keyboardNavigationVisible,
+    
+    // وظائف تعديل الحالة
+    setHighContrast,
+    setLargeText,
+    setReducedMotion,
+    setFocusMode,
+    setSoundFeedback,
+    setReadingGuide,
+    setDyslexicFont,
+    setColorBlindMode,
+    setKeyboardNavigationVisible,
+    
+    // وظائف الأعلان و الصوت
     announce,
     playNotificationSound,
+    
+    // وظائف التبديل
     toggleHighContrast,
     toggleSoundFeedback,
   };

@@ -22,9 +22,9 @@ export function ScreenReaderAnnouncer({
         ? children 
         : announcerRef.current.textContent;
       
-      if (content) {
-        // استخدام الوظيفة العالمية للإعلان
-        if (typeof window !== 'undefined' && typeof window.announce === 'function') {
+      if (content && typeof window !== 'undefined') {
+        // استخدام الوظيفة العالمية للإعلان بأمان
+        if (typeof window.announce === 'function') {
           window.announce(content, politeness);
         }
       }

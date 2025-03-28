@@ -15,6 +15,8 @@ export function LiveAnnouncer() {
   useEffect(() => {
     // إضافة وظيفة announce كوظيفة عالمية
     window.announce = (message: string, politeness: 'polite' | 'assertive' = 'polite') => {
+      if (!message) return;
+      
       const announcer = politeness === 'assertive' 
         ? assertiveAnnouncerRef.current 
         : politeAnnouncerRef.current;
@@ -25,16 +27,20 @@ export function LiveAnnouncer() {
         
         // الإعلان فقط إذا كانت الرسالة مختلفة
         if (oldText !== message) {
-          // ضبط محتوى النص فارغًا أولاً لإجبار قارئات الشاشة
-          // على التعرف على التغيير حتى لو كان النص هو نفسه
-          announcer.textContent = '';
-          
-          // استخدام setTimeout لضمان التقاط قارئات الشاشة للتغيير
-          setTimeout(() => {
-            if (announcer) {
-              announcer.textContent = message;
-            }
-          }, 10);
+          try {
+            // ضبط محتوى النص فارغًا أولاً لإجبار قارئات الشاشة
+            // على التعرف على التغيير حتى لو كان النص هو نفسه
+            announcer.textContent = '';
+            
+            // استخدام setTimeout لضمان التقاط قارئات الشاشة للتغيير
+            setTimeout(() => {
+              if (announcer) {
+                announcer.textContent = message;
+              }
+            }, 10);
+          } catch (error) {
+            console.error('Error announcing message:', error);
+          }
         }
       }
     };
