@@ -1,39 +1,20 @@
 
-import React, { useState, useEffect, useMemo } from "react";
-import { Check, Globe } from "lucide-react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
   DropdownMenuLabel,
+  DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { useLanguageTransition } from "@/hooks/useLanguageTransition";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { motion } from "framer-motion";
-
-// استيراد فقط الوظائف اللازمة من useA11y لتجنب الحلقات اللانهائية
-// وإنشاء وظائف آمنة لاستخدامها داخل المكونات
-const useA11yFeatures = () => {
-  const getReducedMotion = () => {
-    if (typeof window === 'undefined') return false;
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  };
-
-  const announceToScreenReader = (message: string, politeness: "polite" | "assertive" = "polite") => {
-    if (typeof window !== 'undefined' && typeof window.announce === 'function') {
-      window.announce(message, politeness);
-    }
-  };
-
-  return {
-    reducedMotion: getReducedMotion(),
-    announce: announceToScreenReader
-  };
-};
+import { useLanguageTransition } from "@/hooks/useLanguageTransition";
+import { useLanguageNames } from "@/hooks/useLanguageNames";
+import { useA11y } from "@/hooks/useA11y";
+import { useRTLSupport } from "@/hooks/useRTLSupport";
+import { LanguageSwitcherButton } from "@/components/language/LanguageSwitcherButton";
+import { LanguageOption } from "@/components/language/LanguageOption";
 
 interface LanguageSwitcherProps {
   /** نوع العرض: أيقونة فقط أو عرض كامل مع نص */
@@ -43,13 +24,15 @@ interface LanguageSwitcherProps {
 }
 
 /**
- * مكون مبدّل اللغة - معاد هيكلته لتجنب مشاكل التحديث المتكرر
+ * مكون مبدّل اللغة - مقسم إلى مكونات أصغر للتنظيم
  */
 export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageSwitcherProps) {
   const { t, i18n } = useTranslation();
   const { isTransitioning, changeLanguage } = useLanguageTransition();
   const [mounted, setMounted] = useState(false);
-  const { reducedMotion, announce } = useA11yFeatures();
+  const { reducedMotion, announce } = useA11y();
+  const { isRTL } = useRTLSupport();
+  const { languageNames, getGroupedLanguages } = useLanguageNames();
 
   // تأكد من أن مكون اللغة يعمل فقط على جانب العميل
   useEffect(() => {
@@ -65,39 +48,6 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
       document.body.classList.remove('rtl-active');
     }
   }, [i18n.language]);
-
-  /**
-   * قائمة اللغات المدعومة مع معلوماتها
-   */
-  const languageNames = useMemo(() => {
-    return {
-      'en': { name: 'English', nativeName: 'English', flag: '🇺🇸' },
-      'ar': { name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦' },
-      'ar-iq': { name: 'Iraqi Arabic', nativeName: 'العراقية', flag: '🇮🇶' },
-      'fr': { name: 'French', nativeName: 'Français', flag: '🇫🇷' },
-      'ja': { name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
-      'zh': { name: 'Chinese', nativeName: '中文', flag: '🇨🇳' }
-    };
-  }, []);
-
-  // تأكد من أن المكون جاهز قبل العرض
-  if (!mounted) {
-    return null;
-  }
-
-  // الحصول على معلومات اللغة الحالية
-  const currentLanguage = languageNames[i18n.language as keyof typeof languageNames] || languageNames['en'];
-
-  /**
-   * الحصول على اللغات المصنفة للعرض
-   */
-  const getGroupedLanguages = () => {
-    const arabicLanguages: Array<keyof typeof languageNames> = ['ar', 'ar-iq'];
-    const otherLanguages: Array<keyof typeof languageNames> = ['en', 'fr', 'ja', 'zh'];
-    
-    // ترتيب اللغات مع إعطاء الأولوية للغات العربية
-    return [...arabicLanguages, ...otherLanguages];
-  };
 
   /**
    * معالج تغيير اللغة - يعلن قارئ الشاشة بالتغيير
@@ -132,42 +82,31 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
     return t('common.selectLanguage', 'تغيير اللغة');
   };
 
+  // تأكد من أن المكون جاهز قبل العرض
+  if (!mounted) {
+    return null;
+  }
+
+  // الحصول على معلومات اللغة الحالية
+  const currentLanguage = languageNames[i18n.language as keyof typeof languageNames] || languageNames['en'];
+
   return (
     <TooltipProvider>
       <DropdownMenu>
         <Tooltip>
           <TooltipTrigger asChild>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size={variant === "icon" ? "icon" : "default"}
-                className={`relative ${className} ${isTransitioning ? 'opacity-50' : 'opacity-100'} transition-all duration-300 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-700 border border-blue-200 dark:border-gray-600`}
-                aria-label={getTooltipText()}
-              >
-                {variant === "icon" ? (
-                  <div className="relative">
-                    <Globe className="h-4 w-4" />
-                    <motion.div 
-                      className="absolute -top-2 -right-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full w-5 h-5 flex items-center justify-center border border-white dark:border-gray-700 shadow-md"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ 
-                        type: "spring", 
-                        stiffness: 300, 
-                        damping: reducedMotion ? 30 : 15 
-                      }}
-                    >
-                      <span className="text-[10px]">{currentLanguage.flag}</span>
-                    </motion.div>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <span className="mr-1">{currentLanguage.flag}</span>
-                    <span>{currentLanguage.nativeName}</span>
-                    <Globe className="h-4 w-4 ml-2" />
-                  </div>
-                )}
-              </Button>
+              <LanguageSwitcherButton 
+                currentLanguageFlag={currentLanguage.flag}
+                isTransitioning={isTransitioning}
+                isRTL={isRTL}
+                reducedMotion={reducedMotion}
+                onClick={() => {}}
+                tooltipText={getTooltipText()}
+                className={className}
+                variant={variant}
+                currentLanguageNativeName={variant === "full" ? currentLanguage.nativeName : undefined}
+              />
             </DropdownMenuTrigger>
           </TooltipTrigger>
           <TooltipContent side="bottom" className="bg-gradient-to-r from-blue-500/90 to-blue-600/90 text-white border-0 z-50">
@@ -189,60 +128,23 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
           {getGroupedLanguages().map((langCode) => {
             const isActive = i18n.language === langCode;
             const lang = languageNames[langCode];
-            
-            // تمييز لغة العراقية
             const isIraqiArabic = langCode === 'ar-iq';
             
             return (
-              <DropdownMenuItem
+              <LanguageOption 
                 key={langCode}
-                className={`
-                  flex items-center justify-between px-4 py-3 cursor-pointer transition-all
-                  ${isActive 
-                    ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 font-medium' 
-                    : 'hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:translate-y-[-1px]'}
-                  ${isIraqiArabic ? 'border-l-2 border-green-500 dark:border-green-400' : ''}
-                `}
-                onClick={() => handleLanguageChange(langCode)}
-                data-testid={`language-option-${langCode}`}
-              >
-                <div className="flex items-center">
-                  <span className="text-lg mr-3 rtl:ml-3 rtl:mr-0" aria-hidden="true">
-                    {lang.flag}
-                  </span>
-                  <span>{lang.nativeName}</span>
-                  
-                  {isIraqiArabic && (
-                    <span className="ml-2 text-[10px] bg-green-100 text-green-800 px-1.5 py-0.5 rounded dark:bg-green-900/30 dark:text-green-300">
-                      {i18n.language === 'ar-iq' ? 'محسن' : 'محسّن'}
-                    </span>
-                  )}
-                </div>
-                
-                {isActive && (
-                  <motion.div 
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ 
-                      type: "spring", 
-                      stiffness: 300, 
-                      damping: reducedMotion ? 30 : 15 
-                    }}
-                    className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full w-5 h-5 shadow-md"
-                  >
-                    <Check className="h-3 w-3" aria-hidden="true" />
-                  </motion.div>
-                )}
-              </DropdownMenuItem>
+                langCode={langCode}
+                languageName={lang.nativeName}
+                flag={lang.flag}
+                isActive={isActive}
+                isIraqiArabic={isIraqiArabic}
+                onClick={handleLanguageChange}
+                reducedMotion={reducedMotion}
+              />
             );
           })}
         </DropdownMenuContent>
       </DropdownMenu>
     </TooltipProvider>
   );
-}
-
-// وظيفة مساعدة لدمج فئات CSS - منفصلة لتجنب استدعاء hooks
-function cn(...classes: (string | undefined | null | false)[]): string {
-  return classes.filter(Boolean).join(' ');
 }

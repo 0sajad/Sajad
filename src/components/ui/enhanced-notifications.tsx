@@ -1,7 +1,7 @@
 
-import React, { forwardRef } from "react";
+import React from "react";
 import { toast as sonnerToast } from "sonner";
-import { X, Check, AlertTriangle, Info } from "lucide-react";
+import { X, Check, AlertCircle, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // أنواع الإشعارات المدعومة
@@ -20,16 +20,25 @@ export interface EnhancedToastProps {
 }
 
 /**
- * مكون Icon للإشعارات
+ * الإعلان لقارئات الشاشة بطريقة آمنة
  */
-const ToastIcon = ({ type }: { type: ToastType }) => {
+const announceToScreenReader = (message: string, politeness: "polite" | "assertive" = "polite") => {
+  if (typeof window !== 'undefined' && typeof window.announce === 'function') {
+    window.announce(message, politeness);
+  }
+};
+
+/**
+ * الحصول على أيقونة الإشعار حسب النوع
+ */
+const getToastIcon = (type: ToastType) => {
   switch (type) {
     case "success":
       return <Check className="h-4 w-4" />;
     case "error":
       return <X className="h-4 w-4" />;
     case "warning":
-      return <AlertTriangle className="h-4 w-4" />;
+      return <AlertCircle className="h-4 w-4" />;
     case "info":
     default:
       return <Info className="h-4 w-4" />;
@@ -37,18 +46,33 @@ const ToastIcon = ({ type }: { type: ToastType }) => {
 };
 
 /**
- * الإعلان لقارئات الشاشة (يستخدم الوظيفة العامة)
+ * الحصول على أنماط الإشعار حسب النوع
  */
-const announceToScreenReader = (message: string, politeness: "polite" | "assertive" = "polite") => {
-  // استخدام وظيفة announce العامة بأمان
-  if (typeof window !== 'undefined' && typeof window.announce === 'function') {
-    window.announce(message, politeness);
-  }
+const getToastStyles = (type: ToastType) => {
+  const styles = {
+    success: "bg-green-100 dark:bg-green-900 border-green-500 text-green-700 dark:text-green-100",
+    error: "bg-red-100 dark:bg-red-900 border-red-500 text-red-700 dark:text-red-100",
+    warning: "bg-yellow-100 dark:bg-yellow-900 border-yellow-500 text-yellow-700 dark:text-yellow-100",
+    info: "bg-blue-100 dark:bg-blue-900 border-blue-500 text-blue-700 dark:text-blue-100",
+    default: "bg-gray-100 dark:bg-gray-900 border-gray-500 text-gray-700 dark:text-gray-100"
+  };
+
+  const iconStyles = {
+    success: "bg-green-500 text-white",
+    error: "bg-red-500 text-white",
+    warning: "bg-yellow-500 text-white",
+    info: "bg-blue-500 text-white",
+    default: "bg-gray-500 text-white"
+  };
+
+  return {
+    toast: styles[type],
+    icon: iconStyles[type]
+  };
 };
 
 /**
  * تنفيذ وظائف الإشعارات المحسنة كدوال عادية وليس كمكونات React
- * هذا يساعد على تجنب حلقات التحديث غير المقصودة
  */
 export const enhancedToast = {
   // الوظيفة الأساسية لعرض الإشعارات
@@ -83,25 +107,9 @@ export const enhancedToast = {
       );
     }
 
-    // تحديد أنماط بناءً على نوع الإشعار
-    const toastStyles: Record<ToastType, string> = {
-      success: "bg-green-100 dark:bg-green-900 border-green-500 text-green-700 dark:text-green-100",
-      error: "bg-red-100 dark:bg-red-900 border-red-500 text-red-700 dark:text-red-100",
-      warning: "bg-yellow-100 dark:bg-yellow-900 border-yellow-500 text-yellow-700 dark:text-yellow-100",
-      info: "bg-blue-100 dark:bg-blue-900 border-blue-500 text-blue-700 dark:text-blue-100",
-      default: "bg-gray-100 dark:bg-gray-900 border-gray-500 text-gray-700 dark:text-gray-100"
-    };
-
-    const iconStyles: Record<ToastType, string> = {
-      success: "bg-green-500 text-white",
-      error: "bg-red-500 text-white",
-      warning: "bg-yellow-500 text-white",
-      info: "bg-blue-500 text-white",
-      default: "bg-gray-500 text-white"
-    };
-
     // تحديد ما إذا كان RTL نشطًا
     const isRTL = document.documentElement.dir === 'rtl';
+    const styles = getToastStyles(type);
 
     // إظهار الإشعار
     return sonnerToast.custom(
@@ -109,7 +117,7 @@ export const enhancedToast = {
         <div
           className={cn(
             "flex w-full rounded-lg border p-4 shadow-lg",
-            toastStyles[type],
+            styles.toast,
             isRTL ? "flex-row-reverse text-right" : "text-left",
             className
           )}
@@ -117,8 +125,12 @@ export const enhancedToast = {
           aria-live="assertive"
         >
           {showIcon && (
-            <div className={`${isRTL ? 'ml-4' : 'mr-4'} flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${iconStyles[type]}`}>
-              <ToastIcon type={type} />
+            <div className={cn(
+              "flex h-6 w-6 shrink-0 items-center justify-center rounded-full",
+              styles.icon,
+              isRTL ? 'ml-4' : 'mr-4'
+            )}>
+              {getToastIcon(type)}
             </div>
           )}
           
@@ -136,7 +148,10 @@ export const enhancedToast = {
               sonnerToast.dismiss(id);
               if (onClose) onClose();
             }}
-            className={`${isRTL ? 'mr-2' : 'ml-2'} inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-opacity-10 hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2`}
+            className={cn(
+              "inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-opacity-10 hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2",
+              isRTL ? 'mr-2' : 'ml-2'
+            )}
           >
             <X className="h-4 w-4" />
             <span className="sr-only">إغلاق</span>
@@ -169,26 +184,3 @@ export const enhancedToast = {
     return enhancedToast.show({ ...props, type: "info" });
   }
 };
-
-// مكون Viewport محسن
-export const EnhancedToastViewport = forwardRef<
-  HTMLDivElement,
-  { className?: string, children?: React.ReactNode }
->(({ className, ...props }, ref) => {
-  // تحديد RTL بدون استخدام hooks
-  const isRTL = document.documentElement.dir === 'rtl';
-  
-  return (
-    <div
-      ref={ref}
-      className={cn(
-        "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:top-auto sm:flex-col md:max-w-[420px]",
-        isRTL ? "left-0" : "right-0",
-        className
-      )}
-      {...props}
-    />
-  );
-});
-
-EnhancedToastViewport.displayName = "EnhancedToastViewport";
