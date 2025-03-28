@@ -25,6 +25,7 @@ export class GlobalErrorBoundary extends Component<GlobalErrorBoundaryProps, Glo
   }
 
   static getDerivedStateFromError(error: Error) {
+    console.error("Global error caught:", error);
     return {
       hasError: true,
       error

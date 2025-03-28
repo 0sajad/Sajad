@@ -35,7 +35,9 @@ export function LiveAnnouncer() {
     // Clean up
     return () => {
       // @ts-ignore - Remove the announce function from the window object
-      delete window.announce;
+      if (window.announce && typeof window.announce === 'function') {
+        window.announce = () => {};
+      }
     };
   }, []);
   

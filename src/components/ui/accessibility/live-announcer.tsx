@@ -82,9 +82,4 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
   );
 }
 
-// إضافة تعريف الأنواع لوظيفة الإعلان العالمية
-declare global {
-  interface Window {
-    announce(message: string, level?: "polite" | "assertive"): void;
-  }
-}
+// Remove duplicate type declaration

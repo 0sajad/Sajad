@@ -9,6 +9,7 @@ import { ModeProvider } from "@/context/ModeContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AnimatePresence } from "framer-motion";
 import { GlobalErrorBoundary } from "./components/ui/error/GlobalErrorBoundary";
+import { LiveAnnouncer } from "./components/ui/accessibility/LiveAnnouncer";
 
 // Pages
 import Dashboard from "./pages/Dashboard";
@@ -45,6 +46,7 @@ function App() {
       <ThemeProvider defaultTheme="system" storageKey="octa-gram-theme">
         <ModeProvider>
           <TooltipProvider>
+            <LiveAnnouncer />
             <div className={cn(
               "min-h-screen bg-background font-sans antialiased",
               isRTL ? "rtl" : "ltr"

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from "react";
 
 interface ScreenReaderAnnouncerProps {
@@ -34,30 +33,10 @@ export function ScreenReaderAnnouncer({
     }
   }, [children]);
   
-  // إضافة وظيفة الإعلان العامة
+  // إضافة وظيفة الإعلان العامة (Using window.announce that is defined in LiveAnnouncer)
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      window.announce = (message: string, level: "polite" | "assertive" = politeness) => {
-        if (announcerRef.current) {
-          announcerRef.current.setAttribute("aria-live", level);
-          
-          // إعادة تعيين النص ثم إضافته لضمان قراءته
-          announcerRef.current.textContent = '';
-          
-          setTimeout(() => {
-            if (announcerRef.current) {
-              announcerRef.current.textContent = message;
-            }
-          }, 50);
-        }
-      };
-    }
-    
-    return () => {
-      if (typeof window !== 'undefined') {
-        window.announce = () => {};
-      }
-    };
+    // We'll use the global announce function defined in LiveAnnouncer
+    // No need to redefine it here to avoid conflicts
   }, [politeness]);
   
   return (
@@ -84,9 +63,4 @@ export function useScreenReaderAnnouncer() {
   return { announce };
 }
 
-// تعريف النوع للوظيفة العامة
-declare global {
-  interface Window {
-    announce(message: string, level?: "polite" | "assertive"): void;
-  }
-}
+// Type definition moved to window.d.ts
