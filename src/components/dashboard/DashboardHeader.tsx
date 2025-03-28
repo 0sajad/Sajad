@@ -56,7 +56,7 @@ export function DashboardHeader() {
             <div>
               <p className="text-sm font-medium">{t('systemStatus')}</p>
               <div className="flex items-center gap-2 mt-1">
-                <Badge variant="success" className="bg-green-500">
+                <Badge variant="default" className="bg-green-500">
                   {t('active')}
                 </Badge>
               </div>

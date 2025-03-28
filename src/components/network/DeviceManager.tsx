@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,7 +35,6 @@ export function DeviceManager() {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
   
-  // قائمة الأجهزة الوهمية
   const [devices] = useState<Device[]>([
     {
       id: "1",
@@ -90,14 +88,12 @@ export function DeviceManager() {
     }
   ]);
   
-  // تصفية الأجهزة بناءً على البحث
   const filteredDevices = devices.filter(device => 
     device.name.toLowerCase().includes(search.toLowerCase()) ||
     device.ipAddress.includes(search) ||
     device.macAddress.toLowerCase().includes(search.toLowerCase())
   );
   
-  // الحصول على أيقونة مناسبة لنوع الجهاز
   const getDeviceIcon = (type: DeviceType) => {
     switch (type) {
       case 'laptop': return <Laptop className="h-4 w-4" />;
@@ -109,10 +105,9 @@ export function DeviceManager() {
     }
   };
   
-  // الحصول على بادج الحالة
   const getStatusBadge = (isOnline: boolean) => {
     return isOnline 
-      ? <Badge variant="success" className="bg-green-500">Online</Badge>
+      ? <Badge variant="default" className="bg-green-500">Online</Badge>
       : <Badge variant="outline">Offline</Badge>;
   };
   
