@@ -88,8 +88,8 @@ export function usePerformanceOptimization() {
       
       return url.toString();
     } catch (error) {
-      // في حالة حدوث خطأ، أعد المصدر الأصلي
-      return src;
+      // في حالة حدوث خطأ، أعد المصدر الأصلي أو سلسلة فارغة إذا كان المصدر غير محدد
+      return src || '';
     }
   }, [deviceTier]);
   

@@ -32,7 +32,10 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
   // Make sure to apply correct direction to page on load
   useEffect(() => {
     setMounted(true);
-    const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
+    // Make sure we have a valid language before checking
+    const currentLang = i18n.language || 'en';
+    const isRTL = currentLang === "ar" || currentLang === "ar-iq";
+    
     if (isRTL) {
       document.documentElement.setAttribute("dir", "rtl");
       document.body.classList.add('rtl-active');
@@ -43,18 +46,19 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
     
     // Make sure language is properly applied
     const savedLanguage = localStorage.getItem("language");
-    if (savedLanguage && savedLanguage !== i18n.language) {
+    if (savedLanguage && savedLanguage !== currentLang) {
       i18n.changeLanguage(savedLanguage);
     }
   }, [i18n.language, i18n]);
 
-  // Find current language
-  const currentLanguage = languages.find(lang => lang.code === i18n.language)?.code || languages[0].code;
-  const currentLanguageFlag = languages.find(lang => lang.code === currentLanguage)?.flag || "🌐";
+  // Find current language - ensure we have a default
+  const currentLanguage = i18n.language || 'en';
+  const currentLanguageObj = languages.find(lang => lang.code === currentLanguage) || languages.find(lang => lang.code === 'en') || languages[0];
+  const currentLanguageFlag = currentLanguageObj?.flag || "🌐";
 
   // Get tooltip text based on current language
   const getTooltipText = () => {
-    if (i18n.language === 'ar-iq') {
+    if (currentLanguage === 'ar-iq') {
       return 'غير اللغة';
     }
     return t('common.selectLanguage', 'تغيير اللغة');

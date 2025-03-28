@@ -38,8 +38,11 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
   useEffect(() => {
     setMounted(true);
     
+    // Make sure we have a valid language before checking
+    const currentLang = i18n.language || 'en';
     // تطبيق اتجاه RTL للغة العربية عند التركيب
-    const isRTL = i18n.language === 'ar' || i18n.language === 'ar-iq';
+    const isRTL = currentLang === 'ar' || currentLang === 'ar-iq';
+    
     if (isRTL) {
       document.documentElement.dir = 'rtl';
       document.body.classList.add('rtl-active');
@@ -53,20 +56,27 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
    * معالج تغيير اللغة - يعلن قارئ الشاشة بالتغيير
    */
   const handleLanguageChange = (langCode: string) => {
-    const newLanguageName = languageNames[langCode as keyof typeof languageNames]?.nativeName || langCode;
+    if (!langCode) return; // Prevent operations on undefined or empty language code
     
-    // إعلان مخصص حسب اللغة الحالية 
+    const newLanguageName = languageNames && langCode in languageNames 
+      ? languageNames[langCode as keyof typeof languageNames]?.nativeName 
+      : langCode;
+    
+    // إعلان مخصص حسب اللغة الحالية
+    const currentLang = i18n.language || 'en';
     let message = '';
-    if (i18n.language === 'ar-iq') {
+    if (currentLang === 'ar-iq') {
       message = `راح نغير اللغة لـ ${newLanguageName}`;
-    } else if (i18n.language.startsWith('ar')) {
+    } else if (currentLang.startsWith('ar')) {
       message = `جاري التغيير إلى اللغة ${newLanguageName}`;
     } else {
       message = `Changing language to ${newLanguageName}`;
     }
       
     // إعلان التغيير لقارئات الشاشة
-    announce(message, "polite");
+    if (announce) {
+      announce(message, "polite");
+    }
     
     // تغيير اللغة
     changeLanguage(langCode);
@@ -76,7 +86,8 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
    * الحصول على نص تلميح الأداة المناسب للغة الحالية
    */
   const getTooltipText = () => {
-    if (i18n.language === 'ar-iq') {
+    const currentLang = i18n.language || 'en';
+    if (currentLang === 'ar-iq') {
       return 'غير اللغة';
     }
     return t('common.selectLanguage', 'تغيير اللغة');
@@ -87,8 +98,17 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
     return null;
   }
 
+  // Safeguard against languageNames being undefined
+  if (!languageNames) {
+    return null;
+  }
+
   // الحصول على معلومات اللغة الحالية
-  const currentLanguage = languageNames[i18n.language as keyof typeof languageNames] || languageNames['en'];
+  const currentLang = i18n.language || 'en';
+  const currentLanguage = languageNames[currentLang as keyof typeof languageNames] || languageNames['en'];
+
+  // Safeguard against getGroupedLanguages being undefined
+  const groupedLanguages = getGroupedLanguages ? getGroupedLanguages() : ['en'];
 
   return (
     <TooltipProvider>
@@ -125,9 +145,11 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
           </DropdownMenuLabel>
           <DropdownMenuSeparator className="bg-gradient-to-r from-blue-200 to-purple-200 dark:from-blue-800/30 dark:to-purple-800/30" />
           
-          {getGroupedLanguages().map((langCode) => {
+          {groupedLanguages.map((langCode) => {
             const isActive = i18n.language === langCode;
-            const lang = languageNames[langCode];
+            if (!languageNames[langCode as keyof typeof languageNames]) return null;
+            
+            const lang = languageNames[langCode as keyof typeof languageNames];
             const isIraqiArabic = langCode === 'ar-iq';
             
             return (

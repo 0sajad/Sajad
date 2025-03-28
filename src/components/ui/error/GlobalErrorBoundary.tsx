@@ -41,6 +41,24 @@ export class GlobalErrorBoundary extends Component<GlobalErrorBoundaryProps, Glo
   }
 
   handleReload = () => {
+    // Before reloading, we'll try to clear some browser cache
+    if ('caches' in window) {
+      caches.keys().then(cacheNames => {
+        cacheNames.forEach(cacheName => {
+          caches.delete(cacheName);
+        });
+      });
+    }
+    
+    // Clear localStorage related to language settings
+    try {
+      localStorage.removeItem('i18nextLng');
+      localStorage.removeItem('language');
+    } catch (e) {
+      console.error('Failed to clear language storage', e);
+    }
+    
+    // Reload the page
     window.location.reload();
   };
 

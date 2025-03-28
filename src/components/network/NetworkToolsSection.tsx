@@ -1,4 +1,3 @@
-
 import React from "react";
 import { AIChatbot } from "../ai/AIChatbot";
 import { useTranslation } from "react-i18next";
@@ -57,3 +56,6 @@ export function NetworkToolsSection() {
     </section>
   );
 }
+
+// Add default export for compatibility with React.lazy()
+export default NetworkToolsSection;

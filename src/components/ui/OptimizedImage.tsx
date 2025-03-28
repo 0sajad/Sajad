@@ -1,8 +1,7 @@
 
-import React, { useState, useEffect, useRef } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { usePerformanceOptimization } from "@/hooks/usePerformanceOptimization";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { usePerformanceOptimization } from '@/hooks/usePerformanceOptimization';
+import { cn } from '@/lib/utils';
 
 interface OptimizedImageProps {
   src: string;
@@ -10,142 +9,58 @@ interface OptimizedImageProps {
   width?: number;
   height?: number;
   className?: string;
-  priority?: boolean;
-  objectFit?: "contain" | "cover" | "fill" | "none" | "scale-down";
+  loading?: 'lazy' | 'eager';
   quality?: number;
+  priority?: boolean;
   onLoad?: () => void;
   onError?: () => void;
 }
 
-/**
- * مكون صور محسن للأداء
- * يدعم التحميل الكسول وتقليل جودة الصور للأجهزة منخفضة الأداء
- */
 export function OptimizedImage({
   src,
   alt,
   width,
   height,
-  className = "",
-  priority = false,
-  objectFit = "cover",
+  className,
+  loading = 'lazy',
   quality,
+  priority = false,
   onLoad,
   onError,
-}: OptimizedImageProps) {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isVisible, setIsVisible] = useState(priority);
-  const [hasError, setHasError] = useState(false);
-  const { deviceTier, optimizeImageSrc } = usePerformanceOptimization();
-  const imgRef = useRef<HTMLImageElement>(null);
-
-  // تحسين مصدر الصورة حسب قدرة الجهاز
-  const getOptimizedSrc = () => {
-    // التحقق من وجود المصدر
-    if (!src) return '';
-    
-    // تحديد جودة الصورة حسب نوع الجهاز إذا لم يتم تحديدها
-    const autoQuality = quality ?? (deviceTier === 'low' ? 60 : deviceTier === 'medium' ? 80 : 100);
-    // نستدعي optimizeImageSrc بالمعلمات الصحيحة
-    return optimizeImageSrc(src, width, autoQuality);
-  };
-
-  useEffect(() => {
-    if (priority) {
-      setIsVisible(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      {
-        rootMargin: "200px",
-        threshold: 0.01,
-      }
-    );
-
-    if (imgRef.current) {
-      observer.observe(imgRef.current);
-    }
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [priority]);
-
-  const handleLoad = () => {
-    setIsLoaded(true);
-    if (onLoad) onLoad();
-  };
-
-  const handleError = () => {
-    setHasError(true);
-    if (onError) onError();
-  };
-
-  // في حالة حدوث خطأ في تحميل الصورة
-  if (hasError) {
-    return (
-      <div 
-        className={cn(
-          "bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-gray-400 dark:text-gray-600",
-          className
-        )}
-        style={{
-          width: width ? `${width}px` : "100%",
-          height: height ? `${height}px` : "200px",
-        }}
-      >
-        <span className="text-sm">{alt || 'صورة غير متوفرة'}</span>
-      </div>
-    );
+  ...props
+}: OptimizedImageProps & React.ImgHTMLAttributes<HTMLImageElement>) {
+  const { optimizeImageSrc, isLowPerformanceDevice } = usePerformanceOptimization();
+  
+  // Safely handle undefined src
+  if (!src) {
+    console.warn('OptimizedImage: src is undefined');
+    return null;
   }
 
+  // Determine optimized source based on device capabilities
+  const optimizedSrc = optimizeImageSrc(src, width, quality);
+  
+  // Determine loading behavior
+  const effectiveLoading = priority ? 'eager' : loading;
+  
+  // For low-end devices, use smaller size if height and width are provided
+  const finalWidth = isLowPerformanceDevice && width ? Math.floor(width * 0.8) : width;
+  const finalHeight = isLowPerformanceDevice && height ? Math.floor(height * 0.8) : height;
+  
   return (
-    <div
-      className={cn("relative", className)}
-      style={{
-        width: width ? `${width}px` : "100%",
-        height: height ? `${height}px` : "auto",
-      }}
-      ref={imgRef}
-    >
-      {!isLoaded && isVisible && (
-        <Skeleton
-          className="absolute inset-0 z-10"
-          style={{
-            width: "100%",
-            height: "100%",
-          }}
-        />
+    <img
+      src={optimizedSrc}
+      alt={alt}
+      width={finalWidth}
+      height={finalHeight}
+      loading={effectiveLoading}
+      onLoad={onLoad}
+      onError={onError}
+      className={cn(
+        'max-w-full',
+        className
       )}
-      
-      {isVisible && (
-        <img
-          src={getOptimizedSrc()}
-          alt={alt}
-          width={width}
-          height={height}
-          className={cn(
-            "transition-opacity duration-300",
-            isLoaded ? "opacity-100" : "opacity-0",
-            className
-          )}
-          style={{
-            objectFit,
-            width: "100%",
-            height: "100%",
-          }}
-          onLoad={handleLoad}
-          onError={handleError}
-          loading={priority ? "eager" : "lazy"}
-        />
-      )}
-    </div>
+      {...props}
+    />
   );
 }

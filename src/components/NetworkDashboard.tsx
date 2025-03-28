@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useNetworkStats } from "@/hooks/useNetworkStats";
 import { NetworkStatusCard } from "./network/NetworkStatusCard";
@@ -40,3 +39,6 @@ export function NetworkDashboard() {
     </section>
   );
 }
+
+// Add default export for compatibility with React.lazy()
+export default NetworkDashboard;

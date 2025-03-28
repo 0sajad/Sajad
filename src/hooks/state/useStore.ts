@@ -1,20 +1,41 @@
 
 import { create } from 'zustand';
-
-type DeviceTier = 'high' | 'medium' | 'low';
+import { persist } from 'zustand/middleware';
 
 interface StoreState {
-  deviceTier: DeviceTier | null;
-  setDeviceTier: (tier: DeviceTier) => void;
+  deviceTier: 'high' | 'medium' | 'low';
+  setDeviceTier: (tier: 'high' | 'medium' | 'low') => void;
+  preferences: {
+    theme: 'light' | 'dark' | 'system';
+    reducedMotion: boolean;
+    highContrast: boolean;
+  };
+  setPreference: <K extends keyof StoreState['preferences']>(key: K, value: StoreState['preferences'][K]) => void;
 }
 
-export const useStore = create<StoreState>((set) => ({
-  deviceTier: null,
-  setDeviceTier: (tier) => set({ deviceTier: tier }),
-}));
-
-// إضافة نسخة متوافقة مع واجهة البرمجة المستخدمة في الخطافات الأخرى
-export const useAppState = () => {
-  const { deviceTier, setDeviceTier } = useStore();
-  return { deviceTier, setDeviceTier };
-};
+export const useStore = create<StoreState>()(
+  persist(
+    (set) => ({
+      deviceTier: 'medium',
+      setDeviceTier: (tier) => set({ deviceTier: tier }),
+      preferences: {
+        theme: 'system',
+        reducedMotion: false,
+        highContrast: false,
+      },
+      setPreference: (key, value) => set((state) => ({
+        preferences: {
+          ...state.preferences,
+          [key]: value,
+        },
+      })),
+    }),
+    {
+      name: 'app-store',
+      partialize: (state) => ({
+        deviceTier: state.deviceTier,
+        preferences: state.preferences,
+      }),
+    }
+  )
+);
