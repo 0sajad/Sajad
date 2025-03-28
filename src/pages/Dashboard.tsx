@@ -8,7 +8,7 @@ import { SystemStatusPanel } from "@/components/dashboard/SystemStatusPanel";
 import { NetworkQualityIndicator } from "@/components/dashboard/NetworkQualityIndicator";
 import { RealtimeNetworkMonitor } from "@/components/dashboard/RealtimeNetworkMonitor";
 import { useMode } from "@/context/ModeContext";
-import { Layout } from "@/components/layout/Layout";
+import Layout from "@/components/layout/Layout";
 
 export default function Dashboard() {
   const { t, i18n } = useTranslation("dashboard");
