@@ -18,6 +18,7 @@ import License from "./pages/License";
 import FiberOptic from "./pages/FiberOptic";
 import NotFound from "./pages/NotFound";
 import HelpCenter from "./pages/HelpCenter";
+import Index from "./pages/Index";
 
 // Components
 import { LoadingScreen } from "./components/LoadingScreen";
@@ -51,7 +52,7 @@ function App() {
             <Router>
               <AnimatePresence mode="wait">
                 <Routes>
-                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/" element={<Index />} />
                   <Route path="/ai" element={<AIAssistant />} />
                   <Route path="/settings" element={<Settings />} />
                   <Route path="/license" element={<License />} />

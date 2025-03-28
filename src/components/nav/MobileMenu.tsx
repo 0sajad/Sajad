@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Laptop, Settings, HelpCircle, LayoutDashboard, LogIn, Shield, BrainCircuit } from "lucide-react";
+import { Laptop, Settings, HelpCircle, LogIn, Shield, BrainCircuit } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { MobileNavItem } from "./NavItem";
 import { motion } from "framer-motion";
@@ -51,14 +51,6 @@ export function MobileMenu({ isOpen }: MobileMenuProps) {
       exit={{ opacity: 0, y: -20 }}
     >
       <nav className="container mx-auto px-4 py-6 flex flex-col space-y-3">
-        <motion.div variants={itemVariants}>
-          <MobileNavItem
-            to="/"
-            label={t('mobileMenu.dashboard')}
-            icon={<LayoutDashboard size={22} />}
-          />
-        </motion.div>
-        
         <motion.div variants={itemVariants}>
           <MobileNavItem
             to="/tools"

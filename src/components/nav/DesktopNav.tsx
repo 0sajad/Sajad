@@ -1,6 +1,5 @@
 
 import React, { useState } from "react";
-import { DashboardNavItem } from "./items/DashboardNavItem";
 import { ToolsNavItems } from "./items/ToolsNavItems";
 import { UtilityNavItems } from "./items/UtilityNavItems";
 import { NavItemsContainer } from "./NavItemsContainer";
@@ -35,12 +34,6 @@ export const DesktopNav = () => {
         }}
       >
         <NavItemsContainer>
-          <DashboardNavItem
-            onMouseEnter={() => handleItemHover('dashboard')}
-            onMouseLeave={handleItemLeave}
-            isHovered={hoveredItem === 'dashboard'}
-          />
-          
           <ToolsNavItems
             onMouseEnter={() => handleItemHover('tools')}
             onMouseLeave={handleItemLeave}
