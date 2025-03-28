@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -21,15 +20,22 @@ import { ReadingGuide } from "@/components/ui/accessibility/reading-guide";
 import { KeyboardFocusDetector } from "@/components/ui/accessibility/keyboard-focus-detector";
 import { LiveAnnouncer } from "@/components/ui/accessibility/live-announcer";
 import { useA11y } from "@/hooks/useA11y";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { NetworkQualityGauge } from "@/components/analytics/NetworkQualityGauge";
+import { RealTimeMonitoring } from "@/components/analytics/RealTimeMonitoring";
 
 const Index = () => {
   const [loaded, setLoaded] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const { isTransitioning } = useLanguageTransition();
   const { reducedMotion } = useA11y();
+  const isRTL = i18n.dir() === "rtl";
   
-  // Use the new hooks
+  // Use the hooks
   useKeyboardShortcuts();
   usePreferenceSync();
 
@@ -95,22 +101,117 @@ const Index = () => {
           {/* Hero Section */}
           <HeroSection />
           
-          {/* Network Dashboard Section */}
-          <NetworkDashboard />
+          <div className="container mx-auto px-4 py-4">
+            {/* Dashboard Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              {/* Latest Updates Card */}
+              <Card className="border-l-4 border-l-purple-500">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg font-medium flex justify-between items-center">
+                    <span>{isRTL ? "آخر التحديثات" : "Latest Updates"}</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-2 bg-blue-50 rounded-md">
+                      <span className="text-sm text-blue-600">{isRTL ? "تحديث أمني متاح" : "Security update available"}</span>
+                      <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                    </div>
+                    <div className="flex items-center justify-between p-2 bg-green-50 rounded-md">
+                      <span className="text-sm text-green-600">{isRTL ? "تم تحسين الأداء" : "Performance optimized"}</span>
+                      <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Quick Actions Card */}
+              <Card className="border-l-4 border-l-blue-500">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg font-medium flex justify-between items-center">
+                    <span>{isRTL ? "إجراءات سريعة" : "Quick Actions"}</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <Select>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder={isRTL ? "اختر إجراء" : "Select action"} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="scan">{isRTL ? "فحص الشبكة" : "Scan Network"}</SelectItem>
+                        <SelectItem value="optimize">{isRTL ? "تحسين الأداء" : "Optimize Performance"}</SelectItem>
+                        <SelectItem value="backup">{isRTL ? "نسخ احتياطي" : "Backup"}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <div className="flex justify-between">
+                      <Button variant="outline" className="px-4 py-2 w-[48%]">
+                        {isRTL ? "جدولة" : "Schedule"}
+                      </Button>
+                      <Button className="px-4 py-2 bg-primary text-white w-[48%]">
+                        {isRTL ? "تنفيذ" : "Execute"}
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* System Status Card */}
+              <Card className="border-l-4 border-l-green-500">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg font-medium flex justify-between items-center">
+                    <span>{isRTL ? "حالة النظام" : "System Status"}</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">{isRTL ? "الحالة" : "Status"}:</span>
+                      <Badge className="bg-green-500">{isRTL ? "نشط" : "Active"}</Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">{isRTL ? "آخر فحص" : "Last Check"}:</span>
+                      <span className="text-sm font-medium">
+                        {isRTL ? "منذ 2 دقائق" : "2 minutes ago"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">{isRTL ? "مستوى الاستقرار" : "Uptime"}:</span>
+                      <span className="text-sm font-medium">99.9%</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            
+            {/* Network Monitoring Area */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              {/* Real-time Network Monitoring */}
+              <Card className="md:col-span-1 overflow-hidden">
+                <CardContent className="p-4">
+                  <RealTimeMonitoring />
+                </CardContent>
+              </Card>
+
+              {/* Network Quality Gauge */}
+              <Card className="md:col-span-1 overflow-hidden">
+                <CardContent className="p-4">
+                  <NetworkQualityGauge 
+                    qualityScore={87} 
+                    latency={24} 
+                    packetLoss={0.5} 
+                    jitter={1.2}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          </div>
           
-          {/* Network Tools Section */}
+          {/* Other Sections */}
           <NetworkToolsSection />
-          
-          {/* Features Section */}
           <AnimatedCards />
-          
-          {/* AI Features Section */}
           <AIFeaturesSection />
-          
-          {/* Settings Section */}
           <SettingsSection />
-          
-          {/* CTA Section */}
           <CTASection />
         </main>
         

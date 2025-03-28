@@ -1,6 +1,5 @@
 
 import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useTranslation } from "react-i18next";
 import { Activity, Zap, Wifi } from "lucide-react";
@@ -36,7 +35,7 @@ export const NetworkQualityGauge: React.FC<NetworkQualityGaugeProps> = ({
   const quality = getQualityStatus(qualityScore);
   
   return (
-    <div className="h-full rounded-xl bg-white dark:bg-gray-800 shadow-md p-5">
+    <div className="h-full">
       <div className="text-right mb-4">
         <h2 className="text-xl font-bold text-blue-800 dark:text-blue-400 mb-1">{isRTL ? "مؤشر جودة الشبكة" : "Network Quality Gauge"}</h2>
         <p className="text-sm text-gray-500 dark:text-gray-400">{isRTL ? "تحليل مفصل لحالة وأداء الشبكة الحالية" : "Detailed analysis of current network quality"}</p>
@@ -85,7 +84,7 @@ export const NetworkQualityGauge: React.FC<NetworkQualityGaugeProps> = ({
           </div>
           <Progress value={Math.min(100 - (latency * 2), 100)} className="h-2 bg-gray-200 dark:bg-gray-700" />
           <p className="text-xs text-muted-foreground mt-1 dark:text-gray-400">
-            {isRTL ? "تم تناسب معظم التطبيقات" : "Suitable for most applications"}
+            {isRTL ? "مناسب لمعظم التطبيقات" : "Suitable for most applications"}
           </p>
         </div>
         
@@ -116,13 +115,6 @@ export const NetworkQualityGauge: React.FC<NetworkQualityGaugeProps> = ({
             {isRTL ? "معدل تذبذب مستقر ممتاز" : "Excellent stable jitter level"}
           </p>
         </div>
-      </div>
-      
-      <div className="mt-6 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-md">
-        <p className="text-sm font-medium dark:text-white">{isRTL ? "ملخص التشخيص" : "Diagnostic Summary"}:</p>
-        <p className="text-xs text-muted-foreground mt-1 dark:text-gray-400">
-          {isRTL ? "الشبكة في حالة ممتازة. نوصي بالحفاظ على الإعدادات الحالية." : "Network is in excellent condition. We recommend maintaining current settings."}
-        </p>
       </div>
     </div>
   );
