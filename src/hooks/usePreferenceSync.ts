@@ -1,143 +1,147 @@
 
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useA11y } from './useA11y';
+import { useAppState } from './state/use-app-state';
+import { useNotifications } from './useNotifications';
+import { useTranslation } from 'react-i18next';
 
+/**
+ * خطاف لمزامنة تفضيلات التطبيق مع إعدادات النظام
+ */
 export function usePreferenceSync() {
   const { 
-    highContrast, setHighContrast,
-    largeText, setLargeText,
-    reducedMotion, setReducedMotion,
-    focusMode, setFocusMode
+    setReducedMotion, 
+    setHighContrast,
+    setColorBlindMode
   } = useA11y();
-
-  // مزامنة مع تخزين المتصفح والتفضيلات النظام
+  const { setPreference, getPreference } = useAppState();
+  const { info } = useNotifications();
+  const { t } = useTranslation();
+  
+  // التحقق من تفضيلات المستخدم لتقليل الحركة
   useEffect(() => {
-    // تحميل القيم الأولية من التخزين المحلي
-    const loadInitialPreferences = () => {
-      const savedHighContrast = localStorage.getItem('a11y-highContrast');
-      const savedLargeText = localStorage.getItem('a11y-largeText');
-      const savedReducedMotion = localStorage.getItem('a11y-reducedMotion');
-      const savedFocusMode = localStorage.getItem('a11y-focusMode');
-      
-      if (savedHighContrast === 'true') setHighContrast(true);
-      if (savedLargeText === 'true') setLargeText(true);
-      if (savedReducedMotion === 'true') setReducedMotion(true);
-      if (savedFocusMode === 'true') setFocusMode(true);
-      
-      // التحقق من تفضيلات تقليل الحركة في النظام
-      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-      if (prefersReducedMotion.matches && savedReducedMotion === null) {
-        setReducedMotion(true);
-      }
-      
-      // التحقق من تفضيلات مخطط الألوان لتباين محتمل أعلى
-      const prefersColorScheme = window.matchMedia('(prefers-color-scheme: dark)');
-      const prefersDarkWithContrast = window.matchMedia('(prefers-contrast: more)');
-      if (prefersColorScheme.matches && prefersDarkWithContrast.matches && savedHighContrast === null) {
-        setHighContrast(true);
-      }
-      
-      // التحقق من تفضيلات حجم النص في النظام
-      const prefersLargerText = window.matchMedia('(prefers-reduced-transparency: reduce)'); // ليس مثاليًا، ولكنه مؤشر ممكن
-      if (prefersLargerText.matches && savedLargeText === null) {
-        setLargeText(true);
-      }
-    };
+    // استخدام استعلام الوسائط للكشف عن تفضيل تقليل الحركة
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     
-    loadInitialPreferences();
-    
-    // إعلان الإعدادات النشطة للمستخدم
-    const announceInitialSettings = () => {
-      // إذا كانت هناك ميزات نشطة، قم بإنشاء عنصر إعلان لقارئات الشاشة
-      const activeFeatures = [];
-      if (highContrast) activeFeatures.push('high contrast');
-      if (largeText) activeFeatures.push('large text');
-      if (reducedMotion) activeFeatures.push('reduced motion');
-      if (focusMode) activeFeatures.push('focus mode');
+    const handleReducedMotionChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      const prefersReducedMotion = e.matches;
+      const shouldSync = getPreference('syncSystemPreferences', true);
       
-      if (activeFeatures.length > 0) {
-        const announcer = document.createElement('div');
-        announcer.setAttribute('aria-live', 'polite');
-        announcer.className = 'sr-only';
-        announcer.textContent = `Active accessibility features: ${activeFeatures.join(', ')}`;
-        document.body.appendChild(announcer);
+      if (shouldSync) {
+        setReducedMotion(prefersReducedMotion);
+        setPreference('reducedMotion', prefersReducedMotion);
         
-        // إزالة الإعلان بعد قراءته
-        setTimeout(() => {
-          if (document.body.contains(announcer)) {
-            document.body.removeChild(announcer);
-          }
-        }, 3000);
+        if (prefersReducedMotion) {
+          info(
+            t('preferences.reducedMotionEnabled', 'تم تفعيل وضع تقليل الحركة'),
+            t('preferences.syncedWithSystem', 'تمت المزامنة مع تفضيلات النظام')
+          );
+        }
       }
     };
     
-    // تأخير الإعلان للسماح للمستخدم بتحميل الصفحة أولاً
-    const timer = setTimeout(announceInitialSettings, 2000);
+    // التحقق عند التحميل
+    handleReducedMotionChange(reducedMotionQuery);
+    
+    // الاستماع للتغييرات
+    reducedMotionQuery.addEventListener('change', handleReducedMotionChange);
     
     return () => {
-      clearTimeout(timer);
+      reducedMotionQuery.removeEventListener('change', handleReducedMotionChange);
     };
-  }, [setHighContrast, setLargeText, setReducedMotion, setFocusMode]);
+  }, [setReducedMotion, setPreference, getPreference, info, t]);
   
-  // حفظ التفضيلات عند تغييرها
+  // التحقق من وضع الألوان المظلم/الفاتح
   useEffect(() => {
-    localStorage.setItem('a11y-highContrast', highContrast.toString());
-  }, [highContrast]);
-  
-  useEffect(() => {
-    localStorage.setItem('a11y-largeText', largeText.toString());
-  }, [largeText]);
-  
-  useEffect(() => {
-    localStorage.setItem('a11y-reducedMotion', reducedMotion.toString());
-  }, [reducedMotion]);
-  
-  useEffect(() => {
-    localStorage.setItem('a11y-focusMode', focusMode.toString());
-  }, [focusMode]);
-  
-  // الاستماع لتغييرات تفضيلات النظام
-  useEffect(() => {
-    // مراقبة تغييرات تفضيلات تقليل الحركة
-    const prefersReducedMotionMediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const handleReducedMotionChange = (e: MediaQueryListEvent) => {
-      // التحديث فقط إذا لم يقم المستخدم بتعيين تفضيل صريح
-      if (localStorage.getItem('a11y-reducedMotion') === null) {
-        setReducedMotion(e.matches);
-      }
-    };
+    const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
-    // مراقبة تغييرات تفضيلات التباين
-    const prefersContrastMediaQuery = window.matchMedia('(prefers-contrast: more)');
-    const handleContrastChange = (e: MediaQueryListEvent) => {
-      // التحديث فقط إذا لم يقم المستخدم بتعيين تفضيل صريح
-      if (localStorage.getItem('a11y-highContrast') === null) {
-        setHighContrast(e.matches);
-      }
-    };
-    
-    // مراقبة تغيرات الوضع الخفيف/الداكن
-    const prefersColorSchemeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleColorSchemeChange = () => {
-      // لا تغيير مباشر، ولكن قد نحتاج إلى تعديل سلوك التباين العالي
-      const isDarkMode = prefersColorSchemeMediaQuery.matches;
-      const prefersMoreContrast = prefersContrastMediaQuery.matches;
+    const handleDarkModeChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      const prefersDarkMode = e.matches;
+      const shouldSync = getPreference('syncSystemPreferences', true);
       
-      if (isDarkMode && prefersMoreContrast && localStorage.getItem('a11y-highContrast') === null) {
-        setHighContrast(true);
+      if (shouldSync) {
+        setPreference('darkMode', prefersDarkMode);
+        
+        if (prefersDarkMode) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
       }
     };
     
-    prefersReducedMotionMediaQuery.addEventListener('change', handleReducedMotionChange);
-    prefersContrastMediaQuery.addEventListener('change', handleContrastChange);
-    prefersColorSchemeMediaQuery.addEventListener('change', handleColorSchemeChange);
+    // التحقق عند التحميل
+    handleDarkModeChange(darkModeQuery);
+    
+    // الاستماع للتغييرات
+    darkModeQuery.addEventListener('change', handleDarkModeChange);
     
     return () => {
-      prefersReducedMotionMediaQuery.removeEventListener('change', handleReducedMotionChange);
-      prefersContrastMediaQuery.removeEventListener('change', handleContrastChange);
-      prefersColorSchemeMediaQuery.removeEventListener('change', handleColorSchemeChange);
+      darkModeQuery.removeEventListener('change', handleDarkModeChange);
     };
-  }, [setReducedMotion, setHighContrast]);
-
-  return null;
+  }, [setPreference, getPreference]);
+  
+  // التحقق من تفضيلات التباين العالي
+  useEffect(() => {
+    const highContrastQuery = window.matchMedia('(prefers-contrast: more)');
+    
+    const handleHighContrastChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      const prefersHighContrast = e.matches;
+      const shouldSync = getPreference('syncSystemPreferences', true);
+      
+      if (shouldSync) {
+        setHighContrast(prefersHighContrast);
+        setPreference('highContrast', prefersHighContrast);
+        
+        if (prefersHighContrast) {
+          info(
+            t('preferences.highContrastEnabled', 'تم تفعيل وضع التباين العالي'),
+            t('preferences.syncedWithSystem', 'تمت المزامنة مع تفضيلات النظام')
+          );
+        }
+      }
+    };
+    
+    // التحقق عند التحميل
+    handleHighContrastChange(highContrastQuery);
+    
+    // الاستماع للتغييرات
+    highContrastQuery.addEventListener('change', handleHighContrastChange);
+    
+    return () => {
+      highContrastQuery.removeEventListener('change', handleHighContrastChange);
+    };
+  }, [setHighContrast, setPreference, getPreference, info, t]);
+  
+  // وظيفة لإعادة مزامنة جميع التفضيلات مع إعدادات النظام
+  const syncAllWithSystem = useCallback(() => {
+    // مزامنة وضع تقليل الحركة
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(reducedMotionQuery.matches);
+    setPreference('reducedMotion', reducedMotionQuery.matches);
+    
+    // مزامنة وضع الألوان المظلم/الفاتح
+    const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    setPreference('darkMode', darkModeQuery.matches);
+    if (darkModeQuery.matches) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    
+    // مزامنة وضع التباين العالي
+    const highContrastQuery = window.matchMedia('(prefers-contrast: more)');
+    setHighContrast(highContrastQuery.matches);
+    setPreference('highContrast', highContrastQuery.matches);
+    
+    // إعلام المستخدم
+    info(
+      t('preferences.syncComplete', 'تمت مزامنة التفضيلات'),
+      t('preferences.syncedAllPreferences', 'تمت مزامنة جميع التفضيلات مع إعدادات النظام')
+    );
+  }, [setReducedMotion, setHighContrast, setPreference, info, t]);
+  
+  return {
+    syncAllWithSystem
+  };
 }

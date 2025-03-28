@@ -1,75 +1,263 @@
 
-import { useState, useEffect } from 'react';
-import { useNetworkStatus } from './useAppState';
-import { useOfflineSupport } from './useOfflineSupport';
+import { useState, useEffect, useCallback } from 'react';
+import { useNetworkStatus } from './state/use-app-state';
+import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
+import { useAppState } from './state/use-app-state';
 
-type OfflineModeOptions = {
-  autoSync?: boolean;
-  showOfflineIndicator?: boolean;
-  showNotifications?: boolean;
-};
+interface OfflineSyncItem {
+  id: string;
+  type: string;
+  data: any;
+  timestamp: number;
+  priority: number;
+}
 
 /**
- * خطاف مبسط لإدارة وضع عدم الاتصال في التطبيق
+ * خطاف لإدارة وضع عدم الاتصال والمزامنة عندما يعود الاتصال
  */
-export function useOfflineMode(options: OfflineModeOptions = {}) {
-  const { 
-    autoSync = true, 
-    showOfflineIndicator = true,
-    showNotifications = true 
-  } = options;
+export function useOfflineMode() {
+  const { t } = useTranslation();
+  const { isOnline, checkNetworkStatus, setNetworkStatus } = useNetworkStatus();
+  const [isOffline, setIsOffline] = useState(!isOnline);
+  const [pendingSyncItems, setPendingSyncItems] = useState<OfflineSyncItem[]>([]);
+  const [syncInProgress, setSyncInProgress] = useState(false);
+  const { getPreference } = useAppState();
   
-  const { isOnline, checkConnection } = useNetworkStatus();
-  const { saveOfflineData, getOfflineData, hasPendingSync, syncOfflineData } = useOfflineSupport();
-  const [wasOnline, setWasOnline] = useState(true);
-  
-  // تتبع تغيرات حالة الاتصال
+  // الاستماع إلى أحداث الاتصال بالشبكة
   useEffect(() => {
-    // إذا استعاد المستخدم الاتصال وكان هناك بيانات للمزامنة
-    if (isOnline && !wasOnline && hasPendingSync && autoSync) {
-      syncOfflineData();
-    }
-    
-    setWasOnline(isOnline);
-  }, [isOnline, wasOnline, hasPendingSync, autoSync, syncOfflineData]);
-  
-  // إضافة مؤشر وضع عدم الاتصال إلى واجهة المستخدم
-  useEffect(() => {
-    if (!showOfflineIndicator) return;
-    
-    const offlineIndicator = document.getElementById('offline-indicator');
-    
-    if (!isOnline && !offlineIndicator) {
-      const indicator = document.createElement('div');
-      indicator.id = 'offline-indicator';
-      indicator.className = 'fixed bottom-4 left-4 bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-medium z-50 flex items-center';
-      indicator.innerHTML = '<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> وضع عدم الاتصال';
-      document.body.appendChild(indicator);
-    } else if (isOnline && offlineIndicator) {
-      offlineIndicator.remove();
-    }
-    
-    return () => {
-      const indicator = document.getElementById('offline-indicator');
-      if (indicator) {
-        indicator.remove();
+    const handleOnline = async () => {
+      // التحقق من حالة الاتصال بالفعل (وليس فقط الاعتماد على أحداث الشبكة)
+      const isActuallyOnline = await checkNetworkStatus();
+      
+      if (isActuallyOnline) {
+        setIsOffline(false);
+        setNetworkStatus({ isConnected: true, isOnline: true });
+        
+        // إعلام المستخدم
+        toast.success(
+          t('network.backOnline', 'تمت استعادة الاتصال'),
+          {
+            description: hasPendingSync() 
+              ? t('network.syncPending', 'جاري مزامنة البيانات المحفوظة محليًا')
+              : undefined,
+            duration: 3000
+          }
+        );
+        
+        // مزامنة البيانات المخزنة محليًا
+        if (hasPendingSync() && getPreference('autoSync', true)) {
+          syncOfflineData();
+        }
       }
     };
-  }, [isOnline, showOfflineIndicator]);
+    
+    const handleOffline = () => {
+      setIsOffline(true);
+      setNetworkStatus({ isConnected: false, isOnline: false });
+      
+      // إعلام المستخدم
+      toast.warning(
+        t('network.offline', 'تم فقدان الاتصال'),
+        {
+          description: t('network.offlineDescription', 'سيتم حفظ التغييرات محليًا ومزامنتها عند استعادة الاتصال'),
+          duration: 5000
+        }
+      );
+    };
+    
+    // الاستماع إلى أحداث الشبكة
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    
+    // التحقق من الحالة الأولية
+    if (!isOnline) {
+      setIsOffline(true);
+    }
+    
+    // تحميل العناصر المعلقة من التخزين المحلي
+    loadPendingSyncItems();
+    
+    // التحقق من حالة الاتصال دوريًا
+    const checkInterval = setInterval(async () => {
+      if (isOffline) {
+        // محاولة إعادة الاتصال
+        const isActuallyOnline = await checkNetworkStatus();
+        if (isActuallyOnline) {
+          handleOnline();
+        }
+      }
+    }, 30000); // التحقق كل 30 ثانية
+    
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+      clearInterval(checkInterval);
+    };
+  }, [isOnline, checkNetworkStatus, setNetworkStatus, t, isOffline]);
   
-  /**
-   * محاولة إعادة الاتصال بالشبكة
-   */
-  const attemptReconnect = async () => {
-    return await checkConnection();
-  };
+  // تحميل العناصر المعلقة من التخزين المحلي
+  const loadPendingSyncItems = useCallback(() => {
+    try {
+      const storedItems = localStorage.getItem('offline_sync_items');
+      if (storedItems) {
+        setPendingSyncItems(JSON.parse(storedItems));
+      }
+    } catch (error) {
+      console.error('Error loading offline sync items:', error);
+    }
+  }, []);
+  
+  // حفظ العناصر المعلقة في التخزين المحلي
+  const savePendingSyncItems = useCallback((items: OfflineSyncItem[]) => {
+    try {
+      localStorage.setItem('offline_sync_items', JSON.stringify(items));
+    } catch (error) {
+      console.error('Error saving offline sync items:', error);
+    }
+  }, []);
+  
+  // إضافة عنصر للمزامنة عندما يعود الاتصال
+  const addOfflineItem = useCallback((type: string, data: any, priority = 1) => {
+    const newItem: OfflineSyncItem = {
+      id: `offline_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      type,
+      data,
+      timestamp: Date.now(),
+      priority
+    };
+    
+    setPendingSyncItems(prev => {
+      const newItems = [...prev, newItem].sort((a, b) => b.priority - a.priority);
+      savePendingSyncItems(newItems);
+      return newItems;
+    });
+    
+    return newItem.id;
+  }, [savePendingSyncItems]);
+  
+  // التحقق مما إذا كان هناك عناصر معلقة للمزامنة
+  const hasPendingSync = useCallback(() => {
+    return pendingSyncItems.length > 0;
+  }, [pendingSyncItems]);
+  
+  // مزامنة البيانات المخزنة محليًا
+  const syncOfflineData = useCallback(async () => {
+    if (syncInProgress || !isOnline || pendingSyncItems.length === 0) {
+      return;
+    }
+    
+    setSyncInProgress(true);
+    
+    try {
+      // تكرار المصفوفة لتجنب مشاكل التحديث المتزامن
+      const itemsToSync = [...pendingSyncItems];
+      const failedItems: OfflineSyncItem[] = [];
+      
+      // إعلام المستخدم
+      const toastId = toast.loading(
+        t('network.syncing', 'جاري المزامنة'),
+        {
+          description: t('network.syncingItems', 'جاري مزامنة {{count}} عنصر', { count: itemsToSync.length }),
+          duration: Infinity
+        }
+      );
+      
+      for (const item of itemsToSync) {
+        try {
+          // هنا يتم تنفيذ المزامنة الفعلية حسب نوع العنصر
+          // هذا مجرد مثال، ويجب تنفيذ المنطق الفعلي حسب متطلبات التطبيق
+          switch (item.type) {
+            case 'form_submission':
+              // إرسال بيانات النموذج إلى الخادم
+              // await api.submitForm(item.data);
+              console.log('Syncing form submission:', item.data);
+              await new Promise(resolve => setTimeout(resolve, 500)); // تأخير وهمي للمحاكاة
+              break;
+            
+            case 'user_preference':
+              // تحديث تفضيلات المستخدم على الخادم
+              // await api.updatePreferences(item.data);
+              console.log('Syncing user preference:', item.data);
+              await new Promise(resolve => setTimeout(resolve, 300)); // تأخير وهمي للمحاكاة
+              break;
+            
+            default:
+              console.warn('Unknown sync item type:', item.type);
+              failedItems.push(item);
+          }
+        } catch (error) {
+          console.error('Error syncing item:', item, error);
+          failedItems.push(item);
+        }
+      }
+      
+      // تحديث قائمة العناصر المعلقة
+      setPendingSyncItems(failedItems);
+      savePendingSyncItems(failedItems);
+      
+      // إعلام المستخدم
+      toast.dismiss(toastId);
+      
+      if (failedItems.length === 0) {
+        toast.success(
+          t('network.syncComplete', 'تمت المزامنة بنجاح'),
+          { duration: 3000 }
+        );
+      } else {
+        toast.warning(
+          t('network.syncPartial', 'تمت المزامنة جزئيًا'),
+          {
+            description: t('network.syncFailed', 'فشل مزامنة {{count}} عنصر', { count: failedItems.length }),
+            duration: 5000
+          }
+        );
+      }
+    } finally {
+      setSyncInProgress(false);
+    }
+  }, [isOnline, pendingSyncItems, savePendingSyncItems, syncInProgress, t]);
+  
+  // محاولة إعادة الاتصال يدويًا
+  const attemptReconnect = useCallback(async () => {
+    toast.loading(
+      t('network.checkingConnection', 'جاري التحقق من الاتصال'),
+      { duration: 2000 }
+    );
+    
+    const isConnected = await checkNetworkStatus();
+    
+    if (isConnected) {
+      setIsOffline(false);
+      setNetworkStatus({ isConnected: true, isOnline: true });
+      
+      toast.success(
+        t('network.connectionRestored', 'تم استعادة الاتصال'),
+        { duration: 3000 }
+      );
+      
+      return true;
+    } else {
+      toast.error(
+        t('network.stillOffline', 'لا يزال الاتصال مفقودًا'),
+        {
+          description: t('network.checkNetworkSettings', 'تحقق من إعدادات الشبكة وحاول مرة أخرى'),
+          duration: 5000
+        }
+      );
+      
+      return false;
+    }
+  }, [checkNetworkStatus, setNetworkStatus, t]);
   
   return {
     isOnline,
-    isOffline: !isOnline,
-    hasPendingSync,
-    saveOfflineData,
-    getOfflineData,
+    isOffline,
+    hasPendingSync: hasPendingSync(),
+    pendingItemsCount: pendingSyncItems.length,
+    isSyncing: syncInProgress,
+    
+    addOfflineItem,
     syncOfflineData,
     attemptReconnect
   };
