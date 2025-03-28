@@ -24,37 +24,37 @@ export function KeyboardNavigationMenu({ visible }: KeyboardNavigationMenuProps)
   const shortcuts = [
     {
       key: "Alt+C",
-      label: t('accessibility.highContrast'),
+      description: t('accessibility.highContrast'),
       icon: <Eye className="h-4 w-4" />
     },
     {
       key: "Alt+T",
-      label: t('accessibility.largeText'),
+      description: t('accessibility.largeText'),
       icon: <Type className="h-4 w-4" />
     },
     {
       key: "Alt+M",
-      label: t('accessibility.reducedMotion'),
+      description: t('accessibility.reducedMotion'),
       icon: <ZoomIn className="h-4 w-4" />
     },
     {
       key: "Alt+F",
-      label: t('accessibility.focusMode'),
+      description: t('accessibility.focusMode'),
       icon: <MousePointer2 className="h-4 w-4" />
     },
     {
       key: "Alt+D",
-      label: t('accessibility.dyslexicFont'),
+      description: t('accessibility.dyslexicFont'),
       icon: <Type className="h-4 w-4" />
     },
     {
       key: "Alt+R",
-      label: t('accessibility.readingGuide'),
+      description: t('accessibility.readingGuide'),
       icon: <MousePointer2 className="h-4 w-4" />
     },
     {
       key: "Alt+S",
-      label: t('accessibility.soundFeedback'),
+      description: t('accessibility.soundFeedback'),
       icon: <Volume className="h-4 w-4" />
     }
   ];

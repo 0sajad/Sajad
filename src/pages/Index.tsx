@@ -49,7 +49,7 @@ const Index = () => {
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const { i18n } = useTranslation();
   const { isTransitioning } = useLanguageTransition();
-  const { reducedMotion } = useA11y();
+  const { reducedMotion, keyboardNavigationVisible } = useA11y();
   
   // استخدام الخطافات الضرورية
   useKeyboardShortcuts();
@@ -161,7 +161,7 @@ const Index = () => {
           </Suspense>
           
           <Suspense fallback={null}>
-            <KeyboardNavigationMenu />
+            <KeyboardNavigationMenu visible={keyboardNavigationVisible} />
           </Suspense>
           
           <KeyboardFocusDetector />
