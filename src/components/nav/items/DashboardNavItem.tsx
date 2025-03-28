@@ -11,11 +11,37 @@ interface DashboardNavItemProps {
   isHovered?: boolean;
 }
 
-// هذا المكون تم تعطيله حسب طلب المستخدم
 export const DashboardNavItem = ({
   onMouseEnter,
   onMouseLeave,
   isHovered
 }: DashboardNavItemProps = {}) => {
-  return null; // لا يعرض أي شيء
+  const { t } = useTranslation();
+  
+  return (
+    <motion.div 
+      variants={{
+        hidden: { opacity: 0, y: -10 },
+        visible: { 
+          opacity: 1, 
+          y: 0,
+          transition: { 
+            type: "spring",
+            stiffness: 300,
+            damping: 20
+          }
+        }
+      }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      <NavItem 
+        to="/dashboard" 
+        icon={<LayoutDashboard size={17} />} 
+        label={t('header.dashboard')} 
+      />
+    </motion.div>
+  );
 };
