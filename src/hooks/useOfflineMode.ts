@@ -1,109 +1,68 @@
 
-import { useEffect, useState } from 'react';
-import { useAppState } from './state/use-app-state';
-import { useToast } from '@/components/ui/use-toast';
-import { useTranslation } from 'react-i18next';
+import { useState, useEffect } from 'react';
+import { useNetworkStatus } from './useAppState';
+import { useOfflineSupport } from './useOfflineSupport';
+
+type OfflineModeOptions = {
+  autoSync?: boolean;
+  showOfflineIndicator?: boolean;
+  showNotifications?: boolean;
+};
 
 /**
- * خطاف للتعامل مع وضع عدم الاتصال بالإنترنت
- * يوفر معلومات عن حالة الاتصال والوظائف ذات الصلة
+ * خطاف مبسط لإدارة وضع عدم الاتصال في التطبيق
  */
-export function useOfflineMode() {
-  const { t } = useTranslation();
-  const { toast } = useToast();
-  const isOnline = useAppState(state => state.isOnline);
-  const setIsOnline = useAppState(state => (online: boolean) => state.isOnline = online);
-  const [isInitialCheck, setIsInitialCheck] = useState(true);
-  const [enableOfflineNotifications, setEnableOfflineNotifications] = useState(() => {
-    // استرجاع الإعداد من التخزين المحلي
-    const saved = localStorage.getItem('enableOfflineNotifications');
-    return saved !== null ? saved === 'true' : true;
-  });
+export function useOfflineMode(options: OfflineModeOptions = {}) {
+  const { 
+    autoSync = true, 
+    showOfflineIndicator = true,
+    showNotifications = true 
+  } = options;
   
-  // حفظ إعداد الإشعارات في التخزين المحلي
+  const { isOnline } = useNetworkStatus();
+  const { saveOfflineData, getOfflineData, hasPendingSync, syncOfflineData } = useOfflineSupport();
+  const [wasOnline, setWasOnline] = useState(true);
+  
+  // تتبع تغيرات حالة الاتصال
   useEffect(() => {
-    localStorage.setItem('enableOfflineNotifications', String(enableOfflineNotifications));
-  }, [enableOfflineNotifications]);
-  
-  // وظيفة لمراقبة اتصال الإنترنت
-  useEffect(() => {
-    const handleOnline = () => {
-      setIsOnline(true);
-      if (!isInitialCheck && enableOfflineNotifications) {
-        toast({
-          title: t('network.backOnline', 'تم استعادة الاتصال'),
-          description: t('network.backOnlineMessage', 'تم استعادة اتصالك بالإنترنت'),
-          variant: 'default',
-        });
-      }
-    };
-    
-    const handleOffline = () => {
-      setIsOnline(false);
-      if (!isInitialCheck && enableOfflineNotifications) {
-        toast({
-          title: t('network.offline', 'انقطع الاتصال'),
-          description: t('network.offlineMessage', 'انقطع اتصالك بالإنترنت، بعض الميزات قد لا تعمل'),
-          variant: 'destructive',
-          duration: 5000,
-        });
-      }
-    };
-    
-    // التحقق من حالة الاتصال الحالية
-    setIsOnline(navigator.onLine);
-    setIsInitialCheck(false);
-    
-    // إضافة مستمعي الأحداث
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    
-    // إزالة مستمعي الأحداث عند تفكيك المكون
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, [enableOfflineNotifications, isInitialCheck, setIsOnline, t, toast]);
-  
-  /**
-   * محاولة إعادة الاتصال بالإنترنت (يظهر نافذة منبثقة للمستخدم)
-   */
-  const attemptReconnect = () => {
-    if (!isOnline) {
-      toast({
-        title: t('network.reconnectAttempt', 'جاري محاولة إعادة الاتصال'),
-        description: t('network.reconnectMessage', 'يرجى التحقق من اتصالك بالإنترنت'),
-        variant: 'default',
-      });
-      
-      // محاولة إعادة التحقق من الاتصال
-      fetch('https://www.google.com/generate_204', {
-        method: 'HEAD',
-        mode: 'no-cors',
-        cache: 'no-store',
-      })
-        .then(() => {
-          setIsOnline(true);
-          toast({
-            title: t('network.reconnectSuccess', 'تم إعادة الاتصال'),
-            description: t('network.reconnectSuccessMessage', 'تم استعادة اتصالك بالإنترنت'),
-            variant: 'default',
-          });
-        })
-        .catch(() => {
-          toast({
-            title: t('network.stillOffline', 'ما زلت غير متصل'),
-            description: t('network.stillOfflineMessage', 'تأكد من اتصالك بالإنترنت وحاول مرة أخرى'),
-            variant: 'destructive',
-          });
-        });
+    // إذا استعاد المستخدم الاتصال وكان هناك بيانات للمزامنة
+    if (isOnline && !wasOnline && hasPendingSync && autoSync) {
+      syncOfflineData();
     }
-  };
+    
+    setWasOnline(isOnline);
+  }, [isOnline, wasOnline, hasPendingSync, autoSync, syncOfflineData]);
+  
+  // إضافة مؤشر وضع عدم الاتصال إلى واجهة المستخدم
+  useEffect(() => {
+    if (!showOfflineIndicator) return;
+    
+    const offlineIndicator = document.getElementById('offline-indicator');
+    
+    if (!isOnline && !offlineIndicator) {
+      const indicator = document.createElement('div');
+      indicator.id = 'offline-indicator';
+      indicator.className = 'fixed bottom-4 left-4 bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-medium z-50 flex items-center';
+      indicator.innerHTML = '<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> وضع عدم الاتصال';
+      document.body.appendChild(indicator);
+    } else if (isOnline && offlineIndicator) {
+      offlineIndicator.remove();
+    }
+    
+    return () => {
+      const indicator = document.getElementById('offline-indicator');
+      if (indicator) {
+        indicator.remove();
+      }
+    };
+  }, [isOnline, showOfflineIndicator]);
   
   return {
     isOnline,
-    enableOfflineNotifications,
-    setEnableOfflineNotifications,
-    attemptReconnect,
+    isOffline: !isOnline,
+    hasPendingSync,
+    saveOfflineData,
+    getOfflineData,
+    syncOfflineData,
   };
 }

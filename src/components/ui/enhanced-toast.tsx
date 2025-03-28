@@ -1,11 +1,11 @@
 
 import React, { useEffect, useRef } from "react";
-import { Toast, ToastProps } from "@/components/ui/toast";
+import { Toast } from "@/components/ui/toast";
 import { useA11y } from "@/hooks/useA11y";
 import { Check, X, AlertTriangle, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Fix the interface to not extend ToastProps directly since the variant types conflict
+// تحسين واجهة توصيف المكون
 interface EnhancedToastProps {
   className?: string;
   variant?: "default" | "destructive" | "success" | "warning" | "info";
@@ -13,7 +13,6 @@ interface EnhancedToastProps {
   onDismiss?: () => void;
   title?: React.ReactNode;
   description?: React.ReactNode;
-  // Add other toast props we might need, but exclude 'variant' from original ToastProps
   duration?: number;
   action?: React.ReactNode;
 }
@@ -89,10 +88,8 @@ export function EnhancedToast({
     ? { animation: "none", transition: "none" }
     : {};
   
-  // Fixed: don't pass the ref directly to Toast since types don't match
   return (
     <Toast
-      // Don't pass the ref directly since it's a div ref and Toast expects an li ref
       className={cn(
         "flex items-start gap-3",
         variant === "success" && "bg-green-50 text-green-900 dark:bg-green-900/20 dark:text-green-50 border-green-200 dark:border-green-800/50",
@@ -104,7 +101,6 @@ export function EnhancedToast({
       role="status"
       aria-live={variant === "destructive" ? "assertive" : "polite"}
       style={animations}
-      // Map our custom variant to the allowed Toast variants
       variant={variant === "destructive" ? "destructive" : "default"}
       {...props}
     >

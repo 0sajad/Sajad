@@ -1,103 +1,81 @@
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAppState } from './useAppState';
+
+interface RTLOptions {
+  enforceRTL?: boolean;
+  enforceSpecificLanguages?: string[];
+}
 
 /**
- * خطاف (hook) لتحسين دعم الاتجاه من اليمين إلى اليسار (RTL)
- * يقوم بإدارة تغييرات الاتجاه وتطبيق التنسيقات المناسبة عند تغيير اللغة
+ * خطاف لدعم اللغات التي تكتب من اليمين إلى اليسار مثل العربية
  */
-export function useRTLSupport() {
+export function useRTLSupport(options: RTLOptions = {}) {
+  const { enforceRTL = false, enforceSpecificLanguages = ['ar', 'ar-iq', 'he', 'ur', 'fa'] } = options;
   const { i18n } = useTranslation();
-  const { preferences } = useAppState();
+  const [isRTL, setIsRTL] = useState(false);
   
-  // تطبيق الاتجاه المناسب عند تغيير اللغة
+  // تحديث اتجاه المستند عند تغيير اللغة
   useEffect(() => {
-    const isRTL = i18n.language === 'ar' || i18n.language === 'ar-iq';
+    const currentLang = i18n.language;
     
-    // تطبيق الاتجاه على عنصر HTML الجذر
-    document.documentElement.setAttribute('dir', isRTL ? 'rtl' : 'ltr');
+    // تحديد ما إذا كانت اللغة الحالية هي RTL
+    const rtlLanguages = enforceSpecificLanguages;
+    const shouldBeRTL = enforceRTL || rtlLanguages.some(lang => 
+      currentLang === lang || currentLang.startsWith(`${lang}-`)
+    );
     
-    // إضافة فئة RTL للجسم للاستخدام في التنسيقات
-    if (isRTL) {
-      document.body.classList.add('rtl-enabled');
-      document.body.classList.remove('ltr-enabled');
+    // تطبيق الاتجاه على المستند
+    if (shouldBeRTL) {
+      document.documentElement.setAttribute('dir', 'rtl');
+      document.body.classList.add('rtl-active');
     } else {
-      document.body.classList.add('ltr-enabled');
-      document.body.classList.remove('rtl-enabled');
+      document.documentElement.setAttribute('dir', 'ltr');
+      document.body.classList.remove('rtl-active');
     }
     
-    // تطبيق تنسيقات RTL محددة
-    applyRTLSpecificStyles(isRTL);
+    // تحديث الحالة
+    setIsRTL(shouldBeRTL);
     
-    // إضافة سمة البيانات لاستخدامها في استعلامات CSS
-    document.documentElement.setAttribute('data-direction', isRTL ? 'rtl' : 'ltr');
-    
-    // تطبيق تنسيقات خاصة للأرقام في اللغة العربية
-    if (isRTL && preferences.arabicNumerals) {
-      document.documentElement.classList.add('arabic-numerals');
-    } else {
-      document.documentElement.classList.remove('arabic-numerals');
+    // إضافة معلومات RTL إلى النافذة العالمية للاستخدام في المكونات الأخرى
+    if (typeof window !== 'undefined') {
+      window.RTLSupport = window.RTLSupport || {};
+      window.RTLSupport.isRTL = shouldBeRTL;
     }
-    
-    // الاستماع لتغييرات اللغة من مكونات أخرى
-    const handleLanguageChange = (event: CustomEvent) => {
-      const { language } = event.detail;
-      i18n.changeLanguage(language);
-    };
-    
-    window.addEventListener('app:languageChange', handleLanguageChange as EventListener);
-    
-    return () => {
-      window.removeEventListener('app:languageChange', handleLanguageChange as EventListener);
-    };
-  }, [i18n.language, preferences.arabicNumerals]);
+  }, [i18n.language, enforceRTL, enforceSpecificLanguages]);
   
-  // تحديد ما إذا كانت اللغة الحالية هي RTL
-  const isRTL = i18n.language === 'ar' || i18n.language === 'ar-iq';
+  /**
+   * إضافة خاصية التدفق النصي المعكوس إلى عناصر المفاتيح-القيم
+   * مثل: { name: 'اسم', value: 'قيمة' } => { name: 'اسم', value: 'قيمة', textFlow: 'rtl' }
+   */
+  const addRTLTextFlow = <T extends Record<string, any>>(
+    items: T[],
+    textProperties: (keyof T)[] = ['label', 'title', 'text', 'name', 'description']
+  ): (T & { textFlow?: 'rtl' | 'ltr' })[] => {
+    if (!isRTL) return items as (T & { textFlow?: 'rtl' | 'ltr' })[];
+    
+    return items.map(item => {
+      // التحقق مما إذا كانت أي من خصائص النص تحتوي على نص باللغة العربية
+      const hasArabicText = textProperties.some(prop => {
+        const value = item[prop];
+        return typeof value === 'string' && /[\u0600-\u06FF]/.test(value);
+      });
+      
+      // إضافة خاصية textFlow إذا كان النص عربيًا
+      return hasArabicText ? { ...item, textFlow: 'rtl' as const } : item;
+    });
+  };
   
-  // تطبيق تنسيقات محددة لـ RTL
-  const applyRTLSpecificStyles = (isRTL: boolean) => {
-    // تعديل نمط الشريط الجانبي
-    const sidebar = document.querySelector('.app-sidebar');
-    if (sidebar) {
-      if (isRTL) {
-        sidebar.classList.add('rtl-sidebar');
-      } else {
-        sidebar.classList.remove('rtl-sidebar');
-      }
-    }
-    
-    // تعديل اتجاه الرسوم البيانية
-    const charts = document.querySelectorAll('.recharts-wrapper');
-    charts.forEach(chart => {
-      if (isRTL) {
-        chart.classList.add('rtl-chart');
-      } else {
-        chart.classList.remove('rtl-chart');
-      }
-    });
-    
-    // تعديل اتجاه القوائم المنسدلة
-    const dropdowns = document.querySelectorAll('.dropdown-content');
-    dropdowns.forEach(dropdown => {
-      if (isRTL) {
-        dropdown.classList.add('rtl-dropdown');
-      } else {
-        dropdown.classList.remove('rtl-dropdown');
-      }
-    });
+  /**
+   * عكس ترتيب المصفوفة إذا كان الاتجاه من اليمين إلى اليسار
+   */
+  const applyRTLOrder = <T>(items: T[]): T[] => {
+    return isRTL ? [...items].reverse() : items;
   };
   
   return {
     isRTL,
-    // دالة مساعدة لعكس مصفوفة في حالة RTL
-    reverseIfRTL: <T>(array: T[]): T[] => {
-      return isRTL ? [...array].reverse() : array;
-    },
-    // دالة مساعدة للحصول على قيمة حسب الاتجاه
-    getDirectionalValue: <T>(ltrValue: T, rtlValue: T): T => {
-      return isRTL ? rtlValue : ltrValue;
-    }
+    addRTLTextFlow,
+    applyRTLOrder,
   };
 }

@@ -3,8 +3,8 @@ import { StateCreator } from 'zustand';
 import { AppState, AppStatusState } from './types';
 
 /**
- * مخزن حالة التطبيق المتعلقة بالأخطاء والتحميل
- * يحتوي على الوظائف المتعلقة بإدارة الأخطاء وحالة التحميل
+ * مخزن حالة التطبيق
+ * يحتوي على الوظائف المتعلقة بتحميل البيانات والأخطاء وحالة التهيئة
  */
 export const createAppStatusSlice: StateCreator<
   AppState,
@@ -12,25 +12,27 @@ export const createAppStatusSlice: StateCreator<
   [],
   AppStatusState
 > = (set) => ({
-  // حالة التطبيق
-  isOnline: true,
+  // حالة التحميل
   isLoading: {},
   errors: {},
+  isInitialized: false,
   
   // وظائف تعديل الحالة
-  setIsLoading: (key, value) => set((state) => ({
+  setIsLoading: (key, loading) => set(state => ({
     isLoading: {
       ...state.isLoading,
-      [key]: value
+      [key]: loading
     }
   })),
   
-  setError: (key, value) => set((state) => ({
+  setError: (key, error) => set(state => ({
     errors: {
       ...state.errors,
-      [key]: value
+      [key]: error
     }
   })),
   
-  clearAllErrors: () => set({ errors: {} }),
+  setInitialized: (initialized) => set({ 
+    isInitialized: initialized 
+  }),
 });

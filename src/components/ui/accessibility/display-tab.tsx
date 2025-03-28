@@ -1,105 +1,82 @@
 
 import React from "react";
-import { Eye, Type, MousePointer2 } from "lucide-react";
+import { TabsContent } from "@/components/ui/tabs";
 import { useTranslation } from "react-i18next";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { useA11y } from "@/hooks/useA11y";
-import { AccessibilityToggle } from "./accessibility-toggle";
 
-export function DisplayTab() {
+interface DisplayTabProps {
+  highContrast: boolean;
+  largeText: boolean;
+  setHighContrast: (value: boolean) => void;
+  setLargeText: (value: boolean) => void;
+}
+
+/**
+ * تبويب خيارات العرض في قائمة إمكانية الوصول
+ */
+export function DisplayTab({
+  highContrast,
+  largeText,
+  setHighContrast,
+  setLargeText
+}: DisplayTabProps) {
   const { t } = useTranslation();
-  const { 
-    highContrast, setHighContrast,
-    largeText, setLargeText,
-    focusMode, setFocusMode,
-    dyslexicFont, setDyslexicFont
-  } = useA11y();
-
-  // إعلان التغييرات لقارئات الشاشة
-  const announceChange = (feature: string, state: boolean) => {
-    const featureName = t(`accessibility.${feature}`);
-    const stateText = state ? t('accessibility.enabled') : t('accessibility.disabled');
-    const announcement = document.createElement('div');
-    announcement.setAttribute('aria-live', 'polite');
-    announcement.className = 'sr-only';
-    announcement.textContent = t('accessibility.ariaLiveAnnouncement', { 
-      feature: featureName, 
-      state: stateText 
-    });
-    document.body.appendChild(announcement);
-    
-    // إزالة الإعلان بعد قراءته
-    setTimeout(() => {
-      if (document.body.contains(announcement)) {
-        document.body.removeChild(announcement);
-      }
-    }, 3000);
-  };
-
-  const handleToggleHighContrast = (checked: boolean) => {
-    setHighContrast(checked);
-    announceChange('highContrast', checked);
-  };
+  const { dyslexicFont, setDyslexicFont } = useA11y();
   
-  const handleToggleLargeText = (checked: boolean) => {
-    setLargeText(checked);
-    announceChange('largeText', checked);
-  };
-  
-  const handleToggleFocusMode = (checked: boolean) => {
-    setFocusMode(checked);
-    announceChange('focusMode', checked);
-  };
-  
-  const handleToggleDyslexicFont = (checked: boolean) => {
-    setDyslexicFont(checked);
-    announceChange('dyslexicFont', checked);
-  };
-
   return (
-    <div className="space-y-4">
-      <AccessibilityToggle
-        id="a11y-high-contrast"
-        label={t('accessibility.highContrast')}
-        icon={Eye}
-        checked={highContrast}
-        onChange={handleToggleHighContrast}
-        shortcutKey="Alt+C"
-        description={t('accessibility.highContrastDescription')}
-      />
-      
-      <AccessibilityToggle
-        id="a11y-large-text"
-        label={t('accessibility.largeText')}
-        icon={Type}
-        checked={largeText}
-        onChange={handleToggleLargeText}
-        shortcutKey="Alt+T"
-        description={t('accessibility.largeTextDescription')}
-      />
-      
-      <AccessibilityToggle
-        id="a11y-focus-mode"
-        label={t('accessibility.focusMode')}
-        icon={MousePointer2}
-        checked={focusMode}
-        onChange={handleToggleFocusMode}
-        shortcutKey="Alt+F"
-        description={t('accessibility.focusModeDescription')}
-      />
-      
-      <AccessibilityToggle
-        id="a11y-dyslexic-font"
-        label={t('accessibility.dyslexicFont')}
-        icon={Type}
-        checked={dyslexicFont}
-        onChange={handleToggleDyslexicFont}
-        shortcutKey="Alt+D"
-        description={t('accessibility.dyslexicFontDescription')}
-      />
-      
-      <div className="rounded-md bg-muted p-3 text-sm text-muted-foreground">
-        <p>{t('accessibility.displayFeatureHint')}</p>
+    <TabsContent value="display" className="space-y-4">
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="high-contrast" className="cursor-pointer">
+            {t('accessibility.features.highContrast', 'تباين عالي')}
+          </Label>
+          <Switch
+            id="high-contrast"
+            checked={highContrast}
+            onCheckedChange={setHighContrast}
+            aria-label={t('accessibility.features.highContrast', 'تباين عالي')}
+          />
+        </div>
+        <p className="text-xs text-muted-foreground">
+          {t('accessibility.features.highContrastDescription', 'زيادة تباين النص والعناصر لتحسين القراءة')}
+        </p>
       </div>
-    </div>
+      
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="large-text" className="cursor-pointer">
+            {t('accessibility.features.largeText', 'نص كبير')}
+          </Label>
+          <Switch
+            id="large-text"
+            checked={largeText}
+            onCheckedChange={setLargeText}
+            aria-label={t('accessibility.features.largeText', 'نص كبير')}
+          />
+        </div>
+        <p className="text-xs text-muted-foreground">
+          {t('accessibility.features.largeTextDescription', 'زيادة حجم النص لتسهيل القراءة')}
+        </p>
+      </div>
+      
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="dyslexic-font" className="cursor-pointer">
+            {t('accessibility.features.dyslexicFont', 'خط عسر القراءة')}
+          </Label>
+          <Switch
+            id="dyslexic-font"
+            checked={dyslexicFont}
+            onCheckedChange={setDyslexicFont}
+            aria-label={t('accessibility.features.dyslexicFont', 'خط عسر القراءة')}
+          />
+        </div>
+        <p className="text-xs text-muted-foreground">
+          {t('accessibility.features.dyslexicFontDescription', 'استخدام خط خاص لمساعدة الأشخاص الذين يعانون من عسر القراءة')}
+        </p>
+      </div>
+    </TabsContent>
   );
 }

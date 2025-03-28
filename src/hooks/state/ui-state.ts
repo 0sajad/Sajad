@@ -4,7 +4,7 @@ import { AppState, UIState } from './types';
 
 /**
  * مخزن حالة واجهة المستخدم
- * يحتوي على الوظائف المتعلقة بإدارة حالة الواجهة
+ * يحتوي على الوظائف المتعلقة بدرج التنقل والصفحات النشطة والنوافذ المنبثقة
  */
 export const createUISlice: StateCreator<
   AppState,
@@ -12,16 +12,37 @@ export const createUISlice: StateCreator<
   [],
   UIState
 > = (set) => ({
-  // حالة الواجهة
-  isSidebarOpen: true,
-  isSettingsOpen: false,
-  isSearchOpen: false,
-  activeSection: null,
-  lastVisitedPage: '/',
+  // حالة واجهة المستخدم
+  isDrawerOpen: false,
+  activePage: 'home',
+  lastVisitedPage: null,
+  modals: {},
   
   // وظائف تعديل الحالة
-  toggleSidebar: () => set(state => ({ isSidebarOpen: !state.isSidebarOpen })),
-  toggleSettings: () => set(state => ({ isSettingsOpen: !state.isSettingsOpen })),
-  toggleSearch: () => set(state => ({ isSearchOpen: !state.isSearchOpen })),
-  setActiveSection: (section) => set({ activeSection: section }),
+  setDrawerOpen: (isOpen) => set({ isDrawerOpen: isOpen }),
+  
+  setActivePage: (page) => set(state => {
+    // حفظ الصفحة السابقة قبل التغيير
+    const lastVisitedPage = state.activePage;
+    return {
+      activePage: page,
+      lastVisitedPage
+    };
+  }),
+  
+  setLastVisitedPage: (page) => set({ lastVisitedPage: page }),
+  
+  openModal: (modalId) => set(state => ({
+    modals: {
+      ...state.modals,
+      [modalId]: true
+    }
+  })),
+  
+  closeModal: (modalId) => set(state => ({
+    modals: {
+      ...state.modals,
+      [modalId]: false
+    }
+  })),
 });

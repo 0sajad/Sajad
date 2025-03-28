@@ -1,8 +1,7 @@
 
-import React, { useState, useEffect, lazy, Suspense } from "react";
+import React, { useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { HeroSection } from "@/components/sections/HeroSection";
 import { useTranslation } from 'react-i18next';
 import { useLanguageTransition } from "@/hooks/useLanguageTransition";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,39 +12,14 @@ import { KeyboardFocusDetector } from "@/components/ui/accessibility/keyboard-fo
 import { LiveAnnouncer } from "@/components/ui/accessibility/live-announcer";
 import { useA11y } from "@/hooks/useA11y";
 import { SkipLink } from "@/components/ui/accessibility/SkipLink";
-import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { ScreenReaderAnnouncer } from "@/components/ui/accessibility/screen-reader-announcer";
 import { MobileA11yDrawer } from "@/components/ui/accessibility/mobile-a11y-drawer";
 import { useRTLSupport } from "@/hooks/useRTLSupport";
-import { usePerformanceOptimization } from "@/hooks/usePerformanceOptimization";
-import { useKeyboardNavigation } from "@/hooks/useKeyboardNavigation";
-
-// تحسين التحميل البطيء: استخدام التحميل البطيء للمكونات غير الأساسية مع تحميل مسبق
-const NetworkDashboard = lazy(() => import("@/components/NetworkDashboard").then(m => ({ default: m.NetworkDashboard })));
-const AnimatedCards = lazy(() => import("@/components/AnimatedCards").then(m => ({ default: m.AnimatedCards })));
-const AIFeaturesSection = lazy(() => import("@/components/sections/AIFeaturesSection").then(m => ({ default: m.AIFeaturesSection })));
-const SettingsSection = lazy(() => import("@/components/sections/SettingsSection").then(m => ({ default: m.SettingsSection })));
-const CTASection = lazy(() => import("@/components/sections/CTASection").then(m => ({ default: m.CTASection })));
-const FloatingAIAssistant = lazy(() => import("@/components/FloatingAIAssistant").then(m => ({ default: m.FloatingAIAssistant })));
-const NetworkToolsSection = lazy(() => import("@/components/network/NetworkToolsSection").then(m => ({ default: m.NetworkToolsSection })));
-const ReadingGuide = lazy(() => import("@/components/ui/accessibility/reading-guide").then(m => ({ default: m.ReadingGuide })));
-const KeyboardNavigationMenu = lazy(() => import("@/components/ui/accessibility/keyboard-navigation-menu").then(m => ({ default: m.KeyboardNavigationMenu })));
-
-// مكون التحميل المُحسّن للمكونات البطيئة
-const SectionLoader = () => (
-  <div className="w-full py-8 animate-pulse" role="status" aria-label="جاري التحميل">
-    <div className="container mx-auto px-4 lg:px-8">
-      <Skeleton className="w-full h-8 mb-4 rounded-md" />
-      <Skeleton className="w-3/4 h-4 mb-8 rounded-md" />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[1, 2, 3].map(i => (
-          <Skeleton key={i} className="h-64 rounded-lg" />
-        ))}
-      </div>
-    </div>
-  </div>
-);
+import { MainContent } from "@/components/sections/MainContent";
+import { AccessibilityOverlay } from "@/components/accessibility/AccessibilityOverlay";
+import { useSectionVisibility } from "@/hooks/useSectionVisibility";
+import { AIAssistantManager } from "@/components/ai/AIAssistantManager";
 
 /**
  * الصفحة الرئيسية للتطبيق
@@ -54,97 +28,13 @@ const SectionLoader = () => (
 export default function Index() {
   const { t, i18n } = useTranslation();
   const { isTransitioning } = useLanguageTransition();
-  const { 
-    readingGuide, 
-    keyboardNavigationVisible, 
-    announce, 
-    reducedMotion 
-  } = useA11y();
+  const { announce } = useA11y();
   const { isRTL } = useRTLSupport();
-  const { 
-    shouldUseAdvancedAnimations, 
-    shouldUseLazyLoading,
-    deviceTier 
-  } = usePerformanceOptimization();
-  const { isNavigatingWithKeyboard } = useKeyboardNavigation();
-  
-  const [pageLoaded, setPageLoaded] = useState(false);
-  const [showAIAssistant, setShowAIAssistant] = useState(false);
-  const [sectionsVisible, setSectionsVisible] = useState<Record<string, boolean>>({});
+  const { sectionsVisible, pageLoaded, setPageLoaded } = useSectionVisibility();
   
   // استخدام الخطافات (hooks) اللازمة
   useKeyboardShortcuts();
   usePreferenceSync();
-  
-  // تحسين أداء التطبيق: التحميل التدريجي للمكونات
-  useEffect(() => {
-    // التحقق من حالة تحميل الصفحة
-    if (document.readyState === 'complete') {
-      setPageLoaded(true);
-    } else {
-      const handleLoad = () => setPageLoaded(true);
-      window.addEventListener('load', handleLoad);
-      return () => window.removeEventListener('load', handleLoad);
-    }
-    
-    // تحميل المكونات بشكل تدريجي
-    const progressiveLoad = async () => {
-      // التحميل المسبق للمكونات الأساسية
-      if ('requestIdleCallback' in window) {
-        // تحميل مسبق للموارد الهامة خلال وقت الخمول
-        (window as any).requestIdleCallback(() => {
-          // أولوية التحميل بناءً على مستوى الجهاز
-          if (deviceTier !== 'low') {
-            import("@/components/AnimatedCards");
-            import("@/components/sections/AIFeaturesSection");
-          }
-        });
-      }
-    };
-    
-    progressiveLoad();
-  }, [deviceTier]);
-  
-  // تحسين رصد ظهور العناصر باستخدام Intersection Observer
-  useEffect(() => {
-    const observerOptions = {
-      root: null,
-      rootMargin: '0px',
-      threshold: 0.1
-    };
-    
-    const sectionObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const sectionId = entry.target.id;
-          setSectionsVisible(prev => ({...prev, [sectionId]: true}));
-          
-          // إلغاء مراقبة القسم بعد ظهوره لتحسين الأداء
-          sectionObserver.unobserve(entry.target);
-        }
-      });
-    }, observerOptions);
-    
-    // إضافة معرّفات للأقسام ومراقبتها
-    const sections = document.querySelectorAll('.observe-section');
-    sections.forEach(section => {
-      if (!section.id) {
-        section.id = `section-${Math.random().toString(36).substr(2, 9)}`;
-      }
-      sectionObserver.observe(section);
-    });
-    
-    return () => sectionObserver.disconnect();
-  }, [pageLoaded]);
-  
-  // إظهار المساعد الذكي بعد فترة زمنية
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setShowAIAssistant(true);
-    }, reducedMotion ? 1000 : 3000); // وقت أقصر إذا كان وضع تقليل الحركة مفعلاً
-    
-    return () => clearTimeout(timeout);
-  }, [reducedMotion]);
   
   // الإعلان عن اكتمال تحميل الصفحة
   useEffect(() => {
@@ -166,28 +56,6 @@ export default function Index() {
     window.location.href = '/ai';
   };
   
-  // تحميل تدريجي للمكونات بناءً على رؤيتها في الشاشة
-  const renderLazySections = (sectionId: string, Component: React.LazyExoticComponent<any>) => {
-    // تحقق من استراتيجية التحميل البطيء
-    if (!shouldUseLazyLoading()) {
-      return (
-        <Suspense fallback={<SectionLoader />}>
-          <Component />
-        </Suspense>
-      );
-    }
-    
-    // تحميل فقط إذا كان القسم مرئيًا
-    if (sectionsVisible[sectionId]) {
-      return (
-        <Suspense fallback={<SectionLoader />}>
-          <Component />
-        </Suspense>
-      );
-    }
-    return <SectionLoader />;
-  };
-  
   return (
     <ErrorBoundary>
       <TooltipProvider>
@@ -197,76 +65,22 @@ export default function Index() {
         <KeyboardFocusDetector />
         <SkipLink />
         
-        {/* إضافة مؤشر التنقل بلوحة المفاتيح */}
-        {isNavigatingWithKeyboard && (
-          <div className="fixed inset-0 pointer-events-none z-50">
-            <div className="focus-outline-indicator" aria-hidden="true"></div>
-          </div>
-        )}
-        
-        {/* إضافة مكون دليل القراءة إذا كان مفعلاً */}
-        {readingGuide && (
-          <Suspense fallback={null}>
-            <ReadingGuide />
-          </Suspense>
-        )}
-        
-        {/* إضافة قائمة التنقل بلوحة المفاتيح إذا كانت مرئية */}
-        {keyboardNavigationVisible && (
-          <Suspense fallback={null}>
-            <KeyboardNavigationMenu visible={keyboardNavigationVisible} />
-          </Suspense>
-        )}
+        {/* طبقة إمكانية الوصول: تتضمن مكونات الوصول المساعدة */}
+        <AccessibilityOverlay />
         
         {/* رأس الصفحة */}
         <Header />
         
         {/* المحتوى الرئيسي */}
-        <main 
-          id="main-content" 
-          tabIndex={-1} 
-          className={`relative overflow-hidden ${isTransitioning ? 'opacity-0 transition-opacity duration-300' : 'opacity-100 transition-opacity duration-300'}`}
-          lang={i18n.language}
-          dir={isRTL ? 'rtl' : 'ltr'}
-        >
-          <HeroSection />
-          
-          <div id="animated-cards-section" className="observe-section">
-            <Suspense fallback={<SectionLoader />}>
-              <AnimatedCards />
-            </Suspense>
-          </div>
-          
-          <div id="ai-features-section" className="observe-section">
-            {renderLazySections('ai-features-section', AIFeaturesSection)}
-          </div>
-          
-          <div id="network-dashboard-section" className="observe-section">
-            {renderLazySections('network-dashboard-section', NetworkDashboard)}
-          </div>
-          
-          <div id="network-tools-section" className="observe-section">
-            {renderLazySections('network-tools-section', NetworkToolsSection)}
-          </div>
-          
-          <div id="settings-section" className="observe-section">
-            {renderLazySections('settings-section', SettingsSection)}
-          </div>
-          
-          <div id="cta-section" className="observe-section">
-            {renderLazySections('cta-section', CTASection)}
-          </div>
-          
-          {/* تحميل المساعد الذكي فقط عند الحاجة */}
-          {showAIAssistant && (
-            <Suspense fallback={null}>
-              <FloatingAIAssistant 
-                show={showAIAssistant} 
-                onMaximize={handleMaximizeAI} 
-              />
-            </Suspense>
-          )}
-        </main>
+        <MainContent 
+          sectionsVisible={sectionsVisible}
+          isTransitioning={isTransitioning}
+          language={i18n.language}
+          isRTL={isRTL}
+        />
+        
+        {/* المساعد الذكي */}
+        <AIAssistantManager onMaximize={handleMaximizeAI} />
         
         {/* تذييل الصفحة */}
         <Footer />

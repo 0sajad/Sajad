@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { NetworkStatusIndicator } from "./NetworkStatusIndicator";
 import { useTranslation } from "react-i18next";
 import { useOfflineMode } from "@/hooks/useOfflineMode";
@@ -8,12 +8,15 @@ import { cn } from "@/lib/utils";
 import { Battery, BatteryWarning, Cpu, Loader2 } from "lucide-react";
 import { AccessibilityToggleButton } from "./accessibility/accessibility-toggle-button";
 import { AccessibilityMenu } from "./accessibility/accessibility-menu";
-import { useState } from "react";
 
 interface StatusBarProps {
   className?: string;
 }
 
+/**
+ * شريط الحالة في أعلى التطبيق
+ * يعرض معلومات عن حالة الشبكة والجهاز وأدوات إمكانية الوصول
+ */
 export function StatusBar({ className }: StatusBarProps) {
   const { t } = useTranslation();
   const { isOnline } = useOfflineMode();
@@ -56,10 +59,7 @@ export function StatusBar({ className }: StatusBarProps) {
         {/* زر إمكانية الوصول */}
         <AccessibilityToggleButton onClick={() => setShowA11yMenu(!showA11yMenu)} />
         {showA11yMenu && (
-          <AccessibilityMenu 
-            // This line was causing the error - removing onClose prop 
-            // and handling the closing through separate component logic
-          />
+          <AccessibilityMenu />
         )}
       </div>
     </div>

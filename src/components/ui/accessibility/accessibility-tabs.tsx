@@ -1,70 +1,38 @@
 
-import React, { useState } from "react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import React from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTranslation } from "react-i18next";
-import { Eye, ZoomIn, Palette } from "lucide-react";
-import { DisplayTab } from "./tabs/DisplayTab";
-import { MotionTab } from "./tabs/MotionTab";
-import { ColorTab } from "./tabs/ColorTab";
-import { useA11y } from "@/hooks/useA11y";
+import { Eye, MousePointer, Palette } from "lucide-react";
+
+interface AccessibilityTabsProps {
+  children?: React.ReactNode;
+  defaultTab?: string;
+}
 
 /**
- * مكون علامات التبويب لإعدادات إمكانية الوصول المحسّن
- * يوفر واجهة مستخدم بديهية لإعدادات إمكانية الوصول المختلفة
+ * تبويبات لعرض فئات مختلفة من ميزات إمكانية الوصول
  */
-export function AccessibilityTabs() {
+export function AccessibilityTabs({ children, defaultTab = "display" }: AccessibilityTabsProps) {
   const { t } = useTranslation();
-  const { reducedMotion } = useA11y();
-  const [activeTab, setActiveTab] = useState("display");
   
   return (
-    <Tabs 
-      defaultValue="display" 
-      value={activeTab} 
-      onValueChange={setActiveTab}
-      className="w-full"
-    >
-      <TabsList className="grid grid-cols-3 w-full rtl-reverse-grid">
-        <TabsTrigger 
-          value="display" 
-          aria-label={t('accessibility.tabDisplay')}
-          className="flex items-center gap-1.5"
-        >
+    <Tabs defaultValue={defaultTab}>
+      <TabsList className="grid grid-cols-3 mb-4">
+        <TabsTrigger value="display" className="flex items-center gap-1.5">
           <Eye className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">{t('accessibility.tabDisplay')}</span>
+          <span>{t('accessibility.tabs.display', 'العرض')}</span>
         </TabsTrigger>
-        <TabsTrigger 
-          value="motion" 
-          aria-label={t('accessibility.tabMotion')}
-          className="flex items-center gap-1.5"
-        >
-          <ZoomIn className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">{t('accessibility.tabMotion')}</span>
+        <TabsTrigger value="motion" className="flex items-center gap-1.5">
+          <MousePointer className="h-3.5 w-3.5" />
+          <span>{t('accessibility.tabs.motion', 'الحركة')}</span>
         </TabsTrigger>
-        <TabsTrigger 
-          value="color" 
-          aria-label={t('accessibility.tabColor')}
-          className="flex items-center gap-1.5"
-        >
+        <TabsTrigger value="color" className="flex items-center gap-1.5">
           <Palette className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">{t('accessibility.tabColor')}</span>
+          <span>{t('accessibility.tabs.color', 'الألوان')}</span>
         </TabsTrigger>
       </TabsList>
       
-      {/* محتوى تبويب العرض */}
-      <TabsContent value="display" className="space-y-4 pt-2">
-        <DisplayTab />
-      </TabsContent>
-      
-      {/* محتوى تبويب الحركة */}
-      <TabsContent value="motion" className="space-y-4 pt-2">
-        <MotionTab />
-      </TabsContent>
-      
-      {/* محتوى تبويب الألوان */}
-      <TabsContent value="color" className="space-y-4 pt-2">
-        <ColorTab />
-      </TabsContent>
+      {children}
     </Tabs>
   );
 }

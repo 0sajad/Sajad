@@ -4,7 +4,7 @@ import { AppState, UserState } from './types';
 
 /**
  * مخزن حالة المستخدم
- * يحتوي على الوظائف المتعلقة بإدارة حالة المستخدم
+ * يحتوي على الوظائف المتعلقة بمصادقة المستخدم وبياناته وإعداداته
  */
 export const createUserSlice: StateCreator<
   AppState,
@@ -15,27 +15,34 @@ export const createUserSlice: StateCreator<
   // حالة المستخدم
   isAuthenticated: false,
   userId: null,
+  userEmail: null,
+  userDisplayName: null,
   userRole: null,
   userSettings: {},
   
-  // وظائف إدارة المستخدم
-  login: (userId, role) => set({
-    isAuthenticated: true,
-    userId,
-    userRole: role,
+  // وظائف تعديل الحالة
+  setAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
+  
+  setUserData: (userData) => set({
+    userId: userData.id,
+    userEmail: userData.email,
+    userDisplayName: userData.displayName,
+    userRole: userData.role,
   }),
+  
+  updateUserSettings: (newSettings) => set(state => ({
+    userSettings: {
+      ...state.userSettings,
+      ...newSettings
+    }
+  })),
   
   logout: () => set({
     isAuthenticated: false,
     userId: null,
+    userEmail: null,
+    userDisplayName: null,
     userRole: null,
     userSettings: {},
   }),
-  
-  updateUserSettings: (settings) => set(state => ({
-    userSettings: {
-      ...state.userSettings,
-      ...settings
-    }
-  })),
 });
