@@ -8,10 +8,14 @@
   "uses": "Uses",
   "learning": "Learning",
   "suggestedUses": "Suggested AI Uses",
+  "performanceOptimized": "AI Assistant performance optimized for your device",
+  "performanceOptimizedDescription": "To change this setting, go to Performance Settings",
+  "lastUpdated": "Last Updated",
   "models": {
     "basic": "Basic Model",
     "advanced": "Advanced Model",
-    "premium": "Premium Model"
+    "premium": "Premium Model",
+    "specialized": "Specialized Model"
   },
   "useCases": {
     "networkAnalysis": {
@@ -41,6 +45,26 @@
     "reports": {
       "title": "Reports & Statistics",
       "description": "Create analytical reports on network performance and data analysis"
+    },
+    "deepSearch": {
+      "title": "Advanced Search",
+      "description": "Smart search across all network and system data"
+    },
+    "dataAnalysis": {
+      "title": "Data Analysis",
+      "description": "Extract important insights from large network data"
+    },
+    "networkMapping": {
+      "title": "Network Mapping",
+      "description": "Create interactive maps of network structure and relationships"
+    },
+    "automation": {
+      "title": "Process Automation",
+      "description": "Run routine network tasks automatically"
+    },
+    "predictiveAnalysis": {
+      "title": "Predictive Analysis",
+      "description": "Predict network issues before they occur"
     }
   }
 }

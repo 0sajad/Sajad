@@ -8,10 +8,14 @@
   "uses": "الاستخدامات",
   "learning": "التعلم",
   "suggestedUses": "استخدامات مقترحة للذكاء الاصطناعي",
+  "performanceOptimized": "تم تحسين أداء المساعد الذكي تلقائيًا لجهازك",
+  "performanceOptimizedDescription": "لتغيير هذا الإعداد، انتقل إلى إعدادات الأداء",
+  "lastUpdated": "آخر تحديث",
   "models": {
     "basic": "النموذج الأساسي",
     "advanced": "النموذج المتقدم",
-    "premium": "النموذج المميز"
+    "premium": "النموذج المميز",
+    "specialized": "النموذج المتخصص"
   },
   "useCases": {
     "networkAnalysis": {
@@ -41,6 +45,26 @@
     "reports": {
       "title": "التقارير والإحصائيات",
       "description": "إنشاء تقارير تحليلية عن أداء الشبكة وتحليل البيانات"
+    },
+    "deepSearch": {
+      "title": "البحث المتقدم",
+      "description": "البحث الذكي عبر جميع بيانات الشبكة والنظام"
+    },
+    "dataAnalysis": {
+      "title": "تحليل البيانات",
+      "description": "استخراج رؤى مهمة من بيانات الشبكة الكبيرة"
+    },
+    "networkMapping": {
+      "title": "رسم خرائط الشبكة",
+      "description": "إنشاء خرائط تفاعلية لبنية الشبكة وعلاقاتها"
+    },
+    "automation": {
+      "title": "أتمتة العمليات",
+      "description": "تشغيل مهام الشبكة الروتينية بشكل آلي"
+    },
+    "predictiveAnalysis": {
+      "title": "التحليل التنبؤي",
+      "description": "توقع مشكلات الشبكة قبل حدوثها"
     }
   }
 }
