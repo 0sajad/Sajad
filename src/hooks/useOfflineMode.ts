@@ -19,16 +19,9 @@ export function useOfflineMode() {
   const appState = useAppState();
   const isOnline = appState.networkStatus?.isOnline ?? true;
   const checkNetworkStatus = appState.checkConnection;
-  const setNetworkStatus = (status: { isConnected: boolean; isOnline: boolean }) => {
-    appState((state) => ({ 
-      networkStatus: { 
-        ...state.networkStatus, 
-        isConnected: status.isConnected, 
-        isOnline: status.isOnline,
-        lastCheck: new Date()
-      } 
-    }));
-  };
+  
+  // Properly use the Zustand store by accessing specific setter functions
+  const setNetworkStatus = useAppState(state => state.setNetworkStatus);
   
   const [isOffline, setIsOffline] = useState(!isOnline);
   const [pendingSyncItems, setPendingSyncItems] = useState<OfflineSyncItem[]>([]);

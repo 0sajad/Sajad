@@ -15,14 +15,10 @@ export function usePreferenceSync() {
     setColorBlindMode
   } = useA11y();
   const appState = useAppState();
-  const setPreference = (key: string, value: any) => {
-    appState((state) => ({ 
-      preferences: { 
-        ...state.preferences, 
-        [key]: value 
-      } 
-    }));
-  };
+  
+  // Use the proper setter function from Zustand store
+  const setPreference = useAppState(state => state.setPreference);
+  
   const { info } = useNotifications();
   const { t } = useTranslation();
   
