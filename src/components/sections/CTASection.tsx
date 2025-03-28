@@ -24,3 +24,6 @@ export function CTASection() {
     </section>
   );
 }
+
+// Add default export for compatibility with React.lazy()
+export default CTASection;

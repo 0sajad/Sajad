@@ -21,14 +21,15 @@ import { LazyApp } from "@/components/performance/LazyApp";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MainContent } from "@/components/sections/MainContent";
 
-// تعريف النوع للمكونات الكسولة
-type LazyComponentType = React.LazyExoticComponent<React.ComponentType<any>>;
-
-// تحميل المكونات الثقيلة بشكل كسول - تصحيح التحميل لتجنب أخطاء TypeScript
-const AIAssistantManager = lazy(() => import("@/components/ai/AIAssistantManager")) as LazyComponentType;
-const AccessibilityOverlay = lazy(() => import("@/components/accessibility/AccessibilityOverlay").then(
-  module => ({ default: module.AccessibilityOverlay || module.default || (() => null) })
-)) as LazyComponentType;
+// تصحيح التحميل الكسول للمكونات مع دعم الصادرات المسماة
+const AIAssistantManager = lazy(() => 
+  import("@/components/ai/AIAssistantManager").then(module => ({ default: module.AIAssistantManager }))
+);
+const AccessibilityOverlay = lazy(() => 
+  import("@/components/accessibility/AccessibilityOverlay").then(module => ({ 
+    default: module.AccessibilityOverlay || module.default || (() => null)
+  }))
+);
 
 /**
  * الصفحة الرئيسية للتطبيق

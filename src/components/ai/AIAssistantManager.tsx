@@ -82,3 +82,6 @@ export function AIAssistantManager({ onMaximize }: AIAssistantManagerProps) {
     </AIPerformanceOptimizer>
   );
 }
+
+// Add default export for compatibility with React.lazy()
+export default AIAssistantManager;

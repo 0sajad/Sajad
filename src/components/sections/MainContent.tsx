@@ -5,15 +5,27 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { usePerformanceOptimization } from "@/hooks/usePerformanceOptimization";
 
 // تعريف النوع للمكونات الكسولة
-type LazyComponentType = React.LazyExoticComponent<React.ComponentType<any>>;
+type LazyComponentType = React.ComponentType<any>;
 
-// تصحيح التحميل الكسول للمكونات
-const AnimatedCards = lazy(() => import("@/components/AnimatedCards")) as LazyComponentType;
-const AIFeaturesSection = lazy(() => import("@/components/sections/AIFeaturesSection")) as LazyComponentType;
-const NetworkDashboard = lazy(() => import("@/components/NetworkDashboard")) as LazyComponentType;
-const NetworkToolsSection = lazy(() => import("@/components/network/NetworkToolsSection")) as LazyComponentType;
-const SettingsSection = lazy(() => import("@/components/sections/SettingsSection")) as LazyComponentType;
-const CTASection = lazy(() => import("@/components/sections/CTASection")) as LazyComponentType;
+// تصحيح التحميل الكسول للمكونات مع دعم الصادرات المسماة
+const AnimatedCards = lazy(() => 
+  import("@/components/AnimatedCards").then(module => ({ default: module.AnimatedCards }))
+);
+const AIFeaturesSection = lazy(() => 
+  import("@/components/sections/AIFeaturesSection").then(module => ({ default: module.AIFeaturesSection }))
+);
+const NetworkDashboard = lazy(() => 
+  import("@/components/NetworkDashboard").then(module => ({ default: module.NetworkDashboard }))
+);
+const NetworkToolsSection = lazy(() => 
+  import("@/components/network/NetworkToolsSection").then(module => ({ default: module.NetworkToolsSection }))
+);
+const SettingsSection = lazy(() => 
+  import("@/components/sections/SettingsSection").then(module => ({ default: module.SettingsSection }))
+);
+const CTASection = lazy(() => 
+  import("@/components/sections/CTASection").then(module => ({ default: module.CTASection }))
+);
 
 // مكون التحميل المُحسّن للمكونات البطيئة
 const SectionLoader = () => (
@@ -41,7 +53,7 @@ export function MainContent({ sectionsVisible, isTransitioning, language, isRTL 
   const { shouldUseLazyLoading } = usePerformanceOptimization();
   
   // تحميل تدريجي للمكونات بناءً على رؤيتها في الشاشة
-  const renderLazySections = (sectionId: string, Component: LazyComponentType) => {
+  const renderLazySections = (sectionId: string, Component: React.ComponentType<any>) => {
     // تحقق من استراتيجية التحميل البطيء
     if (!shouldUseLazyLoading()) {
       return (

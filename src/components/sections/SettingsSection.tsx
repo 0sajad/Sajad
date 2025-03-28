@@ -87,3 +87,6 @@ export function SettingsSection() {
     </section>
   );
 }
+
+// Add default export for compatibility with React.lazy()
+export default SettingsSection;

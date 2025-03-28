@@ -90,3 +90,6 @@ export function AnimatedCards() {
     </section>
   );
 }
+
+// Add default export for compatibility with React.lazy()
+export default AnimatedCards;
