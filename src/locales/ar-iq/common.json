@@ -9,8 +9,7 @@
     "disableAutoDarkMode": "عطل الوضع الليلي التلقائي",
     "darkMode": "الوضع الليلي",
     "lightMode": "الوضع النهاري",
-    "autoMode": "الوضع التلقائي",
-    "languageChanged": "تم تغيير اللغة إلى {{language}}"
+    "autoMode": "الوضع التلقائي"
   },
   "header": {
     "dashboard": "لوحة التحكم",
@@ -27,7 +26,7 @@
   },
   "dashboard": {
     "title": "لوحة التحكم",
-    "welcome": "أهلاً بيك بأوكتا-كرام",
+    "welcome": "أهلاً بيك بلوحة تحكم أوكتا-كرام",
     "systemStatus": "حالة النظام",
     "status": "الحالة",
     "active": "شغال",
@@ -54,14 +53,12 @@
     "aiAssistant": "مساعد الذكاء الصناعي",
     "settings": "الإعدادات",
     "helpCenter": "مركز المساعدة",
-    "login": "تسجيل دخول",
-    "license": "الترخيص",
-    "fiberOptic": "الفايبر الضوئي"
+    "login": "تسجيل دخول"
   },
   "notFound": {
     "message": "اوبس! الصفحة مو موجودة",
-    "returnHome": "ارجع للرئيسية",
-    "redirecting": "راح نوديك للرئيسية بعد 3 ثواني..."
+    "returnHome": "ارجع للوحة التحكم",
+    "redirecting": "راح نوديك للوحة التحكم بعد 3 ثواني..."
   },
   "error": "خطأ",
   "languageChangeError": "فشل بتغيير اللغة"

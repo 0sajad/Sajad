@@ -1,63 +1,106 @@
 
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { motion } from "framer-motion";
+import React, { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function LoadingScreen() {
-  const { t } = useTranslation();
+  const [progress, setProgress] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    // زيادة شريط التقدم تدريجياً لإعطاء المستخدم مؤشراً بصرياً أن التطبيق يتم تحميله
+    const interval = setInterval(() => {
+      setProgress(prevProgress => {
+        const newProgress = prevProgress + 5;
+        return newProgress > 100 ? 100 : newProgress;
+      });
+    }, 50);
+
+    // التأكد من أن شاشة التحميل تظهر لمدة لا تقل عن 500 مللي ثانية
+    const visibilityTimer = setTimeout(() => {
+      if (progress >= 100) {
+        setIsVisible(false);
+      }
+    }, 500);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(visibilityTimer);
+    };
+  }, [progress]);
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-background">
-      <div className="text-center">
-        <div className="mb-4 relative w-16 h-16">
-          <svg
-            viewBox="0 0 100 100"
-            className="w-full h-full text-primary"
-            xmlns="http://www.w3.org/2000/svg"
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div 
+          className="fixed inset-0 flex items-center justify-center bg-background z-50"
+          initial={{ opacity: 1 }}
+          exit={{ 
+            opacity: 0,
+            transition: { duration: 0.5, ease: "easeInOut" } 
+          }}
+        >
+          <motion.div 
+            className="flex flex-col items-center"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5 }}
           >
-            <motion.path
-              d="M 10,50 Q 25,30 40,50 T 70,50 Q 85,30 95,50"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="4"
-              strokeLinecap="round"
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 1 }}
-              transition={{ 
-                duration: 1.5, 
-                ease: "easeInOut", 
-                repeat: Infinity, 
-                repeatType: "loop" 
-              }}
-            />
-            <motion.circle
-              cx="50"
-              cy="50"
-              r="40"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              opacity="0.2"
-            />
-          </svg>
-        </div>
-        <motion.div
-          initial={{ opacity: 0, y: 5 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="text-xl font-medium"
-        >
-          OCTA-GRAM
+            <div className="relative w-20 h-20">
+              <motion.div 
+                className={cn(
+                  "absolute w-full h-full border-4 border-primary rounded-full"
+                )}
+                animate={{ rotate: 360 }}
+                transition={{ 
+                  duration: 2,
+                  ease: "linear",
+                  repeat: Infinity
+                }}
+              />
+              <motion.div 
+                className={cn(
+                  "absolute w-full h-full border-4 border-transparent border-t-primary rounded-full"
+                )}
+                animate={{ rotate: -360 }}
+                transition={{ 
+                  duration: 3,
+                  ease: "linear",
+                  repeat: Infinity
+                }}
+              />
+            </div>
+            
+            <motion.h2 
+              className="mt-4 text-2xl font-semibold text-foreground"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              OCTA-GRAM
+            </motion.h2>
+            
+            <motion.p 
+              className="text-muted-foreground"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              Loading...
+            </motion.p>
+            
+            {/* شريط تقدم لإظهار حالة التحميل للمستخدم */}
+            <div className="w-56 h-1.5 mt-4 bg-gray-200 rounded-full overflow-hidden">
+              <motion.div 
+                className="h-full bg-primary rounded-full"
+                initial={{ width: "0%" }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.3 }}
+              />
+            </div>
+          </motion.div>
         </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 5 }}
-          animate={{ opacity: 0.7, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-          className="text-sm text-muted-foreground"
-        >
-          {t('loadingApplication', 'Loading application...')}
-        </motion.div>
-      </div>
-    </div>
+      )}
+    </AnimatePresence>
   );
 }

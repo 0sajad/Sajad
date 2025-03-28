@@ -13,13 +13,13 @@ export function NetworkToolsSection() {
   const { t } = useTranslation();
   
   return (
-    <section id="network-tools" className="py-12 px-6 bg-gradient-to-b from-white to-blue-50 dark:from-gray-800 dark:to-gray-900" aria-labelledby="network-tools-heading">
+    <section id="network-tools" className="py-20 px-6" aria-labelledby="network-tools-heading">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12 animate-fade-in">
-          <h2 id="network-tools-heading" className="text-3xl md:text-4xl font-bold mb-4 text-blue-800 dark:text-blue-400">
+          <h2 id="network-tools-heading" className="text-3xl md:text-4xl font-bold mb-4">
             {t('networkTools.title')}
           </h2>
-          <p className="text-muted-foreground max-w-3xl mx-auto dark:text-gray-400">
+          <p className="text-muted-foreground max-w-3xl mx-auto">
             {t('networkTools.qualityMonitoring')}
           </p>
         </div>
@@ -27,14 +27,14 @@ export function NetworkToolsSection() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <Tabs defaultValue="monitoring" className="w-full">
-              <TabsList className="w-full mb-4 bg-gray-100 dark:bg-gray-700 p-1 rounded-lg" aria-label={t('networkTools.tabsLabel', 'أدوات إدارة الشبكة')}>
-                <TabsTrigger value="monitoring" className="flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:shadow-sm rounded-md">
+              <TabsList className="w-full mb-4" aria-label={t('networkTools.tabsLabel', 'أدوات إدارة الشبكة')}>
+                <TabsTrigger value="monitoring" className="flex-1">
                   {t('networkTools.qualityMonitoring')}
                 </TabsTrigger>
-                <TabsTrigger value="management" className="flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:shadow-sm rounded-md">
+                <TabsTrigger value="management" className="flex-1">
                   {t('networkTools.networkManagement')}
                 </TabsTrigger>
-                <TabsTrigger value="simulation" className="flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:shadow-sm rounded-md">
+                <TabsTrigger value="simulation" className="flex-1">
                   {t('networkTools.simulationSystems')}
                 </TabsTrigger>
               </TabsList>
@@ -53,9 +53,7 @@ export function NetworkToolsSection() {
             </Tabs>
           </div>
           
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
-            <AIChatbot />
-          </div>
+          <AIChatbot />
         </div>
       </div>
     </section>

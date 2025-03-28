@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
@@ -8,8 +8,6 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { 
   Select, 
   SelectContent, 
@@ -17,18 +15,10 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { Globe, ArrowDownToLine, Plus, Trash, Save, Brain, Sparkles } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { Globe, ArrowDownToLine, Plus, Trash } from "lucide-react";
 
 export function LanguageTools() {
   const { t, i18n } = useTranslation();
-  const { toast } = useToast();
-  const [activeNamespace, setActiveNamespace] = useState("common");
-  const [editMode, setEditMode] = useState(false);
-  const [aiAssistMode, setAIAssistMode] = useState(false);
-  const [aiPrompt, setAIPrompt] = useState("");
-  const [translationKey, setTranslationKey] = useState("");
-  const [translationValue, setTranslationValue] = useState("");
   
   // قائمة اللغات المتاحة ودعمها الحالي
   const languages = [
@@ -44,62 +34,10 @@ export function LanguageTools() {
     { code: "pt", name: "Portuguese", nativeName: "Português", supported: false },
     { code: "ru", name: "Russian", nativeName: "Русский", supported: false },
   ];
-
-  const namespaces = [
-    { value: "common", label: "Common" },
-    { value: "dashboard", label: "Dashboard" },
-    { value: "settings", label: "Settings" },
-    { value: "ai", label: "AI Assistant" },
-    { value: "networkTools", label: "Network Tools" },
-    { value: "security", label: "Security" },
-  ];
   
   const toggleLanguageSupport = (code: string) => {
-    toast({
-      title: "Language Support Updated",
-      description: `Support for ${code} has been toggled.`,
-    });
-  };
-
-  const addTranslation = () => {
-    if (!translationKey || !translationValue) {
-      toast({
-        title: "Validation Error",
-        description: "Please provide both key and value for the translation.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    toast({
-      title: "Translation Added",
-      description: `Translation for "${translationKey}" has been added.`,
-    });
-
-    setTranslationKey("");
-    setTranslationValue("");
-  };
-
-  const generateWithAI = () => {
-    if (!aiPrompt) {
-      toast({
-        title: "AI Prompt Required",
-        description: "Please provide instructions for the AI.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Simulate AI generation
-    setTimeout(() => {
-      toast({
-        title: "AI Translation Generated",
-        description: "The AI has generated translations based on your prompt.",
-      });
-      
-      setAIPrompt("");
-      setAIAssistMode(false);
-    }, 1500);
+    // هنا يمكن تنفيذ المنطق لتفعيل/تعطيل دعم اللغة
+    console.log(`Toggle support for ${code}`);
   };
   
   return (
@@ -172,32 +110,10 @@ export function LanguageTools() {
       </Card>
       
       <Card>
-        <CardHeader className="bg-muted/50 flex flex-row items-center justify-between">
+        <CardHeader className="bg-muted/50">
           <CardTitle className="text-lg font-tajawal">
             {t('developer.language.strings.title', 'تعديل النصوص')}
           </CardTitle>
-          
-          <div className="flex gap-2">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className={aiAssistMode ? "bg-blue-100" : ""}
-              onClick={() => setAIAssistMode(!aiAssistMode)}
-            >
-              <Brain className="h-4 w-4 mr-2" />
-              <span className="font-tajawal">AI Assist</span>
-            </Button>
-            
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className={editMode ? "bg-blue-100" : ""}
-              onClick={() => setEditMode(!editMode)}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              <span className="font-tajawal">Add Translation</span>
-            </Button>
-          </div>
         </CardHeader>
         <CardContent className="pt-4">
           <div className="space-y-4">
@@ -229,73 +145,32 @@ export function LanguageTools() {
               <Label className="font-tajawal">
                 {t('developer.language.strings.namespaces', 'مجموعات النصوص')}
               </Label>
-              <Select 
-                value={activeNamespace}
-                onValueChange={setActiveNamespace}
-              >
+              <Select defaultValue="common">
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder={t('developer.language.strings.selectNamespace', 'اختر مجموعة')} />
                 </SelectTrigger>
                 <SelectContent>
-                  {namespaces.map(ns => (
-                    <SelectItem key={ns.value} value={ns.value}>
-                      {ns.label}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="common">
+                    {t('developer.language.strings.commonNS', 'النصوص العامة')}
+                  </SelectItem>
+                  <SelectItem value="settings">
+                    {t('developer.language.strings.settingsNS', 'الإعدادات')}
+                  </SelectItem>
+                  <SelectItem value="license">
+                    {t('developer.language.strings.licenseNS', 'التراخيص')}
+                  </SelectItem>
+                  <SelectItem value="aiFeatures">
+                    {t('developer.language.strings.aiFeaturesNS', 'ميزات الذكاء الاصطناعي')}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
             
-            {aiAssistMode ? (
-              <div className="space-y-4 border rounded-md p-4">
-                <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                  <Sparkles className="h-5 w-5 text-blue-500" />
-                  <h4 className="font-medium">AI Translation Assistant</h4>
-                </div>
-                
-                <Textarea
-                  placeholder="Describe what translations you need (e.g., 'Generate translations for the dashboard page in all supported languages')"
-                  className="min-h-[100px]"
-                  value={aiPrompt}
-                  onChange={(e) => setAIPrompt(e.target.value)}
-                />
-                
-                <Button onClick={generateWithAI} className="w-full">
-                  Generate with AI
-                </Button>
-              </div>
-            ) : editMode ? (
-              <div className="space-y-4 border rounded-md p-4">
-                <div className="space-y-2">
-                  <Label>Translation Key</Label>
-                  <Input 
-                    placeholder="Enter translation key (e.g., 'dashboard.title')"
-                    value={translationKey}
-                    onChange={(e) => setTranslationKey(e.target.value)}
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label>Translation Value</Label>
-                  <Textarea 
-                    placeholder="Enter translation text"
-                    value={translationValue}
-                    onChange={(e) => setTranslationValue(e.target.value)}
-                  />
-                </div>
-                
-                <Button onClick={addTranslation} className="w-full">
-                  <Save className="h-4 w-4 mr-2" />
-                  Add Translation
-                </Button>
-              </div>
-            ) : (
-              <div className="border rounded-md p-3 border-dashed">
-                <p className="text-sm text-muted-foreground text-center font-tajawal">
-                  {t('developer.language.strings.editorHint', 'اختر مجموعة نصوص لتعديلها وانقر على زر التعديل أو مساعدة الذكاء الاصطناعي')}
-                </p>
-              </div>
-            )}
+            <div className="border rounded-md p-3 border-dashed">
+              <p className="text-sm text-muted-foreground text-center font-tajawal">
+                {t('developer.language.strings.editorHint', 'اختر مجموعة نصوص لتعديلها')}
+              </p>
+            </div>
             
             <div className="flex space-x-2 rtl:space-x-reverse">
               <Button variant="outline" className="flex-1">

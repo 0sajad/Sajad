@@ -9,6 +9,7 @@ import {
   CardTitle 
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { AlertTriangle } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -17,7 +18,6 @@ import { UiConfiguration } from "./UiConfiguration";
 import { NetworkControls } from "./NetworkControls";
 import { SecuritySettings } from "./SecuritySettings";
 import { LanguageTools } from "./LanguageTools";
-import { AIAssistantDeveloper } from "./AIAssistantDeveloper";
 
 export function DeveloperPanel() {
   const { isDeveloperMode, mode } = useMode();
@@ -55,7 +55,7 @@ export function DeveloperPanel() {
         </div>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-2">
-          <TabsList className="w-full justify-start grid grid-cols-6 mb-6">
+          <TabsList className="w-full justify-start grid grid-cols-5 mb-6">
             <TabsTrigger value="features" className="font-tajawal">
               {t('developer.tabs.features', 'الميزات')}
             </TabsTrigger>
@@ -70,9 +70,6 @@ export function DeveloperPanel() {
             </TabsTrigger>
             <TabsTrigger value="languages" className="font-tajawal">
               {t('developer.tabs.languages', 'اللغات')}
-            </TabsTrigger>
-            <TabsTrigger value="ai" className="font-tajawal">
-              {t('developer.tabs.ai', 'الذكاء الاصطناعي')}
             </TabsTrigger>
           </TabsList>
           
@@ -94,10 +91,6 @@ export function DeveloperPanel() {
           
           <TabsContent value="languages">
             <LanguageTools />
-          </TabsContent>
-
-          <TabsContent value="ai">
-            <AIAssistantDeveloper />
           </TabsContent>
         </Tabs>
       </CardContent>
