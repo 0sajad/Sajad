@@ -1,111 +1,72 @@
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-// Update the interface to include an index signature for dynamic access
 export interface SectionVisibilityState {
-  header: boolean;
-  hero: boolean;
-  features: boolean;
-  testimonials: boolean;
-  pricing: boolean;
-  faq: boolean;
-  cta: boolean;
-  footer: boolean;
-  pageLoaded: boolean;
   [key: string]: boolean; // Add index signature
+  'hero-section': boolean;
+  'animated-cards-section': boolean;
+  'ai-features-section': boolean;
+  'network-dashboard-section': boolean;
+  'network-tools-section': boolean;
+  'settings-section': boolean;
+  'cta-section': boolean;
 }
 
-/**
- * خطاف لإدارة مرئية الأقسام والتحميل التدريجي
- */
 export function useSectionVisibility() {
   const [sectionsVisible, setSectionsVisible] = useState<SectionVisibilityState>({
-    header: false,
-    hero: false,
-    features: false,
-    testimonials: false,
-    pricing: false,
-    faq: false,
-    cta: false,
-    footer: false,
-    pageLoaded: false
+    'hero-section': true,
+    'animated-cards-section': false,
+    'ai-features-section': false,
+    'network-dashboard-section': false,
+    'network-tools-section': false,
+    'settings-section': false,
+    'cta-section': false,
   });
   
-  // حالة تحميل الصفحة
-  const [pageLoaded, setPageLoaded] = useState<boolean>(false);
+  const [pageLoaded, setPageLoaded] = useState(false);
   
-  // تعيين مرئية الأقسام بناءً على التمرير والتحميل
-  useEffect(() => {
-    // تمكين الرأس والبطل فورًا
-    setSectionsVisible(prev => ({
-      ...prev,
-      header: true,
-      hero: true
-    }));
+  // تحديث حالة الرؤية عند التمرير
+  const handleScroll = useCallback(() => {
+    const sections = document.querySelectorAll('.observe-section');
     
-    // وظيفة لفحص مرئية العناصر
-    const checkVisibility = () => {
-      const sections = [
-        { id: 'features', selector: '[data-section="features"]' },
-        { id: 'testimonials', selector: '[data-section="testimonials"]' },
-        { id: 'pricing', selector: '[data-section="pricing"]' },
-        { id: 'faq', selector: '[data-section="faq"]' },
-        { id: 'cta', selector: '[data-section="cta"]' },
-        { id: 'footer', selector: 'footer' }
-      ];
-
-      sections.forEach(({ id, selector }) => {
-        const element = document.querySelector(selector);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          const isVisible = rect.top <= window.innerHeight * 1.1;
-          
-          if (isVisible) {
-            setSectionsVisible(prev => ({
-              ...prev,
-              [id]: true
-            }));
-          }
-        }
-      });
-    };
-    
-    // التحقق أول مرة بعد تحميل الصفحة
-    setTimeout(checkVisibility, 100);
-    
-    // تتبع مرئية الأقسام مع التمرير
-    window.addEventListener('scroll', checkVisibility, { passive: true });
-    
-    // تعيين حالة تحميل الصفحة بعد تأخير
-    const loadTimeout = setTimeout(() => {
-      setPageLoaded(true);
-      setSectionsVisible(prev => ({
-        ...prev,
-        pageLoaded: true
-      }));
+    sections.forEach((section) => {
+      const rect = section.getBoundingClientRect();
+      const inView = (
+        rect.top <= window.innerHeight * 0.75 &&
+        rect.bottom >= window.innerHeight * 0.25
+      );
       
-      // بعد تحميل الصفحة بالكامل، قم بتمكين جميع الأقسام
-      setTimeout(() => {
-        setSectionsVisible({
-          header: true,
-          hero: true,
-          features: true,
-          testimonials: true,
-          pricing: true,
-          faq: true,
-          cta: true,
-          footer: true,
-          pageLoaded: true
-        });
-      }, 1000);
-    }, 800);
-    
-    // التنظيف
-    return () => {
-      window.removeEventListener('scroll', checkVisibility);
-      clearTimeout(loadTimeout);
-    };
+      const id = section.id;
+      if (id) {
+        setSectionsVisible(prev => ({
+          ...prev,
+          [id]: inView
+        }));
+      }
+    });
   }, []);
+  
+  useEffect(() => {
+    // تعيين كافة القطاعات كمرئية بعد التحميل
+    const allSectionsVisible = Object.keys(sectionsVisible).reduce((acc, key) => {
+      acc[key] = true;
+      return acc;
+    }, {} as SectionVisibilityState);
+    
+    const timer = setTimeout(() => {
+      setSectionsVisible(allSectionsVisible);
+      setPageLoaded(true);
+    }, 1000);
+    
+    // إضافة مستمع للتمرير
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // تحقق من الرؤية عند التحميل الأولي
+    
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [handleScroll]);
   
   return {
     sectionsVisible,

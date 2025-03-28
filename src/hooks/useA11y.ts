@@ -1,8 +1,9 @@
+
 import { useAppState } from './useAppState';
 import { useCallback, useEffect } from 'react';
 import { ColorBlindMode } from './accessibility/useA11yColor';
 
-type NotificationSoundType = 'success' | 'error' | 'warning' | 'info' | 'notification';
+export type NotificationSoundType = 'success' | 'error' | 'warning' | 'info' | 'notification';
 
 /**
  * خطاف مركزي لإدارة ميزات إمكانية الوصول
@@ -51,7 +52,7 @@ export function useA11y() {
   // إعلان للقراء الشاشة
   const announce = useCallback((message: string, priority: 'assertive' | 'polite' = 'polite') => {
     // استخدام واجهة برمجة التطبيقات العالمية للإعلان إذا كانت متاحة
-    if (typeof window !== 'undefined' && window.announce) {
+    if (typeof window !== 'undefined' && 'announce' in window && typeof window.announce === 'function') {
       window.announce(message, priority);
       return;
     }
@@ -122,6 +123,7 @@ export function useA11y() {
     document.documentElement.classList.toggle('focus-mode', focusMode);
     document.documentElement.classList.toggle('reading-guide', readingGuide);
     document.documentElement.classList.toggle('dyslexic-font', dyslexicFont);
+    document.documentElement.classList.toggle('keyboard-navigation-visible', keyboardNavigationVisible);
     
     // تطبيق وضع عمى الألوان
     document.documentElement.setAttribute('data-color-blind-mode', colorBlindMode);
@@ -146,7 +148,7 @@ export function useA11y() {
     } else {
       document.documentElement.style.removeProperty('--font-size-adjust');
     }
-  }, [highContrast, largeText, reducedMotion, focusMode, readingGuide, colorBlindMode, dyslexicFont]);
+  }, [highContrast, largeText, reducedMotion, focusMode, readingGuide, colorBlindMode, dyslexicFont, keyboardNavigationVisible]);
 
   return {
     // الإعدادات الحالية

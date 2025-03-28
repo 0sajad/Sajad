@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { ModeProvider } from "@/context/ModeContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AnimatePresence } from "framer-motion";
+import { GlobalErrorBoundary } from "./components/ui/error/GlobalErrorBoundary";
 
 // Pages
 import Dashboard from "./pages/Dashboard";
@@ -17,6 +18,7 @@ import License from "./pages/License";
 import FiberOptic from "./pages/FiberOptic";
 import NotFound from "./pages/NotFound";
 import HelpCenter from "./pages/HelpCenter";
+import Index from "./pages/Index";
 
 // Components
 import { LoadingScreen } from "./components/LoadingScreen";
@@ -39,32 +41,35 @@ function App() {
   }
   
   return (
-    <ThemeProvider defaultTheme="system" storageKey="octa-gram-theme">
-      <ModeProvider>
-        <TooltipProvider>
-          <div className={cn(
-            "min-h-screen bg-background font-sans antialiased",
-            isRTL ? "rtl" : "ltr"
-          )}>
-            <Router>
-              <AnimatePresence mode="wait">
-                <Routes>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/ai" element={<AIAssistant />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="/license" element={<License />} />
-                  <Route path="/fiber-optic" element={<FiberOptic />} />
-                  <Route path="/help-center" element={<HelpCenter />} />
-                  <Route path="/404" element={<NotFound />} />
-                  <Route path="*" element={<Navigate to="/404" replace />} />
-                </Routes>
-              </AnimatePresence>
-            </Router>
-            <Toaster />
-          </div>
-        </TooltipProvider>
-      </ModeProvider>
-    </ThemeProvider>
+    <GlobalErrorBoundary>
+      <ThemeProvider defaultTheme="system" storageKey="octa-gram-theme">
+        <ModeProvider>
+          <TooltipProvider>
+            <div className={cn(
+              "min-h-screen bg-background font-sans antialiased",
+              isRTL ? "rtl" : "ltr"
+            )}>
+              <Router>
+                <AnimatePresence mode="wait">
+                  <Routes>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/index" element={<Index />} />
+                    <Route path="/ai" element={<AIAssistant />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/license" element={<License />} />
+                    <Route path="/fiber-optic" element={<FiberOptic />} />
+                    <Route path="/help-center" element={<HelpCenter />} />
+                    <Route path="/404" element={<NotFound />} />
+                    <Route path="*" element={<Navigate to="/404" replace />} />
+                  </Routes>
+                </AnimatePresence>
+              </Router>
+              <Toaster />
+            </div>
+          </TooltipProvider>
+        </ModeProvider>
+      </ThemeProvider>
+    </GlobalErrorBoundary>
   );
 }
 
