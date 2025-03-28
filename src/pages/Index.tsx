@@ -17,6 +17,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { ScreenReaderAnnouncer } from "@/components/ui/accessibility/screen-reader-announcer";
 import { MobileA11yDrawer } from "@/components/ui/accessibility/mobile-a11y-drawer";
+import { useRTLSupport } from "@/hooks/useRTLSupport";
+import { usePerformanceOptimization } from "@/hooks/usePerformanceOptimization";
+import { useKeyboardNavigation } from "@/hooks/useKeyboardNavigation";
 
 // تحسين التحميل البطيء: استخدام التحميل البطيء للمكونات غير الأساسية مع تحميل مسبق
 const NetworkDashboard = lazy(() => import("@/components/NetworkDashboard").then(m => ({ default: m.NetworkDashboard })));
@@ -57,6 +60,14 @@ export default function Index() {
     announce, 
     reducedMotion 
   } = useA11y();
+  const { isRTL } = useRTLSupport();
+  const { 
+    shouldUseAdvancedAnimations, 
+    shouldUseLazyLoading,
+    deviceTier 
+  } = usePerformanceOptimization();
+  const { isNavigatingWithKeyboard } = useKeyboardNavigation();
+  
   const [pageLoaded, setPageLoaded] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [sectionsVisible, setSectionsVisible] = useState<Record<string, boolean>>({});
@@ -82,14 +93,17 @@ export default function Index() {
       if ('requestIdleCallback' in window) {
         // تحميل مسبق للموارد الهامة خلال وقت الخمول
         (window as any).requestIdleCallback(() => {
-          import("@/components/AnimatedCards");
-          import("@/components/sections/AIFeaturesSection");
+          // أولوية التحميل بناءً على مستوى الجهاز
+          if (deviceTier !== 'low') {
+            import("@/components/AnimatedCards");
+            import("@/components/sections/AIFeaturesSection");
+          }
         });
       }
     };
     
     progressiveLoad();
-  }, []);
+  }, [deviceTier]);
   
   // تحسين رصد ظهور العناصر باستخدام Intersection Observer
   useEffect(() => {
@@ -154,6 +168,16 @@ export default function Index() {
   
   // تحميل تدريجي للمكونات بناءً على رؤيتها في الشاشة
   const renderLazySections = (sectionId: string, Component: React.LazyExoticComponent<any>) => {
+    // تحقق من استراتيجية التحميل البطيء
+    if (!shouldUseLazyLoading()) {
+      return (
+        <Suspense fallback={<SectionLoader />}>
+          <Component />
+        </Suspense>
+      );
+    }
+    
+    // تحميل فقط إذا كان القسم مرئيًا
     if (sectionsVisible[sectionId]) {
       return (
         <Suspense fallback={<SectionLoader />}>
@@ -172,6 +196,13 @@ export default function Index() {
         <ScreenReaderAnnouncer />
         <KeyboardFocusDetector />
         <SkipLink />
+        
+        {/* إضافة مؤشر التنقل بلوحة المفاتيح */}
+        {isNavigatingWithKeyboard && (
+          <div className="fixed inset-0 pointer-events-none z-50">
+            <div className="focus-outline-indicator" aria-hidden="true"></div>
+          </div>
+        )}
         
         {/* إضافة مكون دليل القراءة إذا كان مفعلاً */}
         {readingGuide && (
@@ -196,7 +227,7 @@ export default function Index() {
           tabIndex={-1} 
           className={`relative overflow-hidden ${isTransitioning ? 'opacity-0 transition-opacity duration-300' : 'opacity-100 transition-opacity duration-300'}`}
           lang={i18n.language}
-          dir={i18n.language === 'ar' || i18n.language === 'ar-iq' ? 'rtl' : 'ltr'}
+          dir={isRTL ? 'rtl' : 'ltr'}
         >
           <HeroSection />
           
@@ -207,41 +238,34 @@ export default function Index() {
           </div>
           
           <div id="ai-features-section" className="observe-section">
-            <Suspense fallback={<SectionLoader />}>
-              <AIFeaturesSection />
-            </Suspense>
+            {renderLazySections('ai-features-section', AIFeaturesSection)}
           </div>
           
           <div id="network-dashboard-section" className="observe-section">
-            <Suspense fallback={<SectionLoader />}>
-              <NetworkDashboard />
-            </Suspense>
+            {renderLazySections('network-dashboard-section', NetworkDashboard)}
           </div>
           
           <div id="network-tools-section" className="observe-section">
-            <Suspense fallback={<SectionLoader />}>
-              <NetworkToolsSection />
-            </Suspense>
+            {renderLazySections('network-tools-section', NetworkToolsSection)}
           </div>
           
           <div id="settings-section" className="observe-section">
-            <Suspense fallback={<SectionLoader />}>
-              <SettingsSection />
-            </Suspense>
+            {renderLazySections('settings-section', SettingsSection)}
           </div>
           
           <div id="cta-section" className="observe-section">
-            <Suspense fallback={<SectionLoader />}>
-              <CTASection />
-            </Suspense>
+            {renderLazySections('cta-section', CTASection)}
           </div>
           
-          <Suspense fallback={null}>
-            <FloatingAIAssistant 
-              show={showAIAssistant} 
-              onMaximize={handleMaximizeAI} 
-            />
-          </Suspense>
+          {/* تحميل المساعد الذكي فقط عند الحاجة */}
+          {showAIAssistant && (
+            <Suspense fallback={null}>
+              <FloatingAIAssistant 
+                show={showAIAssistant} 
+                onMaximize={handleMaximizeAI} 
+              />
+            </Suspense>
+          )}
         </main>
         
         {/* تذييل الصفحة */}

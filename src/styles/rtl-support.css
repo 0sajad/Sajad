@@ -1,0 +1,137 @@
+
+/**
+ * تنسيقات لدعم الاتجاه من اليمين إلى اليسار (RTL)
+ */
+
+/* تنسيقات أساسية للاتجاه RTL */
+[dir="rtl"] {
+  text-align: right;
+}
+
+[dir="rtl"] .reverse-grid {
+  direction: rtl;
+}
+
+/* عكس الهوامش والحشوات في RTL */
+[dir="rtl"] .rtl-reverse-padding {
+  padding-right: var(--padding-left, 0);
+  padding-left: var(--padding-right, 0);
+}
+
+[dir="rtl"] .rtl-reverse-margin {
+  margin-right: var(--margin-left, 0);
+  margin-left: var(--margin-right, 0);
+}
+
+/* عكس العناصر المرنة في RTL */
+[dir="rtl"] .rtl-reverse-flex {
+  flex-direction: row-reverse;
+}
+
+/* عكس الشبكة في RTL */
+[dir="rtl"] .rtl-reverse-grid {
+  direction: rtl;
+}
+
+/* عكس الأيقونات في RTL */
+[dir="rtl"] .rtl-mirror {
+  transform: scaleX(-1);
+}
+
+/* تحسين عرض النص العربي */
+[dir="rtl"] .arabic-text {
+  font-feature-settings: "kern", "liga", "calt", "arab";
+  word-spacing: 0.05em;
+  letter-spacing: -0.01em;
+}
+
+/* دعم الكاشيدا (التطويل) للنص العربي */
+.kashida-enabled {
+  text-justify: kashida;
+  text-align-last: justify;
+}
+
+/* تحسين الخطوط العربية */
+[dir="rtl"] body {
+  font-feature-settings: "kern", "liga", "calt", "arab";
+}
+
+/* تصحيح اتجاه الرسوم البيانية */
+[dir="rtl"] .recharts-wrapper:not(.no-rtl-flip) {
+  direction: ltr; /* احتفظ باتجاه LTR للرسوم البيانية */
+  text-align: right;
+}
+
+[dir="rtl"] .recharts-wrapper:not(.no-rtl-flip) .recharts-label,
+[dir="rtl"] .recharts-wrapper:not(.no-rtl-flip) .recharts-text {
+  direction: rtl;
+}
+
+/* تصحيح القوائم المنسدلة في RTL */
+[dir="rtl"] .rtl-dropdown {
+  left: auto;
+  right: 0;
+}
+
+/* تصحيح الشريط الجانبي في RTL */
+[dir="rtl"] .rtl-sidebar {
+  right: 0;
+  left: auto;
+}
+
+/* دعم الأرقام العربية */
+.arabic-numerals {
+  font-feature-settings: "kern", "liga", "calt", "arab", "tnum=0";
+}
+
+/* تصحيح أيقونات الأسهم في RTL */
+[dir="rtl"] .arrow-icon-left {
+  transform: rotate(180deg);
+}
+
+[dir="rtl"] .arrow-icon-right {
+  transform: rotate(180deg);
+}
+
+/* تحسين الانتقالات في RTL */
+[dir="rtl"] .slide-in-animation {
+  animation-direction: reverse;
+}
+
+/* تعديل وضع الإشعارات */
+[dir="rtl"] .toast-notification {
+  right: auto;
+  left: 1rem;
+}
+
+/* تحسين تجربة التمرير في RTL */
+[dir="rtl"] .custom-scrollbar {
+  direction: rtl;
+  scrollbar-width: thin;
+}
+
+/* تحسين عرض النماذج في RTL */
+[dir="rtl"] .form-field > label {
+  text-align: right;
+}
+
+/* تصحيح المربعات الحوارية في RTL */
+[dir="rtl"] .dialog-content {
+  text-align: right;
+}
+
+/* تعديل الجداول في RTL */
+[dir="rtl"] table th,
+[dir="rtl"] table td {
+  text-align: right;
+}
+
+/* تحسين واجهة البطاقات في RTL */
+[dir="rtl"] .card-header {
+  flex-direction: row-reverse;
+}
+
+/* تصحيح التوجيه في الأيقونات */
+[dir="rtl"] .icon-direction {
+  transform: scaleX(-1);
+}

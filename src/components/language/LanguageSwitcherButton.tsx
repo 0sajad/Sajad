@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { useA11y } from "@/hooks/useA11y";
+import { useRTLSupport } from "@/hooks/useRTLSupport";
 
 interface LanguageSwitcherButtonProps {
   className?: string;
@@ -21,6 +22,7 @@ export function LanguageSwitcherButton({
 }: LanguageSwitcherButtonProps) {
   const { t } = useTranslation();
   const { reducedMotion } = useA11y();
+  const { isRTL } = useRTLSupport();
 
   return (
     <Button
@@ -36,7 +38,7 @@ export function LanguageSwitcherButton({
         
         {/* Current language flag with enhanced appearance */}
         <motion.div 
-          className="absolute -top-2 -right-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full w-5 h-5 flex items-center justify-center border border-white dark:border-gray-700 shadow-md"
+          className={`absolute ${isRTL ? '-top-2 -left-2' : '-top-2 -right-2'} bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full w-5 h-5 flex items-center justify-center border border-white dark:border-gray-700 shadow-md`}
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ 

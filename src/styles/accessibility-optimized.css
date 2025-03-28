@@ -1,0 +1,270 @@
+
+/**
+ * أنماط محسنة لإمكانية الوصول
+ * تتضمن تحسينات للتنقل بلوحة المفاتيح، وتباين الألوان، والقراءة المساعدة
+ */
+
+/* تحسين مؤشر التركيز للتنقل بلوحة المفاتيح */
+.focus-visible,
+:focus-visible {
+  outline: 3px solid var(--focus-ring-color, #0284c7) !important;
+  outline-offset: 2px !important;
+  border-radius: 0.25rem;
+  transition: outline-offset 0.1s ease;
+  z-index: 10;
+  position: relative;
+}
+
+/* مؤشر محسن للتركيز عند التنقل بلوحة المفاتيح */
+.focus-outline-indicator {
+  box-shadow: 0 0 0 3px var(--focus-ring-color, #0284c7);
+  border-radius: 0.25rem;
+  pointer-events: none;
+  position: fixed;
+  transition: all 0.2s ease-in-out;
+}
+
+/* تحسينات للوضع عالي التباين */
+.high-contrast {
+  --background: #000;
+  --foreground: #fff;
+  --primary: #ffdd00;
+  --primary-foreground: #000;
+  --muted: #333;
+  --muted-foreground: #fff;
+  --border: #fff;
+  --focus-ring-color: #ffdd00;
+}
+
+.high-contrast a {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.high-contrast button:not(.no-high-contrast-styles),
+.high-contrast .button:not(.no-high-contrast-styles) {
+  background-color: #000;
+  color: #fff;
+  border: 2px solid #fff;
+}
+
+.high-contrast button:hover:not(.no-high-contrast-styles),
+.high-contrast .button:hover:not(.no-high-contrast-styles) {
+  background-color: #fff;
+  color: #000;
+}
+
+/* تحسينات للنص الكبير */
+.large-text {
+  --font-size-multiplier: 1.25;
+  font-size: calc(100% * var(--font-size-multiplier)) !important;
+}
+
+.large-text h1 {
+  font-size: calc(2rem * var(--font-size-multiplier)) !important;
+}
+
+.large-text h2 {
+  font-size: calc(1.75rem * var(--font-size-multiplier)) !important;
+}
+
+.large-text h3 {
+  font-size: calc(1.5rem * var(--font-size-multiplier)) !important;
+}
+
+.large-text p, .large-text div, .large-text span, .large-text button, .large-text a {
+  font-size: calc(1rem * var(--font-size-multiplier)) !important;
+}
+
+/* خط داعم لعسر القراءة */
+.dyslexic-font {
+  --font-family-dyslexic: "OpenDyslexic", sans-serif;
+  font-family: var(--font-family-dyslexic) !important;
+  letter-spacing: 0.05em;
+  word-spacing: 0.1em;
+  line-height: 1.4;
+}
+
+/* تحسين مسافة النص */
+.text-spacing {
+  letter-spacing: 0.1em !important;
+  word-spacing: 0.2em !important;
+  line-height: 1.8 !important;
+}
+
+/* تسطير الروابط */
+.underline-links a {
+  text-decoration: underline !important;
+  text-underline-offset: 0.2em !important;
+}
+
+/* تقليل الحركة */
+.reduced-motion,
+.reduced-motion * {
+  animation-duration: 0.001ms !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* وضع التركيز */
+.focus-mode .low-priority {
+  opacity: 0.3;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.focus-mode .low-priority:hover,
+.focus-mode .low-priority:focus-within {
+  opacity: 1;
+}
+
+.focus-mode main {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* دليل القراءة */
+.reading-guide-container {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.reading-guide-bar {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  background-color: rgba(255, 255, 0, 0.2);
+  border-top: 1px solid rgba(255, 165, 0, 0.3);
+  border-bottom: 1px solid rgba(255, 165, 0, 0.3);
+  transform: translateY(calc(var(--y, 0) * 1px));
+  pointer-events: none;
+  transition: transform 0.1s ease-out;
+  z-index: 9999;
+}
+
+/* مؤشر مخصص للماوس */
+.custom-cursor {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20v-16l16 16H4z'/%3E%3C/svg%3E"), auto;
+}
+
+/* خيارات الألوان لعمى الألوان */
+/* عمى اللون الأحمر */
+.protanopia {
+  filter: url('#protanopia-filter');
+}
+
+/* عمى اللون الأخضر */
+.deuteranopia {
+  filter: url('#deuteranopia-filter');
+}
+
+/* عمى اللون الأزرق */
+.tritanopia {
+  filter: url('#tritanopia-filter');
+}
+
+/* عمى الألوان الكلي */
+.achromatopsia {
+  filter: grayscale(100%);
+}
+
+/* تطبيق تأثير عكس الألوان على الموقع بالكامل */
+.invert-colors {
+  filter: invert(100%) hue-rotate(180deg);
+}
+
+.invert-colors img,
+.invert-colors video,
+.invert-colors .no-invert {
+  filter: invert(100%) hue-rotate(180deg);
+}
+
+/* تطبيق تأثير أحادي اللون */
+.monochrome {
+  filter: grayscale(100%);
+}
+
+/* تخطي إلى المحتوى */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background-color: var(--background);
+  color: var(--foreground);
+  padding: 8px 16px;
+  z-index: 1000;
+  transition: top 0.2s ease;
+  border-radius: 0 0 4px 0;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--focus-ring-color, #0284c7);
+}
+
+/* تحسينات للإعلان للقراء الشاشة */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-announcer {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* تحسين الأداء على الأجهزة منخفضة الأداء */
+@media (prefers-reduced-motion), (max-width: 640px) {
+  .optimize-performance {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+  
+  .optimize-performance * {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+  }
+  
+  .optimize-performance .lazy-load {
+    content-visibility: auto;
+  }
+}
+
+/* تحسين دعم RTL */
+[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
+}
+
+/* تحسين التباعد النصي للعربية */
+[dir="rtl"] {
+  letter-spacing: 0;
+  word-spacing: 0.05em;
+}
