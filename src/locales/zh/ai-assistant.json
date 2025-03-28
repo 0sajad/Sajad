@@ -35,5 +35,10 @@
     "darkMode": "暗黑模式",
     "fontSize": "字体大小",
     "language": "语言"
-  }
+  },
+  "dashboard": "仪表板",
+  "settings": "设置",
+  "license": "许可证",
+  "fiberOptic": "光纤",
+  "helpCenter": "帮助中心"
 }

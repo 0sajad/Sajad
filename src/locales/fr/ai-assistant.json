@@ -1,39 +1,44 @@
 
 {
   "title": "Assistant IA",
-  "subtitle": "Votre Guide Réseau Personnel",
+  "subtitle": "Votre guide personnel de réseau",
   "description": "Obtenez une aide instantanée, des recommandations et de l'automatisation pour votre réseau",
-  "voiceAssistance": "Assistance Vocale",
-  "startRecording": "Commencer l'Enregistrement",
-  "stopRecording": "Arrêter l'Enregistrement",
+  "voiceAssistance": "Assistance vocale",
+  "startRecording": "Commencer l'enregistrement",
+  "stopRecording": "Arrêter l'enregistrement",
   "chatPlaceholder": "Posez une question sur votre réseau...",
   "sendMessage": "Envoyer",
-  "clearChat": "Effacer la Conversation",
-  "historyLabel": "Historique des Conversations",
-  "suggestedQueries": "Questions Suggérées",
+  "clearChat": "Effacer la conversation",
+  "historyLabel": "Historique des conversations",
+  "suggestedQueries": "Questions suggérées",
   "noHistoryYet": "Pas encore d'historique de conversation",
   "loadingResponse": "Chargement de la réponse...",
   "tools": {
-    "title": "Outils Disponibles",
-    "networkAnalysis": "Analyse de Réseau",
-    "securityScan": "Scan de Sécurité",
-    "troubleshoot": "Résoudre les Problèmes",
-    "optimize": "Optimiser la Performance",
-    "deviceSetup": "Configuration d'Appareil"
+    "title": "Outils disponibles",
+    "networkAnalysis": "Analyse réseau",
+    "securityScan": "Analyse de sécurité",
+    "troubleshoot": "Dépannage",
+    "optimize": "Optimisation de performance",
+    "deviceSetup": "Configuration d'appareil"
   },
   "suggestions": {
-    "networkIssue": "Pourquoi ma connexion internet est-elle lente?",
+    "networkIssue": "Pourquoi ma connexion Internet est-elle lente?",
     "securityCheck": "Mon réseau est-il sécurisé?",
     "deviceConnection": "Comment connecter un nouvel appareil?",
-    "signalStrength": "Comment améliorer la puissance de mon signal WiFi?"
+    "signalStrength": "Comment améliorer la force du signal WiFi?"
   },
   "settings": {
-    "title": "Paramètres de l'Assistant",
-    "voiceEnabled": "Activer l'Assistance Vocale",
-    "suggestionsEnabled": "Activer les Suggestions",
-    "historyEnabled": "Activer l'Historique des Conversations",
-    "darkMode": "Mode Sombre",
-    "fontSize": "Taille de Police",
+    "title": "Paramètres de l'assistant",
+    "voiceEnabled": "Activer l'assistance vocale",
+    "suggestionsEnabled": "Activer les suggestions",
+    "historyEnabled": "Activer l'historique des conversations",
+    "darkMode": "Mode sombre",
+    "fontSize": "Taille de police",
     "language": "Langue"
-  }
+  },
+  "dashboard": "Tableau de Bord",
+  "settings": "Paramètres",
+  "license": "Licence",
+  "fiberOptic": "Fibre Optique",
+  "helpCenter": "Centre d'Aide"
 }

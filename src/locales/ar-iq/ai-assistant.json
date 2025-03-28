@@ -35,5 +35,10 @@
     "darkMode": "الوضع الليلي",
     "fontSize": "حجم الخط",
     "language": "اللغة"
-  }
+  },
+  "dashboard": "لوحة التحكم",
+  "settings": "الإعدادات",
+  "license": "الترخيص",
+  "fiberOptic": "الألياف الضوئية",
+  "helpCenter": "مركز المساعدة"
 }

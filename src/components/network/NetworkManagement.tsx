@@ -14,9 +14,9 @@ export function NetworkManagement() {
     <div className="space-y-4">
       <Tabs defaultValue="tools" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="tools">Network Tools</TabsTrigger>
-          <TabsTrigger value="devices">Devices</TabsTrigger>
-          <TabsTrigger value="router">Router Config</TabsTrigger>
+          <TabsTrigger value="tools">{t('tools', 'Network Tools')}</TabsTrigger>
+          <TabsTrigger value="devices">{t('devices', 'Devices')}</TabsTrigger>
+          <TabsTrigger value="router">{t('router', 'Router Config')}</TabsTrigger>
         </TabsList>
         
         <TabsContent value="tools" className="space-y-4">

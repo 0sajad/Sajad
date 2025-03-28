@@ -30,5 +30,20 @@
   "systemResources": "系统资源",
   "cpuUsage": "CPU使用率",
   "memoryUsage": "内存使用率",
-  "storageUsage": "存储使用率"
+  "storageUsage": "存储使用率",
+  "networkTools": "网络工具",
+  "advancedSettings": "高级设置",
+  "securityCenter": "安全中心",
+  "helpSupport": "帮助与支持",
+  "userAccount": "用户账户",
+  "notifications": "通知",
+  "alerts": "警报",
+  "reports": "报告",
+  "analytics": "分析",
+  "diagnostics": "诊断",
+  "troubleshooting": "故障排除",
+  "updates": "更新",
+  "maintenance": "维护",
+  "backup": "备份",
+  "restore": "恢复"
 }

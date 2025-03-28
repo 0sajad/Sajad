@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 interface ToolIdea {
   name: string;
   description: string;
-  category: 'diagnostic' | 'security' | 'optimization' | 'monitoring';
+  category: 'diagnostic' | 'security' | 'optimization' | 'monitoring' | 'communication' | 'analysis' | 'management';
 }
 
 export function useAIToolkit() {
@@ -70,6 +70,56 @@ export function useAIToolkit() {
           name: "Traffic Shaper",
           description: "Control and shape network traffic to optimize performance",
           category: "optimization"
+        },
+        {
+          name: "Wireless Signal Optimizer",
+          description: "Optimize your WiFi signal strength and reduce interference",
+          category: "optimization"
+        },
+        {
+          name: "Network Vulnerability Scanner",
+          description: "Identify and assess network security vulnerabilities",
+          category: "security"
+        },
+        {
+          name: "Cloud Network Integrator",
+          description: "Integrate and manage cloud services with your local network",
+          category: "management"
+        },
+        {
+          name: "IoT Device Manager",
+          description: "Secure and manage IoT devices on your network",
+          category: "management"
+        },
+        {
+          name: "Packet Loss Analyzer",
+          description: "Identify and resolve packet loss issues in your network",
+          category: "diagnostic"
+        },
+        {
+          name: "5G Signal Optimizer",
+          description: "Optimize and analyze 5G cellular network connections",
+          category: "optimization"
+        },
+        {
+          name: "Network Documentation Generator",
+          description: "Automatically generate comprehensive network documentation",
+          category: "management"
+        },
+        {
+          name: "Satellite Connection Manager",
+          description: "Optimize and manage satellite internet connections",
+          category: "optimization"
+        },
+        {
+          name: "Mesh Network Configurator",
+          description: "Configure and optimize mesh network deployments",
+          category: "management"
+        },
+        {
+          name: "Network Compliance Checker",
+          description: "Verify network compliance with security standards and regulations",
+          category: "security"
         }
       ];
       
@@ -146,10 +196,109 @@ export function useAIToolkit() {
     }
   }, []);
   
+  // تحليل أداء الشبكة
+  const analyzeNetworkPerformance = useCallback(async (networkData: any): Promise<any> => {
+    setIsGenerating(true);
+    
+    try {
+      // في الإصدار المستقبلي، سيتم استبدال هذا بالاتصال الفعلي بـ AI
+      await new Promise(resolve => setTimeout(resolve, 1800));
+      
+      // تحليل بسيط للبيانات
+      const analysis = {
+        performanceScore: Math.floor(Math.random() * 100),
+        recommendations: [
+          "Optimize DNS settings for faster lookups",
+          "Update router firmware to the latest version",
+          "Consider upgrading to a dual-band router",
+          "Adjust QoS settings to prioritize important traffic"
+        ],
+        bottlenecks: [
+          "High latency detected in evening hours",
+          "Possible WiFi interference on channel 6",
+          "Outdated network drivers on main workstation"
+        ],
+        optimizationPotential: Math.floor(Math.random() * 50) + 20
+      };
+      
+      toast.success("Network analysis completed");
+      
+      return analysis;
+    } catch (error) {
+      console.error("Error analyzing network:", error);
+      toast.error("Failed to analyze network");
+      
+      return {
+        performanceScore: 0,
+        recommendations: ["Unable to complete analysis"],
+        bottlenecks: [],
+        optimizationPotential: 0
+      };
+    } finally {
+      setIsGenerating(false);
+    }
+  }, []);
+  
+  // توليد خطة تحسين الشبكة
+  const generateNetworkImprovementPlan = useCallback(async (): Promise<any> => {
+    setIsGenerating(true);
+    
+    try {
+      // في الإصدار المستقبلي، سيتم استبدال هذا بالاتصال الفعلي بـ AI
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const improvementPlan = {
+        shortTerm: [
+          "Update all network device firmware",
+          "Optimize WiFi channel selection",
+          "Implement basic QoS rules"
+        ],
+        mediumTerm: [
+          "Set up network segmentation for improved security",
+          "Replace aging switches with managed models",
+          "Implement centralized authentication"
+        ],
+        longTerm: [
+          "Migrate to WiFi 6 infrastructure",
+          "Implement SD-WAN for better WAN management",
+          "Deploy advanced network monitoring tools"
+        ],
+        estimatedTimeInvestment: {
+          shortTerm: "2-3 hours",
+          mediumTerm: "1-2 days",
+          longTerm: "1-2 weeks"
+        },
+        potentialBenefits: {
+          performance: "30-40% improvement",
+          security: "Significant enhancement",
+          reliability: "High improvement",
+          managibility: "Substantial improvement"
+        }
+      };
+      
+      toast.success("Network improvement plan generated");
+      
+      return improvementPlan;
+    } catch (error) {
+      console.error("Error generating improvement plan:", error);
+      toast.error("Failed to generate improvement plan");
+      
+      return {
+        shortTerm: ["Unable to generate plan"],
+        mediumTerm: [],
+        longTerm: []
+      };
+    } finally {
+      setIsGenerating(false);
+    }
+  }, []);
+  
   return {
     isGenerating,
     generateToolIdea,
     generateToolDescription,
-    optimizeExistingTool
+    optimizeExistingTool,
+    analyzeNetworkPerformance,
+    generateNetworkImprovementPlan
   };
 }

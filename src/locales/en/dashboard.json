@@ -30,5 +30,20 @@
   "systemResources": "System Resources",
   "cpuUsage": "CPU Usage",
   "memoryUsage": "Memory Usage",
-  "storageUsage": "Storage Usage"
+  "storageUsage": "Storage Usage",
+  "networkTools": "Network Tools",
+  "advancedSettings": "Advanced Settings",
+  "securityCenter": "Security Center",
+  "helpSupport": "Help & Support",
+  "userAccount": "User Account",
+  "notifications": "Notifications",
+  "alerts": "Alerts",
+  "reports": "Reports",
+  "analytics": "Analytics",
+  "diagnostics": "Diagnostics",
+  "troubleshooting": "Troubleshooting",
+  "updates": "Updates",
+  "maintenance": "Maintenance",
+  "backup": "Backup",
+  "restore": "Restore"
 }
