@@ -1,58 +1,113 @@
 
 import { useState, useEffect } from 'react';
 
+interface SectionVisibilityState {
+  header: boolean;
+  hero: boolean;
+  features: boolean;
+  testimonials: boolean;
+  pricing: boolean;
+  faq: boolean;
+  cta: boolean;
+  footer: boolean;
+  pageLoaded: boolean;
+}
+
 /**
- * خطاف لتتبع ظهور الأقسام في العرض
- * يستخدم Intersection Observer API لتحسين الأداء
+ * خطاف لإدارة مرئية الأقسام والتحميل التدريجي
  */
 export function useSectionVisibility() {
-  const [sectionsVisible, setSectionsVisible] = useState<Record<string, boolean>>({});
-  const [pageLoaded, setPageLoaded] = useState(false);
+  const [sectionsVisible, setSectionsVisible] = useState<SectionVisibilityState>({
+    header: false,
+    hero: false,
+    features: false,
+    testimonials: false,
+    pricing: false,
+    faq: false,
+    cta: false,
+    footer: false,
+    pageLoaded: false
+  });
   
-  // تحقق من اكتمال تحميل الصفحة
-  useEffect(() => {
-    if (document.readyState === 'complete') {
-      setPageLoaded(true);
-    } else {
-      const handleLoad = () => setPageLoaded(true);
-      window.addEventListener('load', handleLoad);
-      return () => window.removeEventListener('load', handleLoad);
-    }
-  }, []);
+  // حالة تحميل الصفحة
+  const [pageLoaded, setPageLoaded] = useState<boolean>(false);
   
-  // إعداد مراقب تقاطع العناصر لتحسين أداء التحميل البطيء
+  // تعيين مرئية الأقسام بناءً على التمرير والتحميل
   useEffect(() => {
-    if (!pageLoaded) return;
+    // تمكين الرأس والبطل فورًا
+    setSectionsVisible(prev => ({
+      ...prev,
+      header: true,
+      hero: true
+    }));
     
-    const observerOptions = {
-      root: null,
-      rootMargin: '0px',
-      threshold: 0.1
-    };
-    
-    const sectionObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const sectionId = entry.target.id;
-          setSectionsVisible(prev => ({...prev, [sectionId]: true}));
+    // وظيفة لفحص مرئية العناصر
+    const checkVisibility = () => {
+      const sections = [
+        { id: 'features', selector: '[data-section="features"]' },
+        { id: 'testimonials', selector: '[data-section="testimonials"]' },
+        { id: 'pricing', selector: '[data-section="pricing"]' },
+        { id: 'faq', selector: '[data-section="faq"]' },
+        { id: 'cta', selector: '[data-section="cta"]' },
+        { id: 'footer', selector: 'footer' }
+      ];
+
+      sections.forEach(({ id, selector }) => {
+        const element = document.querySelector(selector);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          const isVisible = rect.top <= window.innerHeight * 1.1;
           
-          // إلغاء مراقبة القسم بعد ظهوره لتحسين الأداء
-          sectionObserver.unobserve(entry.target);
+          if (isVisible) {
+            setSectionsVisible(prev => ({
+              ...prev,
+              [id]: true
+            }));
+          }
         }
       });
-    }, observerOptions);
+    };
     
-    // إضافة معرّفات للأقسام ومراقبتها
-    const sections = document.querySelectorAll('.observe-section');
-    sections.forEach(section => {
-      if (!section.id) {
-        section.id = `section-${Math.random().toString(36).substr(2, 9)}`;
-      }
-      sectionObserver.observe(section);
-    });
+    // التحقق أول مرة بعد تحميل الصفحة
+    setTimeout(checkVisibility, 100);
     
-    return () => sectionObserver.disconnect();
-  }, [pageLoaded]);
+    // تتبع مرئية الأقسام مع التمرير
+    window.addEventListener('scroll', checkVisibility, { passive: true });
+    
+    // تعيين حالة تحميل الصفحة بعد تأخير
+    const loadTimeout = setTimeout(() => {
+      setPageLoaded(true);
+      setSectionsVisible(prev => ({
+        ...prev,
+        pageLoaded: true
+      }));
+      
+      // بعد تحميل الصفحة بالكامل، قم بتمكين جميع الأقسام
+      setTimeout(() => {
+        setSectionsVisible({
+          header: true,
+          hero: true,
+          features: true,
+          testimonials: true,
+          pricing: true,
+          faq: true,
+          cta: true,
+          footer: true,
+          pageLoaded: true
+        });
+      }, 1000);
+    }, 800);
+    
+    // التنظيف
+    return () => {
+      window.removeEventListener('scroll', checkVisibility);
+      clearTimeout(loadTimeout);
+    };
+  }, []);
   
-  return { sectionsVisible, pageLoaded, setPageLoaded };
+  return {
+    sectionsVisible,
+    pageLoaded,
+    setPageLoaded
+  };
 }

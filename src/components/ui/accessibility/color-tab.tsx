@@ -2,68 +2,78 @@
 import React from "react";
 import { TabsContent } from "@/components/ui/tabs";
 import { useTranslation } from "react-i18next";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useA11y } from "@/hooks/useA11y";
+import { AccessibilityToggle } from "./accessibility-toggle";
+import { Palette, EyeOff, ScreenShare } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 /**
- * تبويب خيارات الألوان في قائمة إمكانية الوصول
+ * تبويب الألوان لإعدادات إمكانية الوصول
  */
 export function ColorTab() {
   const { t } = useTranslation();
   const { colorBlindMode, setColorBlindMode } = useA11y();
   
   return (
-    <TabsContent value="color" className="space-y-4">
-      <div>
-        <Label className="block mb-2">
-          {t('accessibility.features.colorBlindMode', 'وضع عمى الألوان')}
+    <TabsContent value="color" className="space-y-4 py-2">
+      <div className="space-y-2">
+        <Label htmlFor="color-blind-mode">
+          {t('accessibility.colorBlindMode', 'وضع عمى الألوان')}
         </Label>
-        <p className="text-xs text-muted-foreground mb-3">
-          {t('accessibility.features.colorBlindModeDescription', 'تعديل ألوان الموقع لمساعدة الأشخاص الذين يعانون من عمى الألوان')}
-        </p>
-        
-        <RadioGroup
-          value={colorBlindMode}
+        <Select 
+          value={colorBlindMode} 
           onValueChange={(value) => setColorBlindMode(value as any)}
-          className="space-y-2"
         >
-          <div className="flex items-center space-x-2 rtl:space-x-reverse">
-            <RadioGroupItem value="none" id="color-none" />
-            <Label htmlFor="color-none" className="cursor-pointer">
-              {t('accessibility.colorModes.none', 'بدون')}
-            </Label>
-          </div>
-          
-          <div className="flex items-center space-x-2 rtl:space-x-reverse">
-            <RadioGroupItem value="protanopia" id="color-protanopia" />
-            <Label htmlFor="color-protanopia" className="cursor-pointer">
-              {t('accessibility.colorModes.protanopia', 'عمى اللون الأحمر')}
-            </Label>
-          </div>
-          
-          <div className="flex items-center space-x-2 rtl:space-x-reverse">
-            <RadioGroupItem value="deuteranopia" id="color-deuteranopia" />
-            <Label htmlFor="color-deuteranopia" className="cursor-pointer">
-              {t('accessibility.colorModes.deuteranopia', 'عمى اللون الأخضر')}
-            </Label>
-          </div>
-          
-          <div className="flex items-center space-x-2 rtl:space-x-reverse">
-            <RadioGroupItem value="tritanopia" id="color-tritanopia" />
-            <Label htmlFor="color-tritanopia" className="cursor-pointer">
-              {t('accessibility.colorModes.tritanopia', 'عمى اللون الأزرق')}
-            </Label>
-          </div>
-          
-          <div className="flex items-center space-x-2 rtl:space-x-reverse">
-            <RadioGroupItem value="achromatopsia" id="color-achromatopsia" />
-            <Label htmlFor="color-achromatopsia" className="cursor-pointer">
-              {t('accessibility.colorModes.achromatopsia', 'عمى الألوان الكامل')}
-            </Label>
-          </div>
-        </RadioGroup>
+          <SelectTrigger id="color-blind-mode">
+            <SelectValue placeholder={t('accessibility.selectMode', 'اختر الوضع')} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="none">{t('accessibility.normal', 'طبيعي')}</SelectItem>
+            <SelectItem value="protanopia">{t('accessibility.protanopia', 'عمى اللون الأحمر')}</SelectItem>
+            <SelectItem value="deuteranopia">{t('accessibility.deuteranopia', 'عمى اللون الأخضر')}</SelectItem>
+            <SelectItem value="tritanopia">{t('accessibility.tritanopia', 'عمى اللون الأزرق')}</SelectItem>
+            <SelectItem value="achromatopsia">{t('accessibility.achromatopsia', 'عمى الألوان الكلي')}</SelectItem>
+          </SelectContent>
+        </Select>
+        <p className="text-xs text-muted-foreground mt-1">
+          {t('accessibility.colorBlindModeDesc', 'تعديل الألوان للأشخاص الذين يعانون من عمى الألوان')}
+        </p>
       </div>
+      
+      <AccessibilityToggle
+        id="invert-colors-toggle"
+        label={t('accessibility.invertColors', 'عكس الألوان')}
+        description={t('accessibility.invertColorsDesc', 'عكس جميع الألوان في الصفحة')}
+        icon={Palette}
+        checked={document.body.classList.contains('invert-colors')}
+        onChange={(checked) => {
+          if (checked) {
+            document.body.classList.add('invert-colors');
+            localStorage.setItem('invert-colors', 'enabled');
+          } else {
+            document.body.classList.remove('invert-colors');
+            localStorage.removeItem('invert-colors');
+          }
+        }}
+      />
+      
+      <AccessibilityToggle
+        id="monochrome-toggle"
+        label={t('accessibility.monochrome', 'أحادي اللون')}
+        description={t('accessibility.monochromeDesc', 'تحويل الصفحة إلى الأبيض والأسود')}
+        icon={EyeOff}
+        checked={document.body.classList.contains('monochrome')}
+        onChange={(checked) => {
+          if (checked) {
+            document.body.classList.add('monochrome');
+            localStorage.setItem('monochrome', 'enabled');
+          } else {
+            document.body.classList.remove('monochrome');
+            localStorage.removeItem('monochrome');
+          }
+        }}
+      />
     </TabsContent>
   );
 }

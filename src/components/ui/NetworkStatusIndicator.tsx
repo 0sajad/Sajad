@@ -1,48 +1,65 @@
 
-import React from "react";
-import { useOfflineMode } from "@/hooks/useOfflineMode";
-import { useTranslation } from "react-i18next";
-import { WifiOff, Wifi } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { motion } from "framer-motion";
-import { useA11y } from "@/hooks/useA11y";
+import React from 'react';
+import { AlertTriangle, Wifi, WifiOff } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useOfflineMode } from '@/hooks/useOfflineMode';
+import { useTranslation } from 'react-i18next';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
+/**
+ * مؤشر حالة الشبكة الذي يظهر في أعلى التطبيق
+ */
 export function NetworkStatusIndicator() {
   const { t } = useTranslation();
-  const { isOnline, attemptReconnect } = useOfflineMode();
-  const { reducedMotion } = useA11y();
+  const { isOnline, hasPendingSync, syncOfflineData, attemptReconnect } = useOfflineMode();
   
-  if (isOnline) return null;
+  // إذا كان المستخدم متصلاً بالإنترنت، لا نعرض أي شيء
+  if (isOnline && !hasPendingSync) {
+    return null;
+  }
   
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <motion.div
-          initial={{ opacity: 0, y: 10 }} 
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: reducedMotion ? 0.1 : 0.3 }}
-        >
+    <div className="fixed top-0 right-0 m-4 z-50 rtl:right-auto rtl:left-0">
+      <TooltipProvider>
+        <Tooltip>
           <TooltipTrigger asChild>
             <Button
-              variant="ghost"
+              variant={isOnline ? "outline" : "destructive"}
               size="sm"
-              className="p-1 h-7 bg-destructive/10 hover:bg-destructive/20 text-destructive"
-              onClick={attemptReconnect}
-              aria-label={t('network.offline', 'غير متصل بالإنترنت')}
+              className="flex items-center gap-2"
+              onClick={isOnline ? syncOfflineData : attemptReconnect}
             >
-              <WifiOff className="h-4 w-4 mr-1" />
-              <Badge variant="outline" className="text-xs bg-destructive/20 border-destructive/20 text-destructive">
-                {t('network.offline', 'غير متصل')}
-              </Badge>
+              {isOnline ? (
+                <>
+                  <Wifi className="h-4 w-4" />
+                  <span className="sr-only md:not-sr-only">
+                    {t('network.syncPending', 'مزامنة معلقة')}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <WifiOff className="h-4 w-4" />
+                  <span className="sr-only md:not-sr-only">
+                    {t('network.offline', 'غير متصل')}
+                  </span>
+                </>
+              )}
+              
+              {hasPendingSync && (
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                </span>
+              )}
             </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom">
-            <p>{t('network.reconnectHint', 'انقر للمحاولة مجددًا')}</p>
+            {isOnline 
+              ? t('network.clickToSync', 'انقر للمزامنة الآن') 
+              : t('network.clickToReconnect', 'انقر لمحاولة إعادة الاتصال')}
           </TooltipContent>
-        </motion.div>
-      </Tooltip>
-    </TooltipProvider>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
   );
 }

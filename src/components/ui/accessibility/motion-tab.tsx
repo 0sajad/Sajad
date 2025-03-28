@@ -2,9 +2,8 @@
 import React from "react";
 import { TabsContent } from "@/components/ui/tabs";
 import { useTranslation } from "react-i18next";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { useA11y } from "@/hooks/useA11y";
+import { AccessibilityToggle } from "./accessibility-toggle";
+import { MousePointerSquare, Pause, Focus } from "lucide-react";
 
 interface MotionTabProps {
   reducedMotion: boolean;
@@ -12,67 +11,59 @@ interface MotionTabProps {
 }
 
 /**
- * تبويب خيارات الحركة في قائمة إمكانية الوصول
+ * تبويب الحركة لإعدادات إمكانية الوصول
  */
 export function MotionTab({
   reducedMotion,
   setReducedMotion
 }: MotionTabProps) {
   const { t } = useTranslation();
-  const { readingGuide, setReadingGuide, focusMode, setFocusMode } = useA11y();
   
   return (
-    <TabsContent value="motion" className="space-y-4">
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="reduced-motion" className="cursor-pointer">
-            {t('accessibility.features.reducedMotion', 'تقليل الحركة')}
-          </Label>
-          <Switch
-            id="reduced-motion"
-            checked={reducedMotion}
-            onCheckedChange={setReducedMotion}
-            aria-label={t('accessibility.features.reducedMotion', 'تقليل الحركة')}
-          />
-        </div>
-        <p className="text-xs text-muted-foreground">
-          {t('accessibility.features.reducedMotionDescription', 'تقليل أو إزالة الحركات والتأثيرات البصرية')}
-        </p>
-      </div>
+    <TabsContent value="motion" className="space-y-2 py-2">
+      <AccessibilityToggle
+        id="reduced-motion-toggle"
+        label={t('accessibility.reducedMotion', 'تقليل الحركة')}
+        description={t('accessibility.reducedMotionDesc', 'تقليل أو إزالة الرسوم المتحركة')}
+        icon={Pause}
+        checked={reducedMotion}
+        onChange={setReducedMotion}
+        shortcutKey="Alt+M"
+      />
       
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="reading-guide" className="cursor-pointer">
-            {t('accessibility.features.readingGuide', 'دليل القراءة')}
-          </Label>
-          <Switch
-            id="reading-guide"
-            checked={readingGuide}
-            onCheckedChange={setReadingGuide}
-            aria-label={t('accessibility.features.readingGuide', 'دليل القراءة')}
-          />
-        </div>
-        <p className="text-xs text-muted-foreground">
-          {t('accessibility.features.readingGuideDescription', 'إضافة خط مرئي يتبع مؤشر الماوس لمساعدتك على القراءة')}
-        </p>
-      </div>
+      <AccessibilityToggle
+        id="focus-mode-toggle"
+        label={t('accessibility.focusMode', 'وضع التركيز')}
+        description={t('accessibility.focusModeDesc', 'تحسين التركيز بتخفيت العناصر غير الضرورية')}
+        icon={Focus}
+        checked={document.body.classList.contains('focus-mode')}
+        onChange={(checked) => {
+          if (checked) {
+            document.body.classList.add('focus-mode');
+            localStorage.setItem('focus-mode', 'enabled');
+          } else {
+            document.body.classList.remove('focus-mode');
+            localStorage.removeItem('focus-mode');
+          }
+        }}
+      />
       
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="focus-mode" className="cursor-pointer">
-            {t('accessibility.features.focusMode', 'وضع التركيز')}
-          </Label>
-          <Switch
-            id="focus-mode"
-            checked={focusMode}
-            onCheckedChange={setFocusMode}
-            aria-label={t('accessibility.features.focusMode', 'وضع التركيز')}
-          />
-        </div>
-        <p className="text-xs text-muted-foreground">
-          {t('accessibility.features.focusModeDescription', 'تبسيط الواجهة وتقليل العناصر المشتتة للانتباه')}
-        </p>
-      </div>
+      <AccessibilityToggle
+        id="cursor-size-toggle"
+        label={t('accessibility.largerCursor', 'مؤشر أكبر')}
+        description={t('accessibility.largerCursorDesc', 'زيادة حجم مؤشر الماوس')}
+        icon={MousePointerSquare}
+        checked={document.body.classList.contains('large-cursor')}
+        onChange={(checked) => {
+          if (checked) {
+            document.body.classList.add('large-cursor');
+            localStorage.setItem('large-cursor', 'enabled');
+          } else {
+            document.body.classList.remove('large-cursor');
+            localStorage.removeItem('large-cursor');
+          }
+        }}
+      />
     </TabsContent>
   );
 }

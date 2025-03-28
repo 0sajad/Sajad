@@ -2,9 +2,8 @@
 import React from "react";
 import { TabsContent } from "@/components/ui/tabs";
 import { useTranslation } from "react-i18next";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { useA11y } from "@/hooks/useA11y";
+import { AccessibilityToggle } from "./accessibility-toggle";
+import { EyeIcon, Contrast, PaintBucket } from "lucide-react";
 
 interface DisplayTabProps {
   highContrast: boolean;
@@ -14,7 +13,7 @@ interface DisplayTabProps {
 }
 
 /**
- * تبويب خيارات العرض في قائمة إمكانية الوصول
+ * تبويب العرض لإعدادات إمكانية الوصول
  */
 export function DisplayTab({
   highContrast,
@@ -23,60 +22,45 @@ export function DisplayTab({
   setLargeText
 }: DisplayTabProps) {
   const { t } = useTranslation();
-  const { dyslexicFont, setDyslexicFont } = useA11y();
   
   return (
-    <TabsContent value="display" className="space-y-4">
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="high-contrast" className="cursor-pointer">
-            {t('accessibility.features.highContrast', 'تباين عالي')}
-          </Label>
-          <Switch
-            id="high-contrast"
-            checked={highContrast}
-            onCheckedChange={setHighContrast}
-            aria-label={t('accessibility.features.highContrast', 'تباين عالي')}
-          />
-        </div>
-        <p className="text-xs text-muted-foreground">
-          {t('accessibility.features.highContrastDescription', 'زيادة تباين النص والعناصر لتحسين القراءة')}
-        </p>
-      </div>
+    <TabsContent value="display" className="space-y-2 py-2">
+      <AccessibilityToggle
+        id="high-contrast-toggle"
+        label={t('accessibility.highContrast', 'تباين عالي')}
+        description={t('accessibility.highContrastDesc', 'زيادة التباين بين العناصر')}
+        icon={Contrast}
+        checked={highContrast}
+        onChange={setHighContrast}
+        shortcutKey="Alt+C"
+      />
       
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="large-text" className="cursor-pointer">
-            {t('accessibility.features.largeText', 'نص كبير')}
-          </Label>
-          <Switch
-            id="large-text"
-            checked={largeText}
-            onCheckedChange={setLargeText}
-            aria-label={t('accessibility.features.largeText', 'نص كبير')}
-          />
-        </div>
-        <p className="text-xs text-muted-foreground">
-          {t('accessibility.features.largeTextDescription', 'زيادة حجم النص لتسهيل القراءة')}
-        </p>
-      </div>
+      <AccessibilityToggle
+        id="large-text-toggle"
+        label={t('accessibility.largeText', 'نص كبير')}
+        description={t('accessibility.largeTextDesc', 'زيادة حجم النص للقراءة الأسهل')}
+        icon={EyeIcon}
+        checked={largeText}
+        onChange={setLargeText}
+        shortcutKey="Alt+T"
+      />
       
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="dyslexic-font" className="cursor-pointer">
-            {t('accessibility.features.dyslexicFont', 'خط عسر القراءة')}
-          </Label>
-          <Switch
-            id="dyslexic-font"
-            checked={dyslexicFont}
-            onCheckedChange={setDyslexicFont}
-            aria-label={t('accessibility.features.dyslexicFont', 'خط عسر القراءة')}
-          />
-        </div>
-        <p className="text-xs text-muted-foreground">
-          {t('accessibility.features.dyslexicFontDescription', 'استخدام خط خاص لمساعدة الأشخاص الذين يعانون من عسر القراءة')}
-        </p>
-      </div>
+      <AccessibilityToggle
+        id="dark-mode-toggle"
+        label={t('accessibility.darkMode', 'الوضع الداكن')}
+        description={t('accessibility.darkModeDesc', 'تبديل بين السمة الفاتحة والداكنة')}
+        icon={PaintBucket}
+        checked={document.documentElement.classList.contains('dark')}
+        onChange={(checked) => {
+          if (checked) {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+          }
+        }}
+      />
     </TabsContent>
   );
 }
