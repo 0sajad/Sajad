@@ -3,7 +3,7 @@
   "direction": "rtl",
   "language": "ar",
   "header": {
-    "dashboard": "لوحة التحكم",
+    "dashboard": "الرئيسية",
     "tools": "الأدوات",
     "networkScanner": "ماسح الشبكة",
     "wifiAnalyzer": "محلل واي فاي",
@@ -17,7 +17,7 @@
   },
   "notFound": {
     "message": "عذراً! الصفحة غير موجودة",
-    "returnHome": "العودة إلى لوحة التحكم",
-    "redirecting": "جارٍ إعادة التوجيه إلى لوحة التحكم في غضون 3 ثوانٍ..."
+    "returnHome": "العودة إلى الرئيسية",
+    "redirecting": "جارٍ إعادة التوجيه إلى الرئيسية في غضون 3 ثوانٍ..."
   }
 }

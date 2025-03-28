@@ -12,7 +12,7 @@
     "autoMode": "الوضع التلقائي"
   },
   "header": {
-    "dashboard": "لوحة التحكم",
+    "dashboard": "الرئيسية",
     "tools": "الأدوات",
     "networkScanner": "فاحص الشبكة",
     "wifiAnalyzer": "محلل واي فاي",
@@ -26,8 +26,8 @@
   },
   "notFound": {
     "message": "اوبس! الصفحة مو موجودة",
-    "returnHome": "ارجع للوحة التحكم",
-    "redirecting": "راح نوديك للوحة التحكم بعد 3 ثواني..."
+    "returnHome": "ارجع للرئيسية",
+    "redirecting": "راح نوديك للرئيسية بعد 3 ثواني..."
   },
   "error": "خطأ",
   "languageChangeError": "فشل بتغيير اللغة"
