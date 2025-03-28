@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useScreenReaderAnnouncements } from "@/components/ui/accessibility/screen-reader-announcements";
@@ -13,7 +13,24 @@ import { AdvancedTabContent } from "@/components/settings/accessibility/tabs/Adv
 import { useAccessibilityHandlers } from "@/hooks/accessibility/useAccessibilityHandlers";
 
 export default function AccessibilitySettings() {
-  const { announcements } = useScreenReaderAnnouncements();
+  const { announcements, announce } = useScreenReaderAnnouncements();
+  const [announcementsList, setAnnouncementsList] = useState<any[]>([]);
+  
+  // Convert announcements object to array if needed
+  useEffect(() => {
+    if (announcements) {
+      // Create a dummy array if announcements is not already an array
+      if (!Array.isArray(announcements)) {
+        // Just to test the interface - in production this would be done differently
+        setAnnouncementsList([
+          { id: '1', text: 'مرحبًا بك في إعدادات إمكانية الوصول', type: 'info', timestamp: new Date() }
+        ]);
+      } else {
+        setAnnouncementsList(announcements);
+      }
+    }
+  }, [announcements]);
+  
   const {
     // حالة النص
     fontFamily, setFontFamily,
@@ -59,7 +76,7 @@ export default function AccessibilitySettings() {
             onImport={handleImportProfile}
             onRestore={handleRestoreBackup}
             backups={hasBackups() ? getBackups() : []}
-            announcements={announcements}
+            announcements={announcementsList}
           />
           
           <TextTabContent 

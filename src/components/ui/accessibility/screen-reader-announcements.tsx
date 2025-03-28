@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { BookOpen, AlertCircle, Check, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface Announcement {
+export interface Announcement {
   id: string;
   text: string;
   type: 'success' | 'info' | 'warning' | 'error';
@@ -137,9 +137,20 @@ export function useScreenReaderAnnouncements(maxAnnouncements = 10) {
     setAnnouncements([]);
   };
   
+  // Separate functions for different announcement types, but all using the main announce function
+  const announcementHelpers = {
+    success: (message: string) => announce(message, 'success'),
+    error: (message: string) => announce(message, 'error'),
+    warning: (message: string) => announce(message, 'warning'),
+    info: (message: string) => announce(message, 'info'),
+    polite: (message: string) => announce(message, 'info'),
+    assertive: (message: string) => announce(message, 'error')
+  };
+  
   return {
     announcements,
     announce,
-    clearAnnouncements
+    clearAnnouncements,
+    ...announcementHelpers
   };
 }
