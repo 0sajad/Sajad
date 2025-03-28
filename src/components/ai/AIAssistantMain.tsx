@@ -36,7 +36,7 @@ export function AIAssistantMain({ minimized = false, onMaximize }: AIAssistantMa
         <AIHeader />
         <div className="flex-1 flex">
           <AIMainContent initialMessages={initialMessages}>
-            <AIChat />
+            <AIChat initialMessages={initialMessages} />
           </AIMainContent>
           <div className="w-64 border-l p-4 shrink-0 bg-muted/20">
             <AIStatusSection 
