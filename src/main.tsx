@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 import './components/ui/a11y-styles.css'; 
-import './i18n';
+import './i18n/config';
 import { toast } from '@/components/ui/use-toast';
 import { LiveAnnouncer } from './components/ui/accessibility/live-announcer';
 

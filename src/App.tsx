@@ -10,12 +10,12 @@ import FiberOptic from './pages/FiberOptic';
 import HelpCenter from './pages/HelpCenter';
 import NotFound from './pages/NotFound';
 import { ModeProvider } from './context/ModeContext';
-import { ThemeProvider } from './context/ThemeContext';
+import { ThemeProvider } from './components/theme-provider';
 import { TooltipProvider } from './components/ui/tooltip';
 import { Toaster } from './components/ui/toaster';
 import { useTranslation } from 'react-i18next';
 import { I18nextProvider } from 'react-i18next';
-import { i18n } from './i18n/config';
+import i18n from './i18n/config';
 
 function App() {
   const { i18n: i18nInstance } = useTranslation();
@@ -40,9 +40,9 @@ function App() {
   }, [i18nInstance.language]);
 
   return (
-    <I18nextProvider i18n={i18n as any}>
+    <I18nextProvider i18n={i18n}>
       <ModeProvider>
-        <ThemeProvider>
+        <ThemeProvider defaultTheme="system" storageKey="theme-mode">
           <TooltipProvider>
             <Router>
               <Routes>

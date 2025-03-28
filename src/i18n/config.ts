@@ -198,31 +198,36 @@ const DEFAULT_LANGUAGE = 'en';
 
 const normalizeLanguage = (code: string) => code.split('-')[0];
 
-export const i18n = i18next
+// Initialize i18n instance
+const i18nInstance = i18next
   .use(LanguageDetector)
-  .use(initReactI18next)
-  .init({
-    resources,
-    fallbackLng: (code) => {
-      if (!code) return DEFAULT_LANGUAGE;
-      
-      // تحويل المصفوفة إلى سلسلة إذا لزم الأمر
-      if (Array.isArray(code)) {
-        return code[0] as string;
-      }
-      
-      const language = normalizeLanguage(code);
-      return FALLBACK_LANGUAGES[language] || DEFAULT_LANGUAGE;
-    },
-    debug: process.env.NODE_ENV === 'development',
-    supportedLngs: SUPPORTED_LANGUAGES,
-    interpolation: {
-      escapeValue: false,
-    },
-    ns: ['common', 'securityDashboard', 'networkTools', 'ai', 'aiAssistant', 'aiAssistantPage', 'cta', 'dashboard', 'settingsPage'],
-    defaultNS: 'common',
-  });
+  .use(initReactI18next);
+
+// Initialize the i18n configuration
+i18nInstance.init({
+  resources,
+  fallbackLng: (code) => {
+    if (!code) return DEFAULT_LANGUAGE;
+    
+    // Convert array to string if needed
+    if (Array.isArray(code)) {
+      return code[0] as string;
+    }
+    
+    const language = normalizeLanguage(code);
+    return FALLBACK_LANGUAGES[language] || DEFAULT_LANGUAGE;
+  },
+  debug: process.env.NODE_ENV === 'development',
+  supportedLngs: SUPPORTED_LANGUAGES,
+  interpolation: {
+    escapeValue: false,
+  },
+  ns: ['common', 'securityDashboard', 'networkTools', 'ai', 'aiAssistant', 'aiAssistantPage', 'cta', 'dashboard', 'settingsPage'],
+  defaultNS: 'common',
+});
 
 export const changeLanguage = (lng: string) => {
-  i18next.changeLanguage(lng);
+  i18nInstance.changeLanguage(lng);
 };
+
+export default i18nInstance;
