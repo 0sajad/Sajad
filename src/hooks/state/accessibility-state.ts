@@ -22,6 +22,7 @@ export const createAccessibilitySlice: StateCreator<
   colorBlindMode: 'none' as ColorBlindMode,
   dyslexicFont: false,
   soundFeedback: false,
+  keyboardNavigationVisible: false,
   
   // وظائف تعديل الحالة
   setHighContrast: (value) => set({ highContrast: value }),
@@ -32,4 +33,5 @@ export const createAccessibilitySlice: StateCreator<
   setColorBlindMode: (value) => set({ colorBlindMode: value }),
   setDyslexicFont: (value) => set({ dyslexicFont: value }),
   setSoundFeedback: (value) => set({ soundFeedback: value }),
+  setKeyboardNavigationVisible: (value) => set({ keyboardNavigationVisible: value }),
 });

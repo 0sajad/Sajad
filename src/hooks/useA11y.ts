@@ -1,4 +1,3 @@
-
 import { useAppState } from './useAppState';
 import { useCallback, useEffect } from 'react';
 import { ColorBlindMode } from './accessibility/useA11yColor';
@@ -18,6 +17,7 @@ export function useA11y() {
     colorBlindMode,
     dyslexicFont,
     soundFeedback,
+    keyboardNavigationVisible,
     setHighContrast,
     setLargeText,
     setReducedMotion,
@@ -26,6 +26,7 @@ export function useA11y() {
     setColorBlindMode,
     setDyslexicFont,
     setSoundFeedback,
+    setKeyboardNavigationVisible,
   } = useAppState(state => ({
     highContrast: state.highContrast,
     largeText: state.largeText,
@@ -35,6 +36,7 @@ export function useA11y() {
     colorBlindMode: state.colorBlindMode,
     dyslexicFont: state.dyslexicFont,
     soundFeedback: state.soundFeedback,
+    keyboardNavigationVisible: state.keyboardNavigationVisible,
     setHighContrast: state.setHighContrast,
     setLargeText: state.setLargeText,
     setReducedMotion: state.setReducedMotion,
@@ -43,6 +45,7 @@ export function useA11y() {
     setColorBlindMode: state.setColorBlindMode,
     setDyslexicFont: state.setDyslexicFont,
     setSoundFeedback: state.setSoundFeedback,
+    setKeyboardNavigationVisible: state.setKeyboardNavigationVisible,
   }));
 
   // إعلان للقراء الشاشة
@@ -155,6 +158,7 @@ export function useA11y() {
     colorBlindMode,
     dyslexicFont,
     soundFeedback,
+    keyboardNavigationVisible,
     
     // وظائف تغيير الإعدادات
     setHighContrast,
@@ -165,6 +169,7 @@ export function useA11y() {
     setColorBlindMode,
     setDyslexicFont,
     setSoundFeedback,
+    setKeyboardNavigationVisible,
     
     // وظائف مساعدة
     announce,

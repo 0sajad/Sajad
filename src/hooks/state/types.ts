@@ -1,5 +1,4 @@
-
-import { ColorBlindMode } from "@/hooks/accessibility/useA11yColor";
+import { ColorBlindMode } from '@/hooks/accessibility/useA11yColor';
 
 /**
  * تعريف كافة واجهات الحالة المستخدمة في التطبيق
@@ -89,8 +88,8 @@ export interface AccessibilityState {
   colorBlindMode: ColorBlindMode;
   dyslexicFont: boolean;
   soundFeedback: boolean;
+  keyboardNavigationVisible: boolean;
   
-  // وظائف تعديل الحالة
   setHighContrast: (value: boolean) => void;
   setLargeText: (value: boolean) => void;
   setReducedMotion: (value: boolean) => void;
@@ -99,6 +98,7 @@ export interface AccessibilityState {
   setColorBlindMode: (value: ColorBlindMode) => void;
   setDyslexicFont: (value: boolean) => void;
   setSoundFeedback: (value: boolean) => void;
+  setKeyboardNavigationVisible: (value: boolean) => void;
 }
 
 // حالة الشبكة
