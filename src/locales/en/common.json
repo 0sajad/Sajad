@@ -10,7 +10,8 @@
     "settings": "Settings",
     "helpCenter": "Help Center",
     "license": "License",
-    "login": "Log In"
+    "login": "Log In",
+    "fiberOptic": "Fiber Optic"
   },
   "notFound": {
     "message": "Oops! Page not found",

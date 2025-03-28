@@ -2,125 +2,22 @@
 {
   "direction": "rtl",
   "language": "ar",
-  "common": {
-    "selectLanguage": "تغيير اللغة",
-    "language": "اللغة",
-    "enableAutoDarkMode": "تفعيل الوضع الليلي التلقائي",
-    "disableAutoDarkMode": "تعطيل الوضع الليلي التلقائي",
-    "darkMode": "الوضع الليلي",
-    "lightMode": "الوضع النهاري",
-    "autoMode": "الوضع التلقائي"
-  },
   "header": {
     "dashboard": "لوحة التحكم",
     "tools": "الأدوات",
     "networkScanner": "ماسح الشبكة",
     "wifiAnalyzer": "محلل واي فاي",
     "trafficAnalyzer": "محلل حركة المرور",
-    "aiAssistant": "مساعد الذكاء الاصطناعي",
+    "aiAssistant": "المساعد الذكي",
     "settings": "الإعدادات",
     "helpCenter": "مركز المساعدة",
     "license": "الترخيص",
-    "login": "تسجيل الدخول"
-  },
-  "dashboard": {
-    "title": "لوحة التحكم",
-    "welcome": "مرحباً بك في لوحة تحكم أوكتا-جرام",
-    "systemStatus": "حالة النظام",
-    "status": "الحالة",
-    "selectAction": "اختر إجراء",
-    "actions": {
-      "scan": "فحص الشبكة",
-      "optimize": "تحسين الأداء",
-      "backup": "نسخ احتياطي للإعدادات"
-    },
-    "latestUpdates": "آخر التحديثات",
-    "noUpdates": "لا توجد تحديثات جديدة",
-    "active": "نشط",
-    "quickActions": "إجراءات سريعة"
-  },
-  "networkTools": {
-    "title": "أدوات الشبكة المتطورة",
-    "qualityMonitoring": "مراقبة جودة الشبكة",
-    "signalStrength": "قوة الإشارة",
-    "networkManagement": "إدارة الشبكة",
-    "simulationSystems": "أنظمة المحاكاة"
-  },
-  "mobileMenu": {
-    "dashboard": "لوحة التحكم",
-    "tools": "الأدوات",
-    "aiAssistant": "مساعد الذكاء الاصطناعي",
-    "settings": "الإعدادات",
-    "helpCenter": "مركز المساعدة",
-    "login": "تسجيل الدخول"
-  },
-  "aiFeatures": {
-    "title": "ميزات الذكاء الاصطناعي",
-    "selfImproving": "نظام ذكاء اصطناعي ذاتي التحسين",
-    "selfImprovingDesc": "نظام ذكاء يحلل أنماط الشبكة ويتعلم منها باستمرار",
-    "multiLanguage": "دعم متعدد اللغات",
-    "multiLanguageDesc": "يدعم جميع لغات البرمجة",
-    "fileHandling": "معالجة الملفات",
-    "fileHandlingDesc": "يعالج جميع أنواع الملفات والوسائط",
-    "autonomousDev": "تطوير ذاتي",
-    "autonomousDevDesc": "يطور أدوات جديدة بدون تدخل",
-    "advancedLearning": "تعلم متقدم",
-    "advancedLearningDesc": "تعلم مستمر من التفاعلات",
-    "exploreAI": "استكشف مساعد الذكاء الاصطناعي"
-  },
-  "settings": {
-    "notifications": {
-      "title": "الإشعارات",
-      "description": "تحكم في إشعارات النظام التي تريد تلقيها",
-      "updated": "تم تحديث الإشعارات",
-      "enabled": "تم تفعيل إشعارات {{type}}",
-      "disabled": "تم تعطيل إشعارات {{type}}",
-      "allEnabled": "تم تفعيل جميع الإشعارات",
-      "allDisabled": "تم تعطيل جميع الإشعارات",
-      "enableAll": "تفعيل الكل",
-      "disableAll": "تعطيل الكل",
-      "types": {
-        "system": "إشعارات النظام",
-        "security": "إشعارات الأمان",
-        "updates": "التحديثات",
-        "aiAssistant": "مساعد الذكاء الاصطناعي",
-        "networkAlerts": "تنبيهات الشبكة",
-        "performance": "الأداء",
-        "securityScans": "فحوصات الأمان",
-        "serverStatus": "حالة الخادم",
-        "networkActivity": "نشاط الشبكة"
-      },
-      "systemDesc": "إشعارات عامة عن حالة النظام",
-      "securityDesc": "تنبيهات عن مشاكل الأمان والاختراقات المحتملة",
-      "updatesDesc": "إشعارات عن تحديثات وتطويرات النظام",
-      "aiAssistantDesc": "اقتراحات وتنبيهات من مساعد الذكاء الاصطناعي",
-      "networkAlertsDesc": "تنبيهات عن مشاكل الشبكة الحرجة",
-      "performanceDesc": "تنبيهات متعلقة بأداء النظام",
-      "securityScansDesc": "نتائج فحوصات الأمان الدورية",
-      "serverStatusDesc": "تنبيهات عن حالة خوادم النظام",
-      "networkActivityDesc": "ملخصات نشاط الشبكة غير العادي"
-    },
-    "appearance": {
-      "title": "المظهر",
-      "theme": "السمة",
-      "darkMode": "الوضع الليلي",
-      "lightMode": "الوضع النهاري",
-      "systemPreference": "تفضيل النظام",
-      "autoMode": "وضع تلقائي",
-      "autoModeDesc": "التبديل التلقائي بين الوضع الليلي والنهاري حسب الوقت"
-    }
+    "login": "تسجيل الدخول",
+    "fiberOptic": "الألياف الضوئية"
   },
   "notFound": {
     "message": "عذراً! الصفحة غير موجودة",
     "returnHome": "العودة إلى لوحة التحكم",
-    "redirecting": "جاري التوجيه إلى لوحة التحكم خلال 3 ثوان..."
-  },
-  "error": "خطأ",
-  "languageChangeError": "فشل تغيير اللغة",
-  "accessibility": {
-    "skipToContent": "تخطي إلى المحتوى",
-    "highContrast": "تباين عالي",
-    "textToSpeech": "تحويل النص إلى كلام",
-    "largeText": "نص كبير"
+    "redirecting": "جارٍ إعادة التوجيه إلى لوحة التحكم في غضون 3 ثوانٍ..."
   }
 }
