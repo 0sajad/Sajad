@@ -6,85 +6,106 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-import { AdvancedFeatures } from "./AdvancedFeatures";
+import { Zap, Trash, Database, RefreshCw, DownloadCloud, Server } from "lucide-react";
+import { FeatureList } from "@/components/settings/features/FeatureList";
 
 export function AdvancedSettings() {
   const { t } = useTranslation(['settingsPage']);
-  const [optimizationLevel, setOptimizationLevel] = React.useState(50);
-  const [debugMode, setDebugMode] = React.useState(false);
-  const [backupFrequency, setBackupFrequency] = React.useState("weekly");
-  const [apiEndpoint, setApiEndpoint] = React.useState("");
+  const [developmentMode, setDevelopmentMode] = React.useState(false);
+  const [loggingLevel, setLoggingLevel] = React.useState("info");
+  const [autoUpdate, setAutoUpdate] = React.useState(true);
   
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('sections.advanced')}</CardTitle>
-        <CardDescription>{t('advancedSettingsDescription', 'Configure advanced settings for power users')}</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="debugMode">{t('advanced.debugMode', 'Debug Mode')}</Label>
-            <Switch 
-              id="debugMode" 
-              checked={debugMode} 
-              onCheckedChange={setDebugMode} 
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label>{t('advanced.optimizationLevel', 'Optimization Level')}</Label>
-            <div className="flex items-center space-x-2 rtl:space-x-reverse">
-              <Slider 
-                value={[optimizationLevel]} 
-                onValueChange={(vals) => setOptimizationLevel(vals[0])} 
-                max={100} 
-                step={1}
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Zap className="h-5 w-5" />
+            {t('sections.advanced', 'Advanced Settings')}
+          </CardTitle>
+          <CardDescription>{t('advancedDescription', 'Configure advanced system settings and features')}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <Label htmlFor="developmentMode" className="flex items-center gap-2">
+                  <Server className="h-4 w-4" />
+                  {t('advanced.developmentMode', 'Development Mode')}
+                </Label>
+                <p className="text-sm text-muted-foreground">{t('advanced.developmentModeDesc', 'Enable advanced debugging tools')}</p>
+              </div>
+              <Switch 
+                id="developmentMode" 
+                checked={developmentMode} 
+                onCheckedChange={setDevelopmentMode} 
               />
-              <span className="w-12 text-center">{optimizationLevel}%</span>
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div>
+                <Label htmlFor="autoUpdate" className="flex items-center gap-2">
+                  <RefreshCw className="h-4 w-4" />
+                  {t('advanced.autoUpdate', 'Automatic Updates')}
+                </Label>
+                <p className="text-sm text-muted-foreground">{t('advanced.autoUpdateDesc', 'Automatically download and install updates')}</p>
+              </div>
+              <Switch 
+                id="autoUpdate" 
+                checked={autoUpdate} 
+                onCheckedChange={setAutoUpdate} 
+              />
             </div>
           </div>
           
+          <Separator />
+          
           <div className="space-y-2">
-            <Label htmlFor="backupFrequency">{t('advanced.backupFrequency', 'Backup Frequency')}</Label>
+            <Label htmlFor="loggingLevel">{t('advanced.loggingLevel', 'Logging Level')}</Label>
             <Select 
-              value={backupFrequency} 
-              onValueChange={setBackupFrequency}
+              value={loggingLevel} 
+              onValueChange={setLoggingLevel}
             >
-              <SelectTrigger id="backupFrequency">
-                <SelectValue placeholder={t('advanced.selectFrequency', 'Select Frequency')} />
+              <SelectTrigger id="loggingLevel">
+                <SelectValue placeholder={t('advanced.selectLevel', 'Select Level')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="daily">{t('advanced.daily', 'Daily')}</SelectItem>
-                <SelectItem value="weekly">{t('advanced.weekly', 'Weekly')}</SelectItem>
-                <SelectItem value="monthly">{t('advanced.monthly', 'Monthly')}</SelectItem>
-                <SelectItem value="never">{t('advanced.never', 'Never')}</SelectItem>
+                <SelectItem value="debug">{t('advanced.debug', 'Debug')}</SelectItem>
+                <SelectItem value="info">{t('advanced.info', 'Info')}</SelectItem>
+                <SelectItem value="warning">{t('advanced.warning', 'Warning')}</SelectItem>
+                <SelectItem value="error">{t('advanced.error', 'Error')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           
-          <div className="space-y-2">
-            <Label htmlFor="apiEndpoint">{t('advanced.apiEndpoint', 'API Endpoint')}</Label>
-            <Input 
-              id="apiEndpoint" 
-              value={apiEndpoint} 
-              onChange={(e) => setApiEndpoint(e.target.value)} 
-              placeholder="https://api.example.com/v1"
-            />
+          <div className="flex justify-between">
+            <Button variant="outline" className="flex items-center gap-2" type="button">
+              <Trash className="h-4 w-4" />
+              {t('advanced.clearCache', 'Clear Cache')}
+            </Button>
+            <Button className="flex items-center gap-2" type="button">
+              <DownloadCloud className="h-4 w-4" />
+              {t('advanced.exportData', 'Export Data')}
+            </Button>
           </div>
-        </div>
-        
-        <Separator />
-        
-        <AdvancedFeatures />
-        
-        <div className="flex justify-end">
-          <Button variant="outline">{t('advanced.resetToDefaults', 'Reset to Defaults')}</Button>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Database className="h-5 w-5" />
+            {t('advanced.experimentalFeatures', 'Experimental Features')}
+          </CardTitle>
+          <CardDescription>
+            {t('advanced.experimentalDesc', 'Enable or disable experimental features')}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <FeatureList />
+        </CardContent>
+      </Card>
+    </div>
   );
 }
