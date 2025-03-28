@@ -1,19 +1,19 @@
 
 {
   "title": "لوحة التحكم",
-  "welcome": "أهلاً بيك بأوكتا-كرام",
+  "welcome": "أهلاً بك في أوكتا-جرام",
   "systemStatus": "حالة النظام",
   "status": "الحالة",
-  "active": "شغال",
+  "active": "نشط",
   "quickActions": "إجراءات سريعة",
-  "selectAction": "إختار إجراء",
+  "selectAction": "اختر إجراء",
   "actions": {
     "scan": "فحص الشبكة",
     "optimize": "تحسين الأداء",
     "backup": "نسخ احتياطي للإعدادات"
   },
   "latestUpdates": "آخر التحديثات",
-  "noUpdates": "ماكو تحديثات جديدة",
+  "noUpdates": "لا توجد تحديثات جديدة",
   "statistics": "إحصائيات الشبكة",
   "networkQuality": "جودة الشبكة",
   "deviceStatus": "حالة الأجهزة",
@@ -24,7 +24,7 @@
   "performanceMetrics": "مقاييس الأداء",
   "downloadSpeed": "سرعة التنزيل",
   "uploadSpeed": "سرعة الرفع",
-  "latency": "وقت الاستجابة",
+  "latency": "زمن الاستجابة",
   "packetLoss": "فقدان الحزم",
   "jitter": "التذبذب",
   "systemResources": "موارد النظام",

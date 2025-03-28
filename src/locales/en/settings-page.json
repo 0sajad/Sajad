@@ -1,0 +1,46 @@
+
+{
+  "title": "Settings",
+  "description": "Customize and configure application settings",
+  "sections": {
+    "general": "General Settings",
+    "network": "Network Settings",
+    "appearance": "Appearance",
+    "language": "Language",
+    "notifications": "Notifications",
+    "security": "Security & Privacy",
+    "advanced": "Advanced Settings",
+    "system": "System Information",
+    "help": "Help & Support"
+  },
+  "general": {
+    "autoStart": "Auto-start on system boot",
+    "startMinimized": "Start minimized",
+    "closeToTray": "Close to system tray",
+    "checkUpdates": "Automatically check for updates"
+  },
+  "network": {
+    "scanInterval": "Automatic scan interval",
+    "connectionTimeout": "Connection timeout",
+    "enableProxy": "Enable proxy",
+    "proxySettings": "Proxy settings"
+  },
+  "appearance": {
+    "theme": "Theme",
+    "lightTheme": "Light",
+    "darkTheme": "Dark",
+    "systemTheme": "System",
+    "animations": "Enable animations",
+    "compactMode": "Compact mode"
+  },
+  "security": {
+    "twoFactor": "Two-factor authentication",
+    "dataEncryption": "Data encryption",
+    "passwordProtection": "Password protection"
+  },
+  "save": "Save Changes",
+  "cancel": "Cancel",
+  "reset": "Reset to Defaults",
+  "saved": "Settings saved successfully",
+  "resetConfirm": "Are you sure you want to reset all settings?"
+}

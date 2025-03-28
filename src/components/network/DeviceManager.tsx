@@ -1,235 +1,186 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useTranslation } from "react-i18next";
-import { Laptop, Smartphone, Tv, WifiIcon, Router, RefreshCw, PlusCircle, ServerOff } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { 
+  Laptop, 
+  Smartphone, 
+  Wifi, 
+  Router, 
+  Printer, 
+  Tv,
+  Search,
+  Plus,
+  RefreshCw
+} from "lucide-react";
 
-// Sample device data
-const generateDevices = () => {
-  const deviceTypes = ["laptop", "smartphone", "tv", "router", "other"];
-  const statuses = ["online", "offline", "sleep"];
-  const manufacturers = ["Apple", "Samsung", "Sony", "LG", "Cisco", "HP", "Dell"];
-  
-  return Array.from({ length: 10 }, (_, i) => {
-    const type = deviceTypes[Math.floor(Math.random() * deviceTypes.length)];
-    const status = Math.random() > 0.3 ? "online" : statuses[Math.floor(Math.random() * statuses.length)];
-    const manufacturer = manufacturers[Math.floor(Math.random() * manufacturers.length)];
-    
-    return {
-      id: `device-${i}`,
-      name: `${manufacturer} ${type.charAt(0).toUpperCase() + type.slice(1)} ${i + 1}`,
-      type,
-      status,
-      ipAddress: `192.168.1.${10 + i}`,
-      lastSeen: status === "online" ? "Now" : `${Math.floor(Math.random() * 60)} minutes ago`,
-      macAddress: `00:1A:2B:${Math.floor(Math.random() * 100).toString(16).padStart(2, '0')}:${Math.floor(Math.random() * 100).toString(16).padStart(2, '0')}:${Math.floor(Math.random() * 100).toString(16).padStart(2, '0')}`,
-      manufacturer
-    };
-  });
-};
+type DeviceType = 'laptop' | 'smartphone' | 'router' | 'printer' | 'tv' | 'other';
+type ConnectionType = 'wifi' | 'ethernet' | 'offline';
 
-export const DeviceManager = () => {
+interface Device {
+  id: string;
+  name: string;
+  type: DeviceType;
+  ipAddress: string;
+  macAddress: string;
+  connectionType: ConnectionType;
+  lastSeen: Date;
+  isOnline: boolean;
+}
+
+export function DeviceManager() {
   const { t } = useTranslation();
-  const [devices, setDevices] = useState(generateDevices());
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [activeFilter, setActiveFilter] = useState("all");
+  const [search, setSearch] = useState("");
   
-  const getDeviceIcon = (type) => {
+  // قائمة الأجهزة الوهمية
+  const [devices] = useState<Device[]>([
+    {
+      id: "1",
+      name: "Main Laptop",
+      type: "laptop",
+      ipAddress: "192.168.1.101",
+      macAddress: "A1:B2:C3:D4:E5:F6",
+      connectionType: "wifi",
+      lastSeen: new Date(),
+      isOnline: true
+    },
+    {
+      id: "2",
+      name: "iPhone 13",
+      type: "smartphone",
+      ipAddress: "192.168.1.102",
+      macAddress: "G7:H8:I9:J0:K1:L2",
+      connectionType: "wifi",
+      lastSeen: new Date(),
+      isOnline: true
+    },
+    {
+      id: "3",
+      name: "Main Router",
+      type: "router",
+      ipAddress: "192.168.1.1",
+      macAddress: "M3:N4:O5:P6:Q7:R8",
+      connectionType: "ethernet",
+      lastSeen: new Date(),
+      isOnline: true
+    },
+    {
+      id: "4",
+      name: "HP Printer",
+      type: "printer",
+      ipAddress: "192.168.1.103",
+      macAddress: "S9:T0:U1:V2:W3:X4",
+      connectionType: "wifi",
+      lastSeen: new Date(Date.now() - 3600000), // 1 hour ago
+      isOnline: false
+    },
+    {
+      id: "5",
+      name: "Smart TV",
+      type: "tv",
+      ipAddress: "192.168.1.104",
+      macAddress: "Y5:Z6:A7:B8:C9:D0",
+      connectionType: "wifi",
+      lastSeen: new Date(),
+      isOnline: true
+    }
+  ]);
+  
+  // تصفية الأجهزة بناءً على البحث
+  const filteredDevices = devices.filter(device => 
+    device.name.toLowerCase().includes(search.toLowerCase()) ||
+    device.ipAddress.includes(search) ||
+    device.macAddress.toLowerCase().includes(search.toLowerCase())
+  );
+  
+  // الحصول على أيقونة مناسبة لنوع الجهاز
+  const getDeviceIcon = (type: DeviceType) => {
     switch (type) {
-      case "laptop": return <Laptop size={16} />;
-      case "smartphone": return <Smartphone size={16} />;
-      case "tv": return <Tv size={16} />;
-      case "router": return <Router size={16} />;
-      default: return <WifiIcon size={16} />;
+      case 'laptop': return <Laptop className="h-4 w-4" />;
+      case 'smartphone': return <Smartphone className="h-4 w-4" />;
+      case 'router': return <Router className="h-4 w-4" />;
+      case 'printer': return <Printer className="h-4 w-4" />;
+      case 'tv': return <Tv className="h-4 w-4" />;
+      default: return <Laptop className="h-4 w-4" />;
     }
   };
   
-  const refreshDevices = () => {
-    setIsRefreshing(true);
-    
-    toast({
-      title: t('deviceManager.refreshing', 'Refreshing Devices'),
-      description: t('deviceManager.scanningNetwork', 'Scanning network for connected devices...')
-    });
-    
-    setTimeout(() => {
-      setDevices(generateDevices());
-      setIsRefreshing(false);
-      
-      toast({
-        title: t('deviceManager.scanComplete', 'Scan Complete'),
-        description: t('deviceManager.devicesFound', `${devices.length} devices found on your network`)
-      });
-    }, 2000);
-  };
-  
-  // Filter devices based on active filter
-  const filteredDevices = devices.filter(device => {
-    if (activeFilter === "all") return true;
-    if (activeFilter === "online") return device.status === "online";
-    if (activeFilter === "offline") return device.status !== "online";
-    return device.type === activeFilter;
-  });
-  
-  // Count devices by type
-  const deviceCounts = {
-    all: devices.length,
-    online: devices.filter(d => d.status === "online").length,
-    offline: devices.filter(d => d.status !== "online").length,
-    laptop: devices.filter(d => d.type === "laptop").length,
-    smartphone: devices.filter(d => d.type === "smartphone").length,
-    tv: devices.filter(d => d.type === "tv").length,
-    router: devices.filter(d => d.type === "router").length,
-    other: devices.filter(d => d.type === "other").length
+  // الحصول على بادج الحالة
+  const getStatusBadge = (isOnline: boolean) => {
+    return isOnline 
+      ? <Badge variant="success" className="bg-green-500">Online</Badge>
+      : <Badge variant="outline">Offline</Badge>;
   };
   
   return (
-    <Card className="border-octaBlue-200 shadow-md animate-fade-in">
-      <CardHeader className="bg-gradient-to-r from-octaBlue-50 to-octaBlue-100 rounded-t-lg flex flex-row items-center justify-between">
-        <div>
-          <CardTitle className="text-octaBlue-800 flex items-center">
-            <WifiIcon className="mr-2 h-5 w-5 text-octaBlue-600" />
-            {t('deviceManager.title', 'Network Device Manager')}
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            {t('deviceManager.description', 'Monitor and manage all devices connected to your network')}
-          </p>
-        </div>
-        <div className="flex space-x-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={refreshDevices} 
-            disabled={isRefreshing}
-          >
-            <RefreshCw size={16} className={isRefreshing ? 'animate-spin mr-2' : 'mr-2'} />
-            {t('deviceManager.scan', 'Scan')}
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-md font-medium">Device Manager</CardTitle>
+        <div className="flex items-center space-x-2 rtl:space-x-reverse">
+          <Button variant="outline" size="sm">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Scan Network
           </Button>
-          <Button size="sm">
-            <PlusCircle size={16} className="mr-2" />
-            {t('deviceManager.addDevice', 'Add Device')}
+          <Button variant="default" size="sm">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Device
           </Button>
         </div>
       </CardHeader>
-      
-      <CardContent className="p-6">
-        <Tabs value={activeFilter} onValueChange={setActiveFilter} className="mb-6">
-          <TabsList className="w-full grid grid-cols-4 md:grid-cols-8">
-            <TabsTrigger value="all" className="flex items-center gap-1">
-              <WifiIcon size={14} />
-              <span>All ({deviceCounts.all})</span>
-            </TabsTrigger>
-            <TabsTrigger value="online" className="flex items-center gap-1">
-              <WifiIcon size={14} />
-              <span>Online ({deviceCounts.online})</span>
-            </TabsTrigger>
-            <TabsTrigger value="offline" className="flex items-center gap-1">
-              <ServerOff size={14} />
-              <span>Offline ({deviceCounts.offline})</span>
-            </TabsTrigger>
-            <TabsTrigger value="laptop" className="flex items-center gap-1">
-              <Laptop size={14} />
-              <span>Laptops ({deviceCounts.laptop})</span>
-            </TabsTrigger>
-            <TabsTrigger value="smartphone" className="flex items-center gap-1">
-              <Smartphone size={14} />
-              <span>Phones ({deviceCounts.smartphone})</span>
-            </TabsTrigger>
-            <TabsTrigger value="tv" className="flex items-center gap-1">
-              <Tv size={14} />
-              <span>TVs ({deviceCounts.tv})</span>
-            </TabsTrigger>
-            <TabsTrigger value="router" className="flex items-center gap-1">
-              <Router size={14} />
-              <span>Routers ({deviceCounts.router})</span>
-            </TabsTrigger>
-            <TabsTrigger value="other" className="flex items-center gap-1">
-              <WifiIcon size={14} />
-              <span>Other ({deviceCounts.other})</span>
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-        
-        <div className="overflow-auto rounded-md border">
-          <table className="w-full min-w-[600px] caption-bottom text-sm">
-            <thead className="bg-muted/50">
-              <tr className="border-b transition-colors hover:bg-muted/80">
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{t('deviceManager.device', 'Device')}</th>
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{t('deviceManager.status', 'Status')}</th>
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{t('deviceManager.ipAddress', 'IP Address')}</th>
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">{t('deviceManager.lastSeen', 'Last Seen')}</th>
-                <th className="h-12 px-4 text-right align-middle font-medium text-muted-foreground">{t('deviceManager.actions', 'Actions')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredDevices.length > 0 ? (
-                filteredDevices.map((device) => (
-                  <tr key={device.id} className="border-b transition-colors hover:bg-muted/50">
-                    <td className="p-4 align-middle">
-                      <div className="flex items-center gap-2">
-                        <div className={`bg-${device.status === 'online' ? 'green' : 'gray'}-100 p-1.5 rounded-md`}>
-                          {getDeviceIcon(device.type)}
-                        </div>
-                        <div>
-                          <p className="font-medium">{device.name}</p>
-                          <p className="text-xs text-muted-foreground">{device.macAddress}</p>
-                        </div>
+      <CardContent>
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2 rtl:space-x-reverse">
+            <div className="relative flex-1">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search devices..."
+                className="pl-8"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+          </div>
+          
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Device</TableHead>
+                  <TableHead>IP Address</TableHead>
+                  <TableHead>MAC Address</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Last Seen</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredDevices.map((device) => (
+                  <TableRow key={device.id}>
+                    <TableCell className="flex items-center space-x-2 rtl:space-x-reverse">
+                      <div className="bg-primary/10 p-1 rounded-md">
+                        {getDeviceIcon(device.type)}
                       </div>
-                    </td>
-                    <td className="p-4 align-middle">
-                      <Badge variant="outline" className={`
-                        ${device.status === 'online' ? 'bg-green-50 text-green-700 hover:bg-green-50' : 
-                         device.status === 'offline' ? 'bg-red-50 text-red-700 hover:bg-red-50' : 
-                         'bg-amber-50 text-amber-700 hover:bg-amber-50'}
-                      `}>
-                        {device.status.charAt(0).toUpperCase() + device.status.slice(1)}
-                      </Badge>
-                    </td>
-                    <td className="p-4 align-middle font-mono">{device.ipAddress}</td>
-                    <td className="p-4 align-middle">{device.lastSeen}</td>
-                    <td className="p-4 align-middle text-right">
-                      <Button variant="ghost" size="sm">
-                        {t('deviceManager.details', 'Details')}
-                      </Button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={5} className="h-24 text-center">
-                    <div className="flex flex-col items-center justify-center">
-                      <ServerOff className="h-8 w-8 text-muted-foreground mb-2" />
-                      <p className="text-muted-foreground">{t('deviceManager.noDevices', 'No devices found')}</p>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-        
-        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <h3 className="text-md font-medium mb-2">{t('deviceManager.networkInsights', 'Network Insights')}</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-            <div className="bg-white p-3 rounded border">
-              <p className="text-muted-foreground text-sm mb-1">{t('deviceManager.activeDevices', 'Active Devices')}</p>
-              <p className="text-2xl font-bold">{deviceCounts.online}</p>
-            </div>
-            <div className="bg-white p-3 rounded border">
-              <p className="text-muted-foreground text-sm mb-1">{t('deviceManager.lastScan', 'Last Scan')}</p>
-              <p className="text-2xl font-bold">2:45 PM</p>
-            </div>
-            <div className="bg-white p-3 rounded border">
-              <p className="text-muted-foreground text-sm mb-1">{t('deviceManager.networkHealth', 'Network Health')}</p>
-              <p className="text-2xl font-bold text-green-600">93%</p>
-            </div>
+                      <span>{device.name}</span>
+                    </TableCell>
+                    <TableCell>{device.ipAddress}</TableCell>
+                    <TableCell className="font-mono text-xs">{device.macAddress}</TableCell>
+                    <TableCell>{getStatusBadge(device.isOnline)}</TableCell>
+                    <TableCell>
+                      {device.isOnline ? 'Now' : new Intl.RelativeTimeFormat().format(
+                        -Math.round((new Date().getTime() - device.lastSeen.getTime()) / 3600000),
+                        'hour'
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         </div>
       </CardContent>
     </Card>
   );
-};
+}

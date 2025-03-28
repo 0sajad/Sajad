@@ -1,0 +1,39 @@
+
+{
+  "title": "Assistant IA",
+  "subtitle": "Votre Guide Réseau Personnel",
+  "description": "Obtenez une aide instantanée, des recommandations et de l'automatisation pour votre réseau",
+  "voiceAssistance": "Assistance Vocale",
+  "startRecording": "Commencer l'Enregistrement",
+  "stopRecording": "Arrêter l'Enregistrement",
+  "chatPlaceholder": "Posez une question sur votre réseau...",
+  "sendMessage": "Envoyer",
+  "clearChat": "Effacer la Conversation",
+  "historyLabel": "Historique des Conversations",
+  "suggestedQueries": "Questions Suggérées",
+  "noHistoryYet": "Pas encore d'historique de conversation",
+  "loadingResponse": "Chargement de la réponse...",
+  "tools": {
+    "title": "Outils Disponibles",
+    "networkAnalysis": "Analyse de Réseau",
+    "securityScan": "Scan de Sécurité",
+    "troubleshoot": "Résoudre les Problèmes",
+    "optimize": "Optimiser la Performance",
+    "deviceSetup": "Configuration d'Appareil"
+  },
+  "suggestions": {
+    "networkIssue": "Pourquoi ma connexion internet est-elle lente?",
+    "securityCheck": "Mon réseau est-il sécurisé?",
+    "deviceConnection": "Comment connecter un nouvel appareil?",
+    "signalStrength": "Comment améliorer la puissance de mon signal WiFi?"
+  },
+  "settings": {
+    "title": "Paramètres de l'Assistant",
+    "voiceEnabled": "Activer l'Assistance Vocale",
+    "suggestionsEnabled": "Activer les Suggestions",
+    "historyEnabled": "Activer l'Historique des Conversations",
+    "darkMode": "Mode Sombre",
+    "fontSize": "Taille de Police",
+    "language": "Langue"
+  }
+}

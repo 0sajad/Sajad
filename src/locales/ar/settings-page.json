@@ -1,0 +1,46 @@
+
+{
+  "title": "الإعدادات",
+  "description": "تخصيص وضبط إعدادات التطبيق",
+  "sections": {
+    "general": "الإعدادات العامة",
+    "network": "إعدادات الشبكة",
+    "appearance": "المظهر",
+    "language": "اللغة",
+    "notifications": "الإشعارات",
+    "security": "الأمان والخصوصية",
+    "advanced": "إعدادات متقدمة",
+    "system": "معلومات النظام",
+    "help": "المساعدة والدعم"
+  },
+  "general": {
+    "autoStart": "بدء التشغيل التلقائي",
+    "startMinimized": "بدء التشغيل مصغراً",
+    "closeToTray": "الإغلاق إلى شريط المهام",
+    "checkUpdates": "التحقق من التحديثات تلقائياً"
+  },
+  "network": {
+    "scanInterval": "فترة المسح التلقائي",
+    "connectionTimeout": "مهلة الاتصال",
+    "enableProxy": "تمكين البروكسي",
+    "proxySettings": "إعدادات البروكسي"
+  },
+  "appearance": {
+    "theme": "السمة",
+    "lightTheme": "فاتح",
+    "darkTheme": "داكن",
+    "systemTheme": "نظام",
+    "animations": "التأثيرات المتحركة",
+    "compactMode": "الوضع المضغوط"
+  },
+  "security": {
+    "twoFactor": "المصادقة الثنائية",
+    "dataEncryption": "تشفير البيانات",
+    "passwordProtection": "حماية بكلمة المرور"
+  },
+  "save": "حفظ التغييرات",
+  "cancel": "إلغاء",
+  "reset": "إعادة التعيين للإعدادات الافتراضية",
+  "saved": "تم حفظ الإعدادات بنجاح",
+  "resetConfirm": "هل أنت متأكد من رغبتك في إعادة تعيين جميع الإعدادات؟"
+}
