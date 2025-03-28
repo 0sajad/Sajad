@@ -6,6 +6,9 @@ import { createUISlice } from './ui-state';
 import { createPreferencesSlice } from './preferences-state';
 import { createUserSlice } from './user-state';
 import { createAppStatusSlice } from './app-status-state';
+import { createAccessibilitySlice } from './accessibility-state';
+import { createNetworkSlice } from './network-state';
+import { createPerformanceSlice } from './performance-state';
 
 /**
  * متجر إدارة الحالة المركزية للتطبيق
@@ -33,6 +36,9 @@ export const useAppState = create<AppState>()(
       ...createPreferencesSlice(...args),
       ...createUserSlice(...args),
       ...createAppStatusSlice(...args),
+      ...createAccessibilitySlice(...args),
+      ...createNetworkSlice(...args),
+      ...createPerformanceSlice(...args),
     }),
     {
       name: 'app-state',
@@ -44,6 +50,15 @@ export const useAppState = create<AppState>()(
         userId: state.userId,
         userRole: state.userRole,
         userSettings: state.userSettings,
+        highContrast: state.highContrast,
+        largeText: state.largeText,
+        reducedMotion: state.reducedMotion,
+        focusMode: state.focusMode,
+        readingGuide: state.readingGuide,
+        colorBlindMode: state.colorBlindMode,
+        dyslexicFont: state.dyslexicFont,
+        soundFeedback: state.soundFeedback,
+        deviceTier: state.deviceTier,
       }),
     }
   )
