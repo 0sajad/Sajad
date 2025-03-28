@@ -5,12 +5,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { usePerformanceOptimization } from "@/hooks/usePerformanceOptimization";
 
 // تحسين التحميل البطيء: استخدام التحميل البطيء للمكونات غير الأساسية
-const AnimatedCards = lazy(() => import("@/components/AnimatedCards").then(m => ({ default: m.AnimatedCards })));
-const AIFeaturesSection = lazy(() => import("@/components/sections/AIFeaturesSection").then(m => ({ default: m.AIFeaturesSection })));
-const NetworkDashboard = lazy(() => import("@/components/NetworkDashboard").then(m => ({ default: m.NetworkDashboard })));
-const NetworkToolsSection = lazy(() => import("@/components/network/NetworkToolsSection").then(m => ({ default: m.NetworkToolsSection })));
-const SettingsSection = lazy(() => import("@/components/sections/SettingsSection").then(m => ({ default: m.SettingsSection })));
-const CTASection = lazy(() => import("@/components/sections/CTASection").then(m => ({ default: m.CTASection })));
+const AnimatedCards = lazy(() => import("@/components/AnimatedCards"));
+const AIFeaturesSection = lazy(() => import("@/components/sections/AIFeaturesSection"));
+const NetworkDashboard = lazy(() => import("@/components/NetworkDashboard"));
+const NetworkToolsSection = lazy(() => import("@/components/network/NetworkToolsSection"));
+const SettingsSection = lazy(() => import("@/components/sections/SettingsSection"));
+const CTASection = lazy(() => import("@/components/sections/CTASection"));
 
 // مكون التحميل المُحسّن للمكونات البطيئة
 const SectionLoader = () => (
@@ -97,3 +97,5 @@ export function MainContent({ sectionsVisible, isTransitioning, language, isRTL 
     </main>
   );
 }
+
+export default MainContent;

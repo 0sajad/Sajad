@@ -19,13 +19,13 @@ import { useSectionVisibility } from "@/hooks/useSectionVisibility";
 import { LazyLoad } from "@/components/ui/LazyLoad";
 import { LazyApp } from "@/components/performance/LazyApp";
 import { Skeleton } from "@/components/ui/skeleton";
+import { MainContent } from "@/components/sections/MainContent";
 
 // تحميل المكونات الثقيلة بشكل كسول
-const MainContent = lazy(() => import("@/components/sections/MainContent"));
-const AIAssistantManager = lazy(() => import("@/components/ai/AIAssistantManager").then(
-  module => ({ default: module.AIAssistantManager })
+const AIAssistantManager = lazy(() => import("@/components/ai/AIAssistantManager"));
+const AccessibilityOverlay = lazy(() => import("@/components/accessibility/AccessibilityOverlay").then(
+  module => ({ default: module.AccessibilityOverlay })
 ));
-const AccessibilityOverlay = lazy(() => import("@/components/accessibility/AccessibilityOverlay"));
 
 /**
  * الصفحة الرئيسية للتطبيق

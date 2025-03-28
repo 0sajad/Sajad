@@ -43,3 +43,6 @@ export function AccessibilityOverlay() {
     </>
   );
 }
+
+// أضف تصدير افتراضي للتوافق مع التحميل الكسول
+export default AccessibilityOverlay;
