@@ -15,29 +15,41 @@ export function usePerformanceOptimization() {
     if (isInitialized) return;
     
     const detectDeviceCapabilities = () => {
-      // قياس معايير أداء الجهاز
-      const memory = (navigator as any)?.deviceMemory || 4; // إذا لم يكن مدعومًا، نفترض 4GB
-      const processor = navigator?.hardwareConcurrency || 4; // إذا لم يكن مدعومًا، نفترض 4 أنوية
-      
-      // تحقق من ميزات البطارية إذا كانت متوفرة
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      );
-      
-      // تحديد مستوى الجهاز
-      let tier: 'high' | 'medium' | 'low';
-      if (memory <= 2 || processor <= 2 || (isMobile && memory <= 4)) {
-        tier = 'low';
-      } else if (memory >= 8 && processor >= 6 && !isMobile) {
-        tier = 'high';
-      } else {
-        tier = 'medium';
+      try {
+        // قياس معايير أداء الجهاز
+        const memory = (navigator as any)?.deviceMemory || 4; // إذا لم يكن مدعومًا، نفترض 4GB
+        const processor = navigator?.hardwareConcurrency || 4; // إذا لم يكن مدعومًا، نفترض 4 أنوية
+        
+        // تحقق من ميزات البطارية إذا كانت متوفرة
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        );
+        
+        // تحديد تحسينات إضافية للأجهزة المحمولة
+        const hasLowBattery = 'getBattery' in navigator && 
+          ((navigator as any).getBattery?.().then((battery: any) => battery.level < 0.2));
+        
+        // تحديد مستوى الجهاز
+        let tier: 'high' | 'medium' | 'low';
+        if (memory <= 2 || processor <= 2 || (isMobile && memory <= 4) || hasLowBattery) {
+          tier = 'low';
+        } else if (memory >= 8 && processor >= 6 && !isMobile) {
+          tier = 'high';
+        } else {
+          tier = 'medium';
+        }
+        
+        // حفظ مستوى الجهاز
+        setLocalDeviceTier(tier);
+        setDeviceTier(tier);
+      } catch (error) {
+        console.error('Error detecting device capabilities:', error);
+        // استخدام إعدادات متوسطة في حالة حدوث خطأ
+        setLocalDeviceTier('medium');
+        setDeviceTier('medium');
+      } finally {
+        setIsInitialized(true);
       }
-      
-      // حفظ مستوى الجهاز
-      setLocalDeviceTier(tier);
-      setDeviceTier(tier);
-      setIsInitialized(true);
     };
     
     detectDeviceCapabilities();

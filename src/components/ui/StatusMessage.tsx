@@ -57,30 +57,59 @@ export function StatusMessage({
   
   const Icon = icons[type];
   
-  // تعديل رسائل الإعلان حسب اللغة
+  // إنشاء نص الإعلان حسب اللغة
   const getAnnouncementText = () => {
-    // إذا كانت اللغة الحالية هي العربية العراقية
-    if (i18n.language === "ar-iq") {
-      const typeText = type === "error" ? t("error.title", "صار خطأ") : 
-                      type === "success" ? "تم بنجاح" : 
-                      type === "warning" ? "تحذير" : "معلومة";
-      return `${typeText}: ${message}${description ? `. ${description}` : ''}`;
+    const currentLang = i18n.language || 'en';
+    let typeText = '';
+    
+    // تحديد نص النوع حسب اللغة
+    if (currentLang === "ar-iq") {
+      typeText = type === "error" ? t("error.title", "صار خطأ") : 
+                type === "success" ? "تم بنجاح" : 
+                type === "warning" ? "تحذير" : "معلومة";
+    } else if (currentLang.startsWith("ar")) {
+      typeText = type === "error" ? t("error.title", "حدث خطأ") : 
+                type === "success" ? "تم بنجاح" : 
+                type === "warning" ? "تحذير" : "معلومة";
+    } else if (currentLang === "fr") {
+      typeText = type === "error" ? "Erreur" : 
+                type === "success" ? "Succès" : 
+                type === "warning" ? "Avertissement" : "Information";
+    } else if (currentLang === "ja") {
+      typeText = type === "error" ? "エラー" : 
+                type === "success" ? "成功" : 
+                type === "warning" ? "警告" : "情報";
+    } else if (currentLang === "zh") {
+      typeText = type === "error" ? "错误" : 
+                type === "success" ? "成功" : 
+                type === "warning" ? "警告" : "信息";
+    } else {
+      typeText = type === "error" ? "Error" : 
+                type === "success" ? "Success" : 
+                type === "warning" ? "Warning" : "Information";
     }
     
-    // لغات أخرى
-    return `${type}: ${message}${description ? `. ${description}` : ''}`;
+    return `${typeText}: ${message}${description ? `. ${description}` : ''}`;
   };
   
   useEffect(() => {
-    // إعلان الرسالة للقارئات الشاشية
-    announce(getAnnouncementText(), type === "error" ? "assertive" : "polite");
+    // تجنب الأخطاء إذا لم يتم تعريف announce
+    if (typeof announce === 'function') {
+      // إعلان الرسالة للقارئات الشاشية
+      announce(getAnnouncementText(), type === "error" ? "assertive" : "polite");
+    } else {
+      // إذا لم يكن announce متاحًا، استخدم API Window.announce إذا كان موجودًا
+      if (window.announce) {
+        window.announce(getAnnouncementText(), type === "error" ? "assertive" : "polite");
+      }
+    }
     
     // إخفاء الرسالة تلقائياً إذا تم تحديد المدة
     if (autoHideDuration > 0) {
       const timer = setTimeout(() => {
         setVisible(false);
         if (onClose) {
-          setTimeout(onClose, 300); // إنتظار إنتهاء الرسوم المتحركة
+          setTimeout(onClose, reducedMotion ? 0 : 300); // إنتظار إنتهاء الرسوم المتحركة
         }
       }, autoHideDuration);
       
@@ -96,6 +125,9 @@ export function StatusMessage({
     }
   };
   
+  // تحديد القيمة aria-live بناءً على نوع الرسالة
+  const ariaLive = type === "error" ? "assertive" : "polite";
+  
   return (
     <AnimatePresence>
       {visible && (
@@ -106,7 +138,7 @@ export function StatusMessage({
           transition={{ duration: reducedMotion ? 0 : 0.2 }}
           className={`${statusVariants({ type })} ${className}`}
           role={type === "error" ? "alert" : "status"}
-          aria-live={type === "error" ? "assertive" : "polite"}
+          aria-live={ariaLive}
         >
           {showIcon && (
             <Icon className="h-5 w-5 mt-0.5 mr-3 flex-shrink-0" />

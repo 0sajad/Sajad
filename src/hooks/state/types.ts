@@ -1,84 +1,104 @@
-import { ColorBlindMode } from '@/hooks/accessibility/useA11yColor';
+import { Socket } from 'socket.io-client';
 
 /**
- * تعريف كافة واجهات الحالة المستخدمة في التطبيق
+ * واجهة حالة التطبيق
+ * تحدد بنية حالة التطبيق بأكمله
  */
-
-// حالة واجهة المستخدم
-export interface UIState {
-  isDrawerOpen: boolean;
-  activePage: string;
-  lastVisitedPage: string | null;
-  modals: {
-    [key: string]: boolean;
-  };
+export interface AppState extends UIState, UserState, AppStatusState, NetworkState, PerformanceState, PreferencesState, AccessibilityState, CacheState {
+  // حالة الشبكة
+  networkStatus: NetworkStatus;
   
-  // وظائف الحالة
-  setDrawerOpen: (isOpen: boolean) => void;
-  setActivePage: (page: string) => void;
+  // حالة تحميل البيانات
+  dataLoading: DataLoadingState;
+}
+
+/**
+ * حالة واجهة المستخدم
+ * تحتوي على معلومات حول حالة واجهة المستخدم
+ */
+export interface UIState {
+  isSidebarOpen: boolean;
+  lastVisitedPage: string | null;
+  setSidebarOpen: (isOpen: boolean) => void;
   setLastVisitedPage: (page: string) => void;
-  openModal: (modalId: string) => void;
-  closeModal: (modalId: string) => void;
 }
 
-// تفضيلات التطبيق
-export interface AppPreferences {
-  theme: 'light' | 'dark' | 'system';
-  language: string;
-  notifications: boolean;
-  telemetry: boolean;
-  animations: boolean;
-  fullWidthLayout: boolean;
-  compactMode: boolean;
-  soundEffects: boolean;
-  highContrast: boolean;
-  largeText: boolean;
-  reducedMotion: boolean;
-  focusMode: boolean;
-  arabicNumerals: boolean;
-  autoSave: boolean;
-}
-
-// حالة التفضيلات
-export interface PreferencesState {
-  preferences: AppPreferences;
-  setPreference: <K extends keyof AppPreferences>(key: K, value: AppPreferences[K]) => void;
-}
-
-// حالة المستخدم
+/**
+ * حالة المستخدم
+ * تحتوي على معلومات حول المستخدم الحالي
+ */
 export interface UserState {
   isAuthenticated: boolean;
   userId: string | null;
-  userEmail: string | null;
-  userDisplayName: string | null;
   userRole: string | null;
-  userSettings: Record<string, any>;
-  
-  // وظائف الحالة
-  setAuthenticated: (isAuthenticated: boolean) => void;
-  setUserData: (userData: {
-    id: string;
-    email: string;
-    displayName: string;
-    role: string;
-  }) => void;
-  updateUserSettings: (newSettings: Record<string, any>) => void;
-  logout: () => void;
+  userSettings: UserSettings | null;
+  socket: Socket | null;
+  setAuthenticated: (auth: boolean) => void;
+  setUserId: (id: string | null) => void;
+  setUserRole: (role: string | null) => void;
+  setUserSettings: (settings: UserSettings | null) => void;
+  setSocket: (socket: Socket | null) => void;
 }
 
-// حالة التطبيق
+/**
+ * حالة التطبيق
+ * تحتوي على معلومات حول حالة التطبيق نفسه
+ */
 export interface AppStatusState {
-  isLoading: Record<string, boolean>;
-  errors: Record<string, string | null>;
-  isInitialized: boolean;
-  
-  // وظائف الحالة
-  setIsLoading: (key: string, loading: boolean) => void;
-  setError: (key: string, error: string | null) => void;
-  setInitialized: (initialized: boolean) => void;
+  appVersion: string;
+  environment: 'development' | 'production';
+  isOnline: boolean;
+  setAppVersion: (version: string) => void;
+  setEnvironment: (env: 'development' | 'production') => void;
+  setOnlineStatus: (isOnline: boolean) => void;
 }
 
-// حالة إمكانية الوصول
+/**
+ * حالة الشبكة
+ * تحتوي على معلومات حول حالة الشبكة
+ */
+export interface NetworkState {
+  networkType: 'wifi' | 'ethernet' | 'cellular' | 'unknown';
+  connectionSpeed: number;
+  dataUsage: DataUsageStats;
+  signalStrength: number;
+  connectedDevices: number;
+  setNetworkType: (type: 'wifi' | 'ethernet' | 'cellular' | 'unknown') => void;
+  setConnectionSpeed: (speed: number) => void;
+  setDataUsage: (usage: DataUsageStats) => void;
+  setSignalStrength: (strength: number) => void;
+  setConnectedDevices: (devices: number) => void;
+}
+
+/**
+ * حالة الأداء
+ * تحتوي على معلومات حول أداء التطبيق
+ */
+export interface PerformanceState {
+  deviceTier: 'low' | 'medium' | 'high';
+  isLowEndDevice: boolean;
+  setDeviceTier: (tier: 'low' | 'medium' | 'high') => void;
+  optimizeForLowEndDevice: () => void;
+  restoreDefaultPerformance: () => void;
+}
+
+/**
+ * حالة التفضيلات
+ * تحتوي على معلومات حول تفضيلات المستخدم
+ */
+export interface PreferencesState {
+  theme: 'light' | 'dark' | 'system';
+  language: string;
+  notificationsEnabled: boolean;
+  animations: boolean;
+  compactMode: boolean;
+  setPreference: <K extends keyof PreferencesState>(key: K, value: PreferencesState[K]) => void;
+}
+
+/**
+ * حالة إمكانية الوصول
+ * تحتوي على معلومات حول إعدادات إمكانية الوصول
+ */
 export interface AccessibilityState {
   highContrast: boolean;
   largeText: boolean;
@@ -89,7 +109,6 @@ export interface AccessibilityState {
   dyslexicFont: boolean;
   soundFeedback: boolean;
   keyboardNavigationVisible: boolean;
-  
   setHighContrast: (value: boolean) => void;
   setLargeText: (value: boolean) => void;
   setReducedMotion: (value: boolean) => void;
@@ -101,60 +120,67 @@ export interface AccessibilityState {
   setKeyboardNavigationVisible: (value: boolean) => void;
 }
 
-// حالة الشبكة
-export interface NetworkState {
-  isConnected: boolean;
-  isOnline: boolean;
-  lastCheck: Date | null;
-  
-  // وظائف تعديل الحالة
-  setNetworkStatus: (status: { isConnected: boolean; isOnline: boolean }) => void;
-  checkConnection: () => Promise<boolean>;
-}
-
-// حالة الأداء
-export interface PerformanceState {
-  deviceTier: 'low' | 'medium' | 'high';
-  isLowEndDevice: boolean;
-  
-  // وظائف تعديل الحالة
-  setDeviceTier: (tier: 'low' | 'medium' | 'high') => void;
-  optimizeForLowEndDevice: () => void;
-  restoreDefaultPerformance: () => void;
-}
-
-// حالة التخزين المؤقت
+/**
+ * حالة التخزين المؤقت
+ * تحتوي على معلومات حول البيانات المخزنة مؤقتًا
+ */
 export interface CacheState {
-  cachedData: Record<string, {
-    data: any;
-    timestamp: number;
-    ttl: number;
-  }>;
-  
-  // وظائف التخزين المؤقت
-  setCachedData: <T>(key: string, data: T, ttl?: number) => void;
-  getCachedData: <T>(key: string) => T | null;
-  invalidateCache: (key: string) => void;
+  cachedData: Record<string, any>;
+  lastCacheUpdate: Date | null;
+  setCachedData: (data: Record<string, any>) => void;
+  updateCache: (key: string, data: any) => void;
   clearCache: () => void;
 }
 
-// حالة تحميل البيانات
-export interface DataLoadingState {
-  dataLoading: {
-    isLoading: boolean;
-    lastUpdated: Date | null;
-    error: string | null;
-  }
+/**
+ * أنواع البيانات والمُعَرّفات
+ */
+export type Theme = 'light' | 'dark' | 'system';
+export type ColorBlindMode = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia';
+
+/**
+ * واجهات البيانات
+ */
+export interface NetworkStatus {
+  isConnected: boolean;
+  isOnline: boolean;
+  lastCheck: Date | null;
 }
 
-// الحالة المجمعة للتطبيق
-export type AppState = 
-  UIState & 
-  PreferencesState & 
-  UserState & 
-  AppStatusState & 
-  AccessibilityState & 
-  NetworkState & 
-  PerformanceState &
-  DataLoadingState &
-  CacheState;
+export interface DataLoadingState {
+  isLoading: boolean;
+  lastUpdated: Date | null;
+  error: string | null;
+}
+
+export interface UserSettings {
+  theme: Theme;
+  language: string;
+  notificationsEnabled: boolean;
+}
+
+export interface DataUsageStats {
+  totalUsage: number;
+  usageBreakdown: {
+    wifi: number;
+    cellular: number;
+  };
+}
+
+// إضافة واجهة StoreState بجانب الواجهات الأخرى
+export interface StoreState {
+  // Device performance tier
+  deviceTier: 'low' | 'medium' | 'high';
+  setDeviceTier: (tier: 'low' | 'medium' | 'high') => void;
+  
+  // User preferences
+  preferences: {
+    theme: 'light' | 'dark' | 'system';
+    reducedMotion: boolean;
+    highContrast: boolean;
+  };
+  setPreference: <K extends keyof StoreState['preferences']>(
+    key: K, 
+    value: StoreState['preferences'][K]
+  ) => void;
+}

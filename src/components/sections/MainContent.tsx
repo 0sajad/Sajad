@@ -3,29 +3,28 @@ import React, { Suspense, lazy } from 'react';
 import { HeroSection } from "./HeroSection";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePerformanceOptimization } from "@/hooks/usePerformanceOptimization";
+import { ErrorBoundary } from "@/components/ui/error/ErrorBoundary";
+import { ErrorMessage } from "@/components/ui/error/ErrorMessage";
 
 // تعريف النوع للمكونات الكسولة
 type LazyComponentType = React.ComponentType<any>;
 
-// تصحيح التحميل الكسول للمكونات مع دعم الصادرات المسماة
-const AnimatedCards = lazy(() => 
-  import("@/components/AnimatedCards").then(module => ({ default: module.AnimatedCards }))
-);
-const AIFeaturesSection = lazy(() => 
-  import("@/components/sections/AIFeaturesSection").then(module => ({ default: module.AIFeaturesSection }))
-);
-const NetworkDashboard = lazy(() => 
-  import("@/components/NetworkDashboard").then(module => ({ default: module.NetworkDashboard }))
-);
-const NetworkToolsSection = lazy(() => 
-  import("@/components/network/NetworkToolsSection").then(module => ({ default: module.NetworkToolsSection }))
-);
-const SettingsSection = lazy(() => 
-  import("@/components/sections/SettingsSection").then(module => ({ default: module.SettingsSection }))
-);
-const CTASection = lazy(() => 
-  import("@/components/sections/CTASection").then(module => ({ default: module.CTASection }))
-);
+// تصحيح التحميل الكسول للمكونات مع دعم الصادرات المسماة - مع تحسين آلية التحميل
+const importComponent = (path: string, exportName?: string) => {
+  return lazy(() => 
+    import(path).then(module => ({ 
+      default: exportName ? module[exportName] : module.default || module 
+    }))
+  );
+};
+
+// تحميل المكونات بشكل كسول باستخدام آلية موحدة
+const AnimatedCards = importComponent('@/components/AnimatedCards', 'AnimatedCards');
+const AIFeaturesSection = importComponent('@/components/sections/AIFeaturesSection', 'AIFeaturesSection');
+const NetworkDashboard = importComponent('@/components/NetworkDashboard');
+const NetworkToolsSection = importComponent('@/components/network/NetworkToolsSection');
+const SettingsSection = importComponent('@/components/sections/SettingsSection', 'SettingsSection');
+const CTASection = importComponent('@/components/sections/CTASection', 'CTASection');
 
 // مكون التحميل المُحسّن للمكونات البطيئة
 const SectionLoader = () => (
@@ -42,6 +41,18 @@ const SectionLoader = () => (
   </div>
 );
 
+// مكون خطأ التحميل
+const SectionError = ({ sectionId }: { sectionId: string }) => (
+  <div className="container mx-auto px-4 lg:px-8 py-8">
+    <ErrorMessage
+      title={`خطأ في تحميل القسم`}
+      message={`لم نتمكن من تحميل قسم ${sectionId}`}
+      showRetry
+      showBackHome={false}
+    />
+  </div>
+);
+
 interface MainContentProps {
   sectionsVisible: Record<string, boolean>;
   isTransitioning: boolean;
@@ -50,28 +61,36 @@ interface MainContentProps {
 }
 
 export function MainContent({ sectionsVisible, isTransitioning, language, isRTL }: MainContentProps) {
-  const { shouldUseLazyLoading } = usePerformanceOptimization();
+  const { shouldUseLazyLoading, isLowPerformanceDevice } = usePerformanceOptimization();
   
   // تحميل تدريجي للمكونات بناءً على رؤيتها في الشاشة
-  const renderLazySections = (sectionId: string, Component: React.ComponentType<any>) => {
-    // تحقق من استراتيجية التحميل البطيء
-    if (!shouldUseLazyLoading()) {
-      return (
-        <Suspense fallback={<SectionLoader />}>
-          <Component />
-        </Suspense>
-      );
+  const renderLazySection = (sectionId: string, Component: React.ComponentType<any>, priority = false) => {
+    // إذا كانت الأجهزة منخفضة الأداء، نقوم دائمًا بتحميل بالتدريج
+    const shouldLazyLoad = isLowPerformanceDevice || shouldUseLazyLoading();
+    
+    // تحمل بالتدريج فقط إذا كان معطى الـ shouldLazyLoad هو true وليس مكون ذو أولوية
+    if (shouldLazyLoad && !priority) {
+      // تحميل فقط إذا كان القسم مرئيًا
+      if (sectionsVisible[sectionId]) {
+        return (
+          <ErrorBoundary fallback={<SectionError sectionId={sectionId} />}>
+            <Suspense fallback={<SectionLoader />}>
+              <Component />
+            </Suspense>
+          </ErrorBoundary>
+        );
+      }
+      return <SectionLoader />;
     }
     
-    // تحميل فقط إذا كان القسم مرئيًا
-    if (sectionsVisible[sectionId]) {
-      return (
+    // التحميل المباشر للمكونات ذات الأولوية أو عندما لا نحتاج للتحميل الكسول
+    return (
+      <ErrorBoundary fallback={<SectionError sectionId={sectionId} />}>
         <Suspense fallback={<SectionLoader />}>
           <Component />
         </Suspense>
-      );
-    }
-    return <SectionLoader />;
+      </ErrorBoundary>
+    );
   };
 
   return (
@@ -81,33 +100,32 @@ export function MainContent({ sectionsVisible, isTransitioning, language, isRTL 
       className={`relative overflow-hidden ${isTransitioning ? 'opacity-0 transition-opacity duration-300' : 'opacity-100 transition-opacity duration-300'}`}
       lang={language}
       dir={isRTL ? 'rtl' : 'ltr'}
+      aria-live="polite"
     >
       <HeroSection />
       
       <div id="animated-cards-section" className="observe-section">
-        <Suspense fallback={<SectionLoader />}>
-          <AnimatedCards />
-        </Suspense>
+        {renderLazySection('animated-cards-section', AnimatedCards, true)}
       </div>
       
       <div id="ai-features-section" className="observe-section">
-        {renderLazySections('ai-features-section', AIFeaturesSection)}
+        {renderLazySection('ai-features-section', AIFeaturesSection)}
       </div>
       
       <div id="network-dashboard-section" className="observe-section">
-        {renderLazySections('network-dashboard-section', NetworkDashboard)}
+        {renderLazySection('network-dashboard-section', NetworkDashboard)}
       </div>
       
       <div id="network-tools-section" className="observe-section">
-        {renderLazySections('network-tools-section', NetworkToolsSection)}
+        {renderLazySection('network-tools-section', NetworkToolsSection)}
       </div>
       
       <div id="settings-section" className="observe-section">
-        {renderLazySections('settings-section', SettingsSection)}
+        {renderLazySection('settings-section', SettingsSection)}
       </div>
       
       <div id="cta-section" className="observe-section">
-        {renderLazySections('cta-section', CTASection)}
+        {renderLazySection('cta-section', CTASection)}
       </div>
     </main>
   );

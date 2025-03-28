@@ -10,12 +10,27 @@ import { SecurityStatusCard } from "./network/SecurityStatusCard";
 import { ErrorBoundary } from "./ui/error/ErrorBoundary";
 import { useTranslation } from "react-i18next";
 import { ErrorMessage } from "./ui/error/ErrorMessage";
+import { useOfflineMode } from "@/hooks/useOfflineMode";
 
 export function NetworkDashboard() {
   const { t } = useTranslation();
+  const { isOnline } = useOfflineMode();
   const networkStats = useNetworkStats();
 
-  // If we have no network data, show a more user-friendly error
+  // عرض رسالة خطأ مختلفة عندما يكون المستخدم غير متصل بالإنترنت
+  if (!isOnline) {
+    return (
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <ErrorMessage 
+          title={t('networkDashboard.offline.title', 'لا يوجد اتصال بالإنترنت')}
+          message={t('networkDashboard.offline.message', 'يرجى التحقق من اتصالك بالإنترنت وإعادة المحاولة')}
+          showDetailsDialog={false}
+        />
+      </div>
+    );
+  }
+
+  // عرض رسالة خطأ إذا لم يتم تحميل بيانات الشبكة
   if (!networkStats) {
     return (
       <div className="max-w-7xl mx-auto px-6 py-8">

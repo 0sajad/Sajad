@@ -1,11 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AlertCircle, Home, RefreshCw, Server } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Copy, X } from 'lucide-react';
+import { ErrorDetailsDialog } from '@/components/ui/error/ErrorDetailsDialog';
+import { useA11y } from '@/hooks/useA11y';
 
 interface FallbackErrorPageProps {
   error?: Error;
@@ -15,6 +15,18 @@ interface FallbackErrorPageProps {
 export function FallbackErrorPage({ error, resetError }: FallbackErrorPageProps) {
   const { t } = useTranslation();
   const [showDetails, setShowDetails] = useState(false);
+  const { announce } = useA11y();
+  
+  // إعلان حدوث خطأ عند تحميل الصفحة
+  useEffect(() => {
+    if (announce) {
+      const timer = setTimeout(() => {
+        announce(t('error.appCrashAnnouncement', 'حدث خطأ في التطبيق. يرجى إعادة تحميل الصفحة أو الانتقال إلى الصفحة الرئيسية.'), 'assertive');
+      }, 500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [announce, t]);
   
   const handleRefresh = () => {
     // Clear caches if possible
@@ -37,6 +49,10 @@ export function FallbackErrorPage({ error, resetError }: FallbackErrorPageProps)
       console.error('Failed to clear local storage', e);
     }
     
+    if (announce) {
+      announce(t('error.reloadingPage', 'جاري إعادة تحميل الصفحة...'), 'polite');
+    }
+    
     // Reload the page
     window.location.reload();
   };
@@ -55,15 +71,27 @@ Stack: ${error.stack}
         description: t('error.clipboardCopy', 'تم نسخ تفاصيل الخطأ إلى الحافظة'),
         duration: 3000,
       });
+      
+      if (announce) {
+        announce(t('error.copiedAnnouncement', 'تم نسخ تفاصيل الخطأ إلى الحافظة'), 'polite');
+      }
     });
   };
   
+  const goToHomePage = () => {
+    if (announce) {
+      announce(t('error.goingToHomePage', 'جاري الانتقال إلى الصفحة الرئيسية...'), 'polite');
+    }
+    
+    window.location.href = '/';
+  };
+  
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4" role="alert" aria-live="assertive">
       <div className="max-w-md w-full space-y-4 bg-white shadow-lg rounded-lg overflow-hidden">
         <div className="bg-red-50 p-6 text-center border-b border-red-100">
           <div className="inline-flex items-center justify-center bg-red-100 rounded-full p-3 mb-4">
-            <AlertCircle className="h-8 w-8 text-red-600" />
+            <AlertCircle className="h-8 w-8 text-red-600" aria-hidden="true" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
             {t('error.title', 'حدث خطأ في التطبيق')}
@@ -95,16 +123,16 @@ Stack: ${error.stack}
               className="w-full flex items-center justify-center" 
               onClick={resetError || handleRefresh}
             >
-              <RefreshCw className="h-4 w-4 mr-2" />
+              <RefreshCw className="h-4 w-4 mr-2" aria-hidden="true" />
               {t('error.retry', 'إعادة المحاولة')}
             </Button>
             
             <Button 
               variant="default" 
               className="w-full flex items-center justify-center" 
-              onClick={() => window.location.href = '/'}
+              onClick={goToHomePage}
             >
-              <Home className="h-4 w-4 mr-2" />
+              <Home className="h-4 w-4 mr-2" aria-hidden="true" />
               {t('error.backHome', 'الصفحة الرئيسية')}
             </Button>
             
@@ -113,61 +141,23 @@ Stack: ${error.stack}
               className="w-full flex items-center justify-center col-span-2" 
               onClick={() => setShowDetails(true)}
             >
-              <Server className="h-4 w-4 mr-2" />
+              <Server className="h-4 w-4 mr-2" aria-hidden="true" />
               {t('error.details', 'عرض التفاصيل التقنية')}
             </Button>
           </div>
         </div>
       </div>
       
-      <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center text-destructive gap-2">
-              <AlertCircle className="h-5 w-5" />
-              {t('error.technicalDetails', 'التفاصيل التقنية')}
-            </DialogTitle>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="absolute right-4 top-4" 
-              onClick={() => setShowDetails(false)}
-            >
-              <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
-            </Button>
-          </DialogHeader>
-          <div className="space-y-4">
-            {error && (
-              <div className="overflow-auto max-h-96">
-                <div className="font-medium text-sm mb-1">{t('error.message', 'رسالة الخطأ')}:</div>
-                <pre className="text-xs bg-muted p-3 rounded overflow-auto">{error.message}</pre>
-                
-                {error.stack && (
-                  <>
-                    <div className="font-medium text-sm mt-3 mb-1">{t('error.stack', 'تتبع الخطأ')}:</div>
-                    <pre className="text-xs bg-muted p-3 rounded overflow-auto">{error.stack}</pre>
-                  </>
-                )}
-              </div>
-            )}
-            
-            <div className="flex justify-end space-x-2 rtl:space-x-reverse">
-              <Button variant="outline" size="sm" onClick={copyErrorToClipboard}>
-                <Copy className="h-4 w-4 mr-2" />
-                {t('error.copy', 'نسخ التفاصيل')}
-              </Button>
-              <Button 
-                variant="default" 
-                size="sm" 
-                onClick={() => setShowDetails(false)}
-              >
-                {t('error.close', 'إغلاق')}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* استخدام مكون ErrorDetailsDialog بدلاً من Dialog المباشر */}
+      {error && (
+        <ErrorDetailsDialog
+          isOpen={showDetails}
+          onClose={() => setShowDetails(false)}
+          title={t('error.technicalDetails', 'التفاصيل التقنية')}
+          message={error.message}
+          details={error.stack}
+        />
+      )}
     </div>
   );
 }
