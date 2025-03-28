@@ -24,7 +24,6 @@ export function AIPerformanceOptimizer({ children }: AIPerformanceOptimizerProps
     if (isLowPerformanceDevice && !isOptimized) {
       // تطبيق الإعدادات المحسّنة للأجهزة الضعيفة
       setPreference('animations', false);
-      setPreference('reducedMotion', true);
       setPreference('compactMode', true);
       
       // إعلام المستخدم

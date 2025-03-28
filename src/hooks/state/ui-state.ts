@@ -13,12 +13,15 @@ export const createUISlice: StateCreator<
   UIState
 > = (set) => ({
   // حالة واجهة المستخدم
+  isSidebarOpen: false,
   isDrawerOpen: false,
   activePage: 'home',
   lastVisitedPage: null,
   modals: {},
   
   // وظائف تعديل الحالة
+  setSidebarOpen: (isOpen) => set({ isSidebarOpen: isOpen }),
+  
   setDrawerOpen: (isOpen) => set({ isDrawerOpen: isOpen }),
   
   setActivePage: (page) => set(state => {

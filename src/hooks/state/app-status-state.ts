@@ -12,27 +12,28 @@ export const createAppStatusSlice: StateCreator<
   [],
   AppStatusState
 > = (set) => ({
-  // حالة التحميل
+  // حالة التطبيق
+  appVersion: '1.0.0',
+  environment: 'development',
+  isOnline: true,
+  isInitialized: false,
   isLoading: {},
   errors: {},
-  isInitialized: false,
   
   // وظائف تعديل الحالة
-  setIsLoading: (key, loading) => set(state => ({
-    isLoading: {
-      ...state.isLoading,
-      [key]: loading
-    }
+  setAppVersion: (version) => set({ appVersion: version }),
+  
+  setEnvironment: (env) => set({ environment: env }),
+  
+  setOnlineStatus: (isOnline) => set({ isOnline }),
+  
+  setIsLoading: (key, loading) => set((state) => ({
+    isLoading: { ...state.isLoading, [key]: loading }
   })),
   
-  setError: (key, error) => set(state => ({
-    errors: {
-      ...state.errors,
-      [key]: error
-    }
+  setError: (key, error) => set((state) => ({
+    errors: { ...state.errors, [key]: error }
   })),
   
-  setInitialized: (initialized) => set({ 
-    isInitialized: initialized 
-  }),
+  setInitialized: (initialized) => set({ isInitialized: initialized }),
 });

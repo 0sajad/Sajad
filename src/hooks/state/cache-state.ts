@@ -14,6 +14,7 @@ export const createCacheSlice: StateCreator<
 > = (set, get) => ({
   // حالة التخزين المؤقت
   cachedData: {},
+  lastCacheUpdate: null,
   
   // وظائف التخزين المؤقت
   setCachedData: (key, data, ttl = 5 * 60 * 1000) => {
@@ -27,7 +28,10 @@ export const createCacheSlice: StateCreator<
       },
     };
     
-    set({ cachedData: updatedCachedData });
+    set({ 
+      cachedData: updatedCachedData,
+      lastCacheUpdate: new Date()
+    });
   },
   
   getCachedData: (key) => {
@@ -41,7 +45,10 @@ export const createCacheSlice: StateCreator<
     // التحقق مما إذا كانت البيانات المخزنة مؤقتًا صالحة
     if (Date.now() > cachedItem.timestamp + cachedItem.ttl) {
       // إذا انتهت صلاحية البيانات، قم بإزالتها ورجوع null
-      get().invalidateCache(key);
+      const { invalidateCache } = get();
+      if (invalidateCache) {
+        invalidateCache(key);
+      }
       return null;
     }
     
@@ -53,10 +60,16 @@ export const createCacheSlice: StateCreator<
     const updatedCachedData = { ...state.cachedData };
     delete updatedCachedData[key];
     
-    set({ cachedData: updatedCachedData });
+    set({ 
+      cachedData: updatedCachedData,
+      lastCacheUpdate: new Date()
+    });
   },
   
   clearCache: () => {
-    set({ cachedData: {} });
+    set({ 
+      cachedData: {},
+      lastCacheUpdate: new Date()
+    });
   },
 });

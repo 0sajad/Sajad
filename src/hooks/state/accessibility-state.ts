@@ -1,7 +1,6 @@
 
 import { StateCreator } from 'zustand';
-import { AppState, AccessibilityState } from './types';
-import { ColorBlindMode } from '@/hooks/accessibility/useA11yColor';
+import { AppState, AccessibilityState, ColorBlindMode } from './types';
 
 /**
  * مخزن حالة إمكانية الوصول

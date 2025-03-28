@@ -13,7 +13,7 @@ import { Settings, BookOpen, Lightbulb } from "lucide-react";
 export function AISidebarEnhanced() {
   const { t } = useTranslation();
   const { deviceTier } = usePerformanceOptimization();
-  const { preferences } = useAppState();
+  const state = useAppState();
   const [activeTab, setActiveTab] = useState("uses");
   
   // قابلية طي الشريط الجانبي اختياريًا
@@ -26,7 +26,7 @@ export function AISidebarEnhanced() {
   };
   
   // تحسين السلوك استنادًا إلى نوع الجهاز
-  const isCompactMode = deviceTier === 'low' || preferences.compactMode;
+  const isCompactMode = deviceTier === 'low' || state.preferences?.compactMode;
   
   // مصادر التعلم مخصصة حسب اللغة
   const learningSources = {
@@ -46,7 +46,7 @@ export function AISidebarEnhanced() {
   
   // الحصول على مصادر التعلم المناسبة للغة الحالية
   const getCurrentLearningSources = () => {
-    const language = preferences.language;
+    const language = state.preferences?.language || 'ar';
     return learningSources[language === 'ar' ? 'ar' : 'en'];
   };
   

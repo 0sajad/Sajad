@@ -1,6 +1,5 @@
 
 import { useAppState } from './use-app-state';
-import { ColorBlindMode } from '@/hooks/accessibility/useA11yColor';
 
 /**
  * خطاف مساعد للتعامل مع حالة الشبكة

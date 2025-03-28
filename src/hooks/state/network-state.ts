@@ -1,6 +1,6 @@
 
 import { StateCreator } from 'zustand';
-import { AppState, NetworkState } from './types';
+import { AppState, NetworkState, DataUsageStats } from './types';
 
 /**
  * مخزن حالة الشبكة
@@ -13,11 +13,26 @@ export const createNetworkSlice: StateCreator<
   NetworkState
 > = (set, get) => ({
   // حالة الشبكة
+  networkType: 'unknown',
+  connectionSpeed: 0,
+  dataUsage: { totalUsage: 0, usageBreakdown: { wifi: 0, cellular: 0 } },
+  signalStrength: 0,
+  connectedDevices: 0,
   isConnected: true,
   isOnline: true,
   lastCheck: null,
   
   // وظائف تعديل الحالة
+  setNetworkType: (type) => set({ networkType: type }),
+  
+  setConnectionSpeed: (speed) => set({ connectionSpeed: speed }),
+  
+  setDataUsage: (usage) => set({ dataUsage: usage }),
+  
+  setSignalStrength: (strength) => set({ signalStrength: strength }),
+  
+  setConnectedDevices: (devices) => set({ connectedDevices: devices }),
+  
   setNetworkStatus: ({ isConnected, isOnline }) => set({ 
     isConnected, 
     isOnline,

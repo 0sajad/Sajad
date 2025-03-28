@@ -1,6 +1,15 @@
 
 import { StateCreator } from 'zustand';
-import { AppState, UserState } from './types';
+import { AppState, UserState, UserSettings } from './types';
+
+/**
+ * القيم الافتراضية لإعدادات المستخدم
+ */
+const defaultUserSettings: UserSettings = {
+  theme: 'system',
+  language: 'ar',
+  notificationsEnabled: true
+};
 
 /**
  * مخزن حالة المستخدم
@@ -18,10 +27,19 @@ export const createUserSlice: StateCreator<
   userEmail: null,
   userDisplayName: null,
   userRole: null,
-  userSettings: {},
+  userSettings: defaultUserSettings,
+  socket: null,
   
   // وظائف تعديل الحالة
   setAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
+  
+  setUserId: (id) => set({ userId: id }),
+  
+  setUserRole: (role) => set({ userRole: role }),
+  
+  setUserSettings: (settings) => set({ userSettings: settings }),
+  
+  setSocket: (socket) => set({ socket }),
   
   setUserData: (userData) => set({
     userId: userData.id,
@@ -43,6 +61,7 @@ export const createUserSlice: StateCreator<
     userEmail: null,
     userDisplayName: null,
     userRole: null,
-    userSettings: {},
+    userSettings: defaultUserSettings,
+    socket: null
   }),
 });
