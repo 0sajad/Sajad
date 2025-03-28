@@ -1,175 +1,226 @@
 
 import React from "react";
-import { useMode } from "@/context/ModeContext";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { 
-  Card, 
-  CardContent,
-  CardDescription,
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useMode } from "@/context/ModeContext";
 import { Badge } from "@/components/ui/badge";
-import { Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Button } from "@/components/ui/button";
+import { CommunicationTools } from "./CommunicationTools";
 
 export function FeatureManagement() {
-  const { features, toggleFeature, isDeveloperMode } = useMode();
+  const { features, toggleFeature, applyConfiguration, isSyncing } = useMode();
   const { t } = useTranslation();
   
-  const featureGroups = [
-    {
-      title: t('developer.features.ai.title', 'ميزات الذكاء الاصطناعي'),
-      items: [
-        {
-          id: 'aiAssistant',
-          name: t('developer.features.ai.assistant', 'المساعد الذكي'),
-          description: t('developer.features.ai.assistantDesc', 'مساعد ذكي يعمل بتقنية الذكاء الاصطناعي'),
-          badge: 'أساسي'
-        },
-        {
-          id: 'autoHealing',
-          name: t('developer.features.ai.autoHealing', 'إصلاح تلقائي'),
-          description: t('developer.features.ai.autoHealingDesc', 'إصلاح مشاكل الشبكة تلقائيًا'),
-          badge: 'متقدم'
-        },
-        {
-          id: 'networkIsolation',
-          name: t('developer.features.ai.isolation', 'عزل الأجهزة المشبوهة'),
-          description: t('developer.features.ai.isolationDesc', 'عزل الأجهزة المشبوهة تلقائيًا'),
-          badge: 'أمان'
-        },
-      ]
-    },
-    {
-      title: t('developer.features.network.title', 'ميزات الشبكة'),
-      items: [
-        {
-          id: 'networkMonitoring',
-          name: t('developer.features.network.monitoring', 'مراقبة الشبكة'),
-          description: t('developer.features.network.monitoringDesc', 'مراقبة حالة واستخدام الشبكة'),
-          badge: 'أساسي'
-        },
-        {
-          id: 'dnsOptimization',
-          name: t('developer.features.network.dns', 'تحسين خوادم DNS'),
-          description: t('developer.features.network.dnsDesc', 'تحسين أداء تصفح الإنترنت'),
-        },
-        {
-          id: 'multiNetwork',
-          name: t('developer.features.network.multi', 'دمج عدة شبكات'),
-          description: t('developer.features.network.multiDesc', 'استخدام عدة شبكات في وقت واحد'),
-          badge: 'متقدم'
-        },
-        {
-          id: 'trafficShaping',
-          name: t('developer.features.network.traffic', 'توجيه ذكي لحركة البيانات'),
-          description: t('developer.features.network.trafficDesc', 'توزيع النطاق الترددي حسب الأولوية'),
-        },
-        {
-          id: 'latencyHeatmap',
-          name: t('developer.features.network.latency', 'خريطة تأخير الشبكة'),
-          description: t('developer.features.network.latencyDesc', 'عرض مناطق الشبكة الأسرع والأبطأ'),
-        },
-      ]
-    },
-    {
-      title: t('developer.features.security.title', 'ميزات الأمان'),
-      items: [
-        {
-          id: 'advancedSecurity',
-          name: t('developer.features.security.advanced', 'أمان متقدم'),
-          description: t('developer.features.security.advancedDesc', 'حماية متقدمة للشبكة والأجهزة'),
-          badge: 'أساسي'
-        },
-        {
-          id: 'invisibleMode',
-          name: t('developer.features.security.invisible', 'وضع التخفي'),
-          description: t('developer.features.security.invisibleDesc', 'جعل الجهاز غير قابل للكشف'),
-        },
-        {
-          id: 'darkWebProtection',
-          name: t('developer.features.security.darkweb', 'الحماية من الشبكة المظلمة'),
-          description: t('developer.features.security.darkwebDesc', 'منع الاتصالات المشبوهة'),
-          badge: 'متقدم'
-        },
-      ]
-    },
-    {
-      title: t('developer.features.system.title', 'ميزات النظام'),
-      items: [
-        {
-          id: 'zeroPower',
-          name: t('developer.features.system.zeroPower', 'وضع استهلاك منخفض'),
-          description: t('developer.features.system.zeroPowerDesc', 'تقليل استهلاك موارد النظام'),
-        },
-        {
-          id: 'deviceHeat',
-          name: t('developer.features.system.heat', 'مراقبة حرارة الأجهزة'),
-          description: t('developer.features.system.heatDesc', 'مراقبة والتحذير من ارتفاع الحرارة'),
-        },
-      ]
-    },
-    {
-      title: t('developer.features.ui.title', 'ميزات الواجهة'),
-      items: [
-        {
-          id: 'holographicUI',
-          name: t('developer.features.ui.holographic', 'واجهة ثلاثية الأبعاد'),
-          description: t('developer.features.ui.holographicDesc', 'عرض البيانات كمجسمات تفاعلية'),
-          badge: 'متقدم'
-        },
-      ]
-    },
-  ];
+  // Group features by category
+  const featureCategories = {
+    core: ["networkMonitoring", "advancedSecurity", "aiAssistant", "dnsOptimization", "autoHealing"],
+    advanced: ["zeroPower", "holographicUI", "networkIsolation", "latencyHeatmap", "trafficShaping", "invisibleMode"],
+    experimental: ["networkCloning", "multiNetwork", "signalBooster", "darkWebProtection", "deviceHeat"]
+  };
+  
+  const getFeatureLabel = (featureId: string) => {
+    // Map feature IDs to readable labels
+    const labels: Record<string, string> = {
+      networkMonitoring: t('developer.features.networkMonitoring', 'شبكة المراقبة'),
+      advancedSecurity: t('developer.features.advancedSecurity', 'الأمان المتقدم'),
+      aiAssistant: t('developer.features.aiAssistant', 'مساعد الذكاء الاصطناعي'),
+      zeroPower: t('developer.features.zeroPower', 'وضع الطاقة الصفرية'),
+      holographicUI: t('developer.features.holographicUI', 'واجهة ثلاثية الأبعاد'),
+      networkIsolation: t('developer.features.networkIsolation', 'عزل الشبكة'),
+      dnsOptimization: t('developer.features.dnsOptimization', 'تحسين DNS'),
+      latencyHeatmap: t('developer.features.latencyHeatmap', 'خريطة حرارة التأخير'),
+      trafficShaping: t('developer.features.trafficShaping', 'تشكيل حركة المرور'),
+      invisibleMode: t('developer.features.invisibleMode', 'وضع التخفي'),
+      networkCloning: t('developer.features.networkCloning', 'استنساخ الشبكة'),
+      multiNetwork: t('developer.features.multiNetwork', 'الشبكات المتعددة'),
+      autoHealing: t('developer.features.autoHealing', 'الإصلاح التلقائي'),
+      signalBooster: t('developer.features.signalBooster', 'معزز الإشارة'),
+      darkWebProtection: t('developer.features.darkWebProtection', 'حماية الويب المظلم'),
+      deviceHeat: t('developer.features.deviceHeat', 'حرارة الجهاز')
+    };
+    
+    return labels[featureId] || featureId;
+  };
+  
+  const getFeatureDescription = (featureId: string) => {
+    // Map feature IDs to descriptions
+    const descriptions: Record<string, string> = {
+      networkMonitoring: t('developer.features.networkMonitoringDesc', 'مراقبة نشاط الشبكة وتشخيص المشكلات بشكل استباقي'),
+      advancedSecurity: t('developer.features.advancedSecurityDesc', 'حماية متقدمة ضد التهديدات والهجمات الإلكترونية'),
+      aiAssistant: t('developer.features.aiAssistantDesc', 'مساعد ذكي لتحليل الشبكة وحل المشكلات'),
+      zeroPower: t('developer.features.zeroPowerDesc', 'يعمل بدون استهلاك طاقة إضافية من النظام'),
+      holographicUI: t('developer.features.holographicUIDesc', 'واجهة مستخدم ثلاثية الأبعاد مع تجسيد للبيانات'),
+      networkIsolation: t('developer.features.networkIsolationDesc', 'عزل أجزاء من الشبكة للأمان والأداء'),
+      dnsOptimization: t('developer.features.dnsOptimizationDesc', 'تحسين أداء وأمان خوادم DNS'),
+      latencyHeatmap: t('developer.features.latencyHeatmapDesc', 'خريطة حرارية لعرض التأخير عبر الشبكة'),
+      trafficShaping: t('developer.features.trafficShapingDesc', 'تحسين توزيع حركة المرور على الشبكة'),
+      invisibleMode: t('developer.features.invisibleModeDesc', 'إخفاء الأجهزة عن المسح الشبكي'),
+      networkCloning: t('developer.features.networkCloningDesc', 'إنشاء نسخة افتراضية من الشبكة للاختبار'),
+      multiNetwork: t('developer.features.multiNetworkDesc', 'إدارة عدة شبكات من واجهة موحدة'),
+      autoHealing: t('developer.features.autoHealingDesc', 'إصلاح مشاكل الشبكة تلقائياً دون تدخل بشري'),
+      signalBooster: t('developer.features.signalBoosterDesc', 'تعزيز قوة إشارة الشبكة اللاسلكية'),
+      darkWebProtection: t('developer.features.darkWebProtectionDesc', 'حماية من تهديدات الإنترنت المظلم'),
+      deviceHeat: t('developer.features.deviceHeatDesc', 'رصد درجة حرارة الأجهزة الشبكية')
+    };
+    
+    return descriptions[featureId] || '';
+  };
+  
+  const handleFeatureToggle = (featureId: string) => {
+    toggleFeature(featureId);
+  };
   
   return (
-    <div className="space-y-6">
-      {featureGroups.map((group, groupIndex) => (
-        <Card key={groupIndex} className="overflow-hidden">
-          <CardHeader className="bg-muted/50 pb-3">
-            <CardTitle className="text-lg font-tajawal">{group.title}</CardTitle>
-          </CardHeader>
-          
-          <CardContent className="p-0">
-            {group.items.map((feature, featureIndex) => (
-              <div key={featureIndex}>
-                {featureIndex > 0 && <Separator />}
-                <div className="flex items-center justify-between p-4">
-                  <div className="space-y-0.5">
-                    <div className="flex items-center">
-                      <Label className="font-tajawal text-base">{feature.name}</Label>
-                      {feature.badge && (
-                        <Badge variant="outline" className="ml-2 text-xs font-tajawal">
-                          {feature.badge}
-                        </Badge>
-                      )}
-                    </div>
-                    <p className="text-sm text-muted-foreground font-tajawal">{feature.description}</p>
-                  </div>
-                  <Switch
-                    checked={features[feature.id] || false}
-                    onCheckedChange={() => toggleFeature(feature.id)}
-                    disabled={!isDeveloperMode || (feature.id === 'aiAssistant' || feature.id === 'networkMonitoring' || feature.id === 'advancedSecurity')}
-                  />
+    <Tabs defaultValue="core">
+      <TabsList className="grid grid-cols-4 mb-6">
+        <TabsTrigger value="core" className="font-tajawal">
+          {t('developer.features.coreFeaturesTab', 'الميزات الأساسية')}
+        </TabsTrigger>
+        <TabsTrigger value="advanced" className="font-tajawal">
+          {t('developer.features.advancedFeaturesTab', 'الميزات المتقدمة')}
+        </TabsTrigger>
+        <TabsTrigger value="experimental" className="font-tajawal">
+          {t('developer.features.experimentalFeaturesTab', 'الميزات التجريبية')}
+        </TabsTrigger>
+        <TabsTrigger value="tools" className="font-tajawal">
+          {t('developer.features.communicationToolsTab', 'أدوات الاتصالات')}
+        </TabsTrigger>
+      </TabsList>
+      
+      <TabsContent value="core">
+        <div className="space-y-4">
+          {featureCategories.core.map((featureId) => (
+            <div key={featureId} className="flex items-start justify-between rounded-lg border p-4">
+              <div className="space-y-0.5">
+                <div className="flex items-center">
+                  <Label htmlFor={featureId} className="font-tajawal text-base font-medium">
+                    {getFeatureLabel(featureId)}
+                  </Label>
+                  <Badge className="ml-2 bg-green-500 hover:bg-green-600">
+                    {t('developer.features.coreTag', 'أساسي')}
+                  </Badge>
                 </div>
+                <p className="text-muted-foreground font-tajawal text-sm">
+                  {getFeatureDescription(featureId)}
+                </p>
               </div>
-            ))}
-          </CardContent>
-          
-          {groupIndex === 0 && (
-            <CardFooter className="bg-blue-50 p-3 flex items-start">
-              <Info className="text-blue-500 mr-2 mt-0.5 h-4 w-4 shrink-0" />
-              <p className="text-xs text-blue-700 font-tajawal">
-                {t('developer.features.coreNotice', 'الميزات الأساسية لا يمكن تعطيلها لضمان عمل النظام بشكل صحيح')}
-              </p>
-            </CardFooter>
-          )}
-        </Card>
-      ))}
-    </div>
+              
+              <Switch
+                id={featureId}
+                checked={features[featureId]}
+                onCheckedChange={() => handleFeatureToggle(featureId)}
+              />
+            </div>
+          ))}
+        </div>
+        
+        <div className="mt-6 flex justify-end">
+          <Button onClick={applyConfiguration} disabled={isSyncing}>
+            {isSyncing ? (
+              <div className="flex items-center gap-2">
+                <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                {t('developer.features.applying', 'جارٍ التطبيق...')}
+              </div>
+            ) : (
+              t('developer.features.applyChanges', 'تطبيق التغييرات')
+            )}
+          </Button>
+        </div>
+      </TabsContent>
+      
+      <TabsContent value="advanced">
+        <div className="space-y-4">
+          {featureCategories.advanced.map((featureId) => (
+            <div key={featureId} className="flex items-start justify-between rounded-lg border p-4">
+              <div className="space-y-0.5">
+                <div className="flex items-center">
+                  <Label htmlFor={featureId} className="font-tajawal text-base font-medium">
+                    {getFeatureLabel(featureId)}
+                  </Label>
+                  <Badge className="ml-2 bg-blue-500 hover:bg-blue-600">
+                    {t('developer.features.advancedTag', 'متقدم')}
+                  </Badge>
+                </div>
+                <p className="text-muted-foreground font-tajawal text-sm">
+                  {getFeatureDescription(featureId)}
+                </p>
+              </div>
+              
+              <Switch
+                id={featureId}
+                checked={features[featureId]}
+                onCheckedChange={() => handleFeatureToggle(featureId)}
+              />
+            </div>
+          ))}
+        </div>
+        
+        <div className="mt-6 flex justify-end">
+          <Button onClick={applyConfiguration} disabled={isSyncing}>
+            {isSyncing ? (
+              <div className="flex items-center gap-2">
+                <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                {t('developer.features.applying', 'جارٍ التطبيق...')}
+              </div>
+            ) : (
+              t('developer.features.applyChanges', 'تطبيق التغييرات')
+            )}
+          </Button>
+        </div>
+      </TabsContent>
+      
+      <TabsContent value="experimental">
+        <div className="bg-amber-50 border border-amber-200 text-amber-800 rounded-md p-3 mb-4">
+          <p className="text-sm font-tajawal">
+            {t('developer.features.experimentalWarning', 'تحذير: الميزات التجريبية قد تكون غير مستقرة وقد تؤثر على أداء النظام.')}
+          </p>
+        </div>
+        
+        <div className="space-y-4">
+          {featureCategories.experimental.map((featureId) => (
+            <div key={featureId} className="flex items-start justify-between rounded-lg border p-4">
+              <div className="space-y-0.5">
+                <div className="flex items-center">
+                  <Label htmlFor={featureId} className="font-tajawal text-base font-medium">
+                    {getFeatureLabel(featureId)}
+                  </Label>
+                  <Badge className="ml-2 bg-amber-500 hover:bg-amber-600">
+                    {t('developer.features.experimentalTag', 'تجريبي')}
+                  </Badge>
+                </div>
+                <p className="text-muted-foreground font-tajawal text-sm">
+                  {getFeatureDescription(featureId)}
+                </p>
+              </div>
+              
+              <Switch
+                id={featureId}
+                checked={features[featureId]}
+                onCheckedChange={() => handleFeatureToggle(featureId)}
+              />
+            </div>
+          ))}
+        </div>
+        
+        <div className="mt-6 flex justify-end">
+          <Button onClick={applyConfiguration} disabled={isSyncing}>
+            {isSyncing ? (
+              <div className="flex items-center gap-2">
+                <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                {t('developer.features.applying', 'جارٍ التطبيق...')}
+              </div>
+            ) : (
+              t('developer.features.applyChanges', 'تطبيق التغييرات')
+            )}
+          </Button>
+        </div>
+      </TabsContent>
+      
+      <TabsContent value="tools">
+        <CommunicationTools />
+      </TabsContent>
+    </Tabs>
   );
 }

@@ -13,7 +13,7 @@
     "languageChanged": "تم تغيير اللغة إلى {{language}}"
   },
   "header": {
-    "dashboard": "الرئيسية",
+    "dashboard": "لوحة التحكم",
     "tools": "الأدوات",
     "networkScanner": "فاحص الشبكة",
     "wifiAnalyzer": "محلل واي فاي",
@@ -26,7 +26,7 @@
     "fiberOptic": "الفايبر الضوئي"
   },
   "dashboard": {
-    "title": "الرئيسية",
+    "title": "لوحة التحكم",
     "welcome": "أهلاً بيك بأوكتا-كرام",
     "systemStatus": "حالة النظام",
     "status": "الحالة",
@@ -49,12 +49,14 @@
     "simulationSystems": "أنظمة المحاكاة"
   },
   "mobileMenu": {
-    "dashboard": "الرئيسية",
+    "dashboard": "لوحة التحكم",
     "tools": "الأدوات",
     "aiAssistant": "مساعد الذكاء الصناعي",
     "settings": "الإعدادات",
     "helpCenter": "مركز المساعدة",
-    "login": "تسجيل دخول"
+    "login": "تسجيل دخول",
+    "license": "الترخيص",
+    "fiberOptic": "الفايبر الضوئي"
   },
   "notFound": {
     "message": "اوبس! الصفحة مو موجودة",

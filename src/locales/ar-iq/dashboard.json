@@ -20,7 +20,7 @@
   "connectedDevices": "الاجهزة المتصلة",
   "disconnectedDevices": "الاجهزة غير المتصلة",
   "securityStatus": "حالة الامان",
-  "trafficAnalysis": "تحليل الحركة",
+  "trafficAnalysis": "تحليل حركة المرور",
   "performanceMetrics": "مقاييس الاداء",
   "downloadSpeed": "سرعة التنزيل",
   "uploadSpeed": "سرعة الرفع",
@@ -41,9 +41,9 @@
   "reports": "التقارير",
   "analytics": "التحليلات",
   "diagnostics": "التشخيص",
-  "troubleshooting": "استكشاف الاخطاء",
+  "troubleshooting": "استكشاف الاخطاء واصلاحها",
   "updates": "التحديثات",
   "maintenance": "الصيانة",
   "backup": "النسخ الاحتياطي",
-  "restore": "الاستعادة"
+  "restore": "استعادة"
 }

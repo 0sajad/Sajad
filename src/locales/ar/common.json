@@ -13,7 +13,7 @@
     "languageChanged": "تم تغيير اللغة إلى {{language}}"
   },
   "header": {
-    "dashboard": "الرئيسية",
+    "dashboard": "لوحة التحكم",
     "tools": "الأدوات",
     "networkScanner": "ماسح الشبكة",
     "wifiAnalyzer": "محلل واي فاي",
@@ -29,5 +29,7 @@
     "message": "عذراً! الصفحة غير موجودة",
     "returnHome": "العودة إلى الرئيسية",
     "redirecting": "جارٍ إعادة التوجيه إلى الرئيسية في غضون 3 ثوانٍ..."
-  }
+  },
+  "error": "خطأ",
+  "languageChangeError": "فشل في تغيير اللغة"
 }
