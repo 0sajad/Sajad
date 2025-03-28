@@ -1,7 +1,25 @@
 
 import { create } from 'zustand'
 import { devtools, persist, createJSONStorage } from 'zustand/middleware'
-import { type StoreState } from './types';
+import { type PerformanceState } from './types';
+
+// Define a subset of the PerformanceState for our store
+interface StoreState {
+  // Device performance tier
+  deviceTier: 'low' | 'medium' | 'high';
+  setDeviceTier: (tier: 'low' | 'medium' | 'high') => void;
+  
+  // User preferences
+  preferences: {
+    theme: 'light' | 'dark' | 'system';
+    reducedMotion: boolean;
+    highContrast: boolean;
+  };
+  setPreference: <K extends keyof StoreState['preferences']>(
+    key: K, 
+    value: StoreState['preferences'][K]
+  ) => void;
+}
 
 // Check if we're in a browser environment before using localStorage
 const canUseLocalStorage = typeof window !== 'undefined' && window.localStorage;
