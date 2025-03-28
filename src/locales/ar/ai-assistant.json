@@ -1,0 +1,39 @@
+
+{
+  "title": "مساعد الذكاء الاصطناعي",
+  "subtitle": "دليلك الشخصي للشبكة",
+  "description": "الحصول على مساعدة فورية وتوصيات وأتمتة لشبكتك",
+  "voiceAssistance": "المساعدة الصوتية",
+  "startRecording": "بدء التسجيل",
+  "stopRecording": "إيقاف التسجيل",
+  "chatPlaceholder": "اسأل أي شيء عن شبكتك...",
+  "sendMessage": "إرسال",
+  "clearChat": "مسح المحادثة",
+  "historyLabel": "سجل المحادثات",
+  "suggestedQueries": "استفسارات مقترحة",
+  "noHistoryYet": "لا يوجد سجل محادثات بعد",
+  "loadingResponse": "جاري تحميل الاستجابة...",
+  "tools": {
+    "title": "الأدوات المتاحة",
+    "networkAnalysis": "تحليل الشبكة",
+    "securityScan": "فحص الأمان",
+    "troubleshoot": "استكشاف الأخطاء وإصلاحها",
+    "optimize": "تحسين الأداء",
+    "deviceSetup": "إعداد الجهاز"
+  },
+  "suggestions": {
+    "networkIssue": "لماذا اتصال الإنترنت لدي بطيء؟",
+    "securityCheck": "هل شبكتي آمنة؟",
+    "deviceConnection": "كيف أقوم بتوصيل جهاز جديد؟",
+    "signalStrength": "كيف يمكنني تحسين قوة إشارة WiFi؟"
+  },
+  "settings": {
+    "title": "إعدادات المساعد",
+    "voiceEnabled": "تمكين المساعدة الصوتية",
+    "suggestionsEnabled": "تمكين الاقتراحات",
+    "historyEnabled": "تمكين سجل المحادثات",
+    "darkMode": "الوضع الداكن",
+    "fontSize": "حجم الخط",
+    "language": "اللغة"
+  }
+}

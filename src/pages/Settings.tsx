@@ -1,122 +1,72 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
-import { SettingsMenu } from "@/components/settings/SettingsMenu";
-import { AdvancedFeatures } from "@/components/settings/AdvancedFeatures";
-import { NotificationControl } from "@/components/settings/NotificationControl";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
-import { Shield, Zap, Cpu, Server, BrainCircuit, Bell } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SettingsMenu } from "@/components/settings/SettingsMenu";
+import { NotificationSettings } from "@/components/settings/NotificationSettings";
+import { AccessibilitySettings } from "@/components/settings/AccessibilitySettings";
+import { AdvancedSettings } from "@/components/settings/AdvancedSettings";
+import { SecuritySettings } from "@/components/settings/SecuritySettings";
+import { useA11y } from "@/hooks/useA11y";
+import { NetworkSettings } from "@/components/settings/NetworkSettings";
 
 const Settings = () => {
-  const { t } = useTranslation();
-  
+  const { t } = useTranslation(['settingsPage']);
+  const [activeTab, setActiveTab] = useState("notifications");
+  const { announce } = useA11y();
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    announce(t(`sections.${value}`, value), 'info');
+  };
+
   return (
-    <div className="min-h-screen w-full">
+    <div className="container mx-auto p-6 pb-20">
       <Header />
       
-      <main className="container mx-auto px-6 py-24">
-        <div className="flex items-center mb-8">
-          <h1 className="text-3xl font-bold font-tajawal">{t('settings.advancedSettings')}</h1>
-          <span className="mr-3 px-3 py-1 text-xs font-medium bg-octaBlue-50 text-octaBlue-600 rounded-full">
-            {t('settings.developerVersion')}
-          </span>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold">{t('title')}</h1>
+        <p className="text-muted-foreground">{t('description')}</p>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="md:col-span-1">
+          <SettingsMenu activeTab={activeTab} onTabChange={handleTabChange} />
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          <div className="lg:col-span-1">
-            <SettingsMenu />
-          </div>
-          
-          <div className="lg:col-span-3">
-            <Tabs defaultValue="features" dir="rtl" className="w-full">
-              <TabsList className="w-full justify-start mb-6">
-                <TabsTrigger value="features" className="font-tajawal">{t('settings.tabs.advancedFeatures')}</TabsTrigger>
-                <TabsTrigger value="notifications" className="font-tajawal">{t('settings.tabs.notifications')}</TabsTrigger>
-                <TabsTrigger value="network" className="font-tajawal">{t('settings.tabs.network')}</TabsTrigger>
-                <TabsTrigger value="security" className="font-tajawal">{t('settings.tabs.security')}</TabsTrigger>
-                <TabsTrigger value="system" className="font-tajawal">{t('settings.tabs.system')}</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="features">
-                <div className="space-y-4">
-                  <div className="flex items-center">
-                    <BrainCircuit className="text-purple-600 ml-2" size={24} />
-                    <h2 className="text-2xl font-semibold font-tajawal">{t('settings.aiFeatures')}</h2>
-                  </div>
-                  <p className="text-muted-foreground font-tajawal leading-relaxed">
-                    {t('settings.aiDescription')}
-                  </p>
-                  <Separator className="my-4" />
-                  
-                  <AdvancedFeatures />
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="notifications">
-                <div className="space-y-4">
-                  <div className="flex items-center">
-                    <Bell className="text-blue-600 ml-2" size={24} />
-                    <h2 className="text-2xl font-semibold font-tajawal">{t('settings.notificationSettings')}</h2>
-                  </div>
-                  <p className="text-muted-foreground font-tajawal leading-relaxed">
-                    {t('settings.notificationDescription')}
-                  </p>
-                  <Separator className="my-4" />
-                  
-                  <NotificationControl />
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="network">
-                <div className="flex items-center">
-                  <Server className="text-octaBlue-600 ml-2" size={24} />
-                  <h2 className="text-2xl font-semibold font-tajawal">{t('settings.advancedNetworkSettings')}</h2>
-                </div>
-                <p className="text-muted-foreground font-tajawal leading-relaxed mt-2">
-                  {t('settings.networkDescription')}
-                </p>
-                <Separator className="my-4" />
-                <div className="border rounded-lg p-8 text-center">
-                  <p className="text-xl font-tajawal">{t('settings.comingSoon')}</p>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="security">
-                <div className="flex items-center">
-                  <Shield className="text-green-600 ml-2" size={24} />
-                  <h2 className="text-2xl font-semibold font-tajawal">{t('settings.securityPrivacySettings')}</h2>
-                </div>
-                <p className="text-muted-foreground font-tajawal leading-relaxed mt-2">
-                  {t('settings.securityDescription')}
-                </p>
-                <Separator className="my-4" />
-                <div className="border rounded-lg p-8 text-center">
-                  <p className="text-xl font-tajawal">{t('settings.comingSoon')}</p>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="system">
-                <div className="flex items-center">
-                  <Cpu className="text-amber-600 ml-2" size={24} />
-                  <h2 className="text-2xl font-semibold font-tajawal">{t('settings.systemSettings')}</h2>
-                </div>
-                <p className="text-muted-foreground font-tajawal leading-relaxed mt-2">
-                  {t('settings.systemDescription')}
-                </p>
-                <Separator className="my-4" />
-                <div className="border rounded-lg p-8 text-center">
-                  <p className="text-xl font-tajawal">{t('settings.comingSoon')}</p>
-                </div>
-              </TabsContent>
-            </Tabs>
-          </div>
+        <div className="md:col-span-3">
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+            <TabsList className="w-full grid grid-cols-2 md:grid-cols-5">
+              <TabsTrigger value="notifications">{t('sections.notifications')}</TabsTrigger>
+              <TabsTrigger value="network">{t('sections.network')}</TabsTrigger>
+              <TabsTrigger value="security">{t('sections.security')}</TabsTrigger>
+              <TabsTrigger value="accessibility">{t('sections.accessibility')}</TabsTrigger>
+              <TabsTrigger value="advanced">{t('sections.advanced')}</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="notifications" className="mt-6">
+              <NotificationSettings />
+            </TabsContent>
+            
+            <TabsContent value="network" className="mt-6">
+              <NetworkSettings />
+            </TabsContent>
+            
+            <TabsContent value="security" className="mt-6">
+              <SecuritySettings />
+            </TabsContent>
+            
+            <TabsContent value="accessibility" className="mt-6">
+              <AccessibilitySettings />
+            </TabsContent>
+            
+            <TabsContent value="advanced" className="mt-6">
+              <AdvancedSettings />
+            </TabsContent>
+          </Tabs>
         </div>
-      </main>
-      
-      <Footer />
+      </div>
     </div>
   );
 };

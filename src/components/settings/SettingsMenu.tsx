@@ -1,103 +1,80 @@
 
 import React from "react";
 import { 
+  Bell, 
   Shield, 
+  Eye, 
   Zap, 
-  Cpu, 
-  Server, 
-  BrainCircuit, 
   Globe, 
-  Network, 
-  Wifi,
-  ThermometerSun
+  Network
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
-interface SettingsSectionProps {
-  title: string;
-  icon: React.ReactNode;
-  active?: boolean;
-  onClick?: () => void;
+interface SettingsMenuProps {
+  activeTab: string;
+  onTabChange: (value: string) => void;
 }
 
-const SettingsSection = ({ title, icon, active = false, onClick }: SettingsSectionProps) => {
+export function SettingsMenu({ activeTab, onTabChange }: SettingsMenuProps) {
+  const { t } = useTranslation(['settingsPage']);
+  
   return (
-    <button
-      className={cn(
-        "flex items-center w-full px-3 py-2 rounded-md text-right transition-colors",
-        active 
-          ? "bg-primary text-primary-foreground" 
-          : "hover:bg-muted"
-      )}
-      onClick={onClick}
-    >
-      <span className="ml-2.5 rtl:ml-0 rtl:mr-2.5">{icon}</span>
-      <span className="font-tajawal">{title}</span>
-    </button>
-  );
-};
-
-export const SettingsMenu = () => {
-  return (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-medium mb-2 font-tajawal">الميزات الرئيسية</h3>
-        <div className="space-y-1">
-          <SettingsSection 
-            title="الذكاء الاصطناعي" 
-            icon={<BrainCircuit size={18} />} 
-            active
-          />
-          <SettingsSection 
-            title="مراقبة الشبكة" 
-            icon={<Network size={18} />}
-          />
-          <SettingsSection 
-            title="خدمات DNS" 
-            icon={<Globe size={18} />}
-          />
-          <SettingsSection 
-            title="مراقبة الأجهزة" 
-            icon={<Cpu size={18} />}
-          />
-        </div>
-      </div>
+    <div className="space-y-1">
+      <button
+        className={cn(
+          "flex items-center w-full px-3 py-2 rounded-md text-sm text-left transition-colors",
+          activeTab === "notifications" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+        )}
+        onClick={() => onTabChange("notifications")}
+      >
+        <Bell className="mr-2 h-4 w-4" />
+        {t('sections.notifications')}
+      </button>
       
-      <div>
-        <h3 className="text-lg font-medium mb-2 font-tajawal">إعدادات الأمان</h3>
-        <div className="space-y-1">
-          <SettingsSection 
-            title="حماية الشبكة" 
-            icon={<Shield size={18} />}
-          />
-          <SettingsSection 
-            title="وضع التخفي" 
-            icon={<Wifi size={18} />}
-          />
-          <SettingsSection 
-            title="حماية الشبكة المظلمة" 
-            icon={<Shield size={18} />}
-          />
-        </div>
-      </div>
+      <button
+        className={cn(
+          "flex items-center w-full px-3 py-2 rounded-md text-sm text-left transition-colors",
+          activeTab === "network" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+        )}
+        onClick={() => onTabChange("network")}
+      >
+        <Network className="mr-2 h-4 w-4" />
+        {t('sections.network')}
+      </button>
       
-      <div>
-        <h3 className="text-lg font-medium mb-2 font-tajawal">إعدادات النظام</h3>
-        <div className="space-y-1">
-          <SettingsSection 
-            title="توفير الطاقة" 
-            icon={<Zap size={18} />}
-          />
-          <SettingsSection 
-            title="مراقبة الحرارة" 
-            icon={<ThermometerSun size={18} />}
-          />
-          <SettingsSection 
-            title="إعدادات الخادم" 
-            icon={<Server size={18} />}
-          />
-        </div>
-      </div>
+      <button
+        className={cn(
+          "flex items-center w-full px-3 py-2 rounded-md text-sm text-left transition-colors",
+          activeTab === "security" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+        )}
+        onClick={() => onTabChange("security")}
+      >
+        <Shield className="mr-2 h-4 w-4" />
+        {t('sections.security')}
+      </button>
+      
+      <button
+        className={cn(
+          "flex items-center w-full px-3 py-2 rounded-md text-sm text-left transition-colors",
+          activeTab === "accessibility" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+        )}
+        onClick={() => onTabChange("accessibility")}
+      >
+        <Eye className="mr-2 h-4 w-4" />
+        {t('sections.accessibility')}
+      </button>
+      
+      <button
+        className={cn(
+          "flex items-center w-full px-3 py-2 rounded-md text-sm text-left transition-colors",
+          activeTab === "advanced" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+        )}
+        onClick={() => onTabChange("advanced")}
+      >
+        <Zap className="mr-2 h-4 w-4" />
+        {t('sections.advanced')}
+      </button>
     </div>
   );
-};
+}

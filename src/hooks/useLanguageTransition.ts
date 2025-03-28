@@ -64,7 +64,7 @@ export function useLanguageTransition(): UseLanguageTransitionReturnType {
         }, 500);
       }).catch(() => {
         // إشعار خطأ في حالة فشل تغيير اللغة
-        toast.error(t('common.languageChangeError'));
+        toast.error(t('common.languageChangeError', 'Failed to change language'));
         setIsTransitioning(false);
         
         // تشغيل صوت خطأ (إذا كان مفعلاً)

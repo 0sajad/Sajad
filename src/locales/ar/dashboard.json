@@ -1,0 +1,34 @@
+
+{
+  "title": "لوحة التحكم",
+  "welcome": "أهلاً بك في أوكتا-جرام",
+  "systemStatus": "حالة النظام",
+  "status": "الحالة",
+  "active": "نشط",
+  "quickActions": "إجراءات سريعة",
+  "selectAction": "اختر إجراء",
+  "actions": {
+    "scan": "فحص الشبكة",
+    "optimize": "تحسين الأداء",
+    "backup": "نسخ احتياطي للإعدادات"
+  },
+  "latestUpdates": "آخر التحديثات",
+  "noUpdates": "لا توجد تحديثات جديدة",
+  "statistics": "إحصائيات الشبكة",
+  "networkQuality": "جودة الشبكة",
+  "deviceStatus": "حالة الأجهزة",
+  "connectedDevices": "الأجهزة المتصلة",
+  "disconnectedDevices": "الأجهزة غير المتصلة",
+  "securityStatus": "حالة الأمان",
+  "trafficAnalysis": "تحليل حركة المرور",
+  "performanceMetrics": "مقاييس الأداء",
+  "downloadSpeed": "سرعة التنزيل",
+  "uploadSpeed": "سرعة الرفع",
+  "latency": "زمن الاستجابة",
+  "packetLoss": "فقدان الحزم",
+  "jitter": "التذبذب",
+  "systemResources": "موارد النظام",
+  "cpuUsage": "استخدام المعالج",
+  "memoryUsage": "استخدام الذاكرة",
+  "storageUsage": "استخدام التخزين"
+}

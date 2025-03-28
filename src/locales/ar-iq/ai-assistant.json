@@ -1,0 +1,44 @@
+
+{
+  "title": "مساعد الذكاء الاصطناعي",
+  "subtitle": "دليلك الشخصي للشبكة",
+  "description": "خذ مساعدة فورية وتوصيات وأتمتة لشبكتك",
+  "voiceAssistance": "المساعدة الصوتية",
+  "startRecording": "ابدأ التسجيل",
+  "stopRecording": "وكف التسجيل",
+  "chatPlaceholder": "اسأل شي عن شبكتك...",
+  "sendMessage": "دز الرسالة",
+  "clearChat": "مسح المحادثة",
+  "historyLabel": "تاريخ المحادثات",
+  "suggestedQueries": "أسئلة مقترحة",
+  "noHistoryYet": "ماكو محادثات بعد",
+  "loadingResponse": "دا يفكر...",
+  "tools": {
+    "title": "الأدوات المتوفرة",
+    "networkAnalysis": "تحليل الشبكة",
+    "securityScan": "فحص الأمان",
+    "troubleshoot": "حل المشاكل",
+    "optimize": "تحسين الأداء",
+    "deviceSetup": "ضبط الأجهزة"
+  },
+  "suggestions": {
+    "networkIssue": "ليش النت مالتي بطيء؟",
+    "securityCheck": "شبكتي آمنة لو لا؟",
+    "deviceConnection": "شلون أوصل جهاز يديد؟",
+    "signalStrength": "شلون أحسن إشارة الواي فاي؟"
+  },
+  "settings": {
+    "title": "إعدادات المساعد",
+    "voiceEnabled": "فعل المساعدة الصوتية",
+    "suggestionsEnabled": "فعل الاقتراحات",
+    "historyEnabled": "فعل تأريخ المحادثات",
+    "darkMode": "الوضع الليلي",
+    "fontSize": "حجم الخط",
+    "language": "اللغة"
+  },
+  "dashboard": "لوحة التحكم",
+  "settings": "الإعدادات",
+  "license": "الترخيص",
+  "fiberOptic": "الألياف الضوئية",
+  "helpCenter": "مركز المساعدة"
+}

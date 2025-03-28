@@ -1,5 +1,17 @@
 
 {
+  "direction": "ltr",
+  "language": "en",
+  "common": {
+    "selectLanguage": "Change Language",
+    "language": "Language",
+    "enableAutoDarkMode": "Enable Auto Dark Mode",
+    "disableAutoDarkMode": "Disable Auto Dark Mode",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
+    "autoMode": "Auto Mode",
+    "languageChanged": "Language changed to {{language}}"
+  },
   "header": {
     "dashboard": "Dashboard",
     "tools": "Tools",
@@ -17,5 +29,7 @@
     "message": "Oops! Page not found",
     "returnHome": "Return to Dashboard",
     "redirecting": "Redirecting to dashboard in 3 seconds..."
-  }
+  },
+  "error": "Error",
+  "languageChangeError": "Failed to change language"
 }

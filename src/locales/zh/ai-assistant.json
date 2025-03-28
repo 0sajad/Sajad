@@ -1,0 +1,44 @@
+
+{
+  "title": "AI助手",
+  "subtitle": "您的个人网络指南",
+  "description": "为您的网络提供即时帮助、建议和自动化",
+  "voiceAssistance": "语音助手",
+  "startRecording": "开始录音",
+  "stopRecording": "停止录音",
+  "chatPlaceholder": "询问有关您网络的任何问题...",
+  "sendMessage": "发送",
+  "clearChat": "清除聊天",
+  "historyLabel": "聊天历史",
+  "suggestedQueries": "建议的查询",
+  "noHistoryYet": "尚无聊天历史",
+  "loadingResponse": "加载回复中...",
+  "tools": {
+    "title": "可用工具",
+    "networkAnalysis": "网络分析",
+    "securityScan": "安全扫描",
+    "troubleshoot": "故障排除",
+    "optimize": "性能优化",
+    "deviceSetup": "设备设置"
+  },
+  "suggestions": {
+    "networkIssue": "为什么我的互联网连接很慢？",
+    "securityCheck": "我的网络安全吗？",
+    "deviceConnection": "如何连接新设备？",
+    "signalStrength": "如何提高WiFi信号强度？"
+  },
+  "settings": {
+    "title": "助手设置",
+    "voiceEnabled": "启用语音助手",
+    "suggestionsEnabled": "启用建议",
+    "historyEnabled": "启用聊天历史",
+    "darkMode": "暗黑模式",
+    "fontSize": "字体大小",
+    "language": "语言"
+  },
+  "dashboard": "仪表板",
+  "settings": "设置",
+  "license": "许可证",
+  "fiberOptic": "光纤",
+  "helpCenter": "帮助中心"
+}
