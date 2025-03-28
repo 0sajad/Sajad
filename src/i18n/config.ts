@@ -1,4 +1,11 @@
 
+import en from '../locales/en/common.json';
+import ar from '../locales/ar/common.json';
+import arIq from '../locales/ar-iq/common.json';
+import fr from '../locales/fr/common.json';
+import ja from '../locales/ja/common.json';
+import zh from '../locales/zh/common.json';
+
 export const i18nConfig = {
   fallbackLng: 'en',
   debug: false,
@@ -10,22 +17,22 @@ export const i18nConfig = {
   },
   resources: {
     en: {
-      translation: require('../locales/en/common.json')
+      translation: en
     },
     ar: {
-      translation: require('../locales/ar/common.json')
+      translation: ar
     },
     'ar-iq': {
-      translation: require('../locales/ar-iq/common.json')
+      translation: arIq
     },
     fr: {
-      translation: require('../locales/fr/common.json')
+      translation: fr
     },
     ja: {
-      translation: require('../locales/ja/common.json')
+      translation: ja
     },
     zh: {
-      translation: require('../locales/zh/common.json')
+      translation: zh
     }
   }
 };
