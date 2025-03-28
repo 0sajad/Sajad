@@ -1,6 +1,6 @@
 
 import { StateCreator } from 'zustand';
-import { AppState, NetworkState, DataUsageStats } from './types';
+import { AppState, NetworkState } from './types';
 
 /**
  * مخزن حالة الشبكة
@@ -13,58 +13,104 @@ export const createNetworkSlice: StateCreator<
   NetworkState
 > = (set, get) => ({
   // حالة الشبكة
-  networkType: 'unknown',
-  connectionSpeed: 0,
-  dataUsage: { totalUsage: 0, usageBreakdown: { wifi: 0, cellular: 0 } },
-  signalStrength: 0,
-  connectedDevices: 0,
   isConnected: true,
   isOnline: true,
   lastCheck: null,
   
-  // وظائف تعديل الحالة
-  setNetworkType: (type) => set({ networkType: type }),
+  networkStatus: {
+    isConnected: true,
+    isOnline: true,
+    lastCheck: null
+  },
   
-  setConnectionSpeed: (speed) => set({ connectionSpeed: speed }),
+  dataLoading: {
+    isLoading: false,
+    lastUpdated: null,
+    error: null
+  },
   
-  setDataUsage: (usage) => set({ dataUsage: usage }),
-  
-  setSignalStrength: (strength) => set({ signalStrength: strength }),
-  
-  setConnectedDevices: (devices) => set({ connectedDevices: devices }),
-  
-  setNetworkStatus: ({ isConnected, isOnline }) => set({ 
-    isConnected, 
-    isOnline,
-    lastCheck: new Date()
-  }),
-  
-  // وظيفة للتحقق من حالة الاتصال
-  checkConnection: async () => {
+  // التحقق من حالة الشبكة
+  checkNetworkStatus: async () => {
     try {
-      // التحقق من الاتصال بالإنترنت
+      // محاولة الاتصال بخدمة Google لاختبار الاتصال
       const response = await fetch('https://www.google.com/generate_204', {
         method: 'HEAD',
         mode: 'no-cors',
         cache: 'no-store',
       });
       
+      // التحقق من وجود استجابة
       const isOnline = response.type === 'opaque' || response.ok;
-      set({ 
+      
+      // تحديث حالة الشبكة
+      set({
         isConnected: true,
         isOnline,
-        lastCheck: new Date()
+        lastCheck: new Date(),
+        networkStatus: {
+          isConnected: true,
+          isOnline,
+          lastCheck: new Date()
+        }
       });
       
       return isOnline;
     } catch (error) {
-      set({ 
+      // إدارة حالة عدم الاتصال
+      set({
         isConnected: false,
         isOnline: false,
-        lastCheck: new Date()
+        lastCheck: new Date(),
+        networkStatus: {
+          isConnected: false,
+          isOnline: false,
+          lastCheck: new Date()
+        }
       });
       
       return false;
     }
+  },
+  
+  // تحديث حالة الشبكة
+  setNetworkStatus: (status) => set({
+    isConnected: status.isConnected,
+    isOnline: status.isOnline,
+    lastCheck: new Date(),
+    networkStatus: {
+      ...get().networkStatus,
+      ...status,
+      lastCheck: new Date()
+    }
+  }),
+  
+  // معالجة حالة عدم الاتصال
+  handleOfflineStatus: () => {
+    set({
+      isConnected: false,
+      isOnline: false,
+      networkStatus: {
+        ...get().networkStatus,
+        isConnected: false,
+        isOnline: false
+      }
+    });
+    
+    // يمكن إضافة منطق إضافي هنا مثل إظهار إشعارات للمستخدم
+  },
+  
+  // معالجة حالة الاتصال
+  handleOnlineStatus: () => {
+    set({
+      isConnected: true,
+      isOnline: true,
+      networkStatus: {
+        ...get().networkStatus,
+        isConnected: true,
+        isOnline: true
+      }
+    });
+    
+    // إعادة تحميل البيانات عند إعادة الاتصال مثلاً
   }
 });
