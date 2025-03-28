@@ -69,6 +69,34 @@ export const useAppState = create<AppState>()(
       activePage: 'home',
       modals: {},
       
+      // Add the required checkConnection function
+      checkConnection: async () => {
+        try {
+          const response = await fetch('https://www.google.com/generate_204', {
+            method: 'HEAD',
+            mode: 'no-cors',
+            cache: 'no-store',
+          });
+          
+          const isOnline = response.type === 'opaque' || response.ok;
+          args[0]({ 
+            isConnected: true,
+            isOnline,
+            lastCheck: new Date()
+          });
+          
+          return isOnline;
+        } catch (error) {
+          args[0]({ 
+            isConnected: false,
+            isOnline: false,
+            lastCheck: new Date()
+          });
+          
+          return false;
+        }
+      },
+      
       // Combine all state slices
       ...createUISlice(...args),
       ...createPreferencesSlice(...args),
