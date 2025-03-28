@@ -21,22 +21,5 @@
     "sendMessage": "メッセージを送信",
     "writeSomething": "何か入力してください...",
     "chatPlaceholder": "質問してください..."
-  },
-  "header": {
-    "dashboard": "ダッシュボード",
-    "tools": "ツール",
-    "networkScanner": "ネットワークスキャナー",
-    "wifiAnalyzer": "Wi-Fi分析ツール",
-    "trafficAnalyzer": "トラフィック分析",
-    "aiAssistant": "AIアシスタント",
-    "settings": "設定",
-    "helpCenter": "ヘルプセンター",
-    "license": "ライセンス",
-    "login": "ログイン"
-  },
-  "notFound": {
-    "message": "ページが見つかりません",
-    "returnHome": "ダッシュボードに戻る",
-    "redirecting": "3秒後にダッシュボードにリダイレクトします..."
   }
 }

@@ -73,28 +73,12 @@ export function useA11y() {
   
   // Profile management functions
   const profileManager = useA11yProfiles(getCurrentSettings(), applySettings);
-  
-  // Announce function for screen readers
-  const announce = (message: string, priority: 'polite' | 'assertive' = 'polite') => {
-    const announcer = document.createElement('div');
-    announcer.setAttribute('aria-live', priority);
-    announcer.className = 'sr-only';
-    document.body.appendChild(announcer);
-    
-    // Use setTimeout to ensure the DOM change is registered by screen readers
-    setTimeout(() => {
-      announcer.textContent = message;
-      
-      // Play sound notification if enabled
-      if (soundFeedback) {
-        playNotificationSound('notification');
-      }
-      
-      // Remove after announcement is processed
-      setTimeout(() => {
-        document.body.removeChild(announcer);
-      }, 3000);
-    }, 50);
+
+  // Function to announce messages to screen readers
+  const announce = (message: string, level: "polite" | "assertive" = "polite") => {
+    if (typeof window !== 'undefined' && window.announce) {
+      window.announce(message, level);
+    }
   };
 
   return {
@@ -109,7 +93,7 @@ export function useA11y() {
     soundFeedback, setSoundFeedback,
     playNotificationSound,
     
-    // Screen reader announcement
+    // Add announce function
     announce,
     
     // Profile management functions
