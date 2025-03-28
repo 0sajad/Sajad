@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -10,6 +10,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AnimatePresence } from "framer-motion";
 import { GlobalErrorBoundary } from "./components/ui/error/GlobalErrorBoundary";
 import { LiveAnnouncer } from "./components/ui/accessibility/LiveAnnouncer";
+import { FallbackErrorPage } from "./components/error/FallbackErrorPage";
+import { ErrorBoundary } from "./components/ui/ErrorBoundary";
 
 // Pages
 import Dashboard from "./pages/Dashboard";
@@ -52,19 +54,21 @@ function App() {
               isRTL ? "rtl" : "ltr"
             )}>
               <Router>
-                <AnimatePresence mode="wait">
-                  <Routes>
-                    <Route path="/" element={<Dashboard />} />
-                    <Route path="/index" element={<Index />} />
-                    <Route path="/ai" element={<AIAssistant />} />
-                    <Route path="/settings" element={<Settings />} />
-                    <Route path="/license" element={<License />} />
-                    <Route path="/fiber-optic" element={<FiberOptic />} />
-                    <Route path="/help-center" element={<HelpCenter />} />
-                    <Route path="/404" element={<NotFound />} />
-                    <Route path="*" element={<Navigate to="/404" replace />} />
-                  </Routes>
-                </AnimatePresence>
+                <ErrorBoundary fallback={<FallbackErrorPage />}>
+                  <AnimatePresence mode="wait">
+                    <Routes>
+                      <Route path="/" element={<Dashboard />} />
+                      <Route path="/index" element={<Index />} />
+                      <Route path="/ai" element={<AIAssistant />} />
+                      <Route path="/settings" element={<Settings />} />
+                      <Route path="/license" element={<License />} />
+                      <Route path="/fiber-optic" element={<FiberOptic />} />
+                      <Route path="/help-center" element={<HelpCenter />} />
+                      <Route path="/404" element={<NotFound />} />
+                      <Route path="*" element={<Navigate to="/404" replace />} />
+                    </Routes>
+                  </AnimatePresence>
+                </ErrorBoundary>
               </Router>
               <Toaster />
             </div>

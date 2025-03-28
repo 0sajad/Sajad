@@ -34,11 +34,26 @@ export function OptimizedImage({
   // Safely handle undefined src
   if (!src) {
     console.warn('OptimizedImage: src is undefined');
-    return null;
+    return (
+      <div 
+        className={cn("bg-gray-200 dark:bg-gray-800 flex items-center justify-center", className)}
+        style={{ width: width ? `${width}px` : '100%', height: height ? `${height}px` : '200px' }}
+        role="img"
+        aria-label={alt || "Image placeholder"}
+      >
+        <span className="text-gray-400 dark:text-gray-600 text-sm">No image</span>
+      </div>
+    );
   }
 
-  // Determine optimized source based on device capabilities
-  const optimizedSrc = optimizeImageSrc(src, width, quality);
+  // Determine optimized source based on device capabilities - with safeguards
+  let optimizedSrc;
+  try {
+    optimizedSrc = optimizeImageSrc ? optimizeImageSrc(src, width, quality) : src;
+  } catch (err) {
+    console.error('Error optimizing image:', err);
+    optimizedSrc = src;
+  }
   
   // Determine loading behavior
   const effectiveLoading = priority ? 'eager' : loading;

@@ -45,9 +45,17 @@ export function useLanguageNames() {
     }
   }), []);
   
+  // Safe implementation of getGroupedLanguages
   const getGroupedLanguages = () => {
+    if (!languageNames) return [];
     return Object.keys(languageNames);
   };
   
-  return { languageNames, getGroupedLanguages };
+  // Safe language name getter
+  const getLanguageName = (code: string | undefined): LanguageName | undefined => {
+    if (!code || !languageNames) return undefined;
+    return languageNames[code];
+  };
+  
+  return { languageNames, getGroupedLanguages, getLanguageName };
 }
