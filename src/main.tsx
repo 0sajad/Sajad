@@ -6,50 +6,49 @@ import './index.css';
 import './components/ui/a11y-styles.css'; 
 import './i18n';
 import { toast } from '@/components/ui/use-toast';
-import { LiveAnnouncer } from './components/ui/accessibility/live-announcer';
 
-// Unique identifier to track user interactions with accessibility features
+// معرف فريد لتتبع تفاعلات المستخدم مع ميزات إمكانية الوصول
 const ACCESS_INTERACTION_KEY = 'a11y_interaction_version';
 
-// Wrapper component to handle initialization
+// مكون الغلاف للتعامل مع التهيئة
 const AppWrapper = () => {
   const [isKeyboardUser, setIsKeyboardUser] = useState(false);
   const [hasInitialized, setHasInitialized] = useState(false);
 
   useEffect(() => {
-    // Handle accessibility setup and preferences
+    // التعامل مع إعداد إمكانية الوصول والتفضيلات
     if (typeof window !== 'undefined' && !hasInitialized) {
       setHasInitialized(true);
       
-      // Set document language based on direction
+      // تعيين لغة المستند بناءً على الاتجاه
       document.documentElement.lang = document.documentElement.dir === 'rtl' ? 'ar' : 'en';
       
-      // Check for reduced motion preference
+      // التحقق من تفضيلات الحركة المخفضة
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
       if (prefersReducedMotion.matches) {
         document.body.classList.add('reduced-motion');
         localStorage.setItem('reducedMotion', 'true');
       }
       
-      // Check for enhanced contrast preference
+      // التحقق من تفضيلات التباين المحسن
       const prefersContrastMore = window.matchMedia('(prefers-contrast: more)');
       if (prefersContrastMore.matches && localStorage.getItem('highContrast') === null) {
         document.body.classList.add('high-contrast');
         localStorage.setItem('highContrast', 'true');
       }
       
-      // Check for dyslexic font mode
+      // التحقق من وضع الخط لذوي عسر القراءة
       if (localStorage.getItem('dyslexicFont') === 'true') {
         document.body.classList.add('dyslexic-font');
       }
       
-      // Check for color blind mode
+      // التحقق من وضع عمى الألوان
       const colorBlindMode = localStorage.getItem('colorBlindMode');
       if (colorBlindMode) {
         document.body.classList.add(colorBlindMode);
       }
       
-      // Set up main content for screen readers
+      // إعداد المحتوى الرئيسي لقارئات الشاشة
       const main = document.querySelector('main');
       if (main) {
         main.setAttribute('role', 'main');
@@ -57,14 +56,14 @@ const AppWrapper = () => {
         main.setAttribute('tabIndex', '-1');
       }
       
-      // Add skip link for keyboard users
+      // إضافة رابط التخطي إلى المحتوى لمستخدمي لوحة المفاتيح
       const skipLink = document.createElement('a');
       skipLink.href = '#main-content';
       skipLink.className = 'sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:p-4 focus:bg-white focus:text-black focus:shadow-lg rounded';
       skipLink.textContent = document.documentElement.lang === 'ar' ? 'انتقل إلى المحتوى' : 'Skip to content';
       document.body.insertBefore(skipLink, document.body.firstChild);
       
-      // Add SVG filters for color blind modes
+      // إضافة مرشحات SVG لوضع عمى الألوان
       const svgFilters = document.createElement('div');
       svgFilters.setAttribute('aria-hidden', 'true');
       svgFilters.innerHTML = `
@@ -85,7 +84,32 @@ const AppWrapper = () => {
       `;
       document.body.appendChild(svgFilters);
       
-      // Detect keyboard users
+      // إضافة عنصر معلن القارئ الشاشة
+      const liveAnnouncer = document.createElement('div');
+      liveAnnouncer.id = 'liveAnnouncer';
+      liveAnnouncer.className = 'sr-only';
+      liveAnnouncer.setAttribute('aria-live', 'polite');
+      liveAnnouncer.setAttribute('aria-atomic', 'true');
+      document.body.appendChild(liveAnnouncer);
+      
+      // إضافة هوك للإعلان عن التغييرات لقارئات الشاشة
+      window.announce = function(message: string, priority: 'polite' | 'assertive' = 'polite') {
+        const announcer = document.getElementById('liveAnnouncer');
+        if (announcer) {
+          announcer.setAttribute('aria-live', priority);
+          announcer.textContent = message;
+          
+          // مسح الرسالة بعد قراءتها
+          setTimeout(() => {
+            // التحقق من وجود العنصر قبل محاولة تحديثه
+            if (announcer && document.body.contains(announcer)) {
+              announcer.textContent = '';
+            }
+          }, 3000);
+        }
+      };
+      
+      // اكتشاف مستخدمي لوحة المفاتيح
       const handleFirstTab = (e: KeyboardEvent) => {
         if (e.key === 'Tab') {
           document.body.classList.add('keyboard-user');
@@ -96,7 +120,7 @@ const AppWrapper = () => {
       
       window.addEventListener('keydown', handleFirstTab);
       
-      // Inform screen readers that the app has loaded
+      // إعلام قارئات الشاشة أن التطبيق قد اكتمل تحميله
       setTimeout(() => {
         if (window.announce) {
           window.announce(
@@ -106,7 +130,7 @@ const AppWrapper = () => {
           );
         }
         
-        // Show subtle welcome notification
+        // عرض إشعار ترحيبي خفيف
         setTimeout(() => {
           toast({
             title: document.documentElement.lang === 'ar' ? 'مرحبًا بك!' : 'Welcome!',
@@ -116,7 +140,7 @@ const AppWrapper = () => {
           });
         }, 1500);
         
-        // Update user interaction version with accessibility features if not already updated
+        // تحديث إصدار تفاعل المستخدم مع ميزات إمكانية الوصول إذا لم يتم تحديثه بعد
         const currentVersion = localStorage.getItem(ACCESS_INTERACTION_KEY);
         if (!currentVersion) {
           localStorage.setItem(ACCESS_INTERACTION_KEY, '1.0');
@@ -129,14 +153,16 @@ const AppWrapper = () => {
     }
   }, [hasInitialized]);
 
-  // Render App directly without additional loading screen
-  return (
-    <>
-      <LiveAnnouncer />
-      <App />
-    </>
-  );
+  // نكتفي بعرض الـ App مباشرة دون شاشة تحميل إضافية
+  return <App />;
 };
+
+// إضافة أنواع عالمية للإعلانات
+declare global {
+  interface Window {
+    announce(message: string, priority?: 'polite' | 'assertive'): void;
+  }
+}
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

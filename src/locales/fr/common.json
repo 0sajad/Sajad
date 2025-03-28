@@ -2,20 +2,10 @@
 {
   "direction": "ltr",
   "language": "fr",
-  "common": {
-    "selectLanguage": "Changer de langue",
-    "language": "Langue",
-    "enableAutoDarkMode": "Activer le mode sombre automatique",
-    "disableAutoDarkMode": "Désactiver le mode sombre automatique",
-    "darkMode": "Mode sombre",
-    "lightMode": "Mode clair",
-    "autoMode": "Mode automatique",
-    "languageChanged": "Langue changée en {{language}}"
-  },
   "header": {
     "dashboard": "Tableau de bord",
     "tools": "Outils",
-    "networkScanner": "Scanner de réseau",
+    "networkScanner": "Scanner réseau",
     "wifiAnalyzer": "Analyseur WiFi",
     "trafficAnalyzer": "Analyseur de trafic",
     "aiAssistant": "Assistant IA",
@@ -26,10 +16,8 @@
     "fiberOptic": "Fibre optique"
   },
   "notFound": {
-    "message": "Oups! Page non trouvée",
+    "message": "Oups ! Page introuvable",
     "returnHome": "Retour au tableau de bord",
     "redirecting": "Redirection vers le tableau de bord dans 3 secondes..."
-  },
-  "error": "Erreur",
-  "languageChangeError": "Échec du changement de langue"
+  }
 }

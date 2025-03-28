@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 import { useTranslation } from "react-i18next";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
@@ -18,7 +18,6 @@ import License from "./pages/License";
 import FiberOptic from "./pages/FiberOptic";
 import NotFound from "./pages/NotFound";
 import HelpCenter from "./pages/HelpCenter";
-import Index from "./pages/Index";
 
 // Components
 import { LoadingScreen } from "./components/LoadingScreen";
@@ -52,8 +51,7 @@ function App() {
             <Router>
               <AnimatePresence mode="wait">
                 <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/" element={<Dashboard />} />
                   <Route path="/ai" element={<AIAssistant />} />
                   <Route path="/settings" element={<Settings />} />
                   <Route path="/license" element={<License />} />

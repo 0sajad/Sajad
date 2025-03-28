@@ -1,16 +1,13 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useToast } from '@/components/ui/use-toast';
-import { useA11yCore } from './accessibility/useA11yCore';
-import { useA11yColor } from './accessibility/useA11yColor';
-import { useA11yText } from './accessibility/useA11yText';
-import { useA11yKeyboard } from './accessibility/useA11yKeyboard';
-import { useSystemPreferences } from './accessibility/useA11yPreferences';
 
 type SoundType = 'success' | 'error' | 'warning' | 'info';
 
 export interface UseA11yReturnType {
-  // Core accessibility features
+  soundFeedback: boolean;
+  setSoundFeedback: React.Dispatch<React.SetStateAction<boolean>>;
+  playSound: (soundType?: SoundType) => void;
   highContrast: boolean;
   setHighContrast: React.Dispatch<React.SetStateAction<boolean>>;
   largeText: boolean;
@@ -19,58 +16,62 @@ export interface UseA11yReturnType {
   setReducedMotion: React.Dispatch<React.SetStateAction<boolean>>;
   focusMode: boolean;
   setFocusMode: React.Dispatch<React.SetStateAction<boolean>>;
-  
-  // Color features
-  colorBlindMode: string | null;
-  setColorBlindMode: (mode: string | null) => void;
-  
-  // Text features
+  colorBlindMode: string;
+  setColorBlindMode: React.Dispatch<React.SetStateAction<string>>;
   dyslexicFont: boolean;
   setDyslexicFont: React.Dispatch<React.SetStateAction<boolean>>;
   readingGuide: boolean;
   setReadingGuide: React.Dispatch<React.SetStateAction<boolean>>;
-  
-  // Sound features
-  soundFeedback: boolean;
-  setSoundFeedback: React.Dispatch<React.SetStateAction<boolean>>;
-  playSound: (soundType?: SoundType) => void;
-  
-  // Announcement functionality
-  announce: (message: string, type?: 'success' | 'error' | 'warning' | 'info') => void;
+  announce: (message: string) => void;
 }
 
 export function useA11y(): UseA11yReturnType {
-  // Core accessibility features
-  const {
-    highContrast, setHighContrast,
-    largeText, setLargeText,
-    reducedMotion, setReducedMotion,
-    focusMode, setFocusMode
-  } = useA11yCore();
-  
-  // Color features
-  const { colorBlindMode, setColorBlindMode } = useA11yColor();
-  
-  // Text features
-  const { dyslexicFont, setDyslexicFont, readingGuide, setReadingGuide } = useA11yText();
-  
-  // Monitor system preferences for accessibility
-  useSystemPreferences(setReducedMotion);
-  
-  // Set up keyboard shortcuts for accessibility features
-  useA11yKeyboard(
-    highContrast, setHighContrast,
-    largeText, setLargeText,
-    reducedMotion, setReducedMotion,
-    focusMode, setFocusMode,
-    dyslexicFont, setDyslexicFont,
-    readingGuide, setReadingGuide
-  );
-  
   // Sound feedback
   const [soundFeedback, setSoundFeedback] = useState<boolean>(() => {
     const saved = localStorage.getItem('a11y-sound-feedback');
     return saved !== null ? saved === 'true' : true;
+  });
+  
+  // High contrast
+  const [highContrast, setHighContrast] = useState<boolean>(() => {
+    const saved = localStorage.getItem('a11y-high-contrast');
+    return saved !== null ? saved === 'true' : false;
+  });
+  
+  // Large text
+  const [largeText, setLargeText] = useState<boolean>(() => {
+    const saved = localStorage.getItem('a11y-large-text');
+    return saved !== null ? saved === 'true' : false;
+  });
+  
+  // Reduced motion
+  const [reducedMotion, setReducedMotion] = useState<boolean>(() => {
+    const saved = localStorage.getItem('a11y-reduced-motion');
+    return saved !== null ? saved === 'true' : false;
+  });
+  
+  // Focus mode
+  const [focusMode, setFocusMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem('a11y-focus-mode');
+    return saved !== null ? saved === 'true' : false;
+  });
+  
+  // Color blind mode
+  const [colorBlindMode, setColorBlindMode] = useState<string>(() => {
+    const saved = localStorage.getItem('a11y-color-blind-mode');
+    return saved !== null ? saved : 'none';
+  });
+  
+  // Dyslexic font
+  const [dyslexicFont, setDyslexicFont] = useState<boolean>(() => {
+    const saved = localStorage.getItem('a11y-dyslexic-font');
+    return saved !== null ? saved === 'true' : false;
+  });
+  
+  // Reading guide
+  const [readingGuide, setReadingGuide] = useState<boolean>(() => {
+    const saved = localStorage.getItem('a11y-reading-guide');
+    return saved !== null ? saved === 'true' : false;
   });
   
   const { toast } = useToast();
@@ -125,34 +126,34 @@ export function useA11y(): UseA11yReturnType {
       console.error('Error playing sound:', error);
     }
   };
-  
-  // Function that uses the global announce function but adds our sound effects
-  const announce = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info') => {
-    try {
-      if (soundFeedback) {
-        playSound(type as SoundType);
-      }
-      
-      // Use the global announce function if available
-      if (typeof window !== 'undefined' && window.announce) {
-        window.announce(message, type === 'error' ? 'assertive' : 'polite');
-        return;
-      }
-      
-      // Fallback if global announce is not available
-      console.warn('Global announce function not available');
-    } catch (error) {
-      console.error('Error announcing message:', error);
-    }
-  };
 
-  // Persist sound feedback setting
-  useEffect(() => {
-    localStorage.setItem('a11y-sound-feedback', soundFeedback.toString());
+  // Function to announce messages for screen readers
+  const announce = useCallback((message: string) => {
+    // Create or get the live region
+    let liveRegion = document.getElementById('a11y-announcer');
+    if (!liveRegion) {
+      liveRegion = document.createElement('div');
+      liveRegion.id = 'a11y-announcer';
+      liveRegion.setAttribute('aria-live', 'polite');
+      liveRegion.setAttribute('aria-atomic', 'true');
+      liveRegion.className = 'sr-only';
+      document.body.appendChild(liveRegion);
+    }
+    
+    // Set the message
+    liveRegion.textContent = '';
+    setTimeout(() => {
+      liveRegion.textContent = message;
+    }, 100);
+    
+    // Play a sound if sound feedback is enabled
+    playSound('info');
   }, [soundFeedback]);
 
   return {
-    // Core accessibility features
+    soundFeedback,
+    setSoundFeedback,
+    playSound,
     highContrast,
     setHighContrast,
     largeText,
@@ -161,23 +162,12 @@ export function useA11y(): UseA11yReturnType {
     setReducedMotion,
     focusMode,
     setFocusMode,
-    
-    // Color features
     colorBlindMode,
     setColorBlindMode,
-    
-    // Text features
     dyslexicFont,
     setDyslexicFont,
     readingGuide,
     setReadingGuide,
-    
-    // Sound features
-    soundFeedback,
-    setSoundFeedback,
-    playSound,
-    
-    // Announcement functionality
     announce
   };
 }

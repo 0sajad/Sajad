@@ -2,18 +2,8 @@
 {
   "direction": "rtl",
   "language": "ar",
-  "common": {
-    "selectLanguage": "تغيير اللغة",
-    "language": "اللغة",
-    "enableAutoDarkMode": "تفعيل الوضع الليلي التلقائي",
-    "disableAutoDarkMode": "تعطيل الوضع الليلي التلقائي",
-    "darkMode": "الوضع الليلي",
-    "lightMode": "الوضع النهاري",
-    "autoMode": "الوضع التلقائي",
-    "languageChanged": "تم تغيير اللغة إلى {{language}}"
-  },
   "header": {
-    "dashboard": "الرئيسية",
+    "dashboard": "لوحة التحكم",
     "tools": "الأدوات",
     "networkScanner": "ماسح الشبكة",
     "wifiAnalyzer": "محلل واي فاي",
@@ -27,7 +17,7 @@
   },
   "notFound": {
     "message": "عذراً! الصفحة غير موجودة",
-    "returnHome": "العودة إلى الرئيسية",
-    "redirecting": "جارٍ إعادة التوجيه إلى الرئيسية في غضون 3 ثوانٍ..."
+    "returnHome": "العودة إلى لوحة التحكم",
+    "redirecting": "جارٍ إعادة التوجيه إلى لوحة التحكم في غضون 3 ثوانٍ..."
   }
 }

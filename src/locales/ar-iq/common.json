@@ -9,11 +9,10 @@
     "disableAutoDarkMode": "عطل الوضع الليلي التلقائي",
     "darkMode": "الوضع الليلي",
     "lightMode": "الوضع النهاري",
-    "autoMode": "الوضع التلقائي",
-    "languageChanged": "تم تغيير اللغة إلى {{language}}"
+    "autoMode": "الوضع التلقائي"
   },
   "header": {
-    "dashboard": "الرئيسية",
+    "dashboard": "لوحة التحكم",
     "tools": "الأدوات",
     "networkScanner": "فاحص الشبكة",
     "wifiAnalyzer": "محلل واي فاي",
@@ -25,41 +24,10 @@
     "login": "تسجيل الدخول",
     "fiberOptic": "الفايبر الضوئي"
   },
-  "dashboard": {
-    "title": "الرئيسية",
-    "welcome": "أهلاً بيك بأوكتا-كرام",
-    "systemStatus": "حالة النظام",
-    "status": "الحالة",
-    "active": "شغال",
-    "quickActions": "إجراءات سريعة",
-    "selectAction": "إختار إجراء",
-    "actions": {
-      "scan": "فحص الشبكة",
-      "optimize": "تحسين الأداء",
-      "backup": "نسخ احتياطي للإعدادات"
-    },
-    "latestUpdates": "آخر التحديثات",
-    "noUpdates": "ماكو تحديثات جديدة"
-  },
-  "networkTools": {
-    "title": "أدوات الشبكة المتطورة",
-    "qualityMonitoring": "مراقبة جودة الشبكة",
-    "signalStrength": "قوة الإشارة",
-    "networkManagement": "إدارة شبكات الاتصال",
-    "simulationSystems": "أنظمة المحاكاة"
-  },
-  "mobileMenu": {
-    "dashboard": "الرئيسية",
-    "tools": "الأدوات",
-    "aiAssistant": "مساعد الذكاء الصناعي",
-    "settings": "الإعدادات",
-    "helpCenter": "مركز المساعدة",
-    "login": "تسجيل دخول"
-  },
   "notFound": {
     "message": "اوبس! الصفحة مو موجودة",
-    "returnHome": "ارجع للرئيسية",
-    "redirecting": "راح نوديك للرئيسية بعد 3 ثواني..."
+    "returnHome": "ارجع للوحة التحكم",
+    "redirecting": "راح نوديك للوحة التحكم بعد 3 ثواني..."
   },
   "error": "خطأ",
   "languageChangeError": "فشل بتغيير اللغة"

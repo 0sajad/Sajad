@@ -2,18 +2,8 @@
 {
   "direction": "ltr",
   "language": "zh",
-  "common": {
-    "selectLanguage": "更改语言",
-    "language": "语言",
-    "enableAutoDarkMode": "启用自动暗黑模式",
-    "disableAutoDarkMode": "禁用自动暗黑模式",
-    "darkMode": "暗黑模式",
-    "lightMode": "明亮模式",
-    "autoMode": "自动模式",
-    "languageChanged": "语言已更改为 {{language}}"
-  },
   "header": {
-    "dashboard": "仪表盘",
+    "dashboard": "仪表板",
     "tools": "工具",
     "networkScanner": "网络扫描仪",
     "wifiAnalyzer": "WiFi分析仪",
@@ -26,10 +16,8 @@
     "fiberOptic": "光纤"
   },
   "notFound": {
-    "message": "糟糕！找不到页面",
-    "returnHome": "返回仪表盘",
-    "redirecting": "3秒后重定向到仪表盘..."
-  },
-  "error": "错误",
-  "languageChangeError": "更改语言失败"
+    "message": "哎呀！找不到页面",
+    "returnHome": "返回仪表板",
+    "redirecting": "3秒后重定向到仪表板..."
+  }
 }

@@ -15,7 +15,7 @@ import { StatusCards } from "@/components/dashboard/StatusCards";
 import { SystemTabs } from "@/components/dashboard/SystemTabs";
 
 const Dashboard = () => {
-  const { t } = useTranslation(['dashboard']);
+  const { t } = useTranslation();
   const { isDeveloperMode } = useMode();
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const networkStats = useNetworkStats();
@@ -30,7 +30,7 @@ const Dashboard = () => {
   }, []);
   
   const handleMaximizeAI = () => {
-    window.location.href = '/ai';
+    return window.location.href = '/ai';
   };
   
   return (

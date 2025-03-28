@@ -1,6 +1,6 @@
 
 {
-  "dashboard": "الرئيسية",
+  "dashboard": "لوحة التحكم",
   "tools": "الأدوات",
   "networkScanner": "ماسح الشبكة",
   "wifiAnalyzer": "محلل واي فاي",
@@ -9,6 +9,5 @@
   "settings": "الإعدادات",
   "helpCenter": "مركز المساعدة",
   "login": "تسجيل دخول",
-  "license": "الترخيص",
-  "fiberOptic": "الفايبر الضوئي"
+  "license": "الترخيص"
 }

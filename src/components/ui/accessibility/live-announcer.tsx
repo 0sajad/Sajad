@@ -9,18 +9,18 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
   const announcerRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
-    // Define global announce function
+    // تعريف وظيفة الإعلان العامة
     if (typeof window !== 'undefined') {
       window.announce = (message: string, level: "polite" | "assertive" = "polite") => {
         if (announcerRef.current) {
           try {
-            // Reset content first to ensure new announcement is read
+            // إعادة تعيين المحتوى أولاً لضمان قراءة الإعلان الجديد
             announcerRef.current.textContent = "";
             
-            // Set urgency level
+            // تعيين مستوى الإلحاح
             announcerRef.current.setAttribute("aria-live", level);
             
-            // Add announcement content after a short delay to ensure it's read
+            // إضافة محتوى الإعلان بعد فترة قصيرة للتأكد من قراءته
             setTimeout(() => {
               if (announcerRef.current) {
                 announcerRef.current.textContent = message;
@@ -33,13 +33,13 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
       };
     }
     
-    // Cleanup: clear announcer element when component is removed
+    // التنظيف: تفريغ عنصر الإعلان عند إزالة المكون
     return () => {
       if (announcerRef.current) {
         announcerRef.current.textContent = "";
       }
       
-      // Reset announce function to empty function for safety
+      // إعادة إنشاء دالة announce كدالة فارغة للسلامة
       if (typeof window !== 'undefined') {
         window.announce = (message: string) => {
           console.log("LiveAnnouncer unmounted, but announce was called with:", message);
@@ -48,16 +48,16 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
     };
   }, []);
   
-  // Ensure this component runs on app load
+  // تأكد من تشغيل هذا المكون عند تحميل التطبيق
   useEffect(() => {
-    // Check if announce function exists
+    // التحقق من وجود وظيفة الإعلان
     if (typeof window !== 'undefined' && window.announce) {
-      // Initial announcement to ensure system works
+      // إعلان أولي للتأكد من عمل النظام
       window.announce("تم تحميل نظام الإعلانات للوصول", "polite");
     }
   }, []);
   
-  // CSS styling to ensure element is visually hidden but available to screen readers
+  // تنسيق CSS للتأكد من إخفاء العنصر بصريًا مع السماح لقارئات الشاشة بقراءته
   const announcerStyle: React.CSSProperties = {
     position: 'absolute',
     width: '1px',
@@ -80,4 +80,11 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
       style={announcerStyle}
     />
   );
+}
+
+// إضافة تعريف الأنواع لوظيفة الإعلان العالمية
+declare global {
+  interface Window {
+    announce(message: string, level?: "polite" | "assertive"): void;
+  }
 }
