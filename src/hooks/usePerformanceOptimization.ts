@@ -1,12 +1,12 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { useAppState } from '@/hooks/state/use-app-state';
+import { useStore } from './state/useStore';
 
 /**
  * خطاف لتحسين أداء التطبيق بناءً على قدرات الجهاز
  */
 export function usePerformanceOptimization() {
-  const { deviceTier: savedTier, setDeviceTier } = useAppState();
+  const { deviceTier: savedTier, setDeviceTier } = useStore();
   const [deviceTier, setLocalDeviceTier] = useState<'high' | 'medium' | 'low'>(savedTier || 'medium');
   const [isInitialized, setIsInitialized] = useState(false);
   
@@ -51,9 +51,11 @@ export function usePerformanceOptimization() {
   }, [isInitialized, setDeviceTier]);
   
   // تحسين مصدر الصورة
-  const optimizeImageSrc = useCallback((src: string, width?: number, quality?: number): string => {
-    // لا نقوم بتحسين مصادر البيانات المضمنة
+  const optimizeImageSrc = useCallback((src: string | undefined, width?: number, quality?: number): string => {
+    // التحقق من وجود المصدر وأنه نص
     if (!src || typeof src !== 'string') return '';
+    
+    // لا نقوم بتحسين مصادر البيانات المضمنة
     if (src.startsWith('data:')) return src;
     
     try {

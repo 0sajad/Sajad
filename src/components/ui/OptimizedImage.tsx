@@ -41,6 +41,7 @@ export function OptimizedImage({
 
   // تحسين مصدر الصورة حسب قدرة الجهاز
   const getOptimizedSrc = () => {
+    // التحقق من وجود المصدر
     if (!src) return '';
     
     // تحديد جودة الصورة حسب نوع الجهاز إذا لم يتم تحديدها
