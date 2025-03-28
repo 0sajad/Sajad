@@ -6,6 +6,7 @@ import { useA11y } from '@/hooks/useA11y';
 import { useRTLSupport } from '@/hooks/useRTLSupport';
 import { X, Check, AlertTriangle, Info, Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from 'react-i18next';
 
 // Import ToastActionElement type
 import type { ToastActionElement } from "@/components/ui/toast";
