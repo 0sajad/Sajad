@@ -2,79 +2,64 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
-import { Calendar } from "lucide-react";
-import { CountdownUnit } from "./CountdownUnit";
-import { Time } from "@/types/time";
+import { CountdownTimer } from "./CountdownTimer";
+import { Timer } from "lucide-react";
 
 interface CountdownDisplayProps {
   targetDate: Date;
-  timeRemaining: Time;
+  timeRemaining: {
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+  };
   className?: string;
 }
 
-export function CountdownDisplay({ targetDate, timeRemaining, className = "" }: CountdownDisplayProps) {
+export function CountdownDisplay({ 
+  targetDate, 
+  timeRemaining,
+  className = ""
+}: CountdownDisplayProps) {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
   
-  // تنسيق التاريخ المستهدف حسب اللغة
-  const formatTargetDate = () => {
-    switch (i18n.language) {
-      case 'ar':
-      case 'ar-iq':
-        return "العد التنازلي لتاريخ 28 مارس 2025 الساعة 02:10";
-      case 'fr':
-        return "Compte à rebours jusqu'au 28 mars 2025 à 02:10";
-      case 'ja':
-        return "2025年3月28日02:10までのカウントダウン";
-      case 'zh':
-        return "倒计时至2025年3月28日02:10";
-      default:
-        return "Countdown to March 28, 2025 at 02:10 AM";
-    }
-  };
-
+  const title = isRTL ? "العد التنازلي" : "Countdown";
+  
+  // Format full date for screen readers
+  const targetDateString = targetDate.toLocaleString(i18n.language, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+  
+  const ariaLabel = isRTL 
+    ? `العد التنازلي للتاريخ: ${targetDateString}`
+    : `Countdown to: ${targetDateString}`;
+  
   return (
-    <Card className={`overflow-hidden bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 ${className}`}>
+    <Card 
+      className={`overflow-hidden ${className}`}
+      role="timer"
+      aria-label={ariaLabel}
+    >
       <CardContent className="p-0">
-        <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4">
+        <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-medium text-lg">
-              {isRTL ? "العد التنازلي للموعد" : "Countdown to Date"}
-            </h3>
-            <Calendar className="h-5 w-5" aria-hidden="true" />
+            <h3 className="font-medium text-lg">{title}</h3>
+            <Timer className="h-5 w-5" aria-hidden="true" />
           </div>
         </div>
         
         <div className="p-6">
-          <div 
-            className={`grid grid-cols-4 gap-4 text-center ${isRTL ? "dir-rtl" : ""}`}
-            role="timer"
-            aria-label={isRTL ? "العد التنازلي للموعد المحدد" : "Countdown to specified date"}
-          >
-            <CountdownUnit 
-              value={timeRemaining.days} 
-              unit="days"
-            />
-            
-            <CountdownUnit 
-              value={timeRemaining.hours} 
-              unit="hours"
-            />
-            
-            <CountdownUnit 
-              value={timeRemaining.minutes} 
-              unit="minutes"
-            />
-            
-            <CountdownUnit 
-              value={timeRemaining.seconds} 
-              unit="seconds"
-            />
-          </div>
-          
-          <p className="mt-6 text-center text-gray-600 dark:text-gray-300">
-            {formatTargetDate()}
-          </p>
+          <CountdownTimer 
+            days={timeRemaining.days}
+            hours={timeRemaining.hours}
+            minutes={timeRemaining.minutes}
+            seconds={timeRemaining.seconds}
+          />
         </div>
       </CardContent>
     </Card>

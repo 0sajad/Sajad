@@ -1,81 +1,83 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
-/**
- * Core hook for basic accessibility features
- */
 export function useA11yCore() {
-  // Base accessibility settings
-  const [highContrast, setHighContrast] = useState(
-    localStorage.getItem('highContrast') === 'true'
-  );
+  const [highContrast, setHighContrast] = useState<boolean>(false);
+  const [largeText, setLargeText] = useState<boolean>(false);
+  const [reducedMotion, setReducedMotion] = useState<boolean>(false);
+  const [focusMode, setFocusMode] = useState<boolean>(false);
   
-  const [largeText, setLargeText] = useState(
-    localStorage.getItem('largeText') === 'true'
-  );
-  
-  const [reducedMotion, setReducedMotion] = useState(
-    localStorage.getItem('reducedMotion') === 'true' || 
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  );
-  
-  const [focusMode, setFocusMode] = useState(
-    localStorage.getItem('focusMode') === 'true'
-  );
-  
-  // Apply high contrast if enabled
+  // Apply high contrast mode
   useEffect(() => {
     if (highContrast) {
-      document.body.classList.add('high-contrast');
+      document.documentElement.classList.add('high-contrast');
     } else {
-      document.body.classList.remove('high-contrast');
+      document.documentElement.classList.remove('high-contrast');
     }
     
-    localStorage.setItem('highContrast', highContrast.toString());
+    // Store the preference in localStorage
+    localStorage.setItem('a11y-highContrast', String(highContrast));
   }, [highContrast]);
   
-  // Apply large text if enabled
+  // Apply large text mode
   useEffect(() => {
     if (largeText) {
-      document.body.classList.add('large-text');
+      document.documentElement.classList.add('large-text');
     } else {
-      document.body.classList.remove('large-text');
+      document.documentElement.classList.remove('large-text');
     }
     
-    localStorage.setItem('largeText', largeText.toString());
+    // Store the preference in localStorage
+    localStorage.setItem('a11y-largeText', String(largeText));
   }, [largeText]);
   
-  // Apply reduced motion
+  // Apply reduced motion mode
   useEffect(() => {
     if (reducedMotion) {
-      document.body.classList.add('reduced-motion');
+      document.documentElement.classList.add('reduced-motion');
     } else {
-      document.body.classList.remove('reduced-motion');
+      document.documentElement.classList.remove('reduced-motion');
     }
     
-    localStorage.setItem('reducedMotion', reducedMotion.toString());
+    // Store the preference in localStorage
+    localStorage.setItem('a11y-reducedMotion', String(reducedMotion));
   }, [reducedMotion]);
   
   // Apply focus mode
   useEffect(() => {
     if (focusMode) {
-      document.body.classList.add('focus-mode');
+      document.documentElement.classList.add('focus-mode');
     } else {
-      document.body.classList.remove('focus-mode');
+      document.documentElement.classList.remove('focus-mode');
     }
     
-    localStorage.setItem('focusMode', focusMode.toString());
+    // Store the preference in localStorage
+    localStorage.setItem('a11y-focusMode', String(focusMode));
   }, [focusMode]);
-
+  
+  // Load preferences from localStorage on mount
+  useEffect(() => {
+    const storedHighContrast = localStorage.getItem('a11y-highContrast');
+    const storedLargeText = localStorage.getItem('a11y-largeText');
+    const storedReducedMotion = localStorage.getItem('a11y-reducedMotion');
+    const storedFocusMode = localStorage.getItem('a11y-focusMode');
+    
+    if (storedHighContrast === 'true') setHighContrast(true);
+    if (storedLargeText === 'true') setLargeText(true);
+    if (storedReducedMotion === 'true') setReducedMotion(true);
+    if (storedFocusMode === 'true') setFocusMode(true);
+    
+    // Also check system preferences
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (prefersReducedMotion.matches && storedReducedMotion === null) {
+      setReducedMotion(true);
+    }
+  }, []);
+  
   return {
-    // Current settings
-    highContrast,
-    setHighContrast,
-    largeText,
-    setLargeText,
-    reducedMotion,
-    setReducedMotion,
-    focusMode,
-    setFocusMode
+    highContrast, setHighContrast,
+    largeText, setLargeText,
+    reducedMotion, setReducedMotion,
+    focusMode, setFocusMode
   };
 }

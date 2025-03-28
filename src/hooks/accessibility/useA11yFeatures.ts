@@ -1,77 +1,71 @@
 
 import { useState, useEffect } from 'react';
 
-/**
- * Hook for dyslexia-related accessibility features
- */
 export function useDyslexiaFeatures() {
-  const [dyslexiaFont, setDyslexiaFont] = useState(
-    localStorage.getItem('dyslexiaFont') === 'true'
-  );
+  const [dyslexiaFont, setDyslexiaFont] = useState<boolean>(false);
   
-  // Apply dyslexic font
+  // Apply dyslexia font
   useEffect(() => {
     if (dyslexiaFont) {
-      document.body.classList.add('dyslexia-font');
+      document.documentElement.classList.add('dyslexia-font');
     } else {
-      document.body.classList.remove('dyslexia-font');
+      document.documentElement.classList.remove('dyslexia-font');
     }
     
-    localStorage.setItem('dyslexiaFont', dyslexiaFont.toString());
+    localStorage.setItem('a11y-dyslexiaFont', String(dyslexiaFont));
   }, [dyslexiaFont]);
-
-  return {
-    dyslexiaFont,
-    setDyslexiaFont
-  };
+  
+  // Load from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem('a11y-dyslexiaFont');
+    if (stored === 'true') setDyslexiaFont(true);
+  }, []);
+  
+  return { dyslexiaFont, setDyslexiaFont };
 }
 
-/**
- * Hook for text spacing accessibility features
- */
 export function useTextSpacingFeatures() {
-  const [textSpacing, setTextSpacing] = useState(
-    localStorage.getItem('textSpacing') === 'true'
-  );
+  const [textSpacing, setTextSpacing] = useState<boolean>(false);
   
   // Apply text spacing
   useEffect(() => {
     if (textSpacing) {
-      document.body.classList.add('text-spacing');
+      document.documentElement.classList.add('text-spacing');
     } else {
-      document.body.classList.remove('text-spacing');
+      document.documentElement.classList.remove('text-spacing');
     }
     
-    localStorage.setItem('textSpacing', textSpacing.toString());
+    localStorage.setItem('a11y-textSpacing', String(textSpacing));
   }, [textSpacing]);
-
-  return {
-    textSpacing,
-    setTextSpacing
-  };
+  
+  // Load from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem('a11y-textSpacing');
+    if (stored === 'true') setTextSpacing(true);
+  }, []);
+  
+  return { textSpacing, setTextSpacing };
 }
 
-/**
- * Hook for link underline accessibility features
- */
 export function useLinkFeatures() {
-  const [underlineLinks, setUnderlineLinks] = useState(
-    localStorage.getItem('underlineLinks') === 'true'
-  );
+  const [underlineLinks, setUnderlineLinks] = useState<boolean>(false);
   
-  // Apply link underlining
+  // Apply underline links
   useEffect(() => {
     if (underlineLinks) {
-      document.body.classList.add('underline-links');
+      document.documentElement.classList.add('underline-links');
     } else {
-      document.body.classList.remove('underline-links');
+      document.documentElement.classList.remove('underline-links');
     }
     
-    localStorage.setItem('underlineLinks', underlineLinks.toString());
+    localStorage.setItem('a11y-underlineLinks', String(underlineLinks));
   }, [underlineLinks]);
-
-  return {
-    underlineLinks,
-    setUnderlineLinks
-  };
+  
+  // Load from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem('a11y-underlineLinks');
+    if (stored === 'true') setUnderlineLinks(true);
+  }, []);
+  
+  return { underlineLinks, setUnderlineLinks };
 }

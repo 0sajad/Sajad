@@ -1,77 +1,71 @@
 
 import { useState, useEffect } from 'react';
 
-/**
- * Hook for cursor-related accessibility features
- */
 export function useCursorFeatures() {
-  const [customCursor, setCustomCursor] = useState(
-    localStorage.getItem('customCursor') === 'true'
-  );
+  const [customCursor, setCustomCursor] = useState<boolean>(false);
   
   // Apply custom cursor
   useEffect(() => {
     if (customCursor) {
-      document.body.classList.add('custom-cursor');
+      document.documentElement.classList.add('custom-cursor');
     } else {
-      document.body.classList.remove('custom-cursor');
+      document.documentElement.classList.remove('custom-cursor');
     }
     
-    localStorage.setItem('customCursor', customCursor.toString());
+    localStorage.setItem('a11y-customCursor', String(customCursor));
   }, [customCursor]);
-
-  return {
-    customCursor,
-    setCustomCursor
-  };
+  
+  // Load from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem('a11y-customCursor');
+    if (stored === 'true') setCustomCursor(true);
+  }, []);
+  
+  return { customCursor, setCustomCursor };
 }
 
-/**
- * Hook for color inversion accessibility features
- */
 export function useColorInversionFeatures() {
-  const [invertColors, setInvertColors] = useState(
-    localStorage.getItem('invertColors') === 'true'
-  );
+  const [invertColors, setInvertColors] = useState<boolean>(false);
   
   // Apply color inversion
   useEffect(() => {
     if (invertColors) {
-      document.body.classList.add('invert-colors');
+      document.documentElement.classList.add('invert-colors');
     } else {
-      document.body.classList.remove('invert-colors');
+      document.documentElement.classList.remove('invert-colors');
     }
     
-    localStorage.setItem('invertColors', invertColors.toString());
+    localStorage.setItem('a11y-invertColors', String(invertColors));
   }, [invertColors]);
-
-  return {
-    invertColors,
-    setInvertColors
-  };
+  
+  // Load from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem('a11y-invertColors');
+    if (stored === 'true') setInvertColors(true);
+  }, []);
+  
+  return { invertColors, setInvertColors };
 }
 
-/**
- * Hook for monochrome accessibility features
- */
 export function useMonochromeFeatures() {
-  const [monochrome, setMonochrome] = useState(
-    localStorage.getItem('monochrome') === 'true'
-  );
+  const [monochrome, setMonochrome] = useState<boolean>(false);
   
   // Apply monochrome mode
   useEffect(() => {
     if (monochrome) {
-      document.body.classList.add('monochrome');
+      document.documentElement.classList.add('monochrome');
     } else {
-      document.body.classList.remove('monochrome');
+      document.documentElement.classList.remove('monochrome');
     }
     
-    localStorage.setItem('monochrome', monochrome.toString());
+    localStorage.setItem('a11y-monochrome', String(monochrome));
   }, [monochrome]);
-
-  return {
-    monochrome,
-    setMonochrome
-  };
+  
+  // Load from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem('a11y-monochrome');
+    if (stored === 'true') setMonochrome(true);
+  }, []);
+  
+  return { monochrome, setMonochrome };
 }

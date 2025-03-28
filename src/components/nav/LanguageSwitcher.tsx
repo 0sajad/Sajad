@@ -3,8 +3,9 @@ import React, { useEffect, useState } from "react";
 import { DropdownMenu, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useTranslation } from "react-i18next";
 import { useLanguageTransition } from "@/hooks/useLanguageTransition";
-import { LanguageSwitcherButton } from "./LanguageSwitcherButton";
-import { LanguageDropdownContent } from "./LanguageDropdownContent";
+import { LanguageSwitcherButton } from "../language/LanguageSwitcherButton";
+import { LanguageDropdownContent } from "../language/LanguageDropdownContent";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface LanguageSwitcherProps {
   className?: string;
@@ -24,7 +25,7 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
     { code: "zh", name: "Chinese", nativeName: "中文", flag: "🇨🇳" }
   ];
 
-  // تأكد من تطبيق الاتجاه الصحيح للصفحة عند التحميل
+  // Make sure to apply correct direction to page on load
   useEffect(() => {
     setMounted(true);
     const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
@@ -36,37 +37,47 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
       document.body.classList.remove('rtl-active');
     }
     
-    // التأكد من أن اللغة مطبقة بشكل صحيح
+    // Make sure language is properly applied
     const savedLanguage = localStorage.getItem("language");
     if (savedLanguage && savedLanguage !== i18n.language) {
       i18n.changeLanguage(savedLanguage);
     }
   }, [i18n.language, i18n]);
 
-  // العثور على اللغة الحالية
-  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
+  // Find current language
+  const currentLanguage = languages.find(lang => lang.code === i18n.language)?.code || languages[0].code;
+  const currentLanguageFlag = languages.find(lang => lang.code === currentLanguage)?.flag || "🌐";
 
   if (!mounted) {
     return null;
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <div>
-          <LanguageSwitcherButton 
-            className={className} 
-            onClick={() => {}} 
-            isTransitioning={isTransitioning}
-            currentLanguageFlag={currentLanguage.flag}
+    <TooltipProvider>
+      <Tooltip>
+        <DropdownMenu>
+          <TooltipTrigger asChild>
+            <DropdownMenuTrigger asChild>
+              <div>
+                <LanguageSwitcherButton 
+                  className={className} 
+                  onClick={() => {}} 
+                  isTransitioning={isTransitioning}
+                  currentLanguageFlag={currentLanguageFlag}
+                />
+              </div>
+            </DropdownMenuTrigger>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" className="bg-gradient-to-r from-blue-500/90 to-blue-600/90 text-white border-0">
+            <p>Change Language</p>
+          </TooltipContent>
+          <LanguageDropdownContent 
+            languages={languages}
+            currentLanguage={currentLanguage}
+            onChangeLanguage={changeLanguage}
           />
-        </div>
-      </DropdownMenuTrigger>
-      <LanguageDropdownContent 
-        languages={languages}
-        currentLanguage={currentLanguage}
-        onChangeLanguage={changeLanguage}
-      />
-    </DropdownMenu>
+        </DropdownMenu>
+      </Tooltip>
+    </TooltipProvider>
   );
 }

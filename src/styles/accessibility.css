@@ -1,0 +1,156 @@
+
+/* Accessibility CSS Customizations */
+
+/* High contrast mode */
+.high-contrast {
+  --background: #000000;
+  --foreground: #ffffff;
+  --border: #ffff00;
+  
+  /* Ensure sufficient contrast */
+  --primary: #00ddff;
+  --primary-foreground: #000000;
+  --secondary: #ffff00;
+  --secondary-foreground: #000000;
+}
+
+.high-contrast * {
+  border-color: var(--border);
+}
+
+.high-contrast input, 
+.high-contrast button, 
+.high-contrast select, 
+.high-contrast textarea {
+  border: 2px solid var(--border);
+}
+
+/* Large text mode */
+.large-text {
+  font-size: 120%;
+  line-height: 1.5;
+}
+
+.large-text h1 {
+  font-size: 2.5rem;
+}
+
+.large-text h2 {
+  font-size: 2rem;
+}
+
+.large-text h3 {
+  font-size: 1.75rem;
+}
+
+.large-text button, 
+.large-text input {
+  font-size: 1.2rem;
+  padding: 0.5rem 1rem;
+}
+
+/* Reduced motion mode */
+.reduced-motion * {
+  animation-duration: 0.001ms !important;
+  transition-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+}
+
+/* Focus mode */
+.focus-mode :focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.focus-mode button:focus,
+.focus-mode a:focus,
+.focus-mode input:focus,
+.focus-mode select:focus,
+.focus-mode textarea:focus {
+  box-shadow: 0 0 0 3px var(--primary);
+}
+
+/* Keyboard focus indicator */
+.keyboard-focus :focus {
+  outline: 4px solid var(--primary);
+  outline-offset: 4px;
+}
+
+.keyboard-focus button:focus-visible,
+.keyboard-focus a:focus-visible,
+.keyboard-focus input:focus-visible,
+.keyboard-focus select:focus-visible,
+.keyboard-focus textarea:focus-visible {
+  outline: 4px solid var(--primary);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 4px rgba(var(--primary), 0.3);
+}
+
+/* Text spacing for readability */
+.text-spacing {
+  letter-spacing: 0.12em;
+  word-spacing: 0.16em;
+}
+
+.text-spacing p,
+.text-spacing li {
+  line-height: 1.8;
+}
+
+/* Enhanced link styling */
+.underline-links a {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+/* Dyslexia friendly font */
+.dyslexia-font {
+  font-family: 'Comic Sans MS', 'Comic Sans', cursive;
+  letter-spacing: 0.15em;
+  word-spacing: 0.25em;
+  line-height: 1.8;
+}
+
+/* Color inversion */
+.invert-colors {
+  filter: invert(100%);
+}
+
+/* Monochrome mode */
+.monochrome {
+  filter: grayscale(100%);
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  padding: 0.5rem 1rem;
+  z-index: 100;
+  transition: top 0.2s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Reading guide */
+.reading-guide-cursor {
+  position: fixed;
+  width: 100%;
+  height: 40px;
+  background-color: rgba(255, 255, 0, 0.2);
+  border-top: 1px solid #ffd700;
+  border-bottom: 1px solid #ffd700;
+  pointer-events: none;
+  z-index: 9999;
+  display: none;
+}
+
+.reading-guide .reading-guide-cursor {
+  display: block;
+}

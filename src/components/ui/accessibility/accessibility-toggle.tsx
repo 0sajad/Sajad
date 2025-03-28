@@ -1,113 +1,62 @@
 
-import React, { useId } from "react";
-import { Label } from "@/components/ui/label";
+import React from "react";
 import { Switch } from "@/components/ui/switch";
+import { useTranslation } from "react-i18next";
 import { LucideIcon } from "lucide-react";
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
 
 interface AccessibilityToggleProps {
-  id?: string;
+  id: string;
   label: string;
+  description?: string;
   icon: LucideIcon;
   checked: boolean;
   onChange: (checked: boolean) => void;
-  shortcutKey: string;
-  descriptionId?: string;
-  description?: string;
-  disabled?: boolean;
+  shortcutKey?: string;
 }
 
 export function AccessibilityToggle({
-  id: propId,
+  id,
   label,
+  description,
   icon: Icon,
   checked,
   onChange,
-  shortcutKey,
-  descriptionId,
-  description,
-  disabled = false
+  shortcutKey
 }: AccessibilityToggleProps) {
-  // Generate a unique ID if one is not provided
-  const generatedId = useId();
-  const id = propId || `a11y-toggle-${generatedId}`;
+  const { t } = useTranslation();
   
-  // Format keyboard shortcut for display
-  const getKeyboardShortcut = (shortcut: string) => {
-    return (
-      <kbd className="px-2 py-0.5 text-xs bg-muted rounded border border-border">
-        {shortcut}
-      </kbd>
-    );
-  };
-  
-  // Description ID for aria-describedby
-  const actualDescriptionId = descriptionId || description ? `${id}-description` : undefined;
-
   return (
-    <div 
-      className={cn(
-        "flex items-center justify-between p-2 rounded-md transition-colors",
-        checked ? "bg-muted/50" : "hover:bg-muted/20", 
-        disabled && "opacity-50 cursor-not-allowed"
-      )}
-    >
-      <div className="flex items-center space-x-2 rtl:space-x-reverse">
-        <motion.div
-          initial={{ scale: 1 }}
-          animate={{ scale: checked ? 1.1 : 1 }}
-          className={cn("p-1 rounded-full", checked ? "bg-primary/10" : "text-muted-foreground")}
-        >
-          <Icon 
-            className={cn(
-              "h-4 w-4 transition-colors", 
-              checked ? "text-primary" : "text-muted-foreground"
-            )} 
-            aria-hidden="true" 
-          />
-        </motion.div>
-        <div className="flex flex-col">
-          <Label 
-            htmlFor={id}
-            className={cn(
-              "text-sm cursor-pointer transition-colors",
-              checked ? "font-medium" : ""
-            )}
-            id={`${id}-label`}
-          >
-            {label}
-          </Label>
-          {description && (
-            <p 
-              id={actualDescriptionId} 
-              className="text-xs text-muted-foreground"
-            >
-              {description}
-            </p>
-          )}
+    <div className="flex items-start space-x-4 rtl:space-x-reverse p-3 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+      <div className="flex-shrink-0 mt-1">
+        <div className="bg-primary/10 p-2 rounded-md">
+          <Icon className="h-4 w-4 text-primary" />
         </div>
       </div>
-      <div className="flex items-center gap-2">
-        {getKeyboardShortcut(shortcutKey)}
-        <Switch
-          id={id}
-          checked={checked}
-          onCheckedChange={disabled ? undefined : onChange}
-          aria-checked={checked}
-          aria-labelledby={`${id}-label`}
-          aria-describedby={actualDescriptionId}
-          disabled={disabled}
-          onKeyDown={(e) => {
-            // Add support for Alt+shortcutKey when focused
-            if (e.altKey && e.key.toLowerCase() === shortcutKey.replace(/alt\+/i, '').toLowerCase()) {
-              if (!disabled) {
-                onChange(!checked);
-                e.preventDefault();
-              }
-            }
-          }}
-        />
+      
+      <div className="flex-grow">
+        <div className="flex items-center justify-between">
+          <label 
+            htmlFor={id} 
+            className="text-sm font-medium cursor-pointer flex items-center"
+          >
+            {label}
+            {shortcutKey && (
+              <kbd className="ml-2 px-1.5 py-0.5 text-xs bg-gray-100 dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700">
+                {shortcutKey}
+              </kbd>
+            )}
+          </label>
+          <Switch
+            id={id}
+            checked={checked}
+            onCheckedChange={onChange}
+            aria-label={t('accessibility.toggle', { feature: label })}
+          />
+        </div>
+        
+        {description && (
+          <p className="text-xs text-muted-foreground mt-1">{description}</p>
+        )}
       </div>
     </div>
   );

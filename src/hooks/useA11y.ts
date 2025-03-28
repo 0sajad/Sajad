@@ -73,6 +73,17 @@ export function useA11y() {
     }
   };
   
+  // Load sound feedback preference from localStorage
+  useEffect(() => {
+    const storedSoundFeedback = localStorage.getItem('a11y-soundFeedback');
+    if (storedSoundFeedback === 'true') setSoundFeedback(true);
+  }, []);
+  
+  // Save sound feedback preference to localStorage
+  useEffect(() => {
+    localStorage.setItem('a11y-soundFeedback', String(soundFeedback));
+  }, [soundFeedback]);
+  
   return {
     // Core features
     highContrast, setHighContrast,

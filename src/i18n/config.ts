@@ -37,7 +37,7 @@ export const i18n = i18next
     fallbackLng: (code) => {
       if (!code) return DEFAULT_LANGUAGE;
       
-      // تحويل المصفوفة إلى سلسلة إذا لزم الأمر
+      // Convert array to string if needed
       if (Array.isArray(code)) {
         return code[0] as string;
       }
@@ -48,9 +48,9 @@ export const i18n = i18next
     debug: process.env.NODE_ENV === 'development',
     supportedLngs: SUPPORTED_LANGUAGES,
     interpolation: {
-      escapeValue: false, // لا حاجة لـ React لأنه يهرب القيم افتراضياً
+      escapeValue: false, // Not needed for React as it escapes by default
     },
-    // تحسين مع إضافة namespace للأخطاء
+    // Enhanced with error namespace
     ns: ['common', 'securityDashboard', 'networkTools', 'ai', 'aiAssistant', 'cta', 'error'],
     defaultNS: 'common',
   });

@@ -1,97 +1,74 @@
 
-import React, { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { useA11y } from "@/hooks/useA11y";
+import React, { useEffect, useState } from 'react';
+import { useA11y } from '@/hooks/useA11y';
+import { Portal } from '@/components/ui/portal';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { KeyboardShortcutsList } from './keyboard-shortcuts-list';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useTranslation } from 'react-i18next';
+import { X } from 'lucide-react';
 
 export function KeyboardNavigationMenu() {
-  const [visible, setVisible] = useState(false);
-  const { 
-    keyboardNavigationVisible, 
-    setKeyboardNavigationVisible,
-    playNotificationSound 
-  } = useA11y();
-
+  const { keyboardNavigationVisible, setKeyboardNavigationVisible } = useA11y();
+  const [isVisible, setIsVisible] = useState(false);
+  const { t } = useTranslation();
+  
   useEffect(() => {
+    // Show/hide the menu based on state
+    setIsVisible(keyboardNavigationVisible);
+    
+    // Listen for the Alt+? shortcut to toggle menu
     const handleKeyDown = (e: KeyboardEvent) => {
-      // إظهار قائمة التنقل بلوحة المفاتيح عند ضغط ؟
-      if (e.key === "?" && (e.ctrlKey || e.metaKey)) {
+      if (e.altKey && (e.key === '?' || e.key === '؟')) {
         e.preventDefault();
         setKeyboardNavigationVisible(!keyboardNavigationVisible);
-        playNotificationSound("info");
       }
-
-      // إخفاء القائمة عند الضغط على Escape
-      if (e.key === "Escape" && keyboardNavigationVisible) {
+      
+      // Allow Escape to close the menu
+      if (e.key === 'Escape' && keyboardNavigationVisible) {
         setKeyboardNavigationVisible(false);
       }
     };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [keyboardNavigationVisible, setKeyboardNavigationVisible, playNotificationSound]);
-
-  useEffect(() => {
-    setVisible(keyboardNavigationVisible);
-  }, [keyboardNavigationVisible]);
-
-  if (!visible) return null;
-
+    
+    window.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [keyboardNavigationVisible, setKeyboardNavigationVisible]);
+  
+  if (!isVisible) {
+    return null;
+  }
+  
   return (
-    <div 
-      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="keyboard-nav-title"
-    >
-      <div className="bg-background rounded-lg shadow-lg max-w-3xl w-full max-h-[80vh] overflow-auto p-6">
-        <h2 id="keyboard-nav-title" className="text-2xl font-bold mb-4">اختصارات لوحة المفاتيح</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <h3 className="font-medium text-lg">التنقل العام</h3>
-            <ul className="space-y-2">
-              <li className="flex justify-between">
-                <span className="text-muted-foreground">الصفحة الرئيسية</span>
-                <kbd className="bg-muted px-2 py-1 rounded">Alt + H</kbd>
-              </li>
-              <li className="flex justify-between">
-                <span className="text-muted-foreground">لوحة التحكم</span>
-                <kbd className="bg-muted px-2 py-1 rounded">Alt + D</kbd>
-              </li>
-              <li className="flex justify-between">
-                <span className="text-muted-foreground">الإعدادات</span>
-                <kbd className="bg-muted px-2 py-1 rounded">Alt + S</kbd>
-              </li>
-            </ul>
-          </div>
-          <div className="space-y-2">
-            <h3 className="font-medium text-lg">إمكانية الوصول</h3>
-            <ul className="space-y-2">
-              <li className="flex justify-between">
-                <span className="text-muted-foreground">تبديل الوضع المظلم</span>
-                <kbd className="bg-muted px-2 py-1 rounded">Alt + T</kbd>
-              </li>
-              <li className="flex justify-between">
-                <span className="text-muted-foreground">تكبير النص</span>
-                <kbd className="bg-muted px-2 py-1 rounded">Alt + +</kbd>
-              </li>
-              <li className="flex justify-between">
-                <span className="text-muted-foreground">تصغير النص</span>
-                <kbd className="bg-muted px-2 py-1 rounded">Alt + -</kbd>
-              </li>
-            </ul>
-          </div>
-        </div>
-        
-        <div className="mt-6 flex justify-end">
-          <Button 
-            variant="outline" 
-            onClick={() => setKeyboardNavigationVisible(false)}
-          >
-            إغلاق
-          </Button>
-        </div>
+    <Portal>
+      <div 
+        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="keyboard-navigation-title"
+      >
+        <Card className="w-full max-w-md">
+          <CardHeader className="relative">
+            <CardTitle id="keyboard-navigation-title">
+              {t('accessibility.keyboardShortcuts', 'Keyboard Shortcuts')}
+            </CardTitle>
+            <button
+              className="absolute top-4 right-4 rounded-full p-1 hover:bg-muted"
+              onClick={() => setKeyboardNavigationVisible(false)}
+              aria-label={t('common.close')}
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </CardHeader>
+          <CardContent>
+            <ScrollArea className="h-80 pr-4">
+              <KeyboardShortcutsList enableHint badgeVariant="secondary" />
+            </ScrollArea>
+          </CardContent>
+        </Card>
       </div>
-    </div>
+    </Portal>
   );
 }

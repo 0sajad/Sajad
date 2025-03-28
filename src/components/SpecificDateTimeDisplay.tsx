@@ -1,6 +1,6 @@
 
 import React from "react";
-import { DateTimeDisplay } from "@/components/ui/datetime-display";
+import { DateTimeDisplay } from "@/components/datetime/DateTimeDisplay";
 import { CountdownDisplay } from "@/components/countdown/CountdownDisplay";
 import { useTranslation } from "react-i18next";
 import { useCountdown } from "@/hooks/useCountdown";
@@ -11,14 +11,14 @@ export function SpecificDateTimeDisplay() {
   const { t, i18n } = useTranslation();
   const { announce } = useA11y();
   
-  // إنشاء كائن تاريخ لـ 28 مارس 2025 الساعة 02:10
-  const specificDateTime = new Date(2025, 2, 28, 2, 10); // شهر مارس هو الشهر 2 (الأشهر تبدأ من 0)
+  // Create a date object for March 28, 2025 at 02:10
+  const specificDateTime = new Date(2025, 2, 28, 2, 10); // March is month 2 (months start at 0)
   
-  // استخدام hook العد التنازلي
+  // Use the countdown hook
   const { timeRemaining } = useCountdown({
     targetDate: specificDateTime,
     onComplete: () => {
-      // عند اكتمال العد التنازلي
+      // When countdown completes
       const message = i18n.language.startsWith('ar') 
         ? "انتهى العد التنازلي!"
         : "Countdown completed!";

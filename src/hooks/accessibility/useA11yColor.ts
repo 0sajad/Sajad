@@ -1,29 +1,38 @@
 
 import { useState, useEffect } from 'react';
 
-/**
- * Hook for color-related accessibility features
- */
-export function useA11yColor() {
-  const [colorBlindMode, setColorBlindMode] = useState<string | null>(
-    localStorage.getItem('colorBlindMode')
-  );
+type ColorBlindMode = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'achromatopsia';
 
+export function useA11yColor() {
+  const [colorBlindMode, setColorBlindMode] = useState<ColorBlindMode>('none');
+  
   // Apply color blind mode
   useEffect(() => {
-    // Remove all color blind modes first
-    document.body.classList.remove('protanopia', 'deuteranopia', 'tritanopia');
+    // Remove any existing color blind classes
+    document.documentElement.classList.remove(
+      'protanopia', 
+      'deuteranopia', 
+      'tritanopia', 
+      'achromatopsia'
+    );
     
-    if (colorBlindMode) {
-      document.body.classList.add(colorBlindMode);
-      localStorage.setItem('colorBlindMode', colorBlindMode);
-    } else {
-      localStorage.removeItem('colorBlindMode');
+    // Add the new class if not 'none'
+    if (colorBlindMode !== 'none') {
+      document.documentElement.classList.add(colorBlindMode);
     }
+    
+    // Store the preference in localStorage
+    localStorage.setItem('a11y-colorBlindMode', colorBlindMode);
   }, [colorBlindMode]);
-
-  return {
-    colorBlindMode, 
-    setColorBlindMode
-  };
+  
+  // Load preference from localStorage on mount
+  useEffect(() => {
+    const storedColorBlindMode = localStorage.getItem('a11y-colorBlindMode') as ColorBlindMode;
+    
+    if (storedColorBlindMode && storedColorBlindMode !== 'none') {
+      setColorBlindMode(storedColorBlindMode);
+    }
+  }, []);
+  
+  return { colorBlindMode, setColorBlindMode };
 }
