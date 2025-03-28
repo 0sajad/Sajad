@@ -40,10 +40,10 @@ export function Header({ onLanguageChange }: HeaderProps) {
   return (
     <TooltipProvider>
       <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md transition-all duration-300 ${
-        isScrolled ? "py-2 bg-white/90 shadow-sm dark:bg-gray-900/90" : "py-2 bg-transparent"
+        isScrolled ? "py-2 bg-white/90 shadow-sm dark:bg-gray-900/90" : "py-3 bg-transparent"
       }`}>
         <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between">
-          <div className="flex items-center">
+          <div className="flex items-center gap-8"> {/* زيادة المساحة هنا من عدم وجود gap إلى gap-8 */}
             <Logo />
             <DesktopNav />
           </div>

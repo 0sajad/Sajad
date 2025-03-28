@@ -20,7 +20,7 @@ export const DesktopNav = () => {
   return (
     <nav className="hidden md:flex items-center">
       <motion.div 
-        className="flex items-center space-x-1 rtl:space-x-reverse"
+        className="flex items-center space-x-6 rtl:space-x-reverse" // زيادة المساحة هنا من space-x-1 إلى space-x-6
         initial="hidden"
         animate="visible"
         variants={{

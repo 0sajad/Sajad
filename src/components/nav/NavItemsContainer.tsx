@@ -21,7 +21,7 @@ export const NavItemsContainer = ({ children }: NavItemsContainerProps) => {
   
   return (
     <motion.nav 
-      className="flex items-center space-x-8 rtl:space-x-reverse bg-white/20 dark:bg-gray-900/30 backdrop-blur-md px-8 py-3 rounded-full border border-gray-200/30 dark:border-gray-700/30 shadow-md"
+      className="flex items-center space-x-12 rtl:space-x-reverse bg-white/20 dark:bg-gray-900/30 backdrop-blur-md px-8 py-3 rounded-full border border-gray-200/30 dark:border-gray-700/30 shadow-md"
       variants={containerVariants}
       initial="hidden"
       animate="visible"

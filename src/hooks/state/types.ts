@@ -93,7 +93,7 @@ export interface AppStatusState {
 
 // حالة التفضيلات
 export interface PreferencesState {
-  theme: ThemeType;
+  theme: Theme;
   language: string;
   notificationsEnabled: boolean;
   animations: boolean;
@@ -164,13 +164,13 @@ export interface CacheState {
 }
 
 // أنواع إضافية
-export type ThemeType = 'light' | 'dark' | 'system';
+export type Theme = 'light' | 'dark' | 'system';
 export type DeviceTier = 'low' | 'medium' | 'high';
 export type ColorBlindMode = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'achromatopsia';
 
 // واجهات تفضيلات التطبيق
 export interface AppPreferences {
-  theme: ThemeType;
+  theme: Theme;
   language: string;
   notifications: boolean;
   telemetry: boolean;
@@ -194,7 +194,7 @@ export interface AppPreferences {
 
 // واجهة إعدادات المستخدم
 export interface UserSettings {
-  theme: ThemeType;
+  theme: Theme;
   language: string;
   notificationsEnabled: boolean;
 }
