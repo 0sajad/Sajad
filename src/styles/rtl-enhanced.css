@@ -1,0 +1,248 @@
+
+/**
+ * أنماط محسّنة للدعم المتقدم للغات RTL
+ * تركز على النماذج والجداول وعناصر واجهة المستخدم المتقدمة
+ */
+
+/* تحسينات عامة للـ RTL */
+[dir="rtl"] {
+  text-align: right;
+}
+
+/* ============== تحسينات النماذج ============== */
+
+/* تحسين محاذاة التصنيفات في النماذج */
+[dir="rtl"] .form-label,
+[dir="rtl"] label {
+  text-align: right;
+}
+
+/* عكس أيقونات النماذج */
+[dir="rtl"] .form-control-icon {
+  left: auto;
+  right: 0.75rem;
+}
+
+[dir="rtl"] .form-control-icon + input {
+  padding-left: 1rem;
+  padding-right: 2.5rem;
+}
+
+/* ضبط مؤشر التحميل في النماذج */
+[dir="rtl"] .form-spinner {
+  left: 0.75rem;
+  right: auto;
+}
+
+/* تحسين القوائم المنسدلة */
+[dir="rtl"] .dropdown-menu {
+  text-align: right;
+}
+
+[dir="rtl"] .dropdown-item {
+  text-align: right;
+}
+
+/* ============== تحسينات الجداول ============== */
+
+/* محاذاة نص الجداول للـ RTL */
+[dir="rtl"] table th,
+[dir="rtl"] table td {
+  text-align: right;
+}
+
+/* عكس ترتيب رؤوس الأعمدة */
+[dir="rtl"] thead th:first-child {
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+[dir="rtl"] thead th:last-child {
+  border-radius: 0.5rem 0 0 0.5rem;
+}
+
+/* تحسين شكل الصفوف والأعمدة في الجداول */
+[dir="rtl"] .table-row-actions {
+  text-align: left;
+}
+
+/* ضبط تمرير الجداول في RTL */
+[dir="rtl"] .table-wrapper {
+  direction: rtl;
+}
+
+[dir="rtl"] .table-container {
+  direction: rtl;
+}
+
+/* ============== تحسينات المربعات الحوارية ============== */
+
+/* ضبط أزرار المربعات الحوارية */
+[dir="rtl"] .dialog-footer {
+  flex-direction: row-reverse;
+}
+
+/* محاذاة عنوان المربع الحواري */
+[dir="rtl"] .dialog-title {
+  text-align: right;
+}
+
+/* ============== تحسينات البطاقات ============== */
+
+/* محاذاة عنوان البطاقة */
+[dir="rtl"] .card-header {
+  text-align: right;
+}
+
+/* ضبط أيقونات البطاقة */
+[dir="rtl"] .card-icon {
+  margin-right: 0;
+  margin-left: 0.75rem;
+}
+
+/* ============== تحسينات التنقل ============== */
+
+/* ضبط أيقونات التنقل */
+[dir="rtl"] .nav-icon {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+/* ضبط الشريط الجانبي */
+[dir="rtl"] .sidebar {
+  left: auto;
+  right: 0;
+}
+
+[dir="rtl"] .sidebar-collapsed {
+  transform: translateX(100%);
+}
+
+/* ============== تحسينات الإشعارات ============== */
+
+/* ضبط موضع الإشعارات */
+[dir="rtl"] .toast-container {
+  left: 1rem;
+  right: auto;
+}
+
+[dir="rtl"] .toast-content {
+  text-align: right;
+}
+
+[dir="rtl"] .toast-icon {
+  margin-right: 0;
+  margin-left: 0.75rem;
+}
+
+/* ============== المزيد من التحسينات ============== */
+
+/* محاذاة أزرار مجموعات الأدوات */
+[dir="rtl"] .toolbar-group {
+  flex-direction: row-reverse;
+}
+
+/* ضبط نمط التعبئة والهوامش */
+[dir="rtl"] .rtl-padding {
+  padding-left: var(--padding-right, 1rem);
+  padding-right: var(--padding-left, 1rem);
+}
+
+[dir="rtl"] .rtl-margin {
+  margin-left: var(--margin-right, 1rem);
+  margin-right: var(--margin-left, 1rem);
+}
+
+/* ضبط تنسيق الأزرار المجمعة */
+[dir="rtl"] .button-group {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .button-group > *:first-child {
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+[dir="rtl"] .button-group > *:last-child {
+  border-radius: 0.5rem 0 0 0.5rem;
+}
+
+/* تحسين عرض الشرائط الجانبية والأدراج */
+[dir="rtl"] .drawer-right {
+  right: auto;
+  left: 0;
+  transform: translateX(-100%);
+}
+
+[dir="rtl"] .drawer-right.open {
+  transform: translateX(0);
+}
+
+[dir="rtl"] .drawer-left {
+  left: auto;
+  right: 0;
+  transform: translateX(100%);
+}
+
+[dir="rtl"] .drawer-left.open {
+  transform: translateX(0);
+}
+
+/* ضبط عرض العناصر بعرض مخصص */
+[dir="rtl"] .fixed-width-auto {
+  width: auto !important;
+}
+
+/* تحسين شكل الحقول المزدوجة */
+[dir="rtl"] .input-group-text {
+  border-left: none;
+  border-right: var(--border-width, 1px) solid var(--border-color, #ced4da);
+}
+
+[dir="rtl"] .input-group-prepend {
+  margin-right: 0;
+  margin-left: -1px;
+}
+
+[dir="rtl"] .input-group-append {
+  margin-left: 0;
+  margin-right: -1px;
+}
+
+/* تحسين عرض علامات التبويب */
+[dir="rtl"] .tab-content {
+  text-align: right;
+}
+
+[dir="rtl"] .nav-tabs {
+  padding-right: 0;
+}
+
+/* تحسين شكل قوائم التنقل */
+[dir="rtl"] .breadcrumb-item + .breadcrumb-item::before {
+  float: right;
+  padding-left: 0.5rem;
+  padding-right: 0;
+}
+
+[dir="rtl"] .breadcrumb-item + .breadcrumb-item {
+  padding-right: 0.5rem;
+  padding-left: 0;
+}
+
+/* تحسين عرض الشرائح والنطاقات */
+[dir="rtl"] .range-slider {
+  direction: ltr;
+}
+
+[dir="rtl"] .range-value {
+  left: auto;
+  right: var(--value-position, 0);
+}
+
+/* ضبط محاذاة الرسوم البيانية */
+[dir="rtl"] .chart-container {
+  direction: ltr;
+}
+
+[dir="rtl"] .chart-label {
+  direction: rtl;
+}

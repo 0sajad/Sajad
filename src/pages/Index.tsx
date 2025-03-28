@@ -9,7 +9,7 @@ import { QuickAccessibilityButton } from "@/components/ui/QuickAccessibilityButt
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { usePreferenceSync } from "@/hooks/usePreferenceSync";
 import { KeyboardFocusDetector } from "@/components/ui/accessibility/keyboard-focus-detector";
-import { useA11y } from "@/hooks/useA11y";
+import { useA11yContext } from "@/hooks/accessibility/useA11yContext";
 import { SkipLink } from "@/components/ui/accessibility/SkipLink";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { MobileA11yDrawer } from "@/components/ui/accessibility/mobile-a11y-drawer";
@@ -20,6 +20,9 @@ import { LazyLoad } from "@/components/ui/LazyLoad";
 import { LazyApp } from "@/components/performance/LazyApp";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MainContent } from "@/components/sections/MainContent";
+import { A11yWrapper } from "@/components/ui/accessibility/A11yWrapper";
+import { NetworkStatusIndicator } from "@/components/ui/NetworkStatusIndicator";
+import { ArabicTextProvider } from "@/components/text/ArabicTextProvider";
 
 // تصحيح التحميل الكسول للمكونات مع دعم الصادرات المسماة
 const AIAssistantManager = lazy(() => 
@@ -33,12 +36,12 @@ const AccessibilityOverlay = lazy(() =>
 
 /**
  * الصفحة الرئيسية للتطبيق
- * تضم جميع المكونات الرئيسية وتدير حالة تحميل الصفحة
+ * تم تحسينها لاستخدام المكونات والخطافات المحسنة
  */
 export default function Index() {
   const { t, i18n } = useTranslation();
   const { isTransitioning } = useLanguageTransition();
-  const { announce } = useA11y();
+  const { announce } = useA11yContext();
   const { isRTL } = useRTLSupport();
   const { sectionsVisible, pageLoaded, setPageLoaded } = useSectionVisibility();
   const { deviceTier, isLowPerformanceDevice } = usePerformanceOptimization();
@@ -68,48 +71,59 @@ export default function Index() {
   };
   
   return (
-    <LazyApp>
-      <ErrorBoundary>
-        <TooltipProvider>
-          {/* طبقة إمكانية الوصول: تتضمن مكونات الوصول المساعدة */}
-          <Suspense fallback={null}>
-            <AccessibilityOverlay />
-          </Suspense>
-          
-          {/* رأس الصفحة - تحميل أساسي بدون كسل */}
-          <Header />
-          
-          {/* المحتوى الرئيسي - تحميل كسول مع أولوية */}
-          <LazyLoad priority={true} height="100vh">
-            <Suspense fallback={
-              <div className="min-h-[80vh] flex items-center justify-center">
-                <Skeleton className="h-[70vh] w-full max-w-4xl mx-auto rounded-lg" />
-              </div>
-            }>
-              <MainContent 
-                sectionsVisible={sectionsVisible}
-                isTransitioning={isTransitioning}
-                language={i18n.language}
-                isRTL={isRTL}
-              />
-            </Suspense>
-          </LazyLoad>
-          
-          {/* المساعد الذكي - تحميل كسول بأولوية منخفضة */}
-          <LazyLoad threshold={500}>
+    <A11yWrapper>
+      <LazyApp>
+        <ErrorBoundary>
+          <TooltipProvider>
+            {/* طبقة إمكانية الوصول: تتضمن مكونات الوصول المساعدة */}
             <Suspense fallback={null}>
-              <AIAssistantManager onMaximize={handleMaximizeAI} />
+              <AccessibilityOverlay />
             </Suspense>
-          </LazyLoad>
-          
-          {/* تذييل الصفحة - تحميل أساسي بدون كسل */}
-          <Footer />
-          
-          {/* أزرار إمكانية الوصول السريعة */}
-          <QuickAccessibilityButton />
-          <MobileA11yDrawer />
-        </TooltipProvider>
-      </ErrorBoundary>
-    </LazyApp>
+            
+            {/* رابط تخطي المحتوى */}
+            <SkipLink href="#main-content" />
+            
+            {/* مؤشر حالة الشبكة */}
+            <NetworkStatusIndicator />
+            
+            {/* رأس الصفحة - تحميل أساسي بدون كسل */}
+            <Header />
+            
+            {/* المحتوى الرئيسي - تحميل كسول مع أولوية */}
+            <LazyLoad priority={true} height="100vh">
+              <Suspense fallback={
+                <div className="min-h-[80vh] flex items-center justify-center">
+                  <Skeleton className="h-[70vh] w-full max-w-4xl mx-auto rounded-lg" />
+                </div>
+              }>
+                <MainContent 
+                  sectionsVisible={sectionsVisible}
+                  isTransitioning={isTransitioning}
+                  language={i18n.language}
+                  isRTL={isRTL}
+                />
+              </Suspense>
+            </LazyLoad>
+            
+            {/* المساعد الذكي - تحميل كسول بأولوية منخفضة */}
+            <LazyLoad threshold={500}>
+              <Suspense fallback={null}>
+                <AIAssistantManager onMaximize={handleMaximizeAI} />
+              </Suspense>
+            </LazyLoad>
+            
+            {/* تذييل الصفحة - تحميل أساسي بدون كسل */}
+            <Footer />
+            
+            {/* أزرار إمكانية الوصول السريعة */}
+            <QuickAccessibilityButton />
+            <MobileA11yDrawer />
+            
+            {/* كاشف التركيز للوحة المفاتيح */}
+            <KeyboardFocusDetector />
+          </TooltipProvider>
+        </ErrorBoundary>
+      </LazyApp>
+    </A11yWrapper>
   );
 }

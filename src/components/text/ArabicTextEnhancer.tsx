@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { cn } from "@/lib/utils";
-import { useArabicSupport } from '@/hooks/useArabicSupport';
+import { useArabicText } from './ArabicTextProvider';
 
 interface ArabicTextEnhancerProps {
   children: React.ReactNode;
@@ -12,19 +12,23 @@ interface ArabicTextEnhancerProps {
 
 /**
  * مكون لتحسين عرض النص العربي وتطبيق ميزات متقدمة مثل الكشيدة
+ * تم تحسينه لاستخدام ArabicTextProvider
  */
 export function ArabicTextEnhancer({
   children,
   className,
-  kashida = false,
+  kashida,
   enableDigitFormatting = false,
 }: ArabicTextEnhancerProps) {
-  const { isArabic, formatNumber } = useArabicSupport();
+  const { isArabic, formatNumber, kashidaEnabled: globalKashidaEnabled } = useArabicText();
 
   // إذا لم تكن اللغة عربية، نُرجع المحتوى كما هو
   if (!isArabic) {
     return <span className={className}>{children}</span>;
   }
+
+  // استخدام قيمة kashida المحلية إذا تم تمريرها، وإلا استخدام القيمة العالمية
+  const useKashida = kashida !== undefined ? kashida : globalKashidaEnabled;
 
   // تحويل الأرقام في النص إذا كان مطلوباً
   const processContent = (content: React.ReactNode): React.ReactNode => {
@@ -52,13 +56,13 @@ export function ArabicTextEnhancer({
     <span 
       className={cn(
         "arabic-text",
-        kashida && "kashida",
+        useKashida && "kashida",
         className
       )}
       style={{
         // استخدام "inter-word" بدلاً من "kashida" للتوافق مع خصائص CSS القياسية
-        textJustify: kashida ? "inter-word" : undefined,
-        fontFeatureSettings: `"rlig", "calt", "ss01", "ss02"${kashida ? ', "kshd"' : ''}`
+        textJustify: useKashida ? "inter-word" : undefined,
+        fontFeatureSettings: `"rlig", "calt", "ss01", "ss02"${useKashida ? ', "kshd"' : ''}`
       }}
     >
       {React.Children.map(children, child => {

@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 /**
  * خطاف لمزامنة تفضيلات التطبيق مع إعدادات النظام
+ * تم تحسينه لأداء أفضل وتوافق أفضل مع TypeScript
  */
 export function usePreferenceSync() {
   const { 
@@ -14,9 +15,9 @@ export function usePreferenceSync() {
     setHighContrast,
     setColorBlindMode
   } = useA11y();
-  const appState = useAppState();
   
-  // Use the proper setter function from Zustand store
+  // استخدام الطريقة الصحيحة للوصول إلى الحالة والوظائف في Zustand
+  const preferences = useAppState(state => state.preferences);
   const setPreference = useAppState(state => state.setPreference);
   
   const { info } = useNotifications();
@@ -29,7 +30,7 @@ export function usePreferenceSync() {
     
     const handleReducedMotionChange = (e: MediaQueryListEvent | MediaQueryList) => {
       const prefersReducedMotion = e.matches;
-      const shouldSync = appState.preferences?.syncSystemPreferences ?? true;
+      const shouldSync = preferences?.syncSystemPreferences ?? true;
       
       if (shouldSync) {
         setReducedMotion(prefersReducedMotion);
@@ -53,7 +54,7 @@ export function usePreferenceSync() {
     return () => {
       reducedMotionQuery.removeEventListener('change', handleReducedMotionChange);
     };
-  }, [setReducedMotion, setPreference, info, t, appState.preferences]);
+  }, [setReducedMotion, setPreference, info, t, preferences]);
   
   // التحقق من وضع الألوان المظلم/الفاتح
   useEffect(() => {
@@ -61,7 +62,7 @@ export function usePreferenceSync() {
     
     const handleDarkModeChange = (e: MediaQueryListEvent | MediaQueryList) => {
       const prefersDarkMode = e.matches;
-      const shouldSync = appState.preferences?.syncSystemPreferences ?? true;
+      const shouldSync = preferences?.syncSystemPreferences ?? true;
       
       if (shouldSync) {
         setPreference('theme', prefersDarkMode ? 'dark' : 'light');
@@ -83,7 +84,7 @@ export function usePreferenceSync() {
     return () => {
       darkModeQuery.removeEventListener('change', handleDarkModeChange);
     };
-  }, [setPreference, appState.preferences]);
+  }, [setPreference, preferences]);
   
   // التحقق من تفضيلات التباين العالي
   useEffect(() => {
@@ -91,7 +92,7 @@ export function usePreferenceSync() {
     
     const handleHighContrastChange = (e: MediaQueryListEvent | MediaQueryList) => {
       const prefersHighContrast = e.matches;
-      const shouldSync = appState.preferences?.syncSystemPreferences ?? true;
+      const shouldSync = preferences?.syncSystemPreferences ?? true;
       
       if (shouldSync) {
         setHighContrast(prefersHighContrast);
@@ -115,7 +116,40 @@ export function usePreferenceSync() {
     return () => {
       highContrastQuery.removeEventListener('change', handleHighContrastChange);
     };
-  }, [setHighContrast, setPreference, info, t, appState.preferences]);
+  }, [setHighContrast, setPreference, info, t, preferences]);
+
+  // إضافة دعم لتفضيلات عمى الألوان
+  useEffect(() => {
+    // يمكن استخدام forced-colors: active للكشف عن وضع عالي التباين في ويندوز
+    const forcedColorsQuery = window.matchMedia('(forced-colors: active)');
+    
+    const handleForcedColorsChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      const usesForcedColors = e.matches;
+      const shouldSync = preferences?.syncSystemPreferences ?? true;
+      
+      if (shouldSync && usesForcedColors) {
+        // تفعيل وضع عمى الألوان المناسب
+        // هذا مجرد مثال، يمكن تحسينه للكشف عن نوع عمى الألوان المحدد
+        setColorBlindMode('deuteranopia');
+        setPreference('colorBlindMode', 'deuteranopia');
+        
+        info(
+          t('preferences.colorBlindModeEnabled', 'تم تفعيل وضع عمى الألوان'),
+          t('preferences.syncedWithSystem', 'تمت المزامنة مع تفضيلات النظام')
+        );
+      }
+    };
+    
+    // التحقق عند التحميل
+    handleForcedColorsChange(forcedColorsQuery);
+    
+    // الاستماع للتغييرات
+    forcedColorsQuery.addEventListener('change', handleForcedColorsChange);
+    
+    return () => {
+      forcedColorsQuery.removeEventListener('change', handleForcedColorsChange);
+    };
+  }, [setColorBlindMode, setPreference, info, t, preferences]);
   
   // وظيفة لإعادة مزامنة جميع التفضيلات مع إعدادات النظام
   const syncAllWithSystem = useCallback(() => {
@@ -138,14 +172,22 @@ export function usePreferenceSync() {
     setHighContrast(highContrastQuery.matches);
     setPreference('highContrast', highContrastQuery.matches);
     
+    // مزامنة وضع عمى الألوان
+    const forcedColorsQuery = window.matchMedia('(forced-colors: active)');
+    if (forcedColorsQuery.matches) {
+      setColorBlindMode('deuteranopia');
+      setPreference('colorBlindMode', 'deuteranopia');
+    }
+    
     // إعلام المستخدم
     info(
       t('preferences.syncComplete', 'تمت مزامنة التفضيلات'),
       t('preferences.syncedAllPreferences', 'تمت مزامنة جميع التفضيلات مع إعدادات النظام')
     );
-  }, [setReducedMotion, setHighContrast, setPreference, info, t]);
+  }, [setReducedMotion, setHighContrast, setColorBlindMode, setPreference, info, t]);
   
   return {
-    syncAllWithSystem
+    syncAllWithSystem,
+    preferences
   };
 }

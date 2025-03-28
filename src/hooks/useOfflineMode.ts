@@ -1,7 +1,9 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { useAppState } from './state/use-app-state';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { useNetworkManager } from './network/useNetworkManager';
 
 interface OfflineSyncItem {
   id: string;
@@ -13,81 +15,39 @@ interface OfflineSyncItem {
 
 /**
  * خطاف لإدارة وضع عدم الاتصال والمزامنة عندما يعود الاتصال
+ * تم تحسينه لاستخدام useNetworkManager للتحقق من حالة الاتصال
  */
 export function useOfflineMode() {
   const { t } = useTranslation();
-  const appState = useAppState();
-  const isOnline = appState.networkStatus?.isOnline ?? true;
-  const checkNetworkStatus = appState.checkConnection;
+  const { isOnline, retryConnection, checkNetworkStatus } = useNetworkManager();
   
-  // Properly use the Zustand store by accessing specific setter functions
+  // تحسين الوصول إلى وظائف الحالة في Zustand
   const setNetworkStatus = useAppState(state => state.setNetworkStatus);
+  const preferences = useAppState(state => state.preferences);
   
   const [isOffline, setIsOffline] = useState(!isOnline);
   const [pendingSyncItems, setPendingSyncItems] = useState<OfflineSyncItem[]>([]);
   const [syncInProgress, setSyncInProgress] = useState(false);
   
+  // تحديث حالة الاتصال المحلية عند تغير حالة الاتصال العالمية
   useEffect(() => {
-    const handleOnline = async () => {
-      const isActuallyOnline = await checkNetworkStatus();
-      
-      if (isActuallyOnline) {
-        setIsOffline(false);
-        setNetworkStatus({ isConnected: true, isOnline: true });
-        
-        toast.success(
-          t('network.backOnline', 'تمت استعادة الاتصال'),
-          {
-            description: hasPendingSync() 
-              ? t('network.syncPending', 'جاري مزامنة البيانات المحفوظة محليًا')
-              : undefined,
-            duration: 3000
-          }
-        );
-        
-        if (hasPendingSync() && appState.preferences?.autoSave) {
-          syncOfflineData();
-        }
-      }
-    };
+    setIsOffline(!isOnline);
     
-    const handleOffline = () => {
-      setIsOffline(true);
-      setNetworkStatus({ isConnected: false, isOnline: false });
-      
-      toast.warning(
-        t('network.offline', 'تم فقدان الاتصال'),
-        {
-          description: t('network.offlineDescription', 'سيتم حفظ التغييرات محليًا ومزامنتها عند استعادة الاتصال'),
-          duration: 5000
-        }
-      );
-    };
-    
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    
-    if (!isOnline) {
-      setIsOffline(true);
+    if (isOnline && hasPendingSync() && preferences?.autoSave) {
+      syncOfflineData();
     }
-    
+  }, [isOnline, preferences]);
+  
+  useEffect(() => {
     loadPendingSyncItems();
     
-    const checkInterval = setInterval(async () => {
-      if (isOffline) {
-        const isActuallyOnline = await checkNetworkStatus();
-        if (isActuallyOnline) {
-          handleOnline();
-        }
-      }
-    }, 30000);
-    
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-      clearInterval(checkInterval);
+      // حفظ أي عناصر معلقة قبل إنهاء المكون
+      if (pendingSyncItems.length > 0) {
+        savePendingSyncItems(pendingSyncItems);
+      }
     };
-  }, [isOnline, checkNetworkStatus, setNetworkStatus, t, isOffline, appState.preferences]);
+  }, []);
   
   const loadPendingSyncItems = useCallback(() => {
     try {
@@ -196,36 +156,10 @@ export function useOfflineMode() {
     }
   }, [isOnline, pendingSyncItems, savePendingSyncItems, syncInProgress, t]);
   
+  // تم تحسينها لاستخدام retryConnection من useNetworkManager
   const attemptReconnect = useCallback(async () => {
-    toast.loading(
-      t('network.checkingConnection', 'جاري التحقق من الاتصال'),
-      { duration: 2000 }
-    );
-    
-    const isConnected = await checkNetworkStatus();
-    
-    if (isConnected) {
-      setIsOffline(false);
-      setNetworkStatus({ isConnected: true, isOnline: true });
-      
-      toast.success(
-        t('network.connectionRestored', 'تم استعادة الاتصال'),
-        { duration: 3000 }
-      );
-      
-      return true;
-    } else {
-      toast.error(
-        t('network.stillOffline', 'لا يزال الاتصال مفقودًا'),
-        {
-          description: t('network.checkNetworkSettings', 'تحقق من إعدادات الشبكة وحاول مرة أخرى'),
-          duration: 5000
-        }
-      );
-      
-      return false;
-    }
-  }, [checkNetworkStatus, setNetworkStatus, t]);
+    return await retryConnection();
+  }, [retryConnection]);
   
   return {
     isOnline,
@@ -236,6 +170,7 @@ export function useOfflineMode() {
     
     addOfflineItem,
     syncOfflineData,
-    attemptReconnect
+    attemptReconnect,
+    checkNetworkStatus
   };
 }
