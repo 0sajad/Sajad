@@ -61,10 +61,12 @@ export function AILearningSourcesPanel({
       if (diffMins < 1) {
         setTimeAgo(t('common.justNow', 'الآن'));
       } else if (diffMins < 60) {
-        setTimeAgo(t('common.minsAgo', { count: diffMins }, '{{count}} دقيقة مضت'));
+        // Fixed: correctly handle translation with count parameter
+        setTimeAgo(t('common.minsAgo', { defaultValue: '{{count}} دقيقة مضت', count: diffMins }));
       } else {
         const diffHours = Math.floor(diffMins / 60);
-        setTimeAgo(t('common.hoursAgo', { count: diffHours }, '{{count}} ساعة مضت'));
+        // Fixed: correctly handle translation with count parameter
+        setTimeAgo(t('common.hoursAgo', { defaultValue: '{{count}} ساعة مضت', count: diffHours }));
       }
     };
     

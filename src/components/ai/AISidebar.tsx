@@ -4,7 +4,11 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { AIFeatures } from "@/components/ai/AIFeatures";
 import { useTranslation } from "react-i18next";
 
-export const AISidebar = () => {
+interface AISidebarProps {
+  isCompact?: boolean;
+}
+
+export const AISidebar = ({ isCompact = false }: AISidebarProps) => {
   const { t } = useTranslation();
   
   return (

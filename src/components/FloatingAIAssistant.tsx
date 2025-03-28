@@ -8,9 +8,10 @@ import { BrainCircuit, MessageSquare } from "lucide-react";
 interface FloatingAIAssistantProps {
   show: boolean;
   onMaximize: () => void;
+  onError?: () => void; // Added optional onError prop
 }
 
-export function FloatingAIAssistant({ show, onMaximize }: FloatingAIAssistantProps) {
+export function FloatingAIAssistant({ show, onMaximize, onError }: FloatingAIAssistantProps) {
   const { t } = useTranslation();
   const [showSpeechBubble, setShowSpeechBubble] = useState(false);
   const [messageIndex, setMessageIndex] = useState(0);
