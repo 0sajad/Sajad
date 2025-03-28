@@ -24,6 +24,10 @@ const storage = {
     if (isServer) return;
     localStorage.setItem(name, value);
   },
+  removeItem: (name: string): void => {
+    if (isServer) return;
+    localStorage.removeItem(name);
+  }
 }
 
 export const useStore = create<StoreState>()(
@@ -62,6 +66,13 @@ export const useStore = create<StoreState>()(
             console.error('Error setting item in storage', e);
           }
         },
+        removeItem: (name) => {
+          try {
+            storage.removeItem(name);
+          } catch (e) {
+            console.error('Error removing item from storage', e);
+          }
+        }
       },
       partialize: (state) => ({
         deviceTier: state.deviceTier,
