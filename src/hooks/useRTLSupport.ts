@@ -17,12 +17,13 @@ export function useRTLSupport(options: RTLOptions = {}) {
   
   // تحديث اتجاه المستند عند تغيير اللغة
   useEffect(() => {
-    const currentLang = i18n.language;
+    // التأكد من أن اللغة الحالية موجودة قبل استخدامها
+    const currentLang = i18n.language || 'en';
     
     // تحديد ما إذا كانت اللغة الحالية هي RTL
     const rtlLanguages = enforceSpecificLanguages;
     const shouldBeRTL = enforceRTL || rtlLanguages.some(lang => 
-      currentLang === lang || currentLang.startsWith(`${lang}-`)
+      currentLang === lang || (currentLang && currentLang.startsWith(`${lang}-`))
     );
     
     // تطبيق الاتجاه على المستند

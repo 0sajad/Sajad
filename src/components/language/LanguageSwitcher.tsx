@@ -10,11 +10,20 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useLanguageTransition } from "@/hooks/useLanguageTransition";
-import { useLanguageNames } from "@/hooks/useLanguageNames";
 import { useA11y } from "@/hooks/useA11y";
 import { useRTLSupport } from "@/hooks/useRTLSupport";
 import { LanguageSwitcherButton } from "./LanguageSwitcherButton";
 import { LanguageOption } from "./LanguageOption";
+
+// تعريف قائمة اللغات المدعومة مباشرة ضمن المكون
+const DEFAULT_LANGUAGES = [
+  { code: "ar", name: "العربية", nativeName: "العربية", flag: "🇸🇦" },
+  { code: "ar-iq", name: "Iraqi Arabic", nativeName: "العراقية", flag: "🇮🇶" },
+  { code: "en", name: "English", nativeName: "English", flag: "🇺🇸" },
+  { code: "fr", name: "French", nativeName: "Français", flag: "🇫🇷" },
+  { code: "ja", name: "Japanese", nativeName: "日本語", flag: "🇯🇵" },
+  { code: "zh", name: "Chinese", nativeName: "中文", flag: "🇨🇳" }
+];
 
 interface LanguageSwitcherProps {
   /** نوع العرض: أيقونة فقط أو عرض كامل مع نص */
@@ -30,10 +39,9 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
   const { t, i18n } = useTranslation();
   const { isTransitioning, changeLanguage } = useLanguageTransition();
   const [mounted, setMounted] = useState(false);
-  const { reducedMotion, announce } = useA11y();
+  const { reducedMotion, announce } = useA11y?.() || { reducedMotion: false, announce: undefined };
   const { isRTL } = useRTLSupport();
-  const { languageNames, getGroupedLanguages } = useLanguageNames();
-
+  
   // تأكد من أن مكون اللغة يعمل فقط على جانب العميل
   useEffect(() => {
     setMounted(true);
@@ -55,11 +63,10 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
    * معالج تغيير اللغة - يعلن قارئ الشاشة بالتغيير
    */
   const handleLanguageChange = (langCode: string) => {
-    if (!langCode || !languageNames) return;
+    if (!langCode) return;
     
-    const newLanguageName = langCode in languageNames 
-      ? languageNames[langCode as keyof typeof languageNames]?.nativeName 
-      : langCode;
+    const language = DEFAULT_LANGUAGES.find(lang => lang.code === langCode);
+    const newLanguageName = language?.nativeName || langCode;
     
     // إعلان مخصص حسب اللغة الحالية
     const currentLang = i18n.language || 'en';
@@ -100,17 +107,16 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
   };
 
   // تأكد من أن المكون جاهز قبل العرض
-  if (!mounted || !languageNames) {
+  if (!mounted) {
     return null;
   }
 
   // الحصول على معلومات اللغة الحالية
   const currentLang = i18n.language || 'en';
-  const currentLanguage = (languageNames && languageNames[currentLang as keyof typeof languageNames]) || 
-                         (languageNames && languageNames['en']);
+  const currentLanguage = DEFAULT_LANGUAGES.find(lang => lang.code === currentLang) || DEFAULT_LANGUAGES.find(lang => lang.code === 'en') || DEFAULT_LANGUAGES[0];
 
-  // التأكد من وجود اللغات المجمعة
-  const groupedLanguages = getGroupedLanguages ? getGroupedLanguages() : ['en'];
+  // قائمة اللغات المتاحة
+  const groupedLanguages = DEFAULT_LANGUAGES.map(lang => lang.code);
 
   return (
     <TooltipProvider>
@@ -150,10 +156,10 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
           <DropdownMenuSeparator className="bg-gradient-to-r from-blue-200 to-purple-200 dark:from-blue-800/30 dark:to-purple-800/30" />
           
           {groupedLanguages.map((langCode) => {
-            if (!languageNames || !languageNames[langCode as keyof typeof languageNames]) return null;
+            const lang = DEFAULT_LANGUAGES.find(l => l.code === langCode);
+            if (!lang) return null;
             
             const isActive = i18n.language === langCode;
-            const lang = languageNames[langCode as keyof typeof languageNames];
             const isIraqiArabic = langCode === 'ar-iq';
             
             return (
