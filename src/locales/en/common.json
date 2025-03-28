@@ -10,6 +10,13 @@
     "settings": "Settings",
     "helpCenter": "Help Center",
     "license": "License",
-    "login": "Log In"
-  }
+    "login": "Log In",
+    "fiberOptic": "Fiber Optic"
+  },
+  "errors": {
+    "pageNotFound": "Oops! Page not found",
+    "returnHome": "Return to Home",
+    "goToDashboard": "Go to Dashboard" 
+  },
+  "languageChanged": "Language changed to {{language}}"
 }
