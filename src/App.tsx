@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { useTranslation } from "react-i18next";
-import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import { ModeProvider } from "@/context/ModeContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -28,7 +27,6 @@ function App() {
   const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
   
   useEffect(() => {
-    // تقليل وقت التحميل للتأكد من عرض المحتوى بسرعة أكبر
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 800);

@@ -1,8 +1,6 @@
 
 import React from "react";
-import { useNetworkStats } from "@/hooks/useNetworkStats";
 import { AIChatbot } from "../ai/AIChatbot";
-import { GlassCard } from "../ui/glass-card";
 import { useTranslation } from "react-i18next";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { NetworkMonitoring } from "./NetworkMonitoring";

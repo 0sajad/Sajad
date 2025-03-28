@@ -24,7 +24,7 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
     { code: "zh", name: "Chinese", nativeName: "中文", flag: "🇨🇳" }
   ];
 
-  // التأكد من تطبيق الاتجاه الصحيح حسب اللغة عند التحميل
+  // تأكد من تطبيق الاتجاه الصحيح للصفحة عند التحميل
   useEffect(() => {
     setMounted(true);
     const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";

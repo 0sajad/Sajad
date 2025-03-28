@@ -9,8 +9,6 @@ import {
   CardTitle 
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
 import { AlertTriangle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { FeatureManagement } from "./FeatureManagement";
@@ -20,7 +18,7 @@ import { SecuritySettings } from "./SecuritySettings";
 import { LanguageTools } from "./LanguageTools";
 
 export function DeveloperPanel() {
-  const { isDeveloperMode, mode } = useMode();
+  const { isDeveloperMode } = useMode();
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("features");
   

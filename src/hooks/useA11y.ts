@@ -1,41 +1,64 @@
 
-import { useContext, useCallback } from "react";
-import { AccessibilityContext } from "@/context/AccessibilityContext";
+import { useState, useEffect } from 'react';
+import { useDyslexiaFeatures, useTextSpacingFeatures, useLinkFeatures } from './accessibility/useA11yFeatures';
+import { useA11yCore } from './accessibility/useA11yCore';
+import { useA11yText } from './accessibility/useA11yText';
+import { useA11yColor } from './accessibility/useA11yColor';
+import { useCursorFeatures, useColorInversionFeatures, useMonochromeFeatures } from './accessibility/useA11yVisualEffects';
 
 /**
- * Hook مخصص لإدارة ميزات إمكانية الوصول
- * يوفر وظائف للتحكم في ميزات إمكانية الوصول وإعلان الشاشة
+ * Hook to manage all accessibility features
  */
 export function useA11y() {
-  const a11yContext = useContext(AccessibilityContext);
-
-  if (!a11yContext) {
-    throw new Error("useA11y must be used within an AccessibilityProvider");
-  }
-
-  // وظيفة لإعلان نص للقارئات الشاشة
-  const announce = useCallback((message: string, politeness: "assertive" | "polite" = "polite") => {
-    if (a11yContext.screenReaderAnnouncements) {
-      const announcer = document.getElementById(
-        politeness === "assertive" ? "assertive-announcer" : "polite-announcer"
-      );
-      
-      if (announcer) {
-        announcer.textContent = message;
-      }
-    }
-  }, [a11yContext.screenReaderAnnouncements]);
-
-  // وظيفة لتشغيل ملاحظات صوتية
-  const playNotificationSound = useCallback((soundType?: "success" | "error" | "warning" | "info") => {
-    if (a11yContext.soundFeedback && a11yContext.soundNotifications) {
-      a11yContext.soundNotifications.playSound(soundType || "notification");
-    }
-  }, [a11yContext.soundFeedback, a11yContext.soundNotifications]);
-
+  // Core accessibility features
+  const {
+    highContrast, setHighContrast,
+    largeText, setLargeText,
+    reducedMotion, setReducedMotion,
+    focusMode, setFocusMode
+  } = useA11yCore();
+  
+  // Text-related features
+  const {
+    dyslexicFont, setDyslexicFont,
+    readingGuide, setReadingGuide
+  } = useA11yText();
+  
+  // Color-related features
+  const { colorBlindMode, setColorBlindMode } = useA11yColor();
+  
+  // Visual effects features
+  const { customCursor, setCustomCursor } = useCursorFeatures();
+  const { invertColors, setInvertColors } = useColorInversionFeatures();
+  const { monochrome, setMonochrome } = useMonochromeFeatures();
+  
+  // Text spacing & link features
+  const { dyslexiaFont, setDyslexiaFont } = useDyslexiaFeatures();
+  const { textSpacing, setTextSpacing } = useTextSpacingFeatures();
+  const { underlineLinks, setUnderlineLinks } = useLinkFeatures();
+  
   return {
-    ...a11yContext,
-    announce,
-    playNotificationSound
+    // Core features
+    highContrast, setHighContrast,
+    largeText, setLargeText,
+    reducedMotion, setReducedMotion,
+    focusMode, setFocusMode,
+    
+    // Text features
+    dyslexicFont, setDyslexicFont,
+    readingGuide, setReadingGuide,
+    
+    // Color features
+    colorBlindMode, setColorBlindMode,
+    
+    // Visual effects
+    customCursor, setCustomCursor,
+    invertColors, setInvertColors,
+    monochrome, setMonochrome,
+    
+    // Text formatting
+    dyslexiaFont, setDyslexiaFont,
+    textSpacing, setTextSpacing,
+    underlineLinks, setUnderlineLinks
   };
 }
