@@ -1,57 +1,38 @@
 
 import React, { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
-import { Cpu, HardDrive, Thermometer, MemoryStick } from "lucide-react";
+import { Cpu, HardDrive, Thermometer, MemoryStick, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { SystemMonitorHeader } from "./performance/SystemMonitorHeader";
 import { ResourceMetricCard } from "./performance/ResourceMetricCard";
 import { CPUMemoryChart } from "./performance/CPUMemoryChart";
 import { DiskTemperatureChart } from "./performance/DiskTemperatureChart";
 import { SystemHealthAssessment } from "./performance/SystemHealthAssessment";
 import { generatePerformanceData, PerformanceDataPoint } from "./performance/utils/performanceUtils";
 import { useA11y } from "@/hooks/useA11y";
-import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 
 export const SystemPerformanceMonitor = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.dir() === 'rtl';
   const { reducedMotion } = useA11y();
-  const keyboardShortcuts = useKeyboardShortcuts();
   const [performanceData, setPerformanceData] = useState<PerformanceDataPoint[]>(generatePerformanceData());
   const [isRefreshing, setIsRefreshing] = useState(false);
   
   // Current values (last in the array)
   const currentValues = performanceData[performanceData.length - 1];
   
-  // مساعدة آمنة للإعلان لقارئات الشاشة
-  const safeAnnounce = (message: string) => {
-    // التحقق من وجود الدالة announce قبل استخدامها
-    if (keyboardShortcuts && typeof keyboardShortcuts.announce === 'function') {
-      keyboardShortcuts.announce(message);
-    } else if (window.announce) {
-      // استخدام window.announce كخطة بديلة
-      window.announce(message);
-    }
-  };
-  
   const refreshData = () => {
     setIsRefreshing(true);
     
     toast({
-      title: t('systemMonitor.refreshing', 'Refreshing Data'),
-      description: t('systemMonitor.collectingMetrics', 'Collecting system metrics...')
+      title: t('systemMonitor.refreshing', isRTL ? 'تحديث البيانات' : 'Refreshing Data'),
+      description: t('systemMonitor.collectingMetrics', isRTL ? 'جمع مقاييس النظام...' : 'Collecting system metrics...')
     });
-    
-    // استخدام الدالة الآمنة للإعلان
-    safeAnnounce(t('systemMonitor.refreshing', 'Refreshing Data') + '. ' + 
-             t('systemMonitor.collectingMetrics', 'Collecting system metrics...'));
     
     setTimeout(() => {
       setPerformanceData(generatePerformanceData());
       setIsRefreshing(false);
-      
-      // استخدام الدالة الآمنة للإعلان
-      safeAnnounce(t('systemMonitor.dataRefreshed', 'System data has been refreshed'));
     }, 1000);
   };
   
@@ -72,7 +53,7 @@ export const SystemPerformanceMonitor = () => {
         temperature: Math.floor(Math.random() * 15) + 45,
       });
       setPerformanceData(newData);
-    }, reducedMotion ? 10000 : 5000); // تقليل التحديثات في وضع تقليل الحركة
+    }, reducedMotion ? 10000 : 5000);
     
     return () => {
       clearTimeout(initialTimeout);
@@ -80,87 +61,99 @@ export const SystemPerformanceMonitor = () => {
     };
   }, [performanceData, reducedMotion]);
   
-  // Get descriptions for metrics with more context
-  const getCpuDescription = () => {
-    const value = currentValues.cpu;
-    if (value > 80) return t('systemMonitor.cpuHigh', 'CPU usage is very high');
-    if (value > 50) return t('systemMonitor.cpuModerate', 'CPU usage is moderate');
-    return t('systemMonitor.cpuLow', 'CPU usage is low');
-  };
-  
-  const getMemoryDescription = () => {
-    const value = currentValues.memory;
-    if (value > 80) return t('systemMonitor.memoryHigh', 'Memory usage is very high');
-    if (value > 50) return t('systemMonitor.memoryModerate', 'Memory usage is moderate');
-    return t('systemMonitor.memoryLow', 'Memory usage is low');
-  };
-  
-  const getDiskDescription = () => {
-    const value = currentValues.disk;
-    if (value > 80) return t('systemMonitor.diskHigh', 'Disk usage is very high');
-    if (value > 50) return t('systemMonitor.diskModerate', 'Disk usage is moderate');
-    return t('systemMonitor.diskLow', 'Disk usage is low');
-  };
-  
-  const getTemperatureDescription = () => {
-    const value = currentValues.temperature;
-    if (value > 75) return t('systemMonitor.tempHigh', 'Temperature is very high');
-    if (value > 60) return t('systemMonitor.tempModerate', 'Temperature is moderate');
-    return t('systemMonitor.tempLow', 'Temperature is in normal range');
-  };
-  
   return (
-    <Card 
-      className="border-octaBlue-200 shadow-md animate-fade-in" 
-      aria-label={t('systemMonitor.title', 'System Performance Monitor')}
-    >
-      <SystemMonitorHeader onRefresh={refreshData} isRefreshing={isRefreshing} />
+    <Card className="border-blue-200 shadow-md">
+      <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-t-lg flex flex-row items-center justify-between">
+        <div>
+          <CardTitle className="text-blue-800 flex items-center">
+            <Cpu className="mr-2 h-5 w-5 text-blue-600" />
+            {isRTL ? 'مراقبة أداء النظام' : 'System Performance Monitor'}
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            {isRTL ? 'مراقبة موارد النظام في الوقت الفعلي' : 'Real-time monitoring of system resources'}
+          </p>
+        </div>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={refreshData} 
+          disabled={isRefreshing}
+          className="flex items-center gap-1"
+        >
+          <RefreshCw size={14} className={isRefreshing ? 'animate-spin' : ''} />
+          {isRTL ? 'تحديث' : 'Refresh'}
+        </Button>
+      </CardHeader>
       
       <CardContent className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <ResourceMetricCard 
-            icon={Cpu}
-            iconColor="blue"
-            label="CPU"
-            value={`${currentValues.cpu}%`}
-            bgColorFrom="blue"
-            bgColorTo="blue"
-            ariaLabel={t('systemMonitor.cpuUsage', 'CPU usage {value}', { value: `${currentValues.cpu}%` })}
-            description={getCpuDescription()}
-          />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white p-4 rounded-lg border shadow-sm">
+            <div className="flex items-center mb-2">
+              <Cpu className="text-blue-500 mr-2 h-5 w-5" />
+              <div>
+                <h3 className="font-medium text-lg">{currentValues.cpu}%</h3>
+                <p className="text-sm text-muted-foreground">CPU</p>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {currentValues.cpu < 30 ? 
+                (isRTL ? 'استخدام المعالج منخفض' : 'CPU usage is low') : 
+                currentValues.cpu < 70 ? 
+                (isRTL ? 'استخدام المعالج معتدل' : 'CPU usage is moderate') : 
+                (isRTL ? 'استخدام المعالج مرتفع' : 'CPU usage is high')}
+            </p>
+          </div>
           
-          <ResourceMetricCard 
-            icon={MemoryStick}
-            iconColor="green"
-            label={t('systemMonitor.memory', 'Memory')}
-            value={`${currentValues.memory}%`}
-            bgColorFrom="green"
-            bgColorTo="green"
-            ariaLabel={t('systemMonitor.memoryUsage', 'Memory usage {value}', { value: `${currentValues.memory}%` })}
-            description={getMemoryDescription()}
-          />
+          <div className="bg-white p-4 rounded-lg border shadow-sm">
+            <div className="flex items-center mb-2">
+              <MemoryStick className="text-green-500 mr-2 h-5 w-5" />
+              <div>
+                <h3 className="font-medium text-lg">{currentValues.memory}%</h3>
+                <p className="text-sm text-muted-foreground">{isRTL ? 'ذاكرة' : 'Memory'}</p>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {currentValues.memory < 30 ? 
+                (isRTL ? 'استخدام الذاكرة منخفض' : 'Memory usage is low') : 
+                currentValues.memory < 70 ? 
+                (isRTL ? 'استخدام الذاكرة معتدل' : 'Memory usage is moderate') : 
+                (isRTL ? 'استخدام الذاكرة مرتفع' : 'Memory usage is high')}
+            </p>
+          </div>
           
-          <ResourceMetricCard 
-            icon={HardDrive}
-            iconColor="purple"
-            label={t('systemMonitor.disk', 'Disk')}
-            value={`${currentValues.disk}%`}
-            bgColorFrom="purple"
-            bgColorTo="purple"
-            ariaLabel={t('systemMonitor.diskUsage', 'Disk usage {value}', { value: `${currentValues.disk}%` })}
-            description={getDiskDescription()}
-          />
+          <div className="bg-white p-4 rounded-lg border shadow-sm">
+            <div className="flex items-center mb-2">
+              <HardDrive className="text-purple-500 mr-2 h-5 w-5" />
+              <div>
+                <h3 className="font-medium text-lg">{currentValues.disk}%</h3>
+                <p className="text-sm text-muted-foreground">{isRTL ? 'قرص' : 'Disk'}</p>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {currentValues.disk < 30 ? 
+                (isRTL ? 'استخدام القرص منخفض' : 'Disk usage is low') : 
+                currentValues.disk < 70 ? 
+                (isRTL ? 'استخدام القرص معتدل' : 'Disk usage is moderate') : 
+                (isRTL ? 'استخدام القرص مرتفع' : 'Disk usage is high')}
+            </p>
+          </div>
           
-          <ResourceMetricCard 
-            icon={Thermometer}
-            iconColor="amber"
-            label={t('systemMonitor.temperature', 'Temperature')}
-            value={`${currentValues.temperature}°C`}
-            bgColorFrom="amber"
-            bgColorTo="amber"
-            ariaLabel={t('systemMonitor.tempReading', 'Temperature reading {value}', { value: `${currentValues.temperature}°C` })}
-            description={getTemperatureDescription()}
-          />
+          <div className="bg-white p-4 rounded-lg border shadow-sm">
+            <div className="flex items-center mb-2">
+              <Thermometer className="text-amber-500 mr-2 h-5 w-5" />
+              <div>
+                <h3 className="font-medium text-lg">{currentValues.temperature}°C</h3>
+                <p className="text-sm text-muted-foreground">{isRTL ? 'درجة الحرارة' : 'Temperature'}</p>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {currentValues.temperature < 60 ? 
+                (isRTL ? 'درجة الحرارة في النطاق الطبيعي' : 'Temperature is in normal range') : 
+                currentValues.temperature < 75 ? 
+                (isRTL ? 'درجة الحرارة معتدلة' : 'Temperature is moderate') : 
+                (isRTL ? 'درجة الحرارة مرتفعة' : 'Temperature is high')}
+            </p>
+          </div>
         </div>
         
         <div className="space-y-6">

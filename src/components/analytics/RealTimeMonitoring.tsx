@@ -1,9 +1,8 @@
 
 import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
 import { AreaChart, Area, LineChart, Line, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
-import { Activity, Zap, ArrowDownToLine, ArrowUpFromLine, AlertTriangle, RefreshCw } from "lucide-react";
+import { Activity, Zap, ArrowDownToLine, ArrowUpFromLine, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -45,22 +44,13 @@ const generateAnomaly = (data) => {
 };
 
 export const RealTimeMonitoring = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.dir() === 'rtl';
   const [realTimeData, setRealTimeData] = useState(generateRealTimeData());
   const [anomalies, setAnomalies] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   
-  const refreshData = () => {
-    setIsRefreshing(true);
-    
-    const newData = generateRealTimeData();
-    setRealTimeData(newData);
-    setAnomalies(generateAnomaly(newData));
-    
-    setTimeout(() => {
-      setIsRefreshing(false);
-    }, 500);
-  };
+  const lastData = realTimeData[realTimeData.length - 1];
   
   // محاكاة تحديث البيانات في الوقت الفعلي
   useEffect(() => {
@@ -84,175 +74,146 @@ export const RealTimeMonitoring = () => {
   }, [realTimeData]);
   
   return (
-    <Card className="border-octaBlue-200 shadow-md animate-fade-in">
-      <CardHeader className="bg-gradient-to-r from-octaBlue-50 to-octaBlue-100 rounded-t-lg">
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="text-octaBlue-800 font-tajawal flex items-center">
-              <Activity className="mr-2 h-5 w-5 text-octaBlue-600" />
-              مراقبة الشبكة في الوقت الفعلي
-            </CardTitle>
-            <p className="text-sm text-muted-foreground font-tajawal">
-              قياس سرعة ومستوى أداء الشبكة بشكل مباشر
-            </p>
+    <div className="h-full">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className={`p-4 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <div className={`${isRTL ? 'ml-2' : 'mr-2'}`}>
+            <ArrowDownToLine className="text-blue-500 h-6 w-6" />
           </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={refreshData} 
-            disabled={isRefreshing}
-            className="font-tajawal flex items-center gap-1"
-          >
-            <RefreshCw size={14} className={cn("mr-1", isRefreshing && "animate-spin")} />
-            تحديث
-          </Button>
+          <div className={`${isRTL ? 'text-right' : 'text-left'}`}>
+            <p className="text-sm text-muted-foreground">{isRTL ? "سرعة التنزيل" : "Download Speed"}</p>
+            <p className="text-xl font-semibold">{lastData?.download || 95} Mbps</p>
+          </div>
         </div>
-      </CardHeader>
+        
+        <div className={`p-4 rounded-lg bg-gradient-to-br from-green-50 to-green-100 flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <div className={`${isRTL ? 'ml-2' : 'mr-2'}`}>
+            <ArrowUpFromLine className="text-green-500 h-6 w-6" />
+          </div>
+          <div className={`${isRTL ? 'text-right' : 'text-left'}`}>
+            <p className="text-sm text-muted-foreground">{isRTL ? "سرعة الرفع" : "Upload Speed"}</p>
+            <p className="text-xl font-semibold">{lastData?.upload || 65} Mbps</p>
+          </div>
+        </div>
+        
+        <div className={`p-4 rounded-lg bg-gradient-to-br from-amber-50 to-amber-100 flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <div className={`${isRTL ? 'ml-2' : 'mr-2'}`}>
+            <Zap className="text-amber-500 h-6 w-6" />
+          </div>
+          <div className={`${isRTL ? 'text-right' : 'text-left'}`}>
+            <p className="text-sm text-muted-foreground">{isRTL ? "زمن الإستجابة" : "Latency"}</p>
+            <p className="text-xl font-semibold">{lastData?.latency || 21} ms</p>
+          </div>
+        </div>
+      </div>
       
-      <CardContent className="pt-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="p-4 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100">
-            <div className="flex items-center">
-              <ArrowDownToLine className="text-blue-500 mr-2 h-8 w-8" />
-              <div>
-                <p className="text-sm text-muted-foreground font-tajawal">سرعة التنزيل</p>
-                <p className="text-2xl font-bold">{realTimeData[realTimeData.length - 1].download} Mbps</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="p-4 rounded-lg bg-gradient-to-br from-green-50 to-green-100">
-            <div className="flex items-center">
-              <ArrowUpFromLine className="text-green-500 mr-2 h-8 w-8" />
-              <div>
-                <p className="text-sm text-muted-foreground font-tajawal">سرعة الرفع</p>
-                <p className="text-2xl font-bold">{realTimeData[realTimeData.length - 1].upload} Mbps</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="p-4 rounded-lg bg-gradient-to-br from-amber-50 to-amber-100">
-            <div className="flex items-center">
-              <Zap className="text-amber-500 mr-2 h-8 w-8" />
-              <div>
-                <p className="text-sm text-muted-foreground font-tajawal">زمن الإستجابة</p>
-                <p className="text-2xl font-bold">{realTimeData[realTimeData.length - 1].latency} ms</p>
-              </div>
-            </div>
-          </div>
+      <div className="mb-6">
+        <h3 className={`text-md font-medium mb-4 ${isRTL ? 'text-right' : 'text-left'}`}>
+          {isRTL ? "سرعة التنزيل والرفع" : "Download & Upload Speed"}
+        </h3>
+        <div className="h-[150px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={realTimeData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#eaeaea" />
+              <XAxis dataKey="time" tick={{ fontSize: 10 }} />
+              <YAxis tick={{ fontSize: 10 }} />
+              <Tooltip 
+                content={({ active, payload, label }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="bg-white p-3 border rounded shadow-sm">
+                        <p className="text-sm font-bold">{label}</p>
+                        <p className="text-sm text-blue-600">{`${isRTL ? "تنزيل" : "Download"}: ${payload[0].value} Mbps`}</p>
+                        <p className="text-sm text-green-600">{`${isRTL ? "رفع" : "Upload"}: ${payload[1].value} Mbps`}</p>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Area 
+                type="monotone" 
+                dataKey="download" 
+                name={isRTL ? "تنزيل" : "Download"} 
+                stroke="#3b82f6" 
+                fill="#93c5fd" 
+                activeDot={{ r: 8 }} 
+              />
+              <Area 
+                type="monotone" 
+                dataKey="upload" 
+                name={isRTL ? "رفع" : "Upload"} 
+                stroke="#10b981" 
+                fill="#6ee7b7" 
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
-        
-        <div className="space-y-6">
-          <div>
-            <h3 className="text-lg font-medium mb-4 font-tajawal">سرعة التنزيل والرفع</h3>
-            <div className="h-[200px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={realTimeData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis dataKey="time" tick={{ fontSize: 12 }} />
-                  <YAxis tick={{ fontSize: 12 }} />
-                  <Tooltip 
-                    content={({ active, payload, label }) => {
-                      if (active && payload && payload.length) {
-                        return (
-                          <div className="bg-white p-3 border rounded shadow-sm">
-                            <p className="text-sm font-bold">{label}</p>
-                            <p className="text-sm text-blue-600">{`تنزيل: ${payload[0].value} Mbps`}</p>
-                            <p className="text-sm text-green-600">{`رفع: ${payload[1].value} Mbps`}</p>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
-                  <Legend />
-                  <Area 
-                    type="monotone" 
-                    dataKey="download" 
-                    name="التنزيل" 
-                    stroke="#3b82f6" 
-                    fill="#93c5fd" 
-                    activeDot={{ r: 8 }} 
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="upload" 
-                    name="الرفع" 
-                    stroke="#10b981" 
-                    fill="#6ee7b7" 
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-medium mb-4 font-tajawal">زمن الإستجابة</h3>
-            <div className="h-[200px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={realTimeData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis dataKey="time" tick={{ fontSize: 12 }} />
-                  <YAxis tick={{ fontSize: 12 }} />
-                  <Tooltip 
-                    content={({ active, payload, label }) => {
-                      if (active && payload && payload.length) {
-                        return (
-                          <div className="bg-white p-3 border rounded shadow-sm">
-                            <p className="text-sm font-bold">{label}</p>
-                            <p className="text-sm text-amber-600">{`زمن الإستجابة: ${payload[0].value} ms`}</p>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
-                  <Legend />
-                  <Line 
-                    type="monotone" 
-                    dataKey="latency" 
-                    name="زمن الإستجابة" 
-                    stroke="#f59e0b" 
-                    strokeWidth={2} 
-                    dot={{ r: 3 }} 
-                    activeDot={{ r: 8 }} 
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+      </div>
+      
+      <div className="mb-6">
+        <h3 className={`text-md font-medium mb-4 ${isRTL ? 'text-right' : 'text-left'}`}>
+          {isRTL ? "زمن الإستجابة" : "Response Time"}
+        </h3>
+        <div className="h-[150px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={realTimeData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#eaeaea" />
+              <XAxis dataKey="time" tick={{ fontSize: 10 }} />
+              <YAxis tick={{ fontSize: 10 }} />
+              <Tooltip 
+                content={({ active, payload, label }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="bg-white p-3 border rounded shadow-sm">
+                        <p className="text-sm font-bold">{label}</p>
+                        <p className="text-sm text-amber-600">{`${isRTL ? "زمن الإستجابة" : "Latency"}: ${payload[0].value} ms`}</p>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="latency" 
+                name={isRTL ? "زمن الإستجابة" : "Latency"} 
+                stroke="#f59e0b" 
+                strokeWidth={2} 
+                dot={{ r: 3 }} 
+                activeDot={{ r: 8 }} 
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
-        
-        {anomalies.length > 0 && (
-          <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-            <h3 className="text-md font-medium mb-3 flex items-center font-tajawal">
-              <AlertTriangle className="text-amber-500 mr-2 h-5 w-5" />
-              تنبيهات الشبكة
-            </h3>
-            <div className="space-y-3 max-h-36 overflow-y-auto">
-              {anomalies.map((anomaly, index) => (
-                <div key={index} className="flex items-start space-x-2 rtl:space-x-reverse">
-                  <div className={`w-2 h-2 mt-1.5 rounded-full ${
-                    anomaly.type === 'latency' ? 'bg-amber-500' : 
-                    anomaly.type === 'download' ? 'bg-blue-500' : 'bg-green-500'
-                  }`} />
-                  <div>
-                    <p className="text-sm font-medium font-tajawal">
-                      {anomaly.type === 'latency' ? 'ارتفاع في زمن الإستجابة' : 
-                       anomaly.type === 'download' ? 'انخفاض في سرعة التنزيل' : 
-                       'انخفاض في سرعة الرفع'}
-                    </p>
-                    <p className="text-xs text-muted-foreground font-tajawal">
-                      {anomaly.time} - القيمة: {anomaly.value} 
-                      {anomaly.type === 'latency' ? ' ms' : ' Mbps'}
-                    </p>
-                  </div>
+      </div>
+      
+      {anomalies.length > 0 && (
+        <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+          <h3 className={`text-md font-medium mb-3 flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <AlertTriangle className="text-amber-500 h-5 w-5 mx-2" />
+            {isRTL ? "تنبيهات الشبكة" : "Network Alerts"}
+          </h3>
+          <div className="space-y-3 max-h-32 overflow-y-auto">
+            {anomalies.slice(0, 2).map((anomaly, index) => (
+              <div key={index} className={`flex items-start ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+                <div className={`w-2 h-2 mt-1.5 rounded-full ${anomaly.type === 'latency' ? 'bg-amber-500' : anomaly.type === 'download' ? 'bg-blue-500' : 'bg-green-500'} mx-2`} />
+                <div>
+                  <p className="text-sm font-medium">
+                    {anomaly.type === 'latency' ? (isRTL ? 'ارتفاع في زمن الإستجابة' : 'High latency detected') : 
+                     anomaly.type === 'download' ? (isRTL ? 'انخفاض في سرعة التنزيل' : 'Low download speed') : 
+                     (isRTL ? 'انخفاض في سرعة الرفع' : 'Low upload speed')}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {anomaly.time} - {isRTL ? 'القيمة:' : 'Value:'} {anomaly.value} 
+                    {anomaly.type === 'latency' ? ' ms' : ' Mbps'}
+                  </p>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        )}
-      </CardContent>
-    </Card>
+        </div>
+      )}
+    </div>
   );
 };
