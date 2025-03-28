@@ -1,0 +1,23 @@
+
+{
+  "optimized": "Performance Optimized",
+  "optimizedForDevice": "The app has been optimized to work better on your device",
+  "lowEndDevice": "Low-End Device",
+  "optimizationsApplied": "Performance optimizations have been automatically applied to improve your experience.",
+  "reducedEffects": "Visual effects have been reduced",
+  "enhancedMode": "Enhanced Performance Mode",
+  "standardMode": "Standard Performance Mode",
+  "performanceSettings": "Performance Settings",
+  "automaticOptimization": "Automatic Optimization",
+  "manualOptimization": "Manual Optimization",
+  "saveResources": "Save Device Resources",
+  "prioritizeVisuals": "Prioritize Visual Effects",
+  "loadingOptimized": "Loading...",
+  "loadingComplete": "Loading Complete",
+  "deviceDetected": "Your device has been detected as {{deviceType}}",
+  "deviceTypes": {
+    "low": "Low Performance",
+    "medium": "Medium Performance",
+    "high": "High Performance"
+  }
+}

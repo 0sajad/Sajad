@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, lazy, Suspense } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useTranslation } from 'react-i18next';
@@ -14,10 +14,18 @@ import { SkipLink } from "@/components/ui/accessibility/SkipLink";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { MobileA11yDrawer } from "@/components/ui/accessibility/mobile-a11y-drawer";
 import { useRTLSupport } from "@/hooks/useRTLSupport";
-import { MainContent } from "@/components/sections/MainContent";
-import { AccessibilityOverlay } from "@/components/accessibility/AccessibilityOverlay";
+import { usePerformanceOptimization } from "@/hooks/usePerformanceOptimization";
 import { useSectionVisibility } from "@/hooks/useSectionVisibility";
-import { AIAssistantManager } from "@/components/ai/AIAssistantManager";
+import { LazyLoad } from "@/components/ui/LazyLoad";
+import { LazyApp } from "@/components/performance/LazyApp";
+import { Skeleton } from "@/components/ui/skeleton";
+
+// تحميل المكونات الثقيلة بشكل كسول
+const MainContent = lazy(() => import("@/components/sections/MainContent"));
+const AIAssistantManager = lazy(() => import("@/components/ai/AIAssistantManager").then(
+  module => ({ default: module.AIAssistantManager })
+));
+const AccessibilityOverlay = lazy(() => import("@/components/accessibility/AccessibilityOverlay"));
 
 /**
  * الصفحة الرئيسية للتطبيق
@@ -29,15 +37,15 @@ export default function Index() {
   const { announce } = useA11y();
   const { isRTL } = useRTLSupport();
   const { sectionsVisible, pageLoaded, setPageLoaded } = useSectionVisibility();
+  const { deviceTier, isLowPerformanceDevice } = usePerformanceOptimization();
   
   // استخدام الخطافات (hooks) اللازمة
   useKeyboardShortcuts();
   usePreferenceSync();
   
-  // الإعلان عن اكتمال تحميل الصفحة - but only once
+  // الإعلان عن اكتمال تحميل الصفحة
   useEffect(() => {
     if (pageLoaded && announce) {
-      // Use a ref or some other mechanism to ensure this only runs once
       const announceTimeout = setTimeout(() => {
         const isArabic = i18n.language === 'ar' || i18n.language === 'ar-iq';
         const message = isArabic 
@@ -56,32 +64,48 @@ export default function Index() {
   };
   
   return (
-    <ErrorBoundary>
-      <TooltipProvider>
-        {/* طبقة إمكانية الوصول: تتضمن مكونات الوصول المساعدة */}
-        <AccessibilityOverlay />
-        
-        {/* رأس الصفحة */}
-        <Header />
-        
-        {/* المحتوى الرئيسي */}
-        <MainContent 
-          sectionsVisible={sectionsVisible}
-          isTransitioning={isTransitioning}
-          language={i18n.language}
-          isRTL={isRTL}
-        />
-        
-        {/* المساعد الذكي */}
-        <AIAssistantManager onMaximize={handleMaximizeAI} />
-        
-        {/* تذييل الصفحة */}
-        <Footer />
-        
-        {/* أزرار إمكانية الوصول السريعة */}
-        <QuickAccessibilityButton />
-        <MobileA11yDrawer />
-      </TooltipProvider>
-    </ErrorBoundary>
+    <LazyApp>
+      <ErrorBoundary>
+        <TooltipProvider>
+          {/* طبقة إمكانية الوصول: تتضمن مكونات الوصول المساعدة */}
+          <Suspense fallback={null}>
+            <AccessibilityOverlay />
+          </Suspense>
+          
+          {/* رأس الصفحة - تحميل أساسي بدون كسل */}
+          <Header />
+          
+          {/* المحتوى الرئيسي - تحميل كسول مع أولوية */}
+          <LazyLoad priority={true} height="100vh">
+            <Suspense fallback={
+              <div className="min-h-[80vh] flex items-center justify-center">
+                <Skeleton className="h-[70vh] w-full max-w-4xl mx-auto rounded-lg" />
+              </div>
+            }>
+              <MainContent 
+                sectionsVisible={sectionsVisible}
+                isTransitioning={isTransitioning}
+                language={i18n.language}
+                isRTL={isRTL}
+              />
+            </Suspense>
+          </LazyLoad>
+          
+          {/* المساعد الذكي - تحميل كسول بأولوية منخفضة */}
+          <LazyLoad threshold={500}>
+            <Suspense fallback={null}>
+              <AIAssistantManager onMaximize={handleMaximizeAI} />
+            </Suspense>
+          </LazyLoad>
+          
+          {/* تذييل الصفحة - تحميل أساسي بدون كسل */}
+          <Footer />
+          
+          {/* أزرار إمكانية الوصول السريعة */}
+          <QuickAccessibilityButton />
+          <MobileA11yDrawer />
+        </TooltipProvider>
+      </ErrorBoundary>
+    </LazyApp>
   );
 }

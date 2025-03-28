@@ -1,0 +1,23 @@
+
+{
+  "optimized": "تم تحسين الأداء تلقائيًا",
+  "optimizedForDevice": "تم تحسين التطبيق ليعمل بشكل أفضل على جهازك",
+  "lowEndDevice": "جهاز محدود الأداء",
+  "optimizationsApplied": "تم تطبيق تحسينات الأداء تلقائيًا لتحسين تجربتك.",
+  "reducedEffects": "تم تقليل التأثيرات البصرية",
+  "enhancedMode": "وضع الأداء المحسّن",
+  "standardMode": "وضع الأداء القياسي",
+  "performanceSettings": "إعدادات الأداء",
+  "automaticOptimization": "تحسين تلقائي",
+  "manualOptimization": "تحسين يدوي",
+  "saveResources": "توفير موارد الجهاز",
+  "prioritizeVisuals": "إعطاء الأولوية للمؤثرات البصرية",
+  "loadingOptimized": "جاري التحميل...",
+  "loadingComplete": "اكتمل التحميل",
+  "deviceDetected": "تم اكتشاف جهازك كـ {{deviceType}}",
+  "deviceTypes": {
+    "low": "محدود الأداء",
+    "medium": "متوسط الأداء",
+    "high": "عالي الأداء"
+  }
+}
