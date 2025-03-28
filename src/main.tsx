@@ -85,9 +85,6 @@ const AppWrapper = () => {
       `;
       document.body.appendChild(svgFilters);
       
-      // Note: We're not creating the announce function here anymore
-      // as it will be defined by the LiveAnnouncer component
-      
       // Detect keyboard users
       const handleFirstTab = (e: KeyboardEvent) => {
         if (e.key === 'Tab') {
