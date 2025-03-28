@@ -14,6 +14,21 @@ import { createAppStatusSlice } from './app-status-state';
 export const useAppState = create<AppState>()(
   persist(
     (...args) => ({
+      // Initialize network status
+      networkStatus: {
+        isConnected: true,
+        isOnline: true,
+        lastCheck: null
+      },
+      
+      // Initialize data loading
+      dataLoading: {
+        isLoading: false,
+        lastUpdated: null,
+        error: null
+      },
+      
+      // Combine all state slices
       ...createUISlice(...args),
       ...createPreferencesSlice(...args),
       ...createUserSlice(...args),

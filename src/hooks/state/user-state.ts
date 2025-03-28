@@ -10,8 +10,7 @@ export const createUserSlice: StateCreator<
   AppState,
   [],
   [],
-  Pick<AppState, 'isAuthenticated' | 'userId' | 'userRole' | 'userSettings' | 
-    'login' | 'logout' | 'updateUserSettings'>
+  UserState
 > = (set) => ({
   // حالة المستخدم
   isAuthenticated: false,

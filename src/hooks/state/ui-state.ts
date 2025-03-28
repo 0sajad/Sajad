@@ -1,6 +1,6 @@
 
 import { StateCreator } from 'zustand';
-import { AppState } from './types';
+import { AppState, UIState } from './types';
 
 /**
  * مخزن حالة واجهة المستخدم
@@ -10,8 +10,7 @@ export const createUISlice: StateCreator<
   AppState,
   [],
   [],
-  Pick<AppState, 'isSidebarOpen' | 'isSettingsOpen' | 'isSearchOpen' | 'activeSection' | 
-    'lastVisitedPage' | 'toggleSidebar' | 'toggleSettings' | 'toggleSearch' | 'setActiveSection'>
+  UIState
 > = (set) => ({
   // حالة الواجهة
   isSidebarOpen: true,

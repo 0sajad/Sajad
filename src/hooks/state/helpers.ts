@@ -5,7 +5,7 @@ import { useAppState } from './use-app-state';
  * خطاف مساعد للتعامل مع حالة الشبكة
  */
 export function useNetworkStatus() {
-  const { isOnline } = useAppState();
+  const isOnline = useAppState(state => state.isOnline);
   
   return { isOnline };
 }
@@ -14,7 +14,8 @@ export function useNetworkStatus() {
  * خطاف مساعد للتعامل مع تفضيلات التطبيق
  */
 export function useAppPreferences() {
-  const { preferences, setPreference } = useAppState();
+  const preferences = useAppState(state => state.preferences);
+  const setPreference = useAppState(state => state.setPreference);
   
   return { 
     preferences,

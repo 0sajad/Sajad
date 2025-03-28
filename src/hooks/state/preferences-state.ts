@@ -1,6 +1,6 @@
 
 import { StateCreator } from 'zustand';
-import { AppState, AppPreferences } from './types';
+import { AppState, AppPreferences, PreferencesState } from './types';
 
 /**
  * القيم الافتراضية لتفضيلات التطبيق
@@ -13,6 +13,13 @@ export const defaultPreferences: AppPreferences = {
   animations: true,
   fullWidthLayout: false,
   compactMode: false,
+  soundEffects: false,
+  highContrast: false,
+  largeText: false,
+  reducedMotion: false,
+  focusMode: false,
+  arabicNumerals: false,
+  autoSave: true
 };
 
 /**
@@ -23,7 +30,7 @@ export const createPreferencesSlice: StateCreator<
   AppState,
   [],
   [],
-  Pick<AppState, 'preferences' | 'setPreference'>
+  PreferencesState
 > = (set) => ({
   // تفضيلات التطبيق
   preferences: defaultPreferences,
