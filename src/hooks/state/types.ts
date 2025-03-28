@@ -156,4 +156,5 @@ export type AppState =
   AccessibilityState & 
   NetworkState & 
   PerformanceState &
-  DataLoadingState;
+  DataLoadingState &
+  CacheState;

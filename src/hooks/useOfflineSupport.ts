@@ -197,5 +197,6 @@ export function useOfflineSupport() {
     getOfflineData,
     syncOfflineData,
     sendData,
+    checkConnection
   };
 }

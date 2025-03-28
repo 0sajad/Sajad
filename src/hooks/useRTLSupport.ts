@@ -39,8 +39,8 @@ export function useRTLSupport(options: RTLOptions = {}) {
     
     // إضافة معلومات RTL إلى النافذة العالمية للاستخدام في المكونات الأخرى
     if (typeof window !== 'undefined') {
-      window.RTLSupport = window.RTLSupport || {};
-      window.RTLSupport.isRTL = shouldBeRTL;
+      (window as any).RTLSupport = (window as any).RTLSupport || {};
+      (window as any).RTLSupport.isRTL = shouldBeRTL;
     }
   }, [i18n.language, enforceRTL, enforceSpecificLanguages]);
   
@@ -62,7 +62,7 @@ export function useRTLSupport(options: RTLOptions = {}) {
       });
       
       // إضافة خاصية textFlow إذا كان النص عربيًا
-      return hasArabicText ? { ...item, textFlow: 'rtl' as const } : item;
+      return hasArabicText ? { ...item, textFlow: 'rtl' as const } : { ...item, textFlow: 'ltr' as const };
     });
   };
   

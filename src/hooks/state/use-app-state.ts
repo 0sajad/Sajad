@@ -9,6 +9,7 @@ import { createAppStatusSlice } from './app-status-state';
 import { createAccessibilitySlice } from './accessibility-state';
 import { createNetworkSlice } from './network-state';
 import { createPerformanceSlice } from './performance-state';
+import { createCacheSlice } from './cache-state';
 
 /**
  * متجر إدارة الحالة المركزية للتطبيق
@@ -39,6 +40,7 @@ export const useAppState = create<AppState>()(
       ...createAccessibilitySlice(...args),
       ...createNetworkSlice(...args),
       ...createPerformanceSlice(...args),
+      ...createCacheSlice(...args),
     }),
     {
       name: 'app-state',
@@ -59,6 +61,7 @@ export const useAppState = create<AppState>()(
         dyslexicFont: state.dyslexicFont,
         soundFeedback: state.soundFeedback,
         deviceTier: state.deviceTier,
+        cachedData: state.cachedData,
       }),
     }
   )

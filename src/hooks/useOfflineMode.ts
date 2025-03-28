@@ -19,7 +19,7 @@ export function useOfflineMode(options: OfflineModeOptions = {}) {
     showNotifications = true 
   } = options;
   
-  const { isOnline } = useNetworkStatus();
+  const { isOnline, checkConnection } = useNetworkStatus();
   const { saveOfflineData, getOfflineData, hasPendingSync, syncOfflineData } = useOfflineSupport();
   const [wasOnline, setWasOnline] = useState(true);
   
@@ -57,6 +57,13 @@ export function useOfflineMode(options: OfflineModeOptions = {}) {
     };
   }, [isOnline, showOfflineIndicator]);
   
+  /**
+   * محاولة إعادة الاتصال بالشبكة
+   */
+  const attemptReconnect = async () => {
+    return await checkConnection();
+  };
+  
   return {
     isOnline,
     isOffline: !isOnline,
@@ -64,5 +71,6 @@ export function useOfflineMode(options: OfflineModeOptions = {}) {
     saveOfflineData,
     getOfflineData,
     syncOfflineData,
+    attemptReconnect
   };
 }
