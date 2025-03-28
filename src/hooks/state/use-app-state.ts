@@ -18,6 +18,18 @@ import { createCacheSlice } from './cache-state';
 export const useAppState = create<AppState>()(
   persist(
     (...args) => ({
+      // Initialize required properties explicitly
+      isLoading: {},
+      errors: {},
+      isInitialized: false,
+      setIsLoading: (key, loading) => args[0]((state) => ({
+        isLoading: { ...state.isLoading, [key]: loading }
+      })),
+      setError: (key, error) => args[0]((state) => ({
+        errors: { ...state.errors, [key]: error }
+      })),
+      setInitialized: (initialized) => args[0]({ isInitialized: initialized }),
+
       // Initialize network status
       networkStatus: {
         isConnected: true,
@@ -31,6 +43,31 @@ export const useAppState = create<AppState>()(
         lastUpdated: null,
         error: null
       },
+      
+      // Additional required properties
+      isSidebarOpen: false,
+      isConnected: true,
+      isOnline: true,
+      lastCheck: null,
+      preferences: {
+        theme: 'system',
+        language: 'ar',
+        notifications: true,
+        telemetry: false,
+        animations: true,
+        fullWidthLayout: false,
+        compactMode: false,
+        soundEffects: false,
+        highContrast: false,
+        largeText: false,
+        reducedMotion: false,
+        focusMode: false,
+        arabicNumerals: false,
+        autoSave: true,
+        notificationsEnabled: true
+      },
+      activePage: 'home',
+      modals: {},
       
       // Combine all state slices
       ...createUISlice(...args),
