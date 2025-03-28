@@ -1,0 +1,13 @@
+
+{
+  "title": "An error occurred",
+  "message": "Error message",
+  "unknown": "Unknown error",
+  "description": "We're sorry for the inconvenience. Please try one of the following:",
+  "refresh": "Refresh the page",
+  "clearCache": "Clear cache",
+  "differentBrowser": "Try a different browser",
+  "contactSupport": "Contact support if the problem persists",
+  "backHome": "Back to home",
+  "retry": "Try again"
+}

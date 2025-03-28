@@ -1,0 +1,13 @@
+
+{
+  "title": "Une erreur s'est produite",
+  "message": "Message d'erreur",
+  "unknown": "Erreur inconnue",
+  "description": "Nous sommes désolés pour ce désagrément. Veuillez essayer l'une des options suivantes :",
+  "refresh": "Actualiser la page",
+  "clearCache": "Vider le cache",
+  "differentBrowser": "Essayer un autre navigateur",
+  "contactSupport": "Contacter le support si le problème persiste",
+  "backHome": "Retour à l'accueil",
+  "retry": "Réessayer"
+}

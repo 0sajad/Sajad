@@ -6,6 +6,7 @@ import zhAi from '../../locales/zh/ai.json';
 import zhAiAssistant from '../../locales/zh/aiAssistant.json';
 import zhCta from '../../locales/zh/cta.json';
 import zhNetworkTools from '../../locales/zh/networkTools.json';
+import zhError from '../../locales/zh/error.json';
 
 export function loadChineseResources() {
   return {
@@ -15,7 +16,8 @@ export function loadChineseResources() {
       aiAssistant: zhAiAssistant,
       cta: zhCta,
       networkTools: zhNetworkTools,
-      ...zhConfig
+      ...zhConfig,
+      error: zhError
     },
     license: {},
     access: {},

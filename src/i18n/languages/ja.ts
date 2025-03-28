@@ -14,6 +14,7 @@ import jaAi from '../../locales/ja/ai.json';
 import jaAiAssistant from '../../locales/ja/aiAssistant.json';
 import jaConfig from '../../locales/ja/config.json';
 import jaCommonExtra from '../../locales/ja/common.json';
+import jaError from '../../locales/ja/error.json';
 
 export function loadJapaneseResources() {
   // دمج ملفات اليابانية في كائن واحد
@@ -31,7 +32,8 @@ export function loadJapaneseResources() {
     ai: jaAi,
     aiAssistant: jaAiAssistant,
     ...jaConfig,
-    ...jaCommonExtra
+    ...jaCommonExtra,
+    error: jaError
   };
 
   return {

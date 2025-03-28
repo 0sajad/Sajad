@@ -1,0 +1,13 @@
+
+{
+  "title": "エラーが発生しました",
+  "message": "エラーメッセージ",
+  "unknown": "不明なエラー",
+  "description": "ご不便をおかけして申し訳ありません。次のいずれかをお試しください：",
+  "refresh": "ページを更新する",
+  "clearCache": "キャッシュをクリアする",
+  "differentBrowser": "別のブラウザを試す",
+  "contactSupport": "問題が解決しない場合はサポートに連絡する",
+  "backHome": "ホームに戻る",
+  "retry": "再試行"
+}

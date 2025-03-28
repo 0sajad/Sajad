@@ -1,0 +1,13 @@
+
+{
+  "title": "发生错误",
+  "message": "错误信息",
+  "unknown": "未知错误",
+  "description": "我们对此带来的不便深表歉意。请尝试以下选项：",
+  "refresh": "刷新页面",
+  "clearCache": "清除缓存",
+  "differentBrowser": "尝试使用其他浏览器",
+  "contactSupport": "如果问题仍然存在，请联系技术支持",
+  "backHome": "返回主页",
+  "retry": "重试"
+}
