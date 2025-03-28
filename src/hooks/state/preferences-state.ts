@@ -1,6 +1,8 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { StateCreator } from 'zustand';
+import { AppState } from './types';
 
 export interface AppPreferences {
   language: string;
@@ -60,3 +62,25 @@ export const usePreferences = create(
     }
   )
 );
+
+// Add the createPreferencesSlice function that was missing
+export const createPreferencesSlice: StateCreator<
+  AppState,
+  [],
+  [],
+  {
+    preferences: AppPreferences;
+    setPreference: <K extends keyof AppPreferences>(key: K, value: AppPreferences[K]) => void;
+    resetPreferences: () => void;
+  }
+> = (set) => ({
+  preferences: { ...defaultPreferences },
+  setPreference: <K extends keyof AppPreferences>(key: K, value: AppPreferences[K]) => 
+    set((state) => ({
+      preferences: {
+        ...state.preferences,
+        [key]: value
+      }
+    })),
+  resetPreferences: () => set({ preferences: { ...defaultPreferences } })
+});

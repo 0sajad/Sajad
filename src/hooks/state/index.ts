@@ -1,7 +1,11 @@
 
 export * from './types';
 export * from './ui-state';
-export * from './preferences-state';
+export { 
+  usePreferences, 
+  defaultPreferences, 
+  createPreferencesSlice 
+} from './preferences-state';
 export * from './user-state';
 export * from './app-status-state';
 export * from './accessibility-state';

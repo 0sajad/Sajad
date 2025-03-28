@@ -42,10 +42,16 @@ export function AIMainContent({ initialMessages, children }: AIMainContentProps)
             
             <div className="p-4 border-t">
               {tools.length > 0 && (
-                <ActiveToolsList tools={tools} clearAllTools={clearAllTools} />
+                <ActiveToolsList 
+                  tools={tools} 
+                  clearAllTools={clearAllTools} 
+                  toggleTool={toggleTool}
+                />
               )}
               
-              <AIFileUpload onFilesSelected={handleFileUpload} />
+              <AIFileUpload 
+                onFileSelect={handleFileUpload} 
+              />
               
               <ChatInput 
                 input={input}
@@ -54,7 +60,6 @@ export function AIMainContent({ initialMessages, children }: AIMainContentProps)
                 handleVoiceInput={handleVoiceInput}
                 isProcessing={isProcessing}
                 isListening={isListening}
-                toggleTool={toggleTool}
                 tools={tools}
               />
             </div>
