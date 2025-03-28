@@ -2,6 +2,14 @@
 {
   "direction": "ltr",
   "language": "zh",
+  "common": {
+    "selectLanguage": "更改语言",
+    "language": "语言",
+    "darkMode": "深色模式",
+    "lightMode": "浅色模式",
+    "autoMode": "自动模式",
+    "languageChanged": "语言已更改为"
+  },
   "header": {
     "dashboard": "仪表板",
     "tools": "工具",
@@ -13,6 +21,40 @@
     "helpCenter": "帮助中心",
     "license": "许可证",
     "login": "登录"
+  },
+  "dashboard": {
+    "title": "仪表板",
+    "welcome": "欢迎使用OctaGram仪表板",
+    "systemStatus": "系统状态",
+    "status": "状态",
+    "selectAction": "选择操作",
+    "actions": {
+      "scan": "扫描网络",
+      "optimize": "优化性能",
+      "backup": "备份设置"
+    },
+    "latestUpdates": "最新更新",
+    "noUpdates": "没有新更新",
+    "active": "活动",
+    "quickActions": "快速操作"
+  },
+  "networkTools": {
+    "title": "高级网络工具",
+    "qualityMonitoring": "网络质量监控",
+    "signalStrength": "信号强度",
+    "networkManagement": "网络管理",
+    "simulationSystems": "模拟系统"
+  },
+  "accessibility": {
+    "title": "辅助功能",
+    "highContrast": "高对比度",
+    "largeText": "大文本",
+    "reducedMotion": "减少动画",
+    "focusMode": "焦点模式",
+    "readingGuide": "阅读指南",
+    "soundFeedback": "声音反馈",
+    "a11ySettings": "辅助功能设置",
+    "clickToCustomize": "点击自定义"
   },
   "notFound": {
     "message": "哎呀！找不到页面",
