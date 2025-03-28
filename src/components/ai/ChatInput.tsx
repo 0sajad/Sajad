@@ -11,6 +11,7 @@ type ChatInputProps = {
   setInput: (value: string) => void;
   handleSendMessage: () => void;
   handleVoiceInput: () => void;
+  handleFileUpload?: () => void; // Make this prop optional
   isProcessing: boolean;
   isListening: boolean;
   tools?: string[];
@@ -22,6 +23,7 @@ export const ChatInput = ({
   setInput,
   handleSendMessage,
   handleVoiceInput,
+  handleFileUpload, // Now optional
   isProcessing,
   isListening,
   tools = [],
@@ -78,19 +80,21 @@ export const ChatInput = ({
         </Button>
       </motion.div>
       
-      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-        <Button 
-          variant="outline" 
-          size="icon"
-          onClick={handleFileUpload}
-          title={t('ai.uploadFiles')}
-          aria-label={t('ai.uploadFiles')}
-          type="button"
-          disabled={isProcessing}
-        >
-          <FileUp size={18} />
-        </Button>
-      </motion.div>
+      {handleFileUpload && (
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Button 
+            variant="outline" 
+            size="icon"
+            onClick={handleFileUpload}
+            title={t('ai.uploadFiles')}
+            aria-label={t('ai.uploadFiles')}
+            type="button"
+            disabled={isProcessing}
+          >
+            <FileUp size={18} />
+          </Button>
+        </motion.div>
+      )}
       
       <motion.div 
         className="flex-1"

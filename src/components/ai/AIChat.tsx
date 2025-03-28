@@ -66,6 +66,7 @@ export const AIChat = ({ initialMessages = [] }: AIChatProps) => {
                 handleFileUpload={triggerFileUpload}
                 isProcessing={isProcessing}
                 isListening={isListening}
+                tools={tools}
                 hasContent={input.trim().length > 0 || tools.length > 0}
               />
             </div>

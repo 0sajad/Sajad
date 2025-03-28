@@ -50,6 +50,19 @@ export const useAppState = create<AppState>()(
       isOnline: true,
       lastCheck: null,
       
+      // UI state properties required by AppState
+      isDrawerOpen: false,
+      activePage: 'home',
+      lastVisitedPage: null,
+      modals: {},
+      
+      // Required preferences properties from AppState
+      theme: 'system',
+      language: 'ar',
+      notificationsEnabled: true,
+      animations: true,
+      compactMode: false,
+      
       // Updated preferences initialization to match complete AppPreferences interface
       preferences: {
         theme: 'system',
@@ -79,8 +92,6 @@ export const useAppState = create<AppState>()(
         soundFeedback: false,
         syncSystemPreferences: true
       },
-      activePage: 'home',
-      modals: {},
       
       // Add the required checkConnection function
       checkConnection: async () => {
