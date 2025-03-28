@@ -19,6 +19,11 @@ export function AIAssistantMain({ minimized = false, onMaximize }: AIAssistantMa
   const [status, setStatus] = useState<"learning" | "processing" | "idle" | "protecting" | "analyzing" | "optimizing">("analyzing");
   const [isCompact, setIsCompact] = useState(false);
   
+  // Initial messages for AI chat
+  const initialMessages = [
+    { role: "system", content: "I'm your AI assistant. How can I help you today?" }
+  ];
+  
   // إذا كان مصغرًا، أظهر فقط زر التكبير
   if (minimized) {
     return <AIMinimizedButton onMaximize={onMaximize || (() => {})} />;
@@ -30,7 +35,7 @@ export function AIAssistantMain({ minimized = false, onMaximize }: AIAssistantMa
       <div className="flex-1 flex flex-col h-full">
         <AIHeader />
         <div className="flex-1 flex">
-          <AIMainContent>
+          <AIMainContent initialMessages={initialMessages}>
             <AIChat />
           </AIMainContent>
           <div className="w-64 border-l p-4 shrink-0 bg-muted/20">
