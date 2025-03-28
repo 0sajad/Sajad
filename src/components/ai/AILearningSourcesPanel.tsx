@@ -5,13 +5,22 @@ import { motion } from "framer-motion";
 import { BookOpen } from "lucide-react";
 
 interface AILearningSourcesPanelProps {
-  recentSources: string[];
+  recentSources?: string[];
+  isCompact?: boolean;
 }
 
-export function AILearningSourcesPanel({ recentSources }: AILearningSourcesPanelProps) {
+export function AILearningSourcesPanel({ 
+  recentSources = [
+    "Network Security Documentation",
+    "AI Model Training Data",
+    "System Performance Analytics",
+    "User Interaction Patterns"
+  ], 
+  isCompact = false 
+}: AILearningSourcesPanelProps) {
   const { t } = useTranslation();
   
-  // تعريف متغيرات الرسوم المتحركة
+  // Define animation variants
   const containerVariants = {
     hidden: { opacity: 0, y: 10 },
     visible: { 
@@ -39,7 +48,7 @@ export function AILearningSourcesPanel({ recentSources }: AILearningSourcesPanel
   
   return (
     <motion.div 
-      className="mb-4 p-2 bg-amber-50 dark:bg-amber-950/30 rounded-md border border-amber-100 dark:border-amber-900/30"
+      className={`mb-4 p-2 bg-amber-50 dark:bg-amber-950/30 rounded-md border border-amber-100 dark:border-amber-900/30 ${isCompact ? 'text-sm' : ''}`}
       initial="hidden"
       animate="visible"
       variants={containerVariants}
