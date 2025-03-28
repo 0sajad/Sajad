@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useTranslation } from "react-i18next";
 import { Activity, Zap, Wifi } from "lucide-react";
@@ -35,93 +35,83 @@ export const NetworkQualityGauge: React.FC<NetworkQualityGaugeProps> = ({
   
   const quality = getQualityStatus(qualityScore);
   
-  // حساب لون شريط التقدم بناءً على الجودة
-  const getProgressColor = (score: number) => {
-    if (score >= 85) return "bg-green-500";
-    if (score >= 70) return "bg-blue-500";
-    if (score >= 50) return "bg-amber-500";
-    return "bg-red-500";
-  };
-  
   return (
     <div className="h-full">
-      <div className="text-center mb-6">
-        <div className="relative inline-flex items-center justify-center w-40 h-40 mb-3">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-4xl font-bold">{qualityScore}</span>
-          </div>
-          
-          {/* حلقة تقدم دائرية */}
-          <svg className="absolute inset-0 transform -rotate-90" width="160" height="160" viewBox="0 0 160 160">
+      <div className="text-right mb-4">
+        <h2 className="text-xl font-bold text-blue-800 mb-1">{isRTL ? "مؤشر جودة الشبكة" : "Network Quality Gauge"}</h2>
+        <p className="text-sm text-gray-500">{isRTL ? "تحليل مفصل لحالة وأداء الشبكة الحالية" : "Detailed analysis of current network quality"}</p>
+      </div>
+      
+      <div className="flex flex-col items-center justify-center mb-6">
+        <div className="relative w-48 h-48 mb-3">
+          <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
             <circle
-              cx="80"
-              cy="80"
-              r="70"
+              cx="50"
+              cy="50"
+              r="45"
               fill="none"
-              stroke="#e5e7eb"
-              strokeWidth="12"
+              stroke="#f3f4f6"
+              strokeWidth="8"
             />
             <circle
-              cx="80"
-              cy="80"
-              r="70"
+              cx="50"
+              cy="50"
+              r="45"
               fill="none"
-              stroke={qualityScore >= 85 ? "#22c55e" : qualityScore >= 70 ? "#3b82f6" : qualityScore >= 50 ? "#f59e0b" : "#ef4444"}
-              strokeWidth="12"
-              strokeDasharray={`${qualityScore * 4.4} 440`}
+              stroke="#22c55e"
+              strokeWidth="8"
+              strokeDasharray={`${qualityScore * 2.83} 283`}
+              strokeLinecap="round"
             />
           </svg>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-5xl font-bold">{qualityScore}</span>
+          </div>
         </div>
         
-        <p className="text-lg font-medium">{isRTL ? "الجودة" : "Quality"}: <span className={quality.color}>{quality.label}</span></p>
+        <p className="text-lg font-medium text-center">{isRTL ? "الجودة" : "Quality"}: <span className={quality.color}>{quality.label}</span></p>
       </div>
       
       <div className="space-y-6">
         <div>
           <div className="flex justify-between items-center mb-1">
-            <span className="text-sm flex items-center">
-              <Zap className="mr-1 h-4 w-4 text-amber-500" />
-              {isRTL ? "زمن الإستجابة" : "Response Time"}
+            <span className="text-sm font-medium">{isRTL ? "زمن الإستجابة" : "Response Time"}</span>
+            <span className="text-sm font-medium flex items-center">
+              <Zap className="mx-1 h-4 w-4 text-amber-500" />
+              {latency} ms
             </span>
-            <span className="text-sm font-medium">{latency} ms</span>
           </div>
-          <Progress value={Math.min(100 - (latency * 2), 100)} className="h-2" indicatorClassName={latency <= 20 ? "bg-green-500" : latency <= 50 ? "bg-blue-500" : "bg-amber-500"} />
+          <Progress value={Math.min(100 - (latency * 2), 100)} className="h-2" />
           <p className="text-xs text-muted-foreground mt-1">
-            {latency <= 20 ? (isRTL ? "ممتاز: مثالي للألعاب والبث المباشر" : "Excellent: Ideal for gaming and streaming") : 
-             latency <= 50 ? (isRTL ? "جيد: مناسب لمعظم التطبيقات" : "Good: Suitable for most applications") : 
-             (isRTL ? "متوسط: قد تواجه تأخيرًا في بعض التطبيقات" : "Average: May experience delays in some applications")}
+            {isRTL ? "تم تناسب معظم التطبيقات" : "Suitable for most applications"}
           </p>
         </div>
         
         <div>
           <div className="flex justify-between items-center mb-1">
-            <span className="text-sm flex items-center">
-              <Wifi className="mr-1 h-4 w-4 text-blue-500" />
-              {isRTL ? "فقد الحزم" : "Packet Loss"}
+            <span className="text-sm font-medium">{isRTL ? "فقد الحزم" : "Packet Loss"}</span>
+            <span className="text-sm font-medium flex items-center">
+              <Wifi className="mx-1 h-4 w-4 text-blue-500" />
+              {packetLoss}%
             </span>
-            <span className="text-sm font-medium">{packetLoss}%</span>
           </div>
-          <Progress value={Math.max(100 - (packetLoss * 20), 0)} className="h-2" indicatorClassName={packetLoss <= 1 ? "bg-green-500" : packetLoss <= 2 ? "bg-blue-500" : "bg-red-500"} />
+          <Progress value={Math.max(100 - (packetLoss * 20), 0)} className="h-2" />
           <p className="text-xs text-muted-foreground mt-1">
-            {packetLoss <= 1 ? (isRTL ? "ممتاز: فقد حزم أقل من الحد الأدنى" : "Excellent: Minimal packet loss") : 
-             packetLoss <= 2 ? (isRTL ? "مقبول: قد تلاحظ بعض التقطع أحيانًا" : "Acceptable: May notice occasional stuttering") : 
-             (isRTL ? "ضعيف: قد تواجه مشاكل في الاتصال" : "Poor: May experience connection issues")}
+            {isRTL ? "معدل فقد الحزم أقل من المعدل العادي" : "Packet loss rate is below average"}
           </p>
         </div>
         
         <div>
           <div className="flex justify-between items-center mb-1">
-            <span className="text-sm flex items-center">
-              <Activity className="mr-1 h-4 w-4 text-purple-500" />
-              {isRTL ? "تذبذب الشبكة" : "Network Jitter"}
+            <span className="text-sm font-medium">{isRTL ? "تذبذب الشبكة" : "Network Jitter"}</span>
+            <span className="text-sm font-medium flex items-center">
+              <Activity className="mx-1 h-4 w-4 text-purple-500" />
+              {jitter} ms
             </span>
-            <span className="text-sm font-medium">{jitter} ms</span>
           </div>
-          <Progress value={Math.max(100 - (jitter * 20), 0)} className="h-2" indicatorClassName={jitter <= 2 ? "bg-green-500" : jitter <= 5 ? "bg-blue-500" : "bg-red-500"} />
+          <Progress value={Math.max(100 - (jitter * 20), 0)} className="h-2" />
           <p className="text-xs text-muted-foreground mt-1">
-            {jitter <= 2 ? (isRTL ? "ممتاز: شبكة مستقرة للغاية" : "Excellent: Very stable network") : 
-             jitter <= 5 ? (isRTL ? "جيد: مستوى تذبذب منخفض" : "Good: Low jitter level") : 
-             (isRTL ? "ضعيف: شبكة غير مستقرة" : "Poor: Unstable network")}
+            {isRTL ? "معدل تذبذب مستقر ممتاز" : "Excellent stable jitter level"}
           </p>
         </div>
       </div>
@@ -129,11 +119,7 @@ export const NetworkQualityGauge: React.FC<NetworkQualityGaugeProps> = ({
       <div className="mt-6 p-3 bg-blue-50 rounded-md">
         <p className="text-sm font-medium">{isRTL ? "ملخص التشخيص" : "Diagnostic Summary"}:</p>
         <p className="text-xs text-muted-foreground mt-1">
-          {qualityScore >= 85 ? 
-            (isRTL ? "الشبكة في حالة ممتازة. نوصي بالحفاظ على الإعدادات الحالية." : "Network is in excellent condition. We recommend maintaining current settings.") : 
-            qualityScore >= 70 ? 
-            (isRTL ? "الشبكة في حالة جيدة. يمكن تحسين بعض الإعدادات لتحقيق أداء أفضل." : "Network is in good condition. Some settings can be optimized for better performance.") :
-            (isRTL ? "الشبكة تعاني من بعض المشاكل. نوصي بتشغيل أداة تحسين الشبكة." : "Network is experiencing some issues. We recommend running the network optimization tool.")}
+          {isRTL ? "الشبكة في حالة ممتازة. نوصي بالحفاظ على الإعدادات الحالية." : "Network is in excellent condition. We recommend maintaining current settings."}
         </p>
       </div>
     </div>

@@ -63,11 +63,11 @@ export const SystemPerformanceMonitor = () => {
   
   return (
     <Card className="border-blue-200 shadow-md">
-      <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-t-lg flex flex-row items-center justify-between">
+      <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-t-lg flex flex-row items-center justify-between p-4">
         <div>
-          <CardTitle className="text-blue-800 flex items-center">
-            <Cpu className="mr-2 h-5 w-5 text-blue-600" />
-            {isRTL ? 'مراقبة أداء النظام' : 'System Performance Monitor'}
+          <CardTitle className="text-lg font-medium flex items-center gap-2">
+            <Cpu className="h-5 w-5 text-blue-600" />
+            {isRTL ? 'مراقب أداء النظام' : 'System Performance Monitor'}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
             {isRTL ? 'مراقبة موارد النظام في الوقت الفعلي' : 'Real-time monitoring of system resources'}
@@ -78,16 +78,16 @@ export const SystemPerformanceMonitor = () => {
           size="sm" 
           onClick={refreshData} 
           disabled={isRefreshing}
-          className="flex items-center gap-1"
+          className="h-8 px-2"
         >
           <RefreshCw size={14} className={isRefreshing ? 'animate-spin' : ''} />
-          {isRTL ? 'تحديث' : 'Refresh'}
+          <span className="ml-1">{isRTL ? 'تحديث' : 'Refresh'}</span>
         </Button>
       </CardHeader>
       
-      <CardContent className="p-6">
+      <CardContent className="p-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white p-4 rounded-lg border shadow-sm">
+          <div className="p-4 rounded-lg border shadow-sm">
             <div className="flex items-center mb-2">
               <Cpu className="text-blue-500 mr-2 h-5 w-5" />
               <div>
@@ -96,15 +96,11 @@ export const SystemPerformanceMonitor = () => {
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
-              {currentValues.cpu < 30 ? 
-                (isRTL ? 'استخدام المعالج منخفض' : 'CPU usage is low') : 
-                currentValues.cpu < 70 ? 
-                (isRTL ? 'استخدام المعالج معتدل' : 'CPU usage is moderate') : 
-                (isRTL ? 'استخدام المعالج مرتفع' : 'CPU usage is high')}
+              {isRTL ? 'استخدام المعالج منخفض' : 'CPU usage is low'}
             </p>
           </div>
           
-          <div className="bg-white p-4 rounded-lg border shadow-sm">
+          <div className="p-4 rounded-lg border shadow-sm">
             <div className="flex items-center mb-2">
               <MemoryStick className="text-green-500 mr-2 h-5 w-5" />
               <div>
@@ -113,15 +109,11 @@ export const SystemPerformanceMonitor = () => {
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
-              {currentValues.memory < 30 ? 
-                (isRTL ? 'استخدام الذاكرة منخفض' : 'Memory usage is low') : 
-                currentValues.memory < 70 ? 
-                (isRTL ? 'استخدام الذاكرة معتدل' : 'Memory usage is moderate') : 
-                (isRTL ? 'استخدام الذاكرة مرتفع' : 'Memory usage is high')}
+              {isRTL ? 'استخدام الذاكرة معتدل' : 'Memory usage is moderate'}
             </p>
           </div>
           
-          <div className="bg-white p-4 rounded-lg border shadow-sm">
+          <div className="p-4 rounded-lg border shadow-sm">
             <div className="flex items-center mb-2">
               <HardDrive className="text-purple-500 mr-2 h-5 w-5" />
               <div>
@@ -130,15 +122,11 @@ export const SystemPerformanceMonitor = () => {
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
-              {currentValues.disk < 30 ? 
-                (isRTL ? 'استخدام القرص منخفض' : 'Disk usage is low') : 
-                currentValues.disk < 70 ? 
-                (isRTL ? 'استخدام القرص معتدل' : 'Disk usage is moderate') : 
-                (isRTL ? 'استخدام القرص مرتفع' : 'Disk usage is high')}
+              {isRTL ? 'استخدام القرص منخفض' : 'Disk usage is low'}
             </p>
           </div>
           
-          <div className="bg-white p-4 rounded-lg border shadow-sm">
+          <div className="p-4 rounded-lg border shadow-sm">
             <div className="flex items-center mb-2">
               <Thermometer className="text-amber-500 mr-2 h-5 w-5" />
               <div>
@@ -147,11 +135,7 @@ export const SystemPerformanceMonitor = () => {
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
-              {currentValues.temperature < 60 ? 
-                (isRTL ? 'درجة الحرارة في النطاق الطبيعي' : 'Temperature is in normal range') : 
-                currentValues.temperature < 75 ? 
-                (isRTL ? 'درجة الحرارة معتدلة' : 'Temperature is moderate') : 
-                (isRTL ? 'درجة الحرارة مرتفعة' : 'Temperature is high')}
+              {isRTL ? 'درجة الحرارة في النطاق الطبيعي' : 'Temperature is in normal range'}
             </p>
           </div>
         </div>
@@ -159,9 +143,8 @@ export const SystemPerformanceMonitor = () => {
         <div className="space-y-6">
           <CPUMemoryChart performanceData={performanceData} reducedAnimations={reducedMotion} />
           <DiskTemperatureChart performanceData={performanceData} reducedAnimations={reducedMotion} />
+          <SystemHealthAssessment />
         </div>
-        
-        <SystemHealthAssessment />
       </CardContent>
     </Card>
   );
