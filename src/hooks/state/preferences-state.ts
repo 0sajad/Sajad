@@ -20,7 +20,8 @@ export const defaultPreferences: AppPreferences = {
   focusMode: false,
   arabicNumerals: false,
   autoSave: true,
-  notificationsEnabled: true
+  notificationsEnabled: true,
+  syncSystemPreferences: true
 };
 
 /**

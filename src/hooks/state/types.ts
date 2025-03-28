@@ -1,4 +1,3 @@
-
 /**
  * أنواع بيانات مخزن الحالة
  * تعريف الواجهات والأنواع المستخدمة في إدارة حالة التطبيق
@@ -186,6 +185,7 @@ export interface AppPreferences {
   arabicNumerals: boolean;
   autoSave: boolean;
   notificationsEnabled: boolean;
+  syncSystemPreferences: boolean;
 }
 
 // واجهة إعدادات المستخدم

@@ -16,12 +16,12 @@ export function usePreferenceSync() {
   } = useA11y();
   const appState = useAppState();
   const setPreference = (key: string, value: any) => {
-    appState.setState({ 
+    appState((state) => ({ 
       preferences: { 
-        ...appState.preferences, 
+        ...state.preferences, 
         [key]: value 
       } 
-    });
+    }));
   };
   const { info } = useNotifications();
   const { t } = useTranslation();
