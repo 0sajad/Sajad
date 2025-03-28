@@ -20,6 +20,18 @@ export interface AppPreferences {
   dyslexicFont: boolean;
   readingGuide: boolean;
   soundFeedback: boolean;
+  // Adding missing fields from types.ts
+  notifications: boolean;
+  telemetry: boolean;
+  animations: boolean;
+  fullWidthLayout: boolean;
+  soundEffects: boolean;
+  largeText: boolean;
+  reducedMotion: boolean;
+  focusMode: boolean;
+  arabicNumerals: boolean;
+  autoSave: boolean;
+  syncSystemPreferences: boolean;
 }
 
 export const defaultPreferences: AppPreferences = {
@@ -37,7 +49,19 @@ export const defaultPreferences: AppPreferences = {
   colorBlindMode: 'none',
   dyslexicFont: false,
   readingGuide: false,
-  soundFeedback: false
+  soundFeedback: false,
+  // Adding values for missing fields
+  notifications: true,
+  telemetry: false,
+  animations: true,
+  fullWidthLayout: false,
+  soundEffects: false,
+  largeText: false,
+  reducedMotion: false,
+  focusMode: false,
+  arabicNumerals: false,
+  autoSave: true,
+  syncSystemPreferences: true
 };
 
 export const usePreferences = create(
@@ -63,7 +87,7 @@ export const usePreferences = create(
   )
 );
 
-// Add the createPreferencesSlice function that was missing
+// Add the createPreferencesSlice function
 export const createPreferencesSlice: StateCreator<
   AppState,
   [],

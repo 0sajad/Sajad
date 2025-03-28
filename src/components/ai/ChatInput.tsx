@@ -11,10 +11,10 @@ type ChatInputProps = {
   setInput: (value: string) => void;
   handleSendMessage: () => void;
   handleVoiceInput: () => void;
-  handleFileUpload: () => void;
   isProcessing: boolean;
   isListening: boolean;
-  hasContent: boolean;
+  tools?: string[];
+  hasContent?: boolean;
 };
 
 export const ChatInput = ({
@@ -22,10 +22,10 @@ export const ChatInput = ({
   setInput,
   handleSendMessage,
   handleVoiceInput,
-  handleFileUpload,
   isProcessing,
   isListening,
-  hasContent
+  tools = [],
+  hasContent = false
 }: ChatInputProps) => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";

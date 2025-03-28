@@ -49,6 +49,8 @@ export const useAppState = create<AppState>()(
       isConnected: true,
       isOnline: true,
       lastCheck: null,
+      
+      // Updated preferences initialization to match complete AppPreferences interface
       preferences: {
         theme: 'system',
         language: 'ar',
@@ -64,7 +66,18 @@ export const useAppState = create<AppState>()(
         focusMode: false,
         arabicNumerals: false,
         autoSave: true,
-        notificationsEnabled: true
+        notificationsEnabled: true,
+        fontSize: 'normal',
+        animationsEnabled: true,
+        autoRefresh: true,
+        refreshRate: 30,
+        developerMode: false,
+        analyticsEnabled: true,
+        colorBlindMode: 'none',
+        dyslexicFont: false,
+        readingGuide: false,
+        soundFeedback: false,
+        syncSystemPreferences: true
       },
       activePage: 'home',
       modals: {},

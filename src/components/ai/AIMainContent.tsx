@@ -50,7 +50,7 @@ export function AIMainContent({ initialMessages, children }: AIMainContentProps)
               )}
               
               <AIFileUpload 
-                onFileSelect={handleFileUpload} 
+                onFileUpload={handleFileUpload} 
               />
               
               <ChatInput 
@@ -61,6 +61,7 @@ export function AIMainContent({ initialMessages, children }: AIMainContentProps)
                 isProcessing={isProcessing}
                 isListening={isListening}
                 tools={tools}
+                hasContent={tools.length > 0}
               />
             </div>
           </>
