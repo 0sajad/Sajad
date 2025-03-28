@@ -3,6 +3,7 @@ import React from "react";
 import { DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { useTranslation } from "react-i18next";
 import { LanguageOption } from "./LanguageOption";
+import { useA11y } from "@/hooks/useA11y";
 
 interface Language {
   code: string;
@@ -23,6 +24,7 @@ export function LanguageDropdownContent({
   onChangeLanguage 
 }: LanguageDropdownContentProps) {
   const { t } = useTranslation();
+  const { reducedMotion } = useA11y();
   
   return (
     <DropdownMenuContent 
@@ -39,13 +41,13 @@ export function LanguageDropdownContent({
       {languages.map((lang) => (
         <LanguageOption
           key={lang.code}
-          code={lang.code}
-          name={lang.name}
-          nativeName={lang.nativeName}
+          langCode={lang.code}
+          languageName={lang.nativeName}
           flag={lang.flag}
           isActive={currentLanguage === lang.code}
-          isSpecial={lang.code === 'ar-iq'}
+          isIraqiArabic={lang.code === 'ar-iq'}
           onClick={onChangeLanguage}
+          reducedMotion={reducedMotion}
         />
       ))}
     </DropdownMenuContent>

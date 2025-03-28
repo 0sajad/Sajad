@@ -6,15 +6,19 @@ import { useLanguageTransition } from "@/hooks/useLanguageTransition";
 import { LanguageSwitcherButton } from "../language/LanguageSwitcherButton";
 import { LanguageDropdownContent } from "../language/LanguageDropdownContent";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useA11y } from "@/hooks/useA11y";
+import { useRTLSupport } from "@/hooks/useRTLSupport";
 
 interface LanguageSwitcherProps {
   className?: string;
 }
 
 export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const { isTransitioning, changeLanguage } = useLanguageTransition();
   const [mounted, setMounted] = useState(false);
+  const { reducedMotion } = useA11y();
+  const { isRTL } = useRTLSupport();
   
   const languages = [
     { code: "ar", name: "العربية", nativeName: "العربية", flag: "🇸🇦" },
@@ -48,6 +52,14 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
   const currentLanguage = languages.find(lang => lang.code === i18n.language)?.code || languages[0].code;
   const currentLanguageFlag = languages.find(lang => lang.code === currentLanguage)?.flag || "🌐";
 
+  // Get tooltip text based on current language
+  const getTooltipText = () => {
+    if (i18n.language === 'ar-iq') {
+      return 'غير اللغة';
+    }
+    return t('common.selectLanguage', 'تغيير اللغة');
+  };
+
   if (!mounted) {
     return null;
   }
@@ -64,6 +76,9 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
                   onClick={() => {}} 
                   isTransitioning={isTransitioning}
                   currentLanguageFlag={currentLanguageFlag}
+                  isRTL={isRTL}
+                  reducedMotion={reducedMotion}
+                  tooltipText={getTooltipText()}
                 />
               </div>
             </DropdownMenuTrigger>

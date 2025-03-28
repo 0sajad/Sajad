@@ -13,6 +13,11 @@ interface LanguageOptionProps {
   isIraqiArabic: boolean;
   onClick: (langCode: string) => void;
   reducedMotion: boolean;
+  // For compatibility with LanguageDropdownContent
+  code?: string;
+  name?: string;
+  nativeName?: string;
+  isSpecial?: boolean;
 }
 
 export function LanguageOption({
@@ -22,8 +27,19 @@ export function LanguageOption({
   isActive,
   isIraqiArabic,
   onClick,
-  reducedMotion
+  reducedMotion,
+  // Handle alternative prop formats
+  code,
+  name,
+  nativeName,
+  isSpecial
 }: LanguageOptionProps) {
+  // Use the props from either format
+  const actualLangCode = code || langCode;
+  const actualLanguageName = nativeName || languageName;
+  const actualFlag = flag;
+  const actualIsSpecial = isSpecial || isIraqiArabic;
+
   return (
     <DropdownMenuItem
       className={cn(
@@ -31,18 +47,18 @@ export function LanguageOption({
         isActive 
           ? "bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 font-medium" 
           : "hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:translate-y-[-1px]",
-        isIraqiArabic ? "border-l-2 border-green-500 dark:border-green-400" : ""
+        actualIsSpecial ? "border-l-2 border-green-500 dark:border-green-400" : ""
       )}
-      onClick={() => onClick(langCode)}
-      data-testid={`language-option-${langCode}`}
+      onClick={() => onClick(actualLangCode)}
+      data-testid={`language-option-${actualLangCode}`}
     >
       <div className="flex items-center">
         <span className="text-lg mr-3 rtl:ml-3 rtl:mr-0" aria-hidden="true">
-          {flag}
+          {actualFlag}
         </span>
-        <span>{languageName}</span>
+        <span>{actualLanguageName}</span>
         
-        {isIraqiArabic && (
+        {actualIsSpecial && (
           <span className="ml-2 text-[10px] bg-green-100 text-green-800 px-1.5 py-0.5 rounded dark:bg-green-900/30 dark:text-green-300">
             محسّن
           </span>
