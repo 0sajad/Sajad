@@ -1,83 +1,54 @@
 
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from 'zustand'
+import { devtools, persist, createJSONStorage } from 'zustand/middleware'
+import { type StoreState } from './types';
 
-interface StoreState {
-  deviceTier: 'high' | 'medium' | 'low';
-  setDeviceTier: (tier: 'high' | 'medium' | 'low') => void;
-  preferences: {
-    theme: 'light' | 'dark' | 'system';
-    reducedMotion: boolean;
-    highContrast: boolean;
-  };
-  setPreference: <K extends keyof StoreState['preferences']>(key: K, value: StoreState['preferences'][K]) => void;
-}
+// Check if we're in a browser environment before using localStorage
+const canUseLocalStorage = typeof window !== 'undefined' && window.localStorage;
 
-// Check if we're in a browser environment with localStorage
-const isServer = typeof window === 'undefined';
-const storage = {
-  getItem: (name: string): string | null => {
-    if (isServer) return null;
-    return localStorage.getItem(name);
-  },
-  setItem: (name: string, value: string): void => {
-    if (isServer) return;
-    localStorage.setItem(name, value);
-  },
-  removeItem: (name: string): void => {
-    if (isServer) return;
-    localStorage.removeItem(name);
-  }
-}
+// A fallback storage when localStorage is not available
+const fallbackStorage = {
+  getItem: () => null,
+  setItem: () => {},
+  removeItem: () => {}
+};
 
+// Create the store with the necessary middlewares
 export const useStore = create<StoreState>()(
-  persist(
-    (set) => ({
-      deviceTier: 'medium',
-      setDeviceTier: (tier) => set({ deviceTier: tier }),
-      preferences: {
-        theme: 'system',
-        reducedMotion: false,
-        highContrast: false,
-      },
-      setPreference: (key, value) => set((state) => ({
+  devtools(
+    persist(
+      (set) => ({
+        // Device performance tier
+        deviceTier: 'medium',
+        setDeviceTier: (tier) => set({ deviceTier: tier }),
+        
+        // User preferences
         preferences: {
-          ...state.preferences,
-          [key]: value,
+          theme: 'system',
+          reducedMotion: false,
+          highContrast: false,
         },
-      })),
-    }),
-    {
-      name: 'app-store',
-      storage: {
-        getItem: (name) => {
-          try {
-            const value = storage.getItem(name);
-            return value ? JSON.parse(value) : null;
-          } catch (e) {
-            console.error('Error getting item from storage', e);
-            return null;
+        setPreference: (key, value) => set((state) => ({
+          preferences: {
+            ...state.preferences,
+            [key]: value,
           }
-        },
-        setItem: (name, value) => {
-          try {
-            storage.setItem(name, JSON.stringify(value));
-          } catch (e) {
-            console.error('Error setting item in storage', e);
-          }
-        },
-        removeItem: (name) => {
-          try {
-            storage.removeItem(name);
-          } catch (e) {
-            console.error('Error removing item from storage', e);
-          }
-        }
-      },
-      partialize: (state) => ({
-        deviceTier: state.deviceTier,
-        preferences: state.preferences,
+        })),
       }),
-    }
+      {
+        name: 'app-store',
+        storage: createJSONStorage(() => {
+          // Use localStorage if available, otherwise use fallback
+          return canUseLocalStorage 
+            ? window.localStorage 
+            : fallbackStorage;
+        }),
+        // Only persist these specific parts of the state
+        partialize: (state) => ({
+          deviceTier: state.deviceTier,
+          preferences: state.preferences,
+        }),
+      }
+    )
   )
 );

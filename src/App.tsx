@@ -13,6 +13,7 @@ import { LiveAnnouncer } from "./components/ui/accessibility/LiveAnnouncer";
 import { FallbackErrorPage } from "./components/error/FallbackErrorPage";
 import { ErrorBoundary } from "./components/ui/error/ErrorBoundary";
 import { LoadingScreen } from "./components/LoadingScreen";
+import { i18n } from "./i18n";
 
 // Pages
 import Dashboard from "./pages/Dashboard";
@@ -26,10 +27,15 @@ import Index from "./pages/Index";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
-  const { i18n } = useTranslation();
+  const { t } = useTranslation();
   const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
   
   useEffect(() => {
+    // Make sure i18n is initialized
+    if (!i18n.isInitialized) {
+      console.warn("i18n not initialized, attempting to initialize now");
+    }
+    
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 800);

@@ -1,10 +1,11 @@
 
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AlertCircle, Home, RefreshCw, RotateCcw, Server, Copy, X } from 'lucide-react';
+import { AlertCircle, Home, RefreshCw, Server } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Copy, X } from 'lucide-react';
 
 interface FallbackErrorPageProps {
   error?: Error;
@@ -58,29 +59,29 @@ Stack: ${error.stack}
   };
   
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden border border-muted animate-fade-in">
-        <div className="bg-red-50 dark:bg-red-900/20 p-6 text-center border-b border-red-100 dark:border-red-900/20">
-          <div className="inline-flex items-center justify-center bg-red-100 dark:bg-red-900/30 rounded-full p-3 mb-4">
-            <AlertCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
+    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+      <div className="max-w-md w-full space-y-4 bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="bg-red-50 p-6 text-center border-b border-red-100">
+          <div className="inline-flex items-center justify-center bg-red-100 rounded-full p-3 mb-4">
+            <AlertCircle className="h-8 w-8 text-red-600" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
             {t('error.title', 'حدث خطأ في التطبيق')}
           </h1>
-          <p className="text-sm text-gray-600 dark:text-gray-300">
+          <p className="text-sm text-gray-600">
             {error?.message || t('error.unknown', 'خطأ غير معروف')}
           </p>
         </div>
         
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-4">
           <div className="space-y-2">
-            <h2 className="text-lg font-medium text-gray-900 dark:text-white">
+            <h2 className="text-lg font-medium text-gray-900">
               {t('error.whatHappened', 'ماذا حدث؟')}
             </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-300">
+            <p className="text-sm text-gray-600">
               {t('error.description', 'نأسف على هذا الخطأ. يمكنك محاولة إحدى الخيارات التالية:')}
             </p>
-            <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-300 rtl:pr-4 ltr:pl-4 space-y-1 mt-2">
+            <ul className="list-disc list-inside text-sm text-gray-600 rtl:pr-4 ltr:pl-4 space-y-1 mt-2">
               <li>{t('error.refresh', 'تحديث الصفحة')}</li>
               <li>{t('error.clearCache', 'مسح ذاكرة التخزين المؤقت')}</li>
               <li>{t('error.differentBrowser', 'تجربة متصفح مختلف')}</li>

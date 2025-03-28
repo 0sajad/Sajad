@@ -9,10 +9,25 @@ import { NetworkPerformanceCard } from "./network/NetworkPerformanceCard";
 import { SecurityStatusCard } from "./network/SecurityStatusCard";
 import { ErrorBoundary } from "./ui/error/ErrorBoundary";
 import { useTranslation } from "react-i18next";
+import { ErrorMessage } from "./ui/error/ErrorMessage";
 
 export function NetworkDashboard() {
   const { t } = useTranslation();
   const networkStats = useNetworkStats();
+
+  // If we have no network data, show a more user-friendly error
+  if (!networkStats) {
+    return (
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <ErrorMessage 
+          title={t('networkDashboard.error.title', 'خطأ في بيانات الشبكة')}
+          message={t('networkDashboard.error.message', 'لا يمكن تحميل بيانات الشبكة في الوقت الحالي')}
+          showDetailsDialog
+          details="Network stats data is undefined. This could be due to a network connection issue or a problem with the API service."
+        />
+      </div>
+    );
+  }
 
   return (
     <ErrorBoundary>
