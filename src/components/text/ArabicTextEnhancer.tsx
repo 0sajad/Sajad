@@ -56,7 +56,8 @@ export function ArabicTextEnhancer({
         className
       )}
       style={{
-        textJustify: kashida ? "kashida" : undefined,
+        // استخدام "inter-word" بدلاً من "kashida" للتوافق مع خصائص CSS القياسية
+        textJustify: kashida ? "inter-word" : undefined,
         fontFeatureSettings: `"rlig", "calt", "ss01", "ss02"${kashida ? ', "kshd"' : ''}`
       }}
     >

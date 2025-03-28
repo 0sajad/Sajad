@@ -14,7 +14,15 @@ export function usePreferenceSync() {
     setHighContrast,
     setColorBlindMode
   } = useA11y();
-  const { setPreference, getPreference } = useAppState();
+  const appState = useAppState();
+  const setPreference = (key: string, value: any) => {
+    appState.setState({ 
+      preferences: { 
+        ...appState.preferences, 
+        [key]: value 
+      } 
+    });
+  };
   const { info } = useNotifications();
   const { t } = useTranslation();
   
@@ -25,7 +33,7 @@ export function usePreferenceSync() {
     
     const handleReducedMotionChange = (e: MediaQueryListEvent | MediaQueryList) => {
       const prefersReducedMotion = e.matches;
-      const shouldSync = getPreference('syncSystemPreferences', true);
+      const shouldSync = appState.preferences?.syncSystemPreferences ?? true;
       
       if (shouldSync) {
         setReducedMotion(prefersReducedMotion);
@@ -49,7 +57,7 @@ export function usePreferenceSync() {
     return () => {
       reducedMotionQuery.removeEventListener('change', handleReducedMotionChange);
     };
-  }, [setReducedMotion, setPreference, getPreference, info, t]);
+  }, [setReducedMotion, setPreference, info, t, appState.preferences]);
   
   // التحقق من وضع الألوان المظلم/الفاتح
   useEffect(() => {
@@ -57,10 +65,10 @@ export function usePreferenceSync() {
     
     const handleDarkModeChange = (e: MediaQueryListEvent | MediaQueryList) => {
       const prefersDarkMode = e.matches;
-      const shouldSync = getPreference('syncSystemPreferences', true);
+      const shouldSync = appState.preferences?.syncSystemPreferences ?? true;
       
       if (shouldSync) {
-        setPreference('darkMode', prefersDarkMode);
+        setPreference('theme', prefersDarkMode ? 'dark' : 'light');
         
         if (prefersDarkMode) {
           document.documentElement.classList.add('dark');
@@ -79,7 +87,7 @@ export function usePreferenceSync() {
     return () => {
       darkModeQuery.removeEventListener('change', handleDarkModeChange);
     };
-  }, [setPreference, getPreference]);
+  }, [setPreference, appState.preferences]);
   
   // التحقق من تفضيلات التباين العالي
   useEffect(() => {
@@ -87,7 +95,7 @@ export function usePreferenceSync() {
     
     const handleHighContrastChange = (e: MediaQueryListEvent | MediaQueryList) => {
       const prefersHighContrast = e.matches;
-      const shouldSync = getPreference('syncSystemPreferences', true);
+      const shouldSync = appState.preferences?.syncSystemPreferences ?? true;
       
       if (shouldSync) {
         setHighContrast(prefersHighContrast);
@@ -111,7 +119,7 @@ export function usePreferenceSync() {
     return () => {
       highContrastQuery.removeEventListener('change', handleHighContrastChange);
     };
-  }, [setHighContrast, setPreference, getPreference, info, t]);
+  }, [setHighContrast, setPreference, info, t, appState.preferences]);
   
   // وظيفة لإعادة مزامنة جميع التفضيلات مع إعدادات النظام
   const syncAllWithSystem = useCallback(() => {
@@ -122,7 +130,7 @@ export function usePreferenceSync() {
     
     // مزامنة وضع الألوان المظلم/الفاتح
     const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    setPreference('darkMode', darkModeQuery.matches);
+    setPreference('theme', darkModeQuery.matches ? 'dark' : 'light');
     if (darkModeQuery.matches) {
       document.documentElement.classList.add('dark');
     } else {

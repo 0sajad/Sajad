@@ -1,9 +1,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { useNetworkStatus } from './state/use-app-state';
+import { useAppState } from './state/use-app-state';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { useAppState } from './state/use-app-state';
 
 interface OfflineSyncItem {
   id: string;
@@ -18,11 +17,23 @@ interface OfflineSyncItem {
  */
 export function useOfflineMode() {
   const { t } = useTranslation();
-  const { isOnline, checkNetworkStatus, setNetworkStatus } = useNetworkStatus();
+  const appState = useAppState();
+  const isOnline = appState.networkStatus?.isOnline ?? true;
+  const checkNetworkStatus = appState.checkConnection;
+  const setNetworkStatus = (status: { isConnected: boolean; isOnline: boolean }) => {
+    appState.setState({ 
+      networkStatus: { 
+        ...appState.networkStatus, 
+        isConnected: status.isConnected, 
+        isOnline: status.isOnline,
+        lastCheck: new Date()
+      } 
+    });
+  };
+  
   const [isOffline, setIsOffline] = useState(!isOnline);
   const [pendingSyncItems, setPendingSyncItems] = useState<OfflineSyncItem[]>([]);
   const [syncInProgress, setSyncInProgress] = useState(false);
-  const { getPreference } = useAppState();
   
   // الاستماع إلى أحداث الاتصال بالشبكة
   useEffect(() => {
@@ -46,7 +57,7 @@ export function useOfflineMode() {
         );
         
         // مزامنة البيانات المخزنة محليًا
-        if (hasPendingSync() && getPreference('autoSync', true)) {
+        if (hasPendingSync() && appState.preferences?.autoSave) {
           syncOfflineData();
         }
       }
@@ -94,7 +105,7 @@ export function useOfflineMode() {
       window.removeEventListener('offline', handleOffline);
       clearInterval(checkInterval);
     };
-  }, [isOnline, checkNetworkStatus, setNetworkStatus, t, isOffline]);
+  }, [isOnline, checkNetworkStatus, setNetworkStatus, t, isOffline, appState.preferences]);
   
   // تحميل العناصر المعلقة من التخزين المحلي
   const loadPendingSyncItems = useCallback(() => {

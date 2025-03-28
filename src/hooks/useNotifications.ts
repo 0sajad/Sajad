@@ -1,6 +1,6 @@
 
 import { useState, useCallback, useEffect } from 'react';
-import { toast, Toast } from 'sonner';
+import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { useA11y } from './useA11y';
 import { useAppState } from './state/use-app-state';
@@ -28,13 +28,13 @@ export function useNotifications() {
   const { announce, soundFeedback } = useA11y();
   const [activeToasts, setActiveToasts] = useState<string[]>([]);
   const [areNotificationsVisible, setAreNotificationsVisible] = useState(true);
-  const { getPreference } = useAppState();
+  const appState = useAppState();
   
   // التحقق من تفضيلات المستخدم للإشعارات
   useEffect(() => {
-    const showNotifications = getPreference('notifications', true);
+    const showNotifications = appState.preferences?.notificationsEnabled ?? true;
     setAreNotificationsVisible(showNotifications);
-  }, [getPreference]);
+  }, [appState]);
   
   // تشغيل صوت للإشعار
   const playNotificationSound = useCallback((type: NotificationType) => {

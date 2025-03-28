@@ -2,7 +2,7 @@
 import { useCallback } from 'react';
 import { DeviceTier } from './useDeviceDetection';
 
-interface OptimizeImageOptions {
+export interface OptimizeImageOptions {
   width?: number;
   quality?: number;
   format?: 'webp' | 'jpeg' | 'png' | 'avif';
@@ -13,13 +13,11 @@ interface OptimizeImageOptions {
  */
 export function useOptimizedResources(deviceTier: DeviceTier, metrics: { fpsCapped: boolean }) {
   // تحسين مصادر الصور
-  const optimizeImageSrc = useCallback((src: string, options?: OptimizeImageOptions) => {
+  const optimizeImageSrc = useCallback((src: string, width?: number, quality?: number) => {
     if (!src) return src;
     
     // تجاهل الصور المضمنة
     if (src.startsWith('data:')) return src;
-    
-    const { width, quality, format } = options || {};
     
     // إذا كان المصدر URL كاملاً
     try {
@@ -33,19 +31,13 @@ export function useOptimizedResources(deviceTier: DeviceTier, metrics: { fpsCapp
           url.searchParams.set('w', String(Math.round(width * 0.8)));
         }
         // تفضيل تنسيق WEBP للأجهزة منخفضة الأداء
-        if (format || 'webp') {
-          url.searchParams.set('fm', format || 'webp');
-        }
+        url.searchParams.set('fm', 'webp');
         return url.toString();
       } else if (deviceTier === 'medium') {
         // جودة متوسطة
         url.searchParams.set('q', String(quality || 80));
         if (width) {
           url.searchParams.set('w', String(width));
-        }
-        // استخدام التنسيق المحدد أو الافتراضي
-        if (format) {
-          url.searchParams.set('fm', format);
         }
         return url.toString();
       }
@@ -56,9 +48,6 @@ export function useOptimizedResources(deviceTier: DeviceTier, metrics: { fpsCapp
       }
       if (width) {
         url.searchParams.set('w', String(width));
-      }
-      if (format) {
-        url.searchParams.set('fm', format);
       }
       
       return url.toString();
