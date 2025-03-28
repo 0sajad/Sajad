@@ -49,6 +49,8 @@ export default function Index() {
   const { isTransitioning } = useLanguageTransition();
   const { readingGuide, keyboardNavigationVisible, announce } = useA11y();
   const [pageLoaded, setPageLoaded] = useState(false);
+  const [showAIAssistant, setShowAIAssistant] = useState(false);
+  
   useKeyboardShortcuts();
   usePreferenceSync();
   
@@ -63,6 +65,15 @@ export default function Index() {
     }
   }, []);
   
+  // إظهار المساعد الذكي بعد فترة زمنية
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setShowAIAssistant(true);
+    }, 3000);
+    
+    return () => clearTimeout(timeout);
+  }, []);
+  
   // الإعلان عن اكتمال تحميل الصفحة
   useEffect(() => {
     if (pageLoaded) {
@@ -75,6 +86,11 @@ export default function Index() {
       }, 1000);
     }
   }, [pageLoaded, i18n.language, announce]);
+  
+  // التوجه إلى صفحة المساعد الذكي
+  const handleMaximizeAI = () => {
+    window.location.href = '/ai';
+  };
   
   return (
     <ErrorBoundary>
@@ -135,7 +151,10 @@ export default function Index() {
           </Suspense>
           
           <Suspense fallback={null}>
-            <FloatingAIAssistant />
+            <FloatingAIAssistant 
+              show={showAIAssistant} 
+              onMaximize={handleMaximizeAI} 
+            />
           </Suspense>
         </main>
         
