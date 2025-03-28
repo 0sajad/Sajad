@@ -1,28 +1,35 @@
 
 import React, { useEffect, useRef } from 'react';
 
+// نضيف تعريف لواجهة Window لتضمين خاصية announce
+declare global {
+  interface Window {
+    announce: (message: string, politeness?: 'polite' | 'assertive') => void;
+  }
+}
+
 export function LiveAnnouncer() {
   const politeAnnouncerRef = useRef<HTMLDivElement>(null);
   const assertiveAnnouncerRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
-    // Add the announce function to the window object
+    // إضافة وظيفة announce كوظيفة عالمية
     window.announce = (message: string, politeness: 'polite' | 'assertive' = 'polite') => {
       const announcer = politeness === 'assertive' 
         ? assertiveAnnouncerRef.current 
         : politeAnnouncerRef.current;
         
       if (announcer) {
-        // Create a new element for the announcement
+        // إنشاء عنصر جديد للإعلان
         const oldText = announcer.textContent;
         
-        // Only announce if the message is different
+        // الإعلان فقط إذا كانت الرسالة مختلفة
         if (oldText !== message) {
-          // Set the text content to empty first to force screen readers
-          // to recognize the change even if the text is the same
+          // ضبط محتوى النص فارغًا أولاً لإجبار قارئات الشاشة
+          // على التعرف على التغيير حتى لو كان النص هو نفسه
           announcer.textContent = '';
           
-          // Use setTimeout to ensure screen readers catch the change
+          // استخدام setTimeout لضمان التقاط قارئات الشاشة للتغيير
           setTimeout(() => {
             if (announcer) {
               announcer.textContent = message;
@@ -32,14 +39,11 @@ export function LiveAnnouncer() {
       }
     };
     
-    // Clean up
+    // تنظيف
     return () => {
-      // Remove the announce function from the window object safely
-      if (window.announce && typeof window.announce === 'function') {
-        // We need to replace it with a no-op function rather than deleting it
-        // to avoid errors from components that might try to use it during cleanup
-        window.announce = () => {};
-      }
+      // استبدال وظيفة announce بوظيفة لا تفعل شيئًا بدلاً من حذفها
+      // لتجنب الأخطاء من المكونات التي قد تحاول استخدامها أثناء التنظيف
+      window.announce = () => {};
     };
   }, []);
   

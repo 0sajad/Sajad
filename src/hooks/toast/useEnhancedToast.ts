@@ -1,8 +1,21 @@
 
 import { useCallback } from 'react';
 import { ToastManager } from '@/components/notifications/ToastManager';
-import { useA11y } from '@/hooks/useA11y';
-import { useRTLSupport } from '@/hooks/useRTLSupport';
+
+// الوظيفة الآمنة للإعلان - تستخدم الوظيفة العالمية بأمان
+const announceToScreenReader = (message: string, politeness: "polite" | "assertive" = "polite") => {
+  if (typeof window !== 'undefined' && typeof window.announce === 'function') {
+    window.announce(message, politeness);
+  }
+};
+
+// وظيفة آمنة للتحقق من RTL
+const isRTL = () => {
+  if (typeof document !== 'undefined') {
+    return document.documentElement.dir === 'rtl';
+  }
+  return false;
+};
 
 interface ToastOptions {
   title?: string;
@@ -19,9 +32,6 @@ interface ToastOptions {
  * خطاف محسن لإدارة الإشعارات مع دعم إمكانية الوصول
  */
 export function useEnhancedToast() {
-  const { announce, soundFeedback, playNotificationSound } = useA11y();
-  const { isRTL } = useRTLSupport();
-  
   // إظهار إشعار مع اختيار نوعه ودعم إمكانية الوصول
   const showToast = useCallback((options: ToastOptions) => {
     const { title, description, type = "info" } = options;
@@ -29,31 +39,18 @@ export function useEnhancedToast() {
     // الإعلان لقارئات الشاشة
     if (title || description) {
       const message = [title, description].filter(Boolean).join(': ');
-      announce(message, type === "error" ? "assertive" : "polite");
-    }
-    
-    // تشغيل صوت الإشعار إذا كانت الميزة مفعلة
-    if (soundFeedback) {
-      const soundType = type === "success" 
-        ? "success" 
-        : type === "error" 
-          ? "error" 
-          : type === "warning" 
-            ? "warning" 
-            : "info";
-            
-      playNotificationSound(soundType);
+      announceToScreenReader(message, type === "error" ? "assertive" : "polite");
     }
     
     // تعديل موضع الإشعار بناءً على اتجاه اللغة
-    const position = options.position || (isRTL ? "top-left" : "top-right");
+    const position = options.position || (isRTL() ? "top-left" : "top-right");
     
     // إظهار الإشعار
     return ToastManager.show({
       ...options,
       position,
     });
-  }, [announce, soundFeedback, playNotificationSound, isRTL]);
+  }, []);
   
   // وظائف مختصرة لأنواع الإشعارات المختلفة
   const success = useCallback((options: Omit<ToastOptions, "type">) => {

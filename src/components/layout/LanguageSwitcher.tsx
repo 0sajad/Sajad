@@ -14,7 +14,26 @@ import { Button } from "@/components/ui/button";
 import { useLanguageTransition } from "@/hooks/useLanguageTransition";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { motion } from "framer-motion";
-import { useA11y } from "@/hooks/useA11y";
+
+// استيراد فقط الوظائف اللازمة من useA11y لتجنب الحلقات اللانهائية
+// وإنشاء وظائف آمنة لاستخدامها داخل المكونات
+const useA11yFeatures = () => {
+  const getReducedMotion = () => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  };
+
+  const announceToScreenReader = (message: string, politeness: "polite" | "assertive" = "polite") => {
+    if (typeof window !== 'undefined' && typeof window.announce === 'function') {
+      window.announce(message, politeness);
+    }
+  };
+
+  return {
+    reducedMotion: getReducedMotion(),
+    announce: announceToScreenReader
+  };
+};
 
 interface LanguageSwitcherProps {
   /** نوع العرض: أيقونة فقط أو عرض كامل مع نص */
@@ -24,18 +43,13 @@ interface LanguageSwitcherProps {
 }
 
 /**
- * مكون مبدّل اللغة
- * يعرض قائمة باللغات المدعومة ويسمح للمستخدم بالتبديل بينها
- * محسّن لدعم RTL والوصول
- * 
- * @param {LanguageSwitcherProps} props خصائص المكون
- * @returns {JSX.Element} مكون React
+ * مكون مبدّل اللغة - معاد هيكلته لتجنب مشاكل التحديث المتكرر
  */
 export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageSwitcherProps) {
   const { t, i18n } = useTranslation();
   const { isTransitioning, changeLanguage } = useLanguageTransition();
   const [mounted, setMounted] = useState(false);
-  const { announce, reducedMotion } = useA11y();
+  const { reducedMotion, announce } = useA11yFeatures();
 
   // تأكد من أن مكون اللغة يعمل فقط على جانب العميل
   useEffect(() => {
@@ -54,7 +68,6 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
 
   /**
    * قائمة اللغات المدعومة مع معلوماتها
-   * تم تحسينها باستخدام useMemo لمنع إعادة الإنشاء غير الضرورية
    */
   const languageNames = useMemo(() => {
     return {
@@ -67,7 +80,7 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
     };
   }, []);
 
-  // تأكد من أن المكون جاهز قبل العرض (لتجنب اختلاف الواجهة بين الخادم والعميل)
+  // تأكد من أن المكون جاهز قبل العرض
   if (!mounted) {
     return null;
   }
@@ -76,32 +89,18 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
   const currentLanguage = languageNames[i18n.language as keyof typeof languageNames] || languageNames['en'];
 
   /**
-   * تصنيف اللغات لتحسين العرض
-   * تجميع اللغة العربية واللهجة العراقية معًا ثم اللغات الأخرى
+   * الحصول على اللغات المصنفة للعرض
    */
   const getGroupedLanguages = () => {
-    const groupedLanguages: { [key: string]: Array<keyof typeof languageNames> } = {
-      'arabic': ['ar', 'ar-iq'],
-      'other': ['en', 'fr', 'ja', 'zh']
-    };
+    const arabicLanguages: Array<keyof typeof languageNames> = ['ar', 'ar-iq'];
+    const otherLanguages: Array<keyof typeof languageNames> = ['en', 'fr', 'ja', 'zh'];
     
     // ترتيب اللغات مع إعطاء الأولوية للغات العربية
-    const sortedLanguages: Array<keyof typeof languageNames> = [];
-    
-    // إضافة اللغات العربية أولاً
-    sortedLanguages.push(...groupedLanguages.arabic);
-    
-    // ثم إضافة باقي اللغات
-    sortedLanguages.push(...groupedLanguages.other);
-    
-    return sortedLanguages;
+    return [...arabicLanguages, ...otherLanguages];
   };
 
   /**
-   * معالج تغيير اللغة
-   * يغير اللغة ويعلن قارئ الشاشة بالتغيير
-   * 
-   * @param {string} langCode كود اللغة المطلوب التغيير إليها
+   * معالج تغيير اللغة - يعلن قارئ الشاشة بالتغيير
    */
   const handleLanguageChange = (langCode: string) => {
     const newLanguageName = languageNames[langCode as keyof typeof languageNames]?.nativeName || langCode;
@@ -133,20 +132,6 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
     return t('common.selectLanguage', 'تغيير اللغة');
   };
 
-  /**
-   * الحصول على فئات CSS المناسبة لنمط الزر
-   */
-  const getButtonClasses = () => {
-    return cn(
-      "relative",
-      className,
-      isTransitioning ? 'opacity-50' : 'opacity-100',
-      "transition-all duration-300",
-      "bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-700",
-      "border border-blue-200 dark:border-gray-600"
-    );
-  };
-
   return (
     <TooltipProvider>
       <DropdownMenu>
@@ -156,7 +141,7 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
               <Button
                 variant="outline"
                 size={variant === "icon" ? "icon" : "default"}
-                className={getButtonClasses()}
+                className={`relative ${className} ${isTransitioning ? 'opacity-50' : 'opacity-100'} transition-all duration-300 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-700 border border-blue-200 dark:border-gray-600`}
                 aria-label={getTooltipText()}
               >
                 {variant === "icon" ? (
@@ -211,13 +196,13 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
             return (
               <DropdownMenuItem
                 key={langCode}
-                className={cn(
-                  "flex items-center justify-between px-4 py-3 cursor-pointer transition-all",
-                  isActive 
+                className={`
+                  flex items-center justify-between px-4 py-3 cursor-pointer transition-all
+                  ${isActive 
                     ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 font-medium' 
-                    : 'hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:translate-y-[-1px]',
-                  isIraqiArabic ? 'border-l-2 border-green-500 dark:border-green-400' : ''
-                )}
+                    : 'hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:translate-y-[-1px]'}
+                  ${isIraqiArabic ? 'border-l-2 border-green-500 dark:border-green-400' : ''}
+                `}
                 onClick={() => handleLanguageChange(langCode)}
                 data-testid={`language-option-${langCode}`}
               >
@@ -227,7 +212,6 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
                   </span>
                   <span>{lang.nativeName}</span>
                   
-                  {/* إضافة وسم "محسن" للغة العراقية */}
                   {isIraqiArabic && (
                     <span className="ml-2 text-[10px] bg-green-100 text-green-800 px-1.5 py-0.5 rounded dark:bg-green-900/30 dark:text-green-300">
                       {i18n.language === 'ar-iq' ? 'محسن' : 'محسّن'}
@@ -258,7 +242,7 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
   );
 }
 
-// وظيفة مساعدة لدمج فئات CSS
+// وظيفة مساعدة لدمج فئات CSS - منفصلة لتجنب استدعاء hooks
 function cn(...classes: (string | undefined | null | false)[]): string {
   return classes.filter(Boolean).join(' ');
 }

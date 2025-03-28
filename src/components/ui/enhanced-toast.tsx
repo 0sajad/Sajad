@@ -1,9 +1,6 @@
 
 import React, { forwardRef } from "react";
 import { toast as sonnerToast } from "sonner";
-import { useTranslation } from "react-i18next";
-import { useA11y } from "@/hooks/useA11y";
-import { useRTLSupport } from "@/hooks/useRTLSupport";
 import { X, Check, AlertTriangle, Info, Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -23,6 +20,13 @@ export interface EnhancedToastOptions {
   important?: boolean;
 }
 
+// الإعلان الآمن لقارئ الشاشة - يتجنب استخدام hooks
+const announceToScreenReader = (message: string, politeness: "polite" | "assertive" = "polite") => {
+  if (typeof window !== 'undefined' && typeof window.announce === 'function') {
+    window.announce(message, politeness);
+  }
+};
+
 /**
  * مكون النخب المحسن مع دعم إمكانية الوصول وردود الصوت
  */
@@ -37,13 +41,8 @@ export const EnhancedToast = {
       important = false 
     } = options;
     
-    // للاستخدام داخل استدعاءات واجهة برمجة التطبيقات
-    const { announce } = useA11yHelpers();
-    
-    // إعلان لقارئات الشاشة
-    if (typeof announce === 'function') {
-      announce(`${title}. ${description || ''}`, important ? 'assertive' : 'polite');
-    }
+    // إعلان لقارئات الشاشة - يستخدم الوظيفة الآمنة
+    announceToScreenReader(`${title}. ${description || ''}`, important ? 'assertive' : 'polite');
     
     // إظهار النخب المرئي
     return sonnerToast.custom(
@@ -74,18 +73,3 @@ export const EnhancedToast = {
   info: (options: Omit<EnhancedToastOptions, 'type'>) => 
     EnhancedToast.show({ ...options, type: 'info' }),
 };
-
-// خطاف مساعد للوصول إلى وظائف إمكانية الوصول
-function useA11yHelpers() {
-  // Remove the direct useState causing infinite loops
-  // Instead, safely access announcement function
-  const announce = (message: string, politeness: 'polite' | 'assertive' = 'polite') => {
-    if (typeof window !== 'undefined' && typeof window.announce === 'function') {
-      window.announce(message, politeness);
-    }
-  };
-  
-  return {
-    announce
-  };
-}

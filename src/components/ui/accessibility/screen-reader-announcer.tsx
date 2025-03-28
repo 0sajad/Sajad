@@ -22,20 +22,14 @@ export function ScreenReaderAnnouncer({
         ? children 
         : announcerRef.current.textContent;
       
-      // إعادة تعيين المحتوى ثم إضافته من جديد لضمان قراءته
-      announcerRef.current.textContent = '';
-      
-      // تأخير قصير لضمان قراءة النص الجديد
-      setTimeout(() => {
-        if (announcerRef.current) {
-          announcerRef.current.textContent = content;
+      if (content) {
+        // استخدام الوظيفة العالمية للإعلان
+        if (typeof window !== 'undefined' && typeof window.announce === 'function') {
+          window.announce(content, politeness);
         }
-      }, 50);
+      }
     }
-  }, [children]);
-  
-  // Use the global announce function defined in LiveAnnouncer
-  // No need to define it again here to avoid conflicts
+  }, [children, politeness]);
   
   return (
     <div 
@@ -50,7 +44,7 @@ export function ScreenReaderAnnouncer({
   );
 }
 
-// تصدير وظيفة مساعدة للإعلان - uses the global function safely
+// تصدير وظيفة مساعدة للإعلان - تستخدم الوظيفة العالمية بأمان
 export function useScreenReaderAnnouncer() {
   const announce = (message: string, politeness: "polite" | "assertive" = "polite") => {
     if (typeof window !== 'undefined' && typeof window.announce === 'function') {

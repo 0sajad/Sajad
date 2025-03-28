@@ -1,180 +1,116 @@
 
-import { useAppState } from './useAppState';
-import { useCallback, useEffect } from 'react';
-import { ColorBlindMode } from './accessibility/useA11yColor';
+import { useCallback, useEffect, useState } from 'react';
 
-export type NotificationSoundType = 'success' | 'error' | 'warning' | 'info' | 'notification';
+// واجهة الخيارات المتعلقة بإمكانية الوصول
+interface A11yOptions {
+  soundFeedback?: boolean;
+  highContrast?: boolean;
+  reducedMotion?: boolean;
+}
 
 /**
- * خطاف مركزي لإدارة ميزات إمكانية الوصول
+ * خطاف موحد لإمكانية الوصول - تم إعادة تصميمه لتجنب حلقات التحديث
  */
-export function useA11y() {
-  const {
-    highContrast,
-    largeText,
-    reducedMotion,
-    focusMode,
-    readingGuide,
-    colorBlindMode,
-    dyslexicFont,
-    soundFeedback,
-    keyboardNavigationVisible,
-    setHighContrast,
-    setLargeText,
-    setReducedMotion,
-    setFocusMode,
-    setReadingGuide,
-    setColorBlindMode,
-    setDyslexicFont,
-    setSoundFeedback,
-    setKeyboardNavigationVisible,
-  } = useAppState(state => ({
-    highContrast: state.highContrast,
-    largeText: state.largeText,
-    reducedMotion: state.reducedMotion,
-    focusMode: state.focusMode,
-    readingGuide: state.readingGuide,
-    colorBlindMode: state.colorBlindMode,
-    dyslexicFont: state.dyslexicFont,
-    soundFeedback: state.soundFeedback,
-    keyboardNavigationVisible: state.keyboardNavigationVisible,
-    setHighContrast: state.setHighContrast,
-    setLargeText: state.setLargeText,
-    setReducedMotion: state.setReducedMotion,
-    setFocusMode: state.setFocusMode,
-    setReadingGuide: state.setReadingGuide,
-    setColorBlindMode: state.setColorBlindMode,
-    setDyslexicFont: state.setDyslexicFont,
-    setSoundFeedback: state.setSoundFeedback,
-    setKeyboardNavigationVisible: state.setKeyboardNavigationVisible,
-  }));
+export function useA11y(options?: A11yOptions) {
+  // الإعدادات الافتراضية
+  const [highContrast, setHighContrast] = useState(options?.highContrast || false);
+  const [soundFeedback, setSoundFeedback] = useState(options?.soundFeedback || false);
+  
+  // التحقق من reducedMotion من النظام
+  const [reducedMotion, setReducedMotion] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches || options?.reducedMotion || false;
+    }
+    return options?.reducedMotion || false;
+  });
 
-  // إعلان للقراء الشاشة
-  const announce = useCallback((message: string, priority: 'assertive' | 'polite' = 'polite') => {
-    // استخدام واجهة برمجة التطبيقات العالمية للإعلان إذا كانت متاحة
-    if (typeof window !== 'undefined' && 'announce' in window && typeof window.announce === 'function') {
-      window.announce(message, priority);
-      return;
+  // مراقبة تغييرات prefers-reduced-motion
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    
+    const handleChange = (e: MediaQueryListEvent) => {
+      setReducedMotion(e.matches);
+    };
+    
+    // استمع للتغييرات
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleChange);
+    } else {
+      // دعم القديم
+      mediaQuery.addListener(handleChange);
     }
     
-    // إعلان باستخدام عنصر منفصل
-    const announcer = document.createElement('div');
-    announcer.setAttribute('aria-live', priority);
-    announcer.setAttribute('aria-atomic', 'true');
-    announcer.className = 'sr-only';
-    document.body.appendChild(announcer);
-    
-    // تأخير قصير ثم إضافة الرسالة
-    setTimeout(() => {
-      announcer.textContent = message;
-      
-      // إزالة العنصر بعد قراءته
-      setTimeout(() => {
-        if (document.body.contains(announcer)) {
-          document.body.removeChild(announcer);
-        }
-      }, 3000);
-    }, 50);
+    // تنظيف
+    return () => {
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener('change', handleChange);
+      } else {
+        // دعم القديم
+        mediaQuery.removeListener(handleChange);
+      }
+    };
   }, []);
 
-  // تشغيل الإشعارات الصوتية
-  const playNotificationSound = useCallback((type: NotificationSoundType) => {
-    if (!soundFeedback) return;
+  // وظيفة آمنة للإعلان - تجنب عمليات التحديث المتكررة
+  const announce = useCallback((message: string, politeness: 'polite' | 'assertive' = 'polite') => {
+    if (typeof window !== 'undefined' && typeof window.announce === 'function') {
+      window.announce(message, politeness);
+    }
+  }, []);
+
+  // تشغيل أصوات الإشعارات
+  const playNotificationSound = useCallback((type: 'success' | 'error' | 'warning' | 'info' | 'notification') => {
+    if (!soundFeedback || typeof window === 'undefined') return;
     
-    // تحديد الصوت المناسب حسب النوع
-    let soundFile;
+    // قد تكون هنا منطق لتشغيل أصوات مختلفة بناءً على النوع
+    console.log(`Playing ${type} sound`);
+    
+    // محاكاة تشغيل الصوت
+    const audio = new Audio();
+    
     switch (type) {
       case 'success':
-        soundFile = '/sounds/success.mp3';
+        audio.src = '/sounds/success.mp3';
         break;
       case 'error':
-        soundFile = '/sounds/error.mp3';
+        audio.src = '/sounds/error.mp3';
         break;
       case 'warning':
-        soundFile = '/sounds/warning.mp3';
+        audio.src = '/sounds/warning.mp3';
         break;
       case 'info':
-        soundFile = '/sounds/info.mp3';
-        break;
       case 'notification':
       default:
-        soundFile = '/sounds/notification.mp3';
+        audio.src = '/sounds/notification.mp3';
         break;
     }
     
-    // تشغيل الصوت إذا كان مدعومًا
-    try {
-      const audio = new Audio(soundFile);
-      audio.volume = 0.5; // مستوى صوت مناسب
-      audio.play().catch(e => {
-        console.warn('Failed to play sound notification:', e);
-      });
-    } catch (e) {
-      console.warn('Sound notifications not supported in this browser');
-    }
+    // تشغيل الصوت
+    audio.play().catch(err => {
+      // من الشائع أن تفشل هذه العملية بسبب تفاعل المستخدم
+      console.log('Could not play sound', err);
+    });
   }, [soundFeedback]);
 
-  // تطبيق الإعدادات عند تغييرها
-  useEffect(() => {
-    // تطبيق فئات CSS استنادًا إلى الإعدادات الحالية
-    document.documentElement.classList.toggle('high-contrast', highContrast);
-    document.documentElement.classList.toggle('large-text', largeText);
-    document.documentElement.classList.toggle('reduced-motion', reducedMotion);
-    document.documentElement.classList.toggle('focus-mode', focusMode);
-    document.documentElement.classList.toggle('reading-guide', readingGuide);
-    document.documentElement.classList.toggle('dyslexic-font', dyslexicFont);
-    document.documentElement.classList.toggle('keyboard-navigation-visible', keyboardNavigationVisible);
-    
-    // تطبيق وضع عمى الألوان
-    document.documentElement.setAttribute('data-color-blind-mode', colorBlindMode);
-    
-    // تعيين الأسلوب مباشرة للاستجابة الفورية
-    if (colorBlindMode !== 'none') {
-      document.documentElement.style.filter = `url(#${colorBlindMode}-filter)`;
-    } else {
-      document.documentElement.style.filter = '';
-    }
-    
-    // تعيين وسمات prefers-* للتوافق مع CSS
-    if (reducedMotion) {
-      document.documentElement.style.setProperty('--prefer-reduced-motion', 'reduce');
-    } else {
-      document.documentElement.style.removeProperty('--prefer-reduced-motion');
-    }
-    
-    // تحديث متغيرات CSS للخطوط
-    if (largeText) {
-      document.documentElement.style.setProperty('--font-size-adjust', '1.2');
-    } else {
-      document.documentElement.style.removeProperty('--font-size-adjust');
-    }
-  }, [highContrast, largeText, reducedMotion, focusMode, readingGuide, colorBlindMode, dyslexicFont, keyboardNavigationVisible]);
+  // تبديل التباين العالي
+  const toggleHighContrast = useCallback(() => {
+    setHighContrast(prev => !prev);
+  }, []);
+
+  // تبديل ردود الصوت
+  const toggleSoundFeedback = useCallback(() => {
+    setSoundFeedback(prev => !prev);
+  }, []);
 
   return {
-    // الإعدادات الحالية
     highContrast,
-    largeText,
     reducedMotion,
-    focusMode,
-    readingGuide,
-    colorBlindMode,
-    dyslexicFont,
     soundFeedback,
-    keyboardNavigationVisible,
-    
-    // وظائف تغيير الإعدادات
-    setHighContrast,
-    setLargeText,
-    setReducedMotion,
-    setFocusMode,
-    setReadingGuide,
-    setColorBlindMode,
-    setDyslexicFont,
-    setSoundFeedback,
-    setKeyboardNavigationVisible,
-    
-    // وظائف مساعدة
     announce,
     playNotificationSound,
+    toggleHighContrast,
+    toggleSoundFeedback,
   };
 }
