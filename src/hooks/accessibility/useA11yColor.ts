@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 
-type ColorBlindMode = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'achromatopsia';
+export type ColorBlindMode = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'achromatopsia';
 
 export function useA11yColor() {
   const [colorBlindMode, setColorBlindMode] = useState<ColorBlindMode>('none');
@@ -27,10 +27,10 @@ export function useA11yColor() {
   
   // Load preference from localStorage on mount
   useEffect(() => {
-    const storedColorBlindMode = localStorage.getItem('a11y-colorBlindMode') as ColorBlindMode;
+    const storedColorBlindMode = localStorage.getItem('a11y-colorBlindMode') as ColorBlindMode | null;
     
     if (storedColorBlindMode && storedColorBlindMode !== 'none') {
-      setColorBlindMode(storedColorBlindMode);
+      setColorBlindMode(storedColorBlindMode as ColorBlindMode);
     }
   }, []);
   

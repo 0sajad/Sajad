@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useDyslexiaFeatures, useTextSpacingFeatures, useLinkFeatures } from './accessibility/useA11yFeatures';
 import { useA11yCore } from './accessibility/useA11yCore';
 import { useA11yText } from './accessibility/useA11yText';
-import { useA11yColor } from './accessibility/useA11yColor';
+import { useA11yColor, ColorBlindMode } from './accessibility/useA11yColor';
 import { useCursorFeatures, useColorInversionFeatures, useMonochromeFeatures } from './accessibility/useA11yVisualEffects';
 
 /**
@@ -45,8 +45,8 @@ export function useA11y() {
   
   // Screen reader announcement function
   const announce = (message: string, politeness: "polite" | "assertive" = "polite") => {
-    if (typeof window !== 'undefined' && window.announce) {
-      window.announce(message, politeness);
+    if (typeof window !== 'undefined' && (window as any).announce) {
+      (window as any).announce(message, politeness);
     } else {
       console.log(`Screen reader announcement (${politeness}): ${message}`);
     }

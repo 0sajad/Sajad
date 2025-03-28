@@ -16,6 +16,7 @@ import { TextTabContent } from "@/components/settings/accessibility/tabs/TextTab
 import { SoundTabContent } from "@/components/settings/accessibility/tabs/SoundTabContent";
 import { KeyboardTabContent } from "@/components/settings/accessibility/tabs/KeyboardTabContent";
 import { AdvancedTabContent } from "@/components/settings/accessibility/tabs/AdvancedTabContent";
+import { ColorBlindMode } from "@/hooks/accessibility/useA11yColor";
 
 export default function AccessibilitySettings() {
   const { t } = useTranslation();
@@ -56,12 +57,17 @@ export default function AccessibilitySettings() {
   const { exportSettings, importSettings } = useProfileImportExport();
   const { showImportDialog, handleImportError } = useImportProfileHandler();
   
+  // Create a wrapper function to handle ColorBlindMode type conversion
+  const setColorBlindModeWrapper = (value: string) => {
+    setColorBlindMode(value as ColorBlindMode);
+  };
+  
   const { loadProfile } = useProfileActivation(
     setHighContrast,
     setLargeText,
     setReducedMotion,
     setFocusMode,
-    setColorBlindMode,
+    setColorBlindModeWrapper,
     setDyslexicFont,
     setReadingGuide,
     setSoundFeedback
@@ -120,7 +126,9 @@ export default function AccessibilitySettings() {
         setLargeText(settings.largeText);
         setReducedMotion(settings.reducedMotion);
         setFocusMode(settings.focusMode);
-        setColorBlindMode(settings.colorBlindMode);
+        if (settings.colorBlindMode) {
+          setColorBlindMode(settings.colorBlindMode as ColorBlindMode);
+        }
         setDyslexicFont(settings.dyslexicFont);
         setReadingGuide(settings.readingGuide || false);
         setSoundFeedback(settings.soundFeedback || false);

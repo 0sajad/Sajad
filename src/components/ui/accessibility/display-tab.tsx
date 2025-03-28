@@ -58,9 +58,8 @@ export function DisplayTab() {
         checked={largeText}
         onChange={handleToggleLargeText}
         shortcutKey="Alt+T"
-        descriptionId="large-text-desc"
+        description={t('accessibility.largeTextDescription')}
       />
-      <p id="large-text-desc" className="sr-only">{t('accessibility.largeTextDescription')}</p>
       
       <AccessibilityToggle
         id="a11y-focus-mode"
@@ -69,9 +68,8 @@ export function DisplayTab() {
         checked={focusMode}
         onChange={handleToggleFocusMode}
         shortcutKey="Alt+F"
-        descriptionId="focus-mode-desc"
+        description={t('accessibility.focusModeDescription')}
       />
-      <p id="focus-mode-desc" className="sr-only">{t('accessibility.focusModeDescription')}</p>
       
       <AccessibilityToggle
         id="a11y-dyslexic-font"
@@ -80,9 +78,8 @@ export function DisplayTab() {
         checked={dyslexicFont}
         onChange={handleToggleDyslexicFont}
         shortcutKey="Alt+D"
-        descriptionId="dyslexic-font-desc"
+        description={t('accessibility.dyslexicFontDescription')}
       />
-      <p id="dyslexic-font-desc" className="sr-only">{t('accessibility.dyslexicFontDescription')}</p>
     </>
   );
 }

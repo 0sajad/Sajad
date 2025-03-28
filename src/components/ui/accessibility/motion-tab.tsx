@@ -44,9 +44,8 @@ export function MotionTab() {
         checked={reducedMotion}
         onChange={handleToggleReducedMotion}
         shortcutKey="Alt+M"
-        descriptionId="reduced-motion-desc"
+        description={t('accessibility.reducedMotionDescription')}
       />
-      <p id="reduced-motion-desc" className="sr-only">{t('accessibility.reducedMotionDescription')}</p>
       
       <div className="rounded-md bg-muted p-3 text-sm text-muted-foreground">
         <p>{t('accessibility.reducedMotionHint')}</p>

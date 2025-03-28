@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useA11y } from "@/hooks/useA11y";
 import { AccessibilityToggle } from "./accessibility-toggle";
 import { cn } from "@/lib/utils";
+import { ColorBlindMode } from "@/hooks/accessibility/useA11yColor";
 
 export function ColorTab() {
   const { t } = useTranslation();
@@ -41,9 +42,9 @@ export function ColorTab() {
     announceChange('highContrast', checked);
   };
   
-  const handleToggleColorBlindMode = (mode: string | null) => {
+  const handleToggleColorBlindMode = (mode: ColorBlindMode) => {
     setColorBlindMode(mode);
-    announceChange('colorBlindMode', Boolean(mode));
+    announceChange('colorBlindMode', mode !== 'none');
   };
 
   return (
@@ -55,14 +56,13 @@ export function ColorTab() {
         checked={highContrast}
         onChange={handleToggleHighContrast}
         shortcutKey="Alt+C"
-        descriptionId="high-contrast-desc"
+        description={t('accessibility.highContrastDescription')}
       />
-      <p id="high-contrast-desc" className="sr-only">{t('accessibility.highContrastDescription')}</p>
       
       <div className="space-y-2">
         <Label className="text-sm">{t('accessibility.colorBlindMode')}</Label>
         <div className="grid grid-cols-2 gap-2">
-          {["protanopia", "deuteranopia", "tritanopia", null].map((mode) => (
+          {(["protanopia", "deuteranopia", "tritanopia", "none"] as ColorBlindMode[]).map((mode) => (
             <Button
               key={mode || "normal"}
               variant="outline"
@@ -74,7 +74,7 @@ export function ColorTab() {
               onClick={() => handleToggleColorBlindMode(mode)}
             >
               <span>
-                {mode ? t(`accessibility.${mode}`) : t('accessibility.normalVision')}
+                {mode !== 'none' ? t(`accessibility.${mode}`) : t('accessibility.normalVision')}
               </span>
               {colorBlindMode === mode && <Check className="h-3 w-3 ml-2" />}
             </Button>
