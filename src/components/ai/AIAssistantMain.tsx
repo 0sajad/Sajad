@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import { AIMinimizedButton } from "./assistantComponents/AIMinimizedButton";
 import { AIStatusSection } from "./assistantComponents/AIStatusSection";
 import { AICapabilitiesSection } from "./assistantComponents/AICapabilitiesSection";
-import { AIHeader } from "./AIHeader";
-import { AISidebar } from "./AISidebar";
+import { AIHeader } from "./assistantComponents/AIHeader";
+import { AISidebarEnhanced } from "./AISidebarEnhanced";
 import { AIMainContent } from "./AIMainContent";
 import { AIChat } from "./AIChat";
 
@@ -31,7 +31,7 @@ export function AIAssistantMain({ minimized = false, onMaximize }: AIAssistantMa
 
   return (
     <div className="w-full h-full flex rounded-lg overflow-hidden border shadow-lg">
-      <AISidebar />
+      <AISidebarEnhanced />
       <div className="flex-1 flex flex-col h-full">
         <AIHeader />
         <div className="flex-1 flex">

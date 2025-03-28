@@ -1,0 +1,46 @@
+
+{
+  "enhancedMode": "Enhanced Mode",
+  "toggleEnhancedMode": "Toggle Enhanced Mode",
+  "enhancedModeTooltip": "Enable advanced AI capabilities",
+  "selectModel": "Select Model",
+  "assistant": "AI Assistant",
+  "uses": "Uses",
+  "learning": "Learning",
+  "suggestedUses": "Suggested AI Uses",
+  "models": {
+    "basic": "Basic Model",
+    "advanced": "Advanced Model",
+    "premium": "Premium Model"
+  },
+  "useCases": {
+    "networkAnalysis": {
+      "title": "Network Analysis",
+      "description": "Monitor and analyze network performance and identify vulnerabilities"
+    },
+    "security": {
+      "title": "Security Enhancement",
+      "description": "Identify potential threats and suggest actions to improve security"
+    },
+    "optimization": {
+      "title": "Performance Optimization",
+      "description": "Optimize network speed, stability and reduce response time"
+    },
+    "troubleshooting": {
+      "title": "Troubleshooting",
+      "description": "Diagnose and fix connection and network issues automatically"
+    },
+    "codeGeneration": {
+      "title": "Code Generation",
+      "description": "Create code to handle network configurations"
+    },
+    "documentation": {
+      "title": "Network Documentation",
+      "description": "Create detailed technical documentation about network and settings"
+    },
+    "reports": {
+      "title": "Reports & Statistics",
+      "description": "Create analytical reports on network performance and data analysis"
+    }
+  }
+}
