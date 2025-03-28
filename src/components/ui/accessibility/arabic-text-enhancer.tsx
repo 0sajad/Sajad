@@ -36,7 +36,7 @@ export function ArabicTextEnhancer({
   kashidaEnabled,
   setKashidaEnabled
 }: ArabicTextEnhancerProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   
   const fontOptions = [
     { value: "default", label: "النص الافتراضي" },
@@ -45,8 +45,13 @@ export function ArabicTextEnhancer({
     { value: "simplified", label: "الخط المبسط" }
   ];
   
-  // نص مثال للعرض
-  const sampleText = "هذا مثال على كيف سيظهر النص العربي بالإعدادات الحالية. يمكنك ضبط الإعدادات لتحسين قراءة النص حسب تفضيلاتك.";
+  // نص مثال للعرض - متوافق مع اللهجة العراقية إذا كانت مُفعلة
+  const getSampleText = () => {
+    if (i18n.language === "ar-iq") {
+      return "هذا مثال على شكل الكتابة بالإعدادات الحالية. تكدر تضبط الإعدادات حسب ما تحب لتحسين قراءة النص.";
+    }
+    return "هذا مثال على كيف سيظهر النص العربي بالإعدادات الحالية. يمكنك ضبط الإعدادات لتحسين قراءة النص حسب تفضيلاتك.";
+  };
   
   // حساب نمط CSS للنص المثال
   const sampleTextStyle = {
@@ -71,12 +76,36 @@ export function ArabicTextEnhancer({
     }
   }
   
+  // الحصول على ترجمة متوافقة مع اللهجة العراقية
+  const getTranslation = (key: string, defaultValue: string): string => {
+    if (i18n.language === "ar-iq") {
+      // ترجمات مخصصة للهجة العراقية
+      const iraqiTranslations: { [key: string]: string } = {
+        'accessibility.arabicTextEnhancer': 'تحسين الكتابة العربية',
+        'accessibility.arabicTextEnhancerDescription': 'ضبط شكل الكتابة العربية حتى تكدر تقرأ أحسن',
+        'accessibility.fontFamily': 'نوع الخط',
+        'accessibility.font.default': 'الخط العادي',
+        'accessibility.font.traditional': 'الخط التقليدي',
+        'accessibility.font.modern': 'الخط الحديث',
+        'accessibility.font.simplified': 'الخط المبسط',
+        'accessibility.lineHeight': 'المسافة بين السطور',
+        'accessibility.letterSpacing': 'المسافة بين الحروف',
+        'accessibility.kashidaEnabled': 'تفعيل الكشيدة',
+        'accessibility.kashidaDescription': 'تمديد الكلمات لتملي السطر كامل'
+      };
+      
+      return iraqiTranslations[key] || t(key, defaultValue);
+    }
+    
+    return t(key, defaultValue);
+  };
+  
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>{t('accessibility.arabicTextEnhancer', 'تحسين النص العربي')}</CardTitle>
+        <CardTitle>{getTranslation('accessibility.arabicTextEnhancer', 'تحسين النص العربي')}</CardTitle>
         <CardDescription>
-          {t('accessibility.arabicTextEnhancerDescription', 'ضبط إعدادات عرض النص العربي لتحسين القراءة والوضوح')}
+          {getTranslation('accessibility.arabicTextEnhancerDescription', 'ضبط إعدادات عرض النص العربي لتحسين القراءة والوضوح')}
         </CardDescription>
       </CardHeader>
       
@@ -87,14 +116,14 @@ export function ArabicTextEnhancer({
           style={sampleTextStyle as React.CSSProperties}
           dir="rtl"
         >
-          {sampleText}
+          {getSampleText()}
         </div>
         
         {/* اختيار نوع الخط */}
         <div className="space-y-2">
           <div className="flex items-center gap-2 mb-2">
             <Type className="h-4 w-4 text-muted-foreground" />
-            <Label>{t('accessibility.fontFamily', 'نوع الخط')}</Label>
+            <Label>{getTranslation('accessibility.fontFamily', 'نوع الخط')}</Label>
           </div>
           
           <RadioGroup 
@@ -109,7 +138,7 @@ export function ArabicTextEnhancer({
                   htmlFor={`font-${option.value}`}
                   style={{ fontFamily: getFontFamilyValue(option.value) }}
                 >
-                  {t(`accessibility.font.${option.value}`, option.label)}
+                  {getTranslation(`accessibility.font.${option.value}`, option.label)}
                 </Label>
               </div>
             ))}
@@ -120,7 +149,7 @@ export function ArabicTextEnhancer({
         <div className="space-y-2">
           <div className="flex items-center gap-2 mb-2">
             <Baseline className="h-4 w-4 text-muted-foreground" />
-            <Label>{t('accessibility.lineHeight', 'المسافة بين السطور')}</Label>
+            <Label>{getTranslation('accessibility.lineHeight', 'المسافة بين السطور')}</Label>
             <span className="ml-auto text-xs text-muted-foreground">{lineHeight.toFixed(1)}</span>
           </div>
           
@@ -137,7 +166,7 @@ export function ArabicTextEnhancer({
         <div className="space-y-2">
           <div className="flex items-center gap-2 mb-2">
             <Type className="h-4 w-4 text-muted-foreground" />
-            <Label>{t('accessibility.letterSpacing', 'المسافة بين الحروف')}</Label>
+            <Label>{getTranslation('accessibility.letterSpacing', 'المسافة بين الحروف')}</Label>
             <span className="ml-auto text-xs text-muted-foreground">{letterSpacing.toFixed(1)} px</span>
           </div>
           
@@ -155,9 +184,9 @@ export function ArabicTextEnhancer({
           <div className="flex items-center space-x-2 rtl:space-x-reverse">
             <AlignJustify className="h-4 w-4 text-muted-foreground" />
             <Label htmlFor="kashida" className="flex flex-col space-y-1">
-              <span>{t('accessibility.kashidaEnabled', 'تفعيل الكشيدة')}</span>
+              <span>{getTranslation('accessibility.kashidaEnabled', 'تفعيل الكشيدة')}</span>
               <span className="font-normal text-xs text-muted-foreground">
-                {t('accessibility.kashidaDescription', 'ضبط النص لملء عرض السطر بتمديد الكلمات')}
+                {getTranslation('accessibility.kashidaDescription', 'ضبط النص لملء عرض السطر بتمديد الكلمات')}
               </span>
             </Label>
           </div>

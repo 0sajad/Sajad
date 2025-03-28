@@ -44,7 +44,7 @@ export function useLanguageTransition() {
         // حفظ اللغة في التخزين المحلي
         localStorage.setItem("language", langCode);
         
-        // عرض رسالة نجاح
+        // إعداد رسائل النجاح حسب اللغة المختارة
         const languageNames: { [key: string]: string } = {
           "ar": "العربية",
           "ar-iq": "العربية العراقية",
@@ -54,7 +54,14 @@ export function useLanguageTransition() {
           "zh": "中文"
         };
 
-        const message = t("common.languageChanged", "تم تغيير اللغة إلى") + " " + languageNames[langCode];
+        let message = "";
+        
+        // رسالة مخصصة للغة العراقية
+        if (langCode === 'ar-iq') {
+          message = "تم تغيير اللغة لـ" + " " + languageNames[langCode];
+        } else {
+          message = t("common.languageChanged", "تم تغيير اللغة إلى") + " " + languageNames[langCode];
+        }
         
         toast.success(message);
         
@@ -66,8 +73,17 @@ export function useLanguageTransition() {
         
       } catch (error) {
         console.error("Error changing language:", error);
-        toast.error(t("common.errorChangingLanguage", "خطأ في تغيير اللغة"));
-        announce(t("common.errorChangingLanguage", "خطأ في تغيير اللغة"), "assertive");
+        
+        // رسالة خطأ مخصصة للغة العراقية
+        let errorMessage = "";
+        if (i18n.language === 'ar-iq') {
+          errorMessage = "صار خطأ بتغيير اللغة";
+        } else {
+          errorMessage = t("common.errorChangingLanguage", "خطأ في تغيير اللغة");
+        }
+        
+        toast.error(errorMessage);
+        announce(errorMessage, "assertive");
         playNotificationSound("error");
       } finally {
         setTimeout(() => {

@@ -25,7 +25,7 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
   const { t, i18n } = useTranslation();
   const { isTransitioning, changeLanguage } = useLanguageTransition();
   const [mounted, setMounted] = useState(false);
-  const { announce } = useA11y();
+  const { announce, reducedMotion } = useA11y();
 
   // تأكد من أن مكون اللغة يعمل فقط على جانب العميل
   useEffect(() => {
@@ -52,19 +52,49 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
   // الحصول على معلومات اللغة الحالية
   const currentLanguage = languageNames[i18n.language] || languageNames['en'];
 
+  // تصنيف اللغات لتجميع اللغة العربية واللهجة العراقية معًا
+  const getGroupedLanguages = () => {
+    const groupedLanguages: { [key: string]: Array<keyof typeof languageNames> } = {
+      'arabic': ['ar', 'ar-iq'],
+      'other': ['en', 'fr', 'ja', 'zh']
+    };
+    
+    const sortedLanguages: Array<keyof typeof languageNames> = [];
+    
+    // ترتيب اللغات: العربية أولاً ثم الباقي
+    Object.values(groupedLanguages).forEach(group => {
+      sortedLanguages.push(...group);
+    });
+    
+    return sortedLanguages;
+  };
+
   // دالة للتعامل مع تغيير اللغة مع إمكانية الوصول
   const handleLanguageChange = (langCode: string) => {
     const newLanguageName = languageNames[langCode]?.nativeName || langCode;
     
-    // إعلان للقارئات الشاشية
-    const message = i18n.language.startsWith('ar')
-      ? `جاري التغيير إلى اللغة ${newLanguageName}`
-      : `Changing language to ${newLanguageName}`;
+    // إعلان مخصص حسب اللغة الحالية 
+    let message = '';
+    if (i18n.language === 'ar-iq') {
+      message = `راح نغير اللغة لـ ${newLanguageName}`;
+    } else if (i18n.language.startsWith('ar')) {
+      message = `جاري التغيير إلى اللغة ${newLanguageName}`;
+    } else {
+      message = `Changing language to ${newLanguageName}`;
+    }
       
     announce(message, "polite");
     
     // تغيير اللغة
     changeLanguage(langCode);
+  };
+
+  // الحصول على نص تلميح الأداة حسب اللغة الحالية
+  const getTooltipText = () => {
+    if (i18n.language === 'ar-iq') {
+      return 'غير اللغة';
+    }
+    return t('common.selectLanguage', 'تغيير اللغة');
   };
 
   return (
@@ -77,7 +107,7 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
                 variant="outline"
                 size={variant === "icon" ? "icon" : "default"}
                 className={`relative ${className} ${isTransitioning ? 'opacity-50' : 'opacity-100'} transition-all duration-300 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-700 border border-blue-200 dark:border-gray-600`}
-                aria-label={t('common.selectLanguage', 'تغيير اللغة')}
+                aria-label={getTooltipText()}
               >
                 {variant === "icon" ? (
                   <div className="relative">
@@ -86,7 +116,7 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
                       className="absolute -top-2 -right-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full w-5 h-5 flex items-center justify-center border border-white dark:border-gray-700 shadow-md"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                      transition={{ type: "spring", stiffness: 300, damping: reducedMotion ? 30 : 15 }}
                     >
                       <span className="text-[10px]">{currentLanguage.flag}</span>
                     </motion.div>
@@ -102,7 +132,7 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
             </DropdownMenuTrigger>
           </TooltipTrigger>
           <TooltipContent side="bottom" className="bg-gradient-to-r from-blue-500/90 to-blue-600/90 text-white border-0">
-            <p>{t('common.selectLanguage', 'تغيير اللغة')}</p>
+            <p>{getTooltipText()}</p>
           </TooltipContent>
         </Tooltip>
         
@@ -117,9 +147,12 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
           </DropdownMenuLabel>
           <DropdownMenuSeparator className="bg-gradient-to-r from-blue-200 to-purple-200 dark:from-blue-800/30 dark:to-purple-800/30" />
           
-          {Object.keys(languageNames).map((langCode) => {
+          {getGroupedLanguages().map((langCode) => {
             const isActive = i18n.language === langCode;
             const lang = languageNames[langCode];
+            
+            // تمييز لغة العراقية
+            const isIraqiArabic = langCode === 'ar-iq';
             
             return (
               <DropdownMenuItem
@@ -128,6 +161,8 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
                   isActive 
                     ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 font-medium' 
                     : 'hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:translate-y-[-1px]'
+                } ${
+                  isIraqiArabic ? 'border-l-2 border-green-500 dark:border-green-400' : ''
                 }`}
                 onClick={() => handleLanguageChange(langCode)}
                 data-testid={`language-option-${langCode}`}
@@ -137,13 +172,20 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
                     {lang.flag}
                   </span>
                   <span>{lang.nativeName}</span>
+                  
+                  {/* كلمة "محسن" للغة العراقية */}
+                  {isIraqiArabic && (
+                    <span className="ml-2 text-[10px] bg-green-100 text-green-800 px-1.5 py-0.5 rounded dark:bg-green-900/30 dark:text-green-300">
+                      {i18n.language === 'ar-iq' ? 'محسن' : 'محسّن'}
+                    </span>
+                  )}
                 </div>
                 
                 {isActive && (
                   <motion.div 
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                    transition={{ type: "spring", stiffness: 300, damping: reducedMotion ? 30 : 15 }}
                     className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full w-5 h-5 shadow-md"
                   >
                     <Check className="h-3 w-3" aria-hidden="true" />

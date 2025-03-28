@@ -17,6 +17,7 @@ import enDeviceManager from '@/locales/en/deviceManager.json';
 import enSettings from '@/locales/en/settings.json';
 import enSystemMonitor from '@/locales/en/systemMonitor.json';
 import enHelpCenter from '@/locales/en/helpCenter.json';
+import enError from '@/locales/en/error.json';
 
 import arCommon from '@/locales/ar/common.json';
 import arSecurityDashboard from '@/locales/ar/securityDashboard.json';
@@ -27,6 +28,7 @@ import arCta from '@/locales/ar/cta.json';
 import arAccess from '@/locales/ar/access.json';
 import arLicense from '@/locales/ar/license.json';
 import arAiFeatures from '@/locales/ar/aiFeatures.json';
+import arError from '@/locales/ar/error.json';
 
 import arIqCommon from '@/locales/ar-iq/common.json';
 import arIqSecurityDashboard from '@/locales/ar-iq/securityDashboard.json';
@@ -47,6 +49,7 @@ import arIqFooter from '@/locales/ar-iq/footer.json';
 import arIqHero from '@/locales/ar-iq/hero.json';
 import arIqHeader from '@/locales/ar-iq/header.json';
 import arIqMobileMenu from '@/locales/ar-iq/mobileMenu.json';
+import arIqError from '@/locales/ar-iq/error.json';
 
 import jaCommon from '@/locales/ja/common.json';
 import jaSecurityDashboard from '@/locales/ja/securityDashboard.json';
@@ -62,6 +65,7 @@ import jaSettings from '@/locales/ja/settings.json';
 import jaHelpCenter from '@/locales/ja/helpCenter.json';
 import jaHeader from '@/locales/ja/header.json';
 import jaMobileMenu from '@/locales/ja/mobileMenu.json';
+import jaError from '@/locales/ja/error.json';
 
 import frCta from '@/locales/fr/cta.json';
 import frNetworkTools from '@/locales/fr/networkTools.json';
@@ -69,12 +73,14 @@ import frAi from '@/locales/fr/ai.json';
 import frAiAssistant from '@/locales/fr/aiAssistant.json';
 import frSettings from '@/locales/fr/settings.json';
 import frCommon from '@/locales/fr/common.json';
+import frError from '@/locales/fr/error.json';
 
 import zhAi from '@/locales/zh/ai.json';
 import zhCta from '@/locales/zh/cta.json';
 import zhNetworkTools from '@/locales/zh/networkTools.json';
 import zhAiAssistant from '@/locales/zh/aiAssistant.json';
 import zhCommon from '@/locales/zh/common.json';
+import zhError from '@/locales/zh/error.json';
 
 // Define resources using imported JSON files
 const resources = {
@@ -91,7 +97,8 @@ const resources = {
     deviceManager: enDeviceManager,
     settings: enSettings,
     systemMonitor: enSystemMonitor,
-    helpCenter: enHelpCenter
+    helpCenter: enHelpCenter,
+    error: enError
   },
   ar: {
     common: arCommon,
@@ -102,7 +109,8 @@ const resources = {
     cta: arCta,
     access: arAccess,
     license: arLicense,
-    aiFeatures: arAiFeatures
+    aiFeatures: arAiFeatures,
+    error: arError
   },
   'ar-iq': {
     common: arIqCommon,
@@ -123,7 +131,8 @@ const resources = {
     footer: arIqFooter,
     hero: arIqHero,
     header: arIqHeader,
-    mobileMenu: arIqMobileMenu
+    mobileMenu: arIqMobileMenu,
+    error: arIqError
   },
   ja: {
     common: jaCommon,
@@ -139,7 +148,8 @@ const resources = {
     settings: jaSettings,
     helpCenter: jaHelpCenter,
     header: jaHeader,
-    mobileMenu: jaMobileMenu
+    mobileMenu: jaMobileMenu,
+    error: jaError
   },
   fr: {
     common: frCommon,
@@ -147,14 +157,16 @@ const resources = {
     networkTools: frNetworkTools,
     ai: frAi,
     aiAssistant: frAiAssistant,
-    settings: frSettings
+    settings: frSettings,
+    error: frError
   },
   zh: {
     common: zhCommon,
     ai: zhAi,
     cta: zhCta,
     networkTools: zhNetworkTools,
-    aiAssistant: zhAiAssistant
+    aiAssistant: zhAiAssistant,
+    error: zhError
   }
 };
 
@@ -183,12 +195,12 @@ export const i18n = i18next
       return FALLBACK_LANGUAGES[language] || DEFAULT_LANGUAGE;
     },
     debug: process.env.NODE_ENV === 'development',
-    supportedLngs: SUPPORTED_LANGUAGES, // استخدام supportedLngs بدلاً من whitelist
+    supportedLngs: SUPPORTED_LANGUAGES,
     interpolation: {
       escapeValue: false, // لا حاجة لـ React لأنه يهرب القيم افتراضياً
     },
-    // التأكد من استخدام اللغة الافتراضية لترجمة النصوص
-    ns: ['common', 'securityDashboard', 'networkTools', 'ai', 'aiAssistant', 'cta'],
+    // تحسين مع إضافة namespace للأخطاء
+    ns: ['common', 'securityDashboard', 'networkTools', 'ai', 'aiAssistant', 'cta', 'error'],
     defaultNS: 'common',
   });
 

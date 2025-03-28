@@ -3,8 +3,16 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 export function SkipLink() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [focused, setFocused] = useState(false);
+  
+  // تخصيص نص الرابط للهجة العراقية
+  const getSkipLinkText = () => {
+    if (i18n.language === "ar-iq") {
+      return "انتقل للمحتوى الرئيسي";
+    }
+    return t('accessibility.skipToContent', 'الانتقال إلى المحتوى الأساسي');
+  };
   
   return (
     <a 
@@ -18,8 +26,9 @@ export function SkipLink() {
       `}
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
+      aria-label={getSkipLinkText()}
     >
-      {t('accessibility.skipToContent', 'الانتقال إلى المحتوى الأساسي')}
+      {getSkipLinkText()}
     </a>
   );
 }

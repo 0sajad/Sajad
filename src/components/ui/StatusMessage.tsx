@@ -4,6 +4,7 @@ import { Info, AlertCircle, CheckCircle, XCircle, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cva } from "class-variance-authority";
 import { useA11y } from "@/hooks/useA11y";
+import { useTranslation } from "react-i18next";
 
 type StatusType = "info" | "success" | "warning" | "error";
 
@@ -45,6 +46,7 @@ export function StatusMessage({
 }: StatusMessageProps) {
   const [visible, setVisible] = useState(true);
   const { announce, reducedMotion } = useA11y();
+  const { t, i18n } = useTranslation();
   
   const icons = {
     info: Info,
@@ -55,9 +57,23 @@ export function StatusMessage({
   
   const Icon = icons[type];
   
+  // تعديل رسائل الإعلان حسب اللغة
+  const getAnnouncementText = () => {
+    // إذا كانت اللغة الحالية هي العربية العراقية
+    if (i18n.language === "ar-iq") {
+      const typeText = type === "error" ? t("error.title", "صار خطأ") : 
+                      type === "success" ? "تم بنجاح" : 
+                      type === "warning" ? "تحذير" : "معلومة";
+      return `${typeText}: ${message}${description ? `. ${description}` : ''}`;
+    }
+    
+    // لغات أخرى
+    return `${type}: ${message}${description ? `. ${description}` : ''}`;
+  };
+  
   useEffect(() => {
     // إعلان الرسالة للقارئات الشاشية
-    announce(`${type}: ${message}${description ? `. ${description}` : ''}`, type === "error" ? "assertive" : "polite");
+    announce(getAnnouncementText(), type === "error" ? "assertive" : "polite");
     
     // إخفاء الرسالة تلقائياً إذا تم تحديد المدة
     if (autoHideDuration > 0) {
@@ -107,7 +123,7 @@ export function StatusMessage({
             <button
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent focus:ring-primary rounded-full"
               onClick={handleClose}
-              aria-label="إغلاق الرسالة"
+              aria-label={i18n.language === "ar-iq" ? "إغلاق الرسالة" : t("close", "Close")}
             >
               <X className="h-4 w-4" />
             </button>
