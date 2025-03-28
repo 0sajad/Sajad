@@ -21,16 +21,13 @@
     "settings": "الإعدادات",
     "helpCenter": "مركز المساعدة",
     "license": "الترخيص",
-    "login": "تسجيل الدخول",
-    "fiberOptic": "الفايبر الضوئي"
+    "login": "تسجيل الدخول"
   },
   "dashboard": {
     "title": "لوحة التحكم",
     "welcome": "أهلاً بيك بلوحة تحكم أوكتا-كرام",
     "systemStatus": "حالة النظام",
     "status": "الحالة",
-    "active": "شغال",
-    "quickActions": "إجراءات سريعة",
     "selectAction": "إختار إجراء",
     "actions": {
       "scan": "فحص الشبكة",
@@ -38,13 +35,15 @@
       "backup": "نسخ احتياطي للإعدادات"
     },
     "latestUpdates": "آخر التحديثات",
-    "noUpdates": "ماكو تحديثات جديدة"
+    "noUpdates": "ماكو تحديثات جديدة",
+    "active": "شغال",
+    "quickActions": "إجراءات سريعة"
   },
   "networkTools": {
     "title": "أدوات الشبكة المتطورة",
     "qualityMonitoring": "مراقبة جودة الشبكة",
     "signalStrength": "قوة الإشارة",
-    "networkManagement": "إدارة شبكات الاتصال",
+    "networkManagement": "إدارة الشبكة",
     "simulationSystems": "أنظمة المحاكاة"
   },
   "mobileMenu": {
@@ -53,7 +52,7 @@
     "aiAssistant": "مساعد الذكاء الصناعي",
     "settings": "الإعدادات",
     "helpCenter": "مركز المساعدة",
-    "login": "تسجيل دخول"
+    "login": "تسجيل الدخول"
   },
   "notFound": {
     "message": "اوبس! الصفحة مو موجودة",

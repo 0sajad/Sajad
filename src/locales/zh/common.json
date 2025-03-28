@@ -12,8 +12,7 @@
     "settings": "设置",
     "helpCenter": "帮助中心",
     "license": "许可证",
-    "login": "登录",
-    "fiberOptic": "光纤"
+    "login": "登录"
   },
   "notFound": {
     "message": "哎呀！找不到页面",
