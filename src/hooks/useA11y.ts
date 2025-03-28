@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { useA11yCore } from './accessibility/useA11yCore';
@@ -200,11 +199,4 @@ export function useA11y(): UseA11yReturnType {
     // Announcement functionality
     announce
   };
-}
-
-// Augment Window interface to add announce function
-declare global {
-  interface Window {
-    announce?: (message: string, priority?: 'polite' | 'assertive') => void;
-  }
 }

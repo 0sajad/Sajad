@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
@@ -156,13 +155,6 @@ const AppWrapper = () => {
   // نكتفي بعرض الـ App مباشرة دون شاشة تحميل إضافية
   return <App />;
 };
-
-// إضافة أنواع عالمية للإعلانات
-declare global {
-  interface Window {
-    announce(message: string, priority?: 'polite' | 'assertive'): void;
-  }
-}
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
