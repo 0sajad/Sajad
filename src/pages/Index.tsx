@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -21,6 +20,7 @@ import { ReadingGuide } from "@/components/ui/accessibility/reading-guide";
 import { KeyboardFocusDetector } from "@/components/ui/accessibility/keyboard-focus-detector";
 import { LiveAnnouncer } from "@/components/ui/accessibility/live-announcer";
 import { useA11y } from "@/hooks/useA11y";
+import { SpecificDateTimeDisplay } from "@/components/SpecificDateTimeDisplay";
 
 const Index = () => {
   const [loaded, setLoaded] = useState(false);
@@ -29,20 +29,17 @@ const Index = () => {
   const { isTransitioning } = useLanguageTransition();
   const { reducedMotion } = useA11y();
   
-  // Use the new hooks
   useKeyboardShortcuts();
   usePreferenceSync();
 
   useEffect(() => {
     setLoaded(true);
     
-    // التحقق من اللغة المحفوظة أو استخدام لغة المتصفح
     const savedLanguage = localStorage.getItem("language");
     if (savedLanguage && savedLanguage !== i18n.language) {
       i18n.changeLanguage(savedLanguage);
     }
     
-    // التحقق من اتجاه اللغة وتطبيقه
     const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
     document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
     if (isRTL) {
@@ -51,14 +48,11 @@ const Index = () => {
       document.body.classList.remove('rtl-active');
     }
     
-    // عرض مساعد الذكاء الاصطناعي بعد فترة
     const timeout = setTimeout(() => {
       setShowAIAssistant(true);
     }, 5000);
     
-    // الاستماع لحدث تغيير اللغة
     const handleLanguageFullChange = () => {
-      // إعادة تطبيق الاتجاه
       const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
       document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
       if (isRTL) {
@@ -92,40 +86,32 @@ const Index = () => {
         <Header />
         
         <main id="main-content" tabIndex={-1}>
-          {/* Hero Section */}
           <HeroSection />
           
-          {/* Network Dashboard Section */}
+          <SpecificDateTimeDisplay />
+          
           <NetworkDashboard />
           
-          {/* Network Tools Section */}
           <NetworkToolsSection />
           
-          {/* Features Section */}
           <AnimatedCards />
           
-          {/* AI Features Section */}
           <AIFeaturesSection />
           
-          {/* Settings Section */}
           <SettingsSection />
           
-          {/* CTA Section */}
           <CTASection />
         </main>
         
         <Footer />
         
-        {/* Floating AI Assistant */}
         <FloatingAIAssistant 
           show={showAIAssistant} 
           onMaximize={() => window.location.href = '/ai'} 
         />
         
-        {/* Accessibility Controls */}
         <QuickAccessibilityButton />
 
-        {/* Accessibility Components */}
         <ReadingGuide />
         <KeyboardNavigationMenu />
         <KeyboardFocusDetector />
