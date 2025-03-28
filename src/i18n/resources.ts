@@ -18,7 +18,8 @@ export type ResourceKey =
   | 'footer'
   | 'hero'
   | 'header'
-  | 'mobileMenu';
+  | 'mobileMenu'
+  | 'accessibility'; // إضافة نمط جديد للترجمات المتعلقة بإمكانية الوصول
 
 export interface TranslationResources {
   [key: string]: {

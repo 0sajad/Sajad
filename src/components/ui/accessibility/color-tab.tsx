@@ -16,7 +16,7 @@ export function ColorTab() {
     colorBlindMode, setColorBlindMode
   } = useA11y();
 
-  // Announce changes to screen readers
+  // إعلان التغييرات لقارئات الشاشة
   const announceChange = (feature: string, state: boolean) => {
     const featureName = t(`accessibility.${feature}`);
     const stateText = state ? t('accessibility.enabled') : t('accessibility.disabled');
@@ -29,7 +29,7 @@ export function ColorTab() {
     });
     document.body.appendChild(announcement);
     
-    // Remove announcement after it's read
+    // إزالة الإعلان بعد قراءته
     setTimeout(() => {
       if (document.body.contains(announcement)) {
         document.body.removeChild(announcement);
@@ -62,9 +62,9 @@ export function ColorTab() {
       <div className="space-y-2">
         <Label className="text-sm">{t('accessibility.colorBlindMode')}</Label>
         <div className="grid grid-cols-2 gap-2">
-          {(["protanopia", "deuteranopia", "tritanopia", "none"] as ColorBlindMode[]).map((mode) => (
+          {(["none", "protanopia", "deuteranopia", "tritanopia"] as ColorBlindMode[]).map((mode) => (
             <Button
-              key={mode || "normal"}
+              key={mode}
               variant="outline"
               size="sm"
               className={cn(

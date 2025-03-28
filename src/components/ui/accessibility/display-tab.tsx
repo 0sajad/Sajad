@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Type, MousePointer2 } from "lucide-react";
+import { Eye, Type, MousePointer2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useA11y } from "@/hooks/useA11y";
 import { AccessibilityToggle } from "./accessibility-toggle";
@@ -8,12 +8,13 @@ import { AccessibilityToggle } from "./accessibility-toggle";
 export function DisplayTab() {
   const { t } = useTranslation();
   const { 
+    highContrast, setHighContrast,
     largeText, setLargeText,
     focusMode, setFocusMode,
     dyslexicFont, setDyslexicFont
   } = useA11y();
 
-  // Announce changes to screen readers
+  // إعلان التغييرات لقارئات الشاشة
   const announceChange = (feature: string, state: boolean) => {
     const featureName = t(`accessibility.${feature}`);
     const stateText = state ? t('accessibility.enabled') : t('accessibility.disabled');
@@ -26,7 +27,7 @@ export function DisplayTab() {
     });
     document.body.appendChild(announcement);
     
-    // Remove announcement after it's read
+    // إزالة الإعلان بعد قراءته
     setTimeout(() => {
       if (document.body.contains(announcement)) {
         document.body.removeChild(announcement);
@@ -34,11 +35,16 @@ export function DisplayTab() {
     }, 3000);
   };
 
+  const handleToggleHighContrast = (checked: boolean) => {
+    setHighContrast(checked);
+    announceChange('highContrast', checked);
+  };
+  
   const handleToggleLargeText = (checked: boolean) => {
     setLargeText(checked);
     announceChange('largeText', checked);
   };
-
+  
   const handleToggleFocusMode = (checked: boolean) => {
     setFocusMode(checked);
     announceChange('focusMode', checked);
@@ -50,7 +56,17 @@ export function DisplayTab() {
   };
 
   return (
-    <>
+    <div className="space-y-4">
+      <AccessibilityToggle
+        id="a11y-high-contrast"
+        label={t('accessibility.highContrast')}
+        icon={Eye}
+        checked={highContrast}
+        onChange={handleToggleHighContrast}
+        shortcutKey="Alt+C"
+        description={t('accessibility.highContrastDescription')}
+      />
+      
       <AccessibilityToggle
         id="a11y-large-text"
         label={t('accessibility.largeText')}
@@ -80,6 +96,10 @@ export function DisplayTab() {
         shortcutKey="Alt+D"
         description={t('accessibility.dyslexicFontDescription')}
       />
-    </>
+      
+      <div className="rounded-md bg-muted p-3 text-sm text-muted-foreground">
+        <p>{t('accessibility.displayFeatureHint')}</p>
+      </div>
+    </div>
   );
 }

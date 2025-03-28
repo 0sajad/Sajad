@@ -12,15 +12,16 @@ import {
 import { useTranslation } from "react-i18next";
 import { KeyboardShortcutsList } from "./keyboard-shortcuts-list";
 
-interface KeyboardNavigationMenuProps {
+// تعريف نوع البيانات للاختصارات
+export interface KeyboardShortcutsMenuProps {
   visible: boolean;
 }
 
-export function KeyboardNavigationMenu({ visible }: KeyboardNavigationMenuProps) {
+export function KeyboardNavigationMenu({ visible }: KeyboardShortcutsMenuProps) {
   const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
   
-  // Define shortcuts
+  // تعريف الاختصارات بالشكل الصحيح
   const shortcuts = [
     {
       key: "Alt+C",
@@ -59,7 +60,7 @@ export function KeyboardNavigationMenu({ visible }: KeyboardNavigationMenuProps)
     }
   ];
   
-  // Show or hide based on props
+  // إظهار أو إخفاء بناءً على الخصائص
   useEffect(() => {
     setIsVisible(visible);
   }, [visible]);

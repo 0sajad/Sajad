@@ -6,9 +6,9 @@ export type ColorBlindMode = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopi
 export function useA11yColor() {
   const [colorBlindMode, setColorBlindMode] = useState<ColorBlindMode>('none');
   
-  // Apply color blind mode
+  // تطبيق وضع عمى الألوان
   useEffect(() => {
-    // Remove any existing color blind classes
+    // إزالة أي فئات عمى الألوان الموجودة
     document.documentElement.classList.remove(
       'protanopia', 
       'deuteranopia', 
@@ -16,16 +16,16 @@ export function useA11yColor() {
       'achromatopsia'
     );
     
-    // Add the new class if not 'none'
+    // إضافة الفئة الجديدة إذا لم تكن 'none'
     if (colorBlindMode !== 'none') {
       document.documentElement.classList.add(colorBlindMode);
     }
     
-    // Store the preference in localStorage
+    // تخزين التفضيل في localStorage
     localStorage.setItem('a11y-colorBlindMode', colorBlindMode);
   }, [colorBlindMode]);
   
-  // Load preference from localStorage on mount
+  // تحميل التفضيل من localStorage عند التركيب
   useEffect(() => {
     const storedColorBlindMode = localStorage.getItem('a11y-colorBlindMode') as ColorBlindMode | null;
     

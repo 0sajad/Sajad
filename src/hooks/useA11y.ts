@@ -7,10 +7,10 @@ import { useA11yColor, ColorBlindMode } from './accessibility/useA11yColor';
 import { useCursorFeatures, useColorInversionFeatures, useMonochromeFeatures } from './accessibility/useA11yVisualEffects';
 
 /**
- * Hook to manage all accessibility features
+ * دالة لإدارة جميع ميزات إمكانية الوصول
  */
 export function useA11y() {
-  // Core accessibility features
+  // ميزات إمكانية الوصول الأساسية
   const {
     highContrast, setHighContrast,
     largeText, setLargeText,
@@ -18,41 +18,41 @@ export function useA11y() {
     focusMode, setFocusMode
   } = useA11yCore();
   
-  // Text-related features
+  // ميزات متعلقة بالنص
   const {
     dyslexicFont, setDyslexicFont,
     readingGuide, setReadingGuide
   } = useA11yText();
   
-  // Color-related features
+  // ميزات متعلقة بالألوان
   const { colorBlindMode, setColorBlindMode } = useA11yColor();
   
-  // Visual effects features
+  // ميزات التأثيرات المرئية
   const { customCursor, setCustomCursor } = useCursorFeatures();
   const { invertColors, setInvertColors } = useColorInversionFeatures();
   const { monochrome, setMonochrome } = useMonochromeFeatures();
   
-  // Text spacing & link features
+  // تباعد النص وميزات الروابط
   const { dyslexiaFont, setDyslexiaFont } = useDyslexiaFeatures();
   const { textSpacing, setTextSpacing } = useTextSpacingFeatures();
   const { underlineLinks, setUnderlineLinks } = useLinkFeatures();
   
-  // Add sound feedback state
+  // إضافة حالة ردود الصوت
   const [soundFeedback, setSoundFeedback] = useState<boolean>(false);
   
-  // Add keyboard navigation state
+  // إضافة حالة التنقل بلوحة المفاتيح
   const [keyboardNavigationVisible, setKeyboardNavigationVisible] = useState<boolean>(false);
   
-  // Screen reader announcement function
+  // وظيفة إعلان قارئ الشاشة
   const announce = (message: string, politeness: "polite" | "assertive" = "polite") => {
     if (typeof window !== 'undefined' && (window as any).announce) {
       (window as any).announce(message, politeness);
     } else {
-      console.log(`Screen reader announcement (${politeness}): ${message}`);
+      console.log(`إعلان قارئ الشاشة (${politeness}): ${message}`);
     }
   };
   
-  // Function to play notification sounds
+  // وظيفة تشغيل أصوات الإشعارات
   const playNotificationSound = (type: "success" | "error" | "warning" | "info" | "notification" = "notification") => {
     if (!soundFeedback) return;
     
@@ -67,54 +67,54 @@ export function useA11y() {
       
       const audio = new Audio(soundMap[type] || soundMap.notification);
       audio.volume = 0.2;
-      audio.play().catch(err => console.error('Error playing sound:', err));
+      audio.play().catch(err => console.error('خطأ في تشغيل الصوت:', err));
     } catch (error) {
-      console.error('Error playing notification sound:', error);
+      console.error('خطأ في تشغيل صوت الإشعار:', error);
     }
   };
   
-  // Load sound feedback preference from localStorage
+  // تحميل تفضيل ردود الصوت من localStorage
   useEffect(() => {
     const storedSoundFeedback = localStorage.getItem('a11y-soundFeedback');
     if (storedSoundFeedback === 'true') setSoundFeedback(true);
   }, []);
   
-  // Save sound feedback preference to localStorage
+  // حفظ تفضيل ردود الصوت في localStorage
   useEffect(() => {
     localStorage.setItem('a11y-soundFeedback', String(soundFeedback));
   }, [soundFeedback]);
   
   return {
-    // Core features
+    // الميزات الأساسية
     highContrast, setHighContrast,
     largeText, setLargeText,
     reducedMotion, setReducedMotion,
     focusMode, setFocusMode,
     
-    // Text features
+    // ميزات النص
     dyslexicFont, setDyslexicFont,
     readingGuide, setReadingGuide,
     
-    // Color features
+    // ميزات الألوان
     colorBlindMode, setColorBlindMode,
     
-    // Visual effects
+    // التأثيرات المرئية
     customCursor, setCustomCursor,
     invertColors, setInvertColors,
     monochrome, setMonochrome,
     
-    // Text formatting
+    // تنسيق النص
     dyslexiaFont, setDyslexiaFont,
     textSpacing, setTextSpacing,
     underlineLinks, setUnderlineLinks,
     
-    // Sound feedback
+    // ردود الصوت
     soundFeedback, setSoundFeedback,
     
-    // Keyboard navigation
+    // التنقل بلوحة المفاتيح
     keyboardNavigationVisible, setKeyboardNavigationVisible,
     
-    // Helper functions
+    // وظائف مساعدة
     announce,
     playNotificationSound
   };

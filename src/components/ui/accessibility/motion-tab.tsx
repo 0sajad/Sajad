@@ -9,7 +9,7 @@ export function MotionTab() {
   const { t } = useTranslation();
   const { reducedMotion, setReducedMotion } = useA11y();
 
-  // Announce changes to screen readers
+  // إعلان التغييرات لقارئات الشاشة
   const announceChange = (feature: string, state: boolean) => {
     const featureName = t(`accessibility.${feature}`);
     const stateText = state ? t('accessibility.enabled') : t('accessibility.disabled');
@@ -22,7 +22,7 @@ export function MotionTab() {
     });
     document.body.appendChild(announcement);
     
-    // Remove announcement after it's read
+    // إزالة الإعلان بعد قراءته
     setTimeout(() => {
       if (document.body.contains(announcement)) {
         document.body.removeChild(announcement);
