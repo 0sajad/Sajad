@@ -1,22 +1,42 @@
 
 {
+  "direction": "ltr",
+  "language": "ja",
+  "hero": {
+    "badge": "プロフェッショナルネットワーク分析システム",
+    "title": "OCTA-GRAM",
+    "description": "AI搭載インテリジェンスによる高度なネットワーク監視、分析、最適化",
+    "aiAssistant": "AIアシスタント",
+    "learnMore": "詳細を見る"
+  },
+  "ai": {
+    "chat": "チャット",
+    "files": "ファイルアップロード",
+    "tools": "高度なツール",
+    "processing": "処理中...",
+    "stopListening": "リスニングを停止",
+    "startListening": "リスニングを開始",
+    "uploadFiles": "ファイルをアップロード",
+    "messageInput": "メッセージ入力",
+    "sendMessage": "メッセージを送信",
+    "writeSomething": "何か入力してください...",
+    "chatPlaceholder": "質問してください..."
+  },
   "header": {
     "dashboard": "ダッシュボード",
     "tools": "ツール",
     "networkScanner": "ネットワークスキャナー",
-    "wifiAnalyzer": "WiFi分析ツール",
+    "wifiAnalyzer": "Wi-Fi分析ツール",
     "trafficAnalyzer": "トラフィック分析",
     "aiAssistant": "AIアシスタント",
     "settings": "設定",
     "helpCenter": "ヘルプセンター",
     "license": "ライセンス",
-    "login": "ログイン",
-    "fiberOptic": "光ファイバー"
+    "login": "ログイン"
   },
-  "errors": {
-    "pageNotFound": "ページが見つかりません",
-    "returnHome": "ホームに戻る",
-    "goToDashboard": "ダッシュボードへ"
-  },
-  "languageChanged": "言語が{{language}}に変更されました"
+  "notFound": {
+    "message": "ページが見つかりません",
+    "returnHome": "ダッシュボードに戻る",
+    "redirecting": "3秒後にダッシュボードにリダイレクトします..."
+  }
 }

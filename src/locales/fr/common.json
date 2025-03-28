@@ -1,22 +1,22 @@
 
 {
+  "direction": "ltr",
+  "language": "fr",
   "header": {
     "dashboard": "Tableau de bord",
     "tools": "Outils",
-    "networkScanner": "Scanner de réseau",
+    "networkScanner": "Scanner réseau",
     "wifiAnalyzer": "Analyseur WiFi",
     "trafficAnalyzer": "Analyseur de trafic",
     "aiAssistant": "Assistant IA",
     "settings": "Paramètres",
     "helpCenter": "Centre d'aide",
     "license": "Licence",
-    "login": "Connexion",
-    "fiberOptic": "Fibre Optique"
+    "login": "Connexion"
   },
-  "errors": {
-    "pageNotFound": "Oups ! Page non trouvée",
-    "returnHome": "Retour à l'accueil",
-    "goToDashboard": "Aller au tableau de bord"
-  },
-  "languageChanged": "Langue changée en {{language}}"
+  "notFound": {
+    "message": "Oups ! Page introuvable",
+    "returnHome": "Retour au tableau de bord",
+    "redirecting": "Redirection vers le tableau de bord dans 3 secondes..."
+  }
 }

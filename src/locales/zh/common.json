@@ -1,22 +1,22 @@
 
 {
+  "direction": "ltr",
+  "language": "zh",
   "header": {
     "dashboard": "仪表板",
     "tools": "工具",
     "networkScanner": "网络扫描仪",
-    "wifiAnalyzer": "WiFi分析器",
-    "trafficAnalyzer": "流量分析",
-    "aiAssistant": "人工智能助手",
+    "wifiAnalyzer": "WiFi分析仪",
+    "trafficAnalyzer": "流量分析仪",
+    "aiAssistant": "AI助手",
     "settings": "设置",
     "helpCenter": "帮助中心",
     "license": "许可证",
-    "login": "登录",
-    "fiberOptic": "光纤"
+    "login": "登录"
   },
-  "errors": {
-    "pageNotFound": "哎呀！页面未找到",
-    "returnHome": "返回主页",
-    "goToDashboard": "前往仪表板"
-  },
-  "languageChanged": "语言已更改为{{language}}"
+  "notFound": {
+    "message": "哎呀！找不到页面",
+    "returnHome": "返回仪表板",
+    "redirecting": "3秒后重定向到仪表板..."
+  }
 }
