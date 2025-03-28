@@ -21,7 +21,12 @@ export const defaultPreferences: AppPreferences = {
   arabicNumerals: false,
   autoSave: true,
   notificationsEnabled: true,
-  syncSystemPreferences: true
+  syncSystemPreferences: true,
+  // إضافة الخصائص الجديدة
+  dyslexicFont: false,
+  readingGuide: false,
+  soundFeedback: false,
+  colorBlindMode: 'none'
 };
 
 /**

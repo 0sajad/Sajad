@@ -80,8 +80,8 @@ export default function Index() {
               <AccessibilityOverlay />
             </Suspense>
             
-            {/* رابط تخطي المحتوى */}
-            <SkipLink href="#main-content" />
+            {/* رابط تخطي المحتوى - تم تحديث الاستدعاء ليتوافق مع الواجهة المحدثة */}
+            <SkipLink targetId="main-content" />
             
             {/* مؤشر حالة الشبكة */}
             <NetworkStatusIndicator />

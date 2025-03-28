@@ -186,6 +186,10 @@ export interface AppPreferences {
   autoSave: boolean;
   notificationsEnabled: boolean;
   syncSystemPreferences: boolean;
+  dyslexicFont: boolean;
+  readingGuide: boolean;
+  soundFeedback: boolean;
+  colorBlindMode: ColorBlindMode;
 }
 
 // واجهة إعدادات المستخدم

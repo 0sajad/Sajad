@@ -7,11 +7,15 @@ import { useA11y } from "@/hooks/useA11y";
 interface SkipLinkProps {
   targetId?: string;
   className?: string;
+  href?: string; // إضافة خاصية الرابط
 }
 
-export function SkipLink({ targetId = "main-content", className = "" }: SkipLinkProps) {
+export function SkipLink({ targetId = "main-content", className = "", href }: SkipLinkProps) {
   const { t, i18n } = useTranslation();
   const { announce } = useA11y();
+  
+  // تحديد معرف الهدف من الرابط إذا تم تمريره
+  const targetHref = href || `#${targetId}`;
   
   // الحصول على الترجمة المناسبة بناءً على اللغة الحالية
   const skipText = i18n.language === 'ar-iq' 
@@ -21,8 +25,11 @@ export function SkipLink({ targetId = "main-content", className = "" }: SkipLink
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     
+    // استخدام المعرف المستخرج من الرابط إذا كان يبدأ بعلامة #
+    const id = targetHref.startsWith('#') ? targetHref.substring(1) : targetId;
+    
     // البحث عن العنصر المستهدف
-    const targetElement = document.getElementById(targetId);
+    const targetElement = document.getElementById(id);
     
     if (targetElement) {
       // تعيين التركيز على العنصر المستهدف
@@ -47,7 +54,7 @@ export function SkipLink({ targetId = "main-content", className = "" }: SkipLink
   
   return (
     <a
-      href={`#${targetId}`}
+      href={targetHref}
       className={`sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 rtl:focus:left-auto rtl:focus:right-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:shadow-md focus:outline-none ${className}`}
       onClick={handleClick}
       onKeyDown={(e) => {
