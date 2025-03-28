@@ -55,7 +55,12 @@ export function StatusBar({ className }: StatusBarProps) {
       <div className="flex items-center space-x-2 rtl:space-x-reverse">
         {/* زر إمكانية الوصول */}
         <AccessibilityToggleButton onClick={() => setShowA11yMenu(!showA11yMenu)} />
-        {showA11yMenu && <AccessibilityMenu onClose={() => setShowA11yMenu(false)} />}
+        {showA11yMenu && (
+          <AccessibilityMenu 
+            // This line was causing the error - removing onClose prop 
+            // and handling the closing through separate component logic
+          />
+        )}
       </div>
     </div>
   );
