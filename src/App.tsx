@@ -40,7 +40,7 @@ function App() {
   }, [i18nInstance.language]);
 
   return (
-    <I18nextProvider i18n={i18n}>
+    <I18nextProvider i18n={i18n as any}>
       <ModeProvider>
         <ThemeProvider>
           <TooltipProvider>
