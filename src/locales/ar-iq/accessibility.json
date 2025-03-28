@@ -66,5 +66,20 @@
   "profileExportedAnnouncement": "انصدّر الملف الشخصي {name}",
   "settingsImportedAnnouncement": "انجابت الإعدادات بنجاح",
   "importErrorAnnouncement": "خطأ بجلب الملف الشخصي",
-  "backupRestoredAnnouncement": "انرجعت النسخة الاحتياطية"
+  "backupRestoredAnnouncement": "انرجعت النسخة الاحتياطية",
+  "advancedSettings": "إعدادات متقدمة",
+  "textSpacing": "تباعد النص",
+  "lineHeight": "ارتفاع السطر",
+  "letterSpacing": "تباعد الحروف",
+  "wordSpacing": "تباعد الكلمات",
+  "paragraphSpacing": "تباعد الفقرات",
+  "textSettings": "إعدادات النص",
+  "soundSettings": "إعدادات الصوت",
+  "keyboardSettings": "اختصارات الكيبورد",
+  "comingSoon": "قادم قريباً",
+  "allAvailableShortcuts": "جميع الاختصارات المتاحة",
+  "customizeShortcuts": "تخصيص الاختصارات",
+  "customizeShortcutsDescription": "بالإصدارات الجاية رح تكدر تخصص الاختصارات على كيفك",
+  "screenReaderAnnouncements": "إعلانات قارئ الشاشة",
+  "noAnnouncements": "ماكو إعلانات بالوقت الحالي"
 }

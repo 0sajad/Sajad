@@ -17,6 +17,7 @@ import arIqLicense from '../../locales/ar-iq/license.json';
 import arIqAccess from '../../locales/ar-iq/access.json';
 import arIqCommon from '../../locales/ar-iq/common.json';
 import arIqError from '../../locales/ar-iq/error.json';
+import arIqAccessibility from '../../locales/ar-iq/accessibility.json';
 
 export function loadIraqiArabicResources() {
   // دمج ملفات ar-iq في كائن واحد
@@ -41,6 +42,7 @@ export function loadIraqiArabicResources() {
   return {
     common: combined,
     license: arIqLicense,
-    access: arIqAccess
+    access: arIqAccess,
+    accessibility: arIqAccessibility
   };
 }

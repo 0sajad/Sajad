@@ -15,6 +15,8 @@ import { useA11y } from "@/hooks/useA11y";
 import { SkipLink } from "@/components/ui/accessibility/SkipLink";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
+import { ScreenReaderAnnouncer } from "@/components/ui/accessibility/screen-reader-announcer";
+import { MobileA11yDrawer } from "@/components/ui/accessibility/mobile-a11y-drawer";
 
 // استخدام التحميل البطيء للمكونات غير الأساسية لتسريع تحميل الصفحة الأولية
 const NetworkDashboard = lazy(() => import("@/components/NetworkDashboard").then(m => ({ default: m.NetworkDashboard })));
@@ -26,150 +28,124 @@ const FloatingAIAssistant = lazy(() => import("@/components/FloatingAIAssistant"
 const NetworkToolsSection = lazy(() => import("@/components/network/NetworkToolsSection").then(m => ({ default: m.NetworkToolsSection })));
 const ReadingGuide = lazy(() => import("@/components/ui/accessibility/reading-guide").then(m => ({ default: m.ReadingGuide })));
 const KeyboardNavigationMenu = lazy(() => import("@/components/ui/accessibility/keyboard-navigation-menu").then(m => ({ default: m.KeyboardNavigationMenu })));
-const SpecificDateTimeDisplay = lazy(() => import("@/components/SpecificDateTimeDisplay").then(m => ({ default: m.SpecificDateTimeDisplay })));
 
 // مكون التحميل للمكونات البطيئة
 const SectionLoader = () => (
   <div className="w-full py-12">
     <div className="container mx-auto">
       <Skeleton className="w-full h-8 mb-4" />
-      <Skeleton className="w-3/4 h-4 mb-2" />
-      <Skeleton className="w-1/2 h-4 mb-8" />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Skeleton className="w-full h-48 rounded-lg" />
-        <Skeleton className="w-full h-48 rounded-lg" />
-        <Skeleton className="w-full h-48 rounded-lg" />
+      <Skeleton className="w-3/4 h-4 mb-8" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[1, 2, 3].map(i => (
+          <Skeleton key={i} className="h-64 rounded-lg" />
+        ))}
       </div>
     </div>
   </div>
 );
 
-const Index = () => {
-  const [loaded, setLoaded] = useState(false);
-  const [showAIAssistant, setShowAIAssistant] = useState(false);
-  const { i18n } = useTranslation();
+export default function Index() {
+  const { t, i18n } = useTranslation();
   const { isTransitioning } = useLanguageTransition();
-  const { reducedMotion, keyboardNavigationVisible } = useA11y();
-  
-  // استخدام الخطافات الضرورية
+  const { readingGuide, keyboardNavigationVisible, announce } = useA11y();
+  const [pageLoaded, setPageLoaded] = useState(false);
   useKeyboardShortcuts();
   usePreferenceSync();
-
+  
   useEffect(() => {
-    // تعيين الصفحة كمحملة
-    setLoaded(true);
-    
-    // التأكد من تطبيق اللغة المخزنة
-    const savedLanguage = localStorage.getItem("language");
-    if (savedLanguage && savedLanguage !== i18n.language) {
-      i18n.changeLanguage(savedLanguage);
-    }
-    
-    // تطبيق الاتجاه المناسب (RTL أو LTR)
-    const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
-    document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
-    if (isRTL) {
-      document.body.classList.add('rtl-active');
+    // التحقق من وجود علامة التحميل
+    if (document.readyState === 'complete') {
+      setPageLoaded(true);
     } else {
-      document.body.classList.remove('rtl-active');
+      const handleLoad = () => setPageLoaded(true);
+      window.addEventListener('load', handleLoad);
+      return () => window.removeEventListener('load', handleLoad);
     }
-    
-    // تعيين مهلة لإظهار المساعد الذكي
-    const timeout = setTimeout(() => {
-      setShowAIAssistant(true);
-    }, 5000);
-    
-    // دالة للتعامل مع تغيير اللغة الكامل
-    const handleLanguageFullChange = () => {
-      const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
-      document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
-      if (isRTL) {
-        document.body.classList.add('rtl-active');
-      } else {
-        document.body.classList.remove('rtl-active');
-      }
-    };
-    
-    // إضافة مستمع الحدث
-    document.addEventListener('languageFullyChanged', handleLanguageFullChange);
-    
-    // تنظيف عند إزالة المكون
-    return () => {
-      clearTimeout(timeout);
-      document.removeEventListener('languageFullyChanged', handleLanguageFullChange);
-    };
-  }, [i18n]);
-
+  }, []);
+  
+  // الإعلان عن اكتمال تحميل الصفحة
+  useEffect(() => {
+    if (pageLoaded) {
+      setTimeout(() => {
+        const isArabic = i18n.language === 'ar' || i18n.language === 'ar-iq';
+        const message = isArabic 
+          ? 'تم تحميل الصفحة بنجاح، يمكنك استخدام زر تخطي إلى المحتوى للانتقال السريع'
+          : 'Page loaded successfully. You can use the skip to content button for quick navigation';
+        announce(message, 'polite');
+      }, 1000);
+    }
+  }, [pageLoaded, i18n.language, announce]);
+  
   return (
     <ErrorBoundary>
       <TooltipProvider>
-        <div 
-          className={`min-h-screen w-full transition-all ${reducedMotion ? 'transition-none' : 'duration-500'} ${loaded ? 'opacity-100' : 'opacity-0'} ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}
-          role="application"
-        >
-          <SkipLink />
-          
-          <Header />
-          
-          <main id="main-content" tabIndex={-1}>
-            <HeroSection />
-            
-            <Suspense fallback={<SectionLoader />}>
-              <SpecificDateTimeDisplay />
-            </Suspense>
-            
-            <Suspense fallback={<SectionLoader />}>
-              <NetworkDashboard />
-            </Suspense>
-            
-            <Suspense fallback={<SectionLoader />}>
-              <NetworkToolsSection />
-            </Suspense>
-            
-            <Suspense fallback={<SectionLoader />}>
-              <AnimatedCards />
-            </Suspense>
-            
-            <Suspense fallback={<SectionLoader />}>
-              <AIFeaturesSection />
-            </Suspense>
-            
-            <Suspense fallback={<SectionLoader />}>
-              <SettingsSection />
-            </Suspense>
-            
-            <Suspense fallback={<SectionLoader />}>
-              <CTASection />
-            </Suspense>
-          </main>
-          
-          <Footer />
-          
-          <Suspense fallback={null}>
-            {showAIAssistant && (
-              <FloatingAIAssistant 
-                show={showAIAssistant} 
-                onMaximize={() => window.location.href = '/ai'} 
-              />
-            )}
-          </Suspense>
-          
-          <QuickAccessibilityButton />
-
+        {/* مكونات قارئ الشاشة والتنقل بلوحة المفاتيح */}
+        <LiveAnnouncer />
+        <ScreenReaderAnnouncer />
+        <KeyboardFocusDetector />
+        <SkipLink />
+        
+        {/* إضافة مكون دليل القراءة إذا كان مفعلاً */}
+        {readingGuide && (
           <Suspense fallback={null}>
             <ReadingGuide />
           </Suspense>
-          
+        )}
+        
+        {/* إضافة قائمة التنقل بلوحة المفاتيح إذا كانت مرئية */}
+        {keyboardNavigationVisible && (
           <Suspense fallback={null}>
             <KeyboardNavigationMenu visible={keyboardNavigationVisible} />
           </Suspense>
+        )}
+        
+        {/* رأس الصفحة */}
+        <Header />
+        
+        {/* المحتوى الرئيسي */}
+        <main 
+          id="main-content" 
+          tabIndex={-1} 
+          className={`relative overflow-hidden ${isTransitioning ? 'opacity-0 transition-opacity duration-300' : 'opacity-100 transition-opacity duration-300'}`}
+        >
+          <HeroSection />
           
-          <KeyboardFocusDetector />
-          <LiveAnnouncer />
-        </div>
+          <Suspense fallback={<SectionLoader />}>
+            <AnimatedCards />
+          </Suspense>
+          
+          <Suspense fallback={<SectionLoader />}>
+            <AIFeaturesSection />
+          </Suspense>
+          
+          <Suspense fallback={<SectionLoader />}>
+            <NetworkDashboard />
+          </Suspense>
+          
+          <Suspense fallback={<SectionLoader />}>
+            <NetworkToolsSection />
+          </Suspense>
+          
+          <Suspense fallback={<SectionLoader />}>
+            <SettingsSection />
+          </Suspense>
+          
+          <Suspense fallback={<SectionLoader />}>
+            <CTASection />
+          </Suspense>
+          
+          <Suspense fallback={null}>
+            <FloatingAIAssistant />
+          </Suspense>
+        </main>
+        
+        {/* تذييل الصفحة */}
+        <Footer />
+        
+        {/* أزرار إمكانية الوصول السريعة */}
+        <QuickAccessibilityButton />
+        <MobileA11yDrawer />
       </TooltipProvider>
     </ErrorBoundary>
   );
-};
-
-export default Index;
+}
