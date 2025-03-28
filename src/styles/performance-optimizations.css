@@ -1,110 +1,62 @@
 
-/**
- * أنماط CSS لتحسين الأداء
- * تطبق تلقائيًا على الأجهزة منخفضة الأداء
- */
+/* تحسينات الأداء للأجهزة منخفضة القدرة */
 
-/* تحسينات عامة للأداء */
-.optimize-performance {
-  /* تقليل تكلفة الرسم بتبسيط الحدود والظلال والتأثيرات */
-  --simplified-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  --simplified-border-radius: 4px;
-  --simplified-transition: none;
-}
-
-/* إلغاء التأثيرات المكلفة للرسوم المتحركة */
+/* تقليل الرسوم المتحركة */
 .optimize-performance * {
-  transition-duration: 0.1s !important;
-  animation-duration: 0.1s !important;
+  transition-duration: 150ms !important;
+  animation-duration: 150ms !important;
 }
 
-/* تقليل التأثيرات البصرية المكلفة */
-.optimize-performance .shadow,
-.optimize-performance .shadow-sm,
-.optimize-performance .shadow-md,
+/* تبسيط الظلال والتأثيرات */
 .optimize-performance .shadow-lg,
 .optimize-performance .shadow-xl,
-.optimize-performance .shadow-2xl {
-  box-shadow: var(--simplified-shadow) !important;
+.optimize-performance .shadow-md {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
 }
 
-/* تبسيط الحدود المنحنية */
-.optimize-performance .rounded-md,
-.optimize-performance .rounded-lg,
-.optimize-performance .rounded-xl,
-.optimize-performance .rounded-2xl,
-.optimize-performance .rounded-3xl,
-.optimize-performance .rounded-full {
-  border-radius: var(--simplified-border-radius) !important;
-}
-
-/* إلغاء تأثيرات الضبابية */
-.optimize-performance .backdrop-blur-sm,
+/* تبسيط تأثيرات الخلفية */
 .optimize-performance .backdrop-blur-md,
-.optimize-performance .backdrop-blur-lg,
-.optimize-performance .backdrop-blur-xl,
-.optimize-performance .blur-sm,
-.optimize-performance .blur-md,
-.optimize-performance .blur-lg,
-.optimize-performance .blur-xl {
+.optimize-performance .backdrop-blur-lg {
   backdrop-filter: none !important;
-  filter: none !important;
+  background-color: rgba(255,255,255,0.9) !important;
 }
 
-/* تحسين القراءة للعناصر المرئية */
-.optimize-performance .visible-when-needed {
-  content-visibility: auto;
+.dark .optimize-performance .backdrop-blur-md,
+.dark .optimize-performance .backdrop-blur-lg {
+  background-color: rgba(0,0,0,0.8) !important;
 }
 
-/* الاحتفاظ بالعناصر الأساسية دون تغيير */
-.optimize-performance .keep-effects {
-  transition: inherit;
-  animation: inherit;
-  box-shadow: inherit;
-  border-radius: inherit;
-  backdrop-filter: inherit;
-  filter: inherit;
-}
-
-/* تحسين الاستجابة على الأجهزة المحمولة */
-@media (max-width: 768px) {
-  .optimize-performance .hide-on-mobile {
-    display: none !important;
-  }
-  
-  .optimize-performance .simplify-on-mobile {
-    padding: 0.5rem !important;
-    margin: 0.5rem !important;
+/* إيقاف الرسوم المتحركة للمستخدمين الذين يفضلون تقليل الحركة */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
-/* تحسينات لتحميل الصفحة */
-.content-loading {
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
+/* تحسينات للأجهزة منخفضة الأداء */
+.device-low img {
+  image-rendering: auto;
 }
 
-.content-loaded {
-  opacity: 1;
+/* تقليل جودة الصور للأجهزة منخفضة الأداء */
+.device-low .optimize-image-quality {
+  filter: blur(0.5px);
 }
 
-/* تحسينات أداء الخطوط */
-@media (max-width: 768px) {
-  .optimize-font-performance {
-    font-variation-settings: normal !important;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-  }
+/* تقليل تأثيرات CSS للأجهزة منخفضة الأداء */
+.device-low .bg-gradient-to-r,
+.device-low .bg-gradient-to-l,
+.device-low .bg-gradient-to-b,
+.device-low .bg-gradient-to-t {
+  background: #f5f5f5 !important;
 }
 
-/* مؤشرات الأداء */
-.device-low .performance-indicator {
-  border: 2px solid orange;
-}
-
-.device-medium .performance-indicator {
-  border: 2px solid blue;
-}
-
-.device-high .performance-indicator {
-  border: 2px solid green;
+.dark .device-low .bg-gradient-to-r,
+.dark .device-low .bg-gradient-to-l,
+.dark .device-low .bg-gradient-to-b,
+.dark .device-low .bg-gradient-to-t {
+  background: #1f1f1f !important;
 }

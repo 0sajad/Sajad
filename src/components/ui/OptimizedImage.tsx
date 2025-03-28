@@ -41,10 +41,12 @@ export function OptimizedImage({
 
   // تحسين مصدر الصورة حسب قدرة الجهاز
   const getOptimizedSrc = () => {
+    if (!src) return '';
+    
     // تحديد جودة الصورة حسب نوع الجهاز إذا لم يتم تحديدها
     const autoQuality = quality ?? (deviceTier === 'low' ? 60 : deviceTier === 'medium' ? 80 : 100);
-    // نستدعي optimizeImageSrc بالمعلمات الصحيحة فقط
-    return optimizeImageSrc(src, width);
+    // نستدعي optimizeImageSrc بالمعلمات الصحيحة
+    return optimizeImageSrc(src, width, autoQuality);
   };
 
   useEffect(() => {

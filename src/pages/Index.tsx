@@ -22,9 +22,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { MainContent } from "@/components/sections/MainContent";
 
 // تحميل المكونات الثقيلة بشكل كسول
-const AIAssistantManager = lazy(() => import("@/components/ai/AIAssistantManager"));
+const AIAssistantManager = lazy(() => import("@/components/ai/AIAssistantManager").then(
+  module => ({ default: module.default || module })
+));
 const AccessibilityOverlay = lazy(() => import("@/components/accessibility/AccessibilityOverlay").then(
-  module => ({ default: module.AccessibilityOverlay })
+  module => ({ default: module.AccessibilityOverlay || module.default || module })
 ));
 
 /**
