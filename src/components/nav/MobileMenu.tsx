@@ -94,7 +94,7 @@ export function MobileMenu({ isOpen }: MobileMenuProps) {
         <motion.div variants={itemVariants}>
           <MobileNavItem
             to="/license"
-            label={t('mobileMenu.helpCenter')}
+            label={t('header.license')}
             icon={<Shield size={22} />}
           />
         </motion.div>
