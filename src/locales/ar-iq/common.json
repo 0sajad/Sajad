@@ -24,6 +24,37 @@
     "login": "تسجيل الدخول",
     "fiberOptic": "الفايبر الضوئي"
   },
+  "dashboard": {
+    "title": "لوحة التحكم",
+    "welcome": "أهلاً بيك بلوحة تحكم أوكتا-كرام",
+    "systemStatus": "حالة النظام",
+    "status": "الحالة",
+    "active": "شغال",
+    "quickActions": "إجراءات سريعة",
+    "selectAction": "إختار إجراء",
+    "actions": {
+      "scan": "فحص الشبكة",
+      "optimize": "تحسين الأداء",
+      "backup": "نسخ احتياطي للإعدادات"
+    },
+    "latestUpdates": "آخر التحديثات",
+    "noUpdates": "ماكو تحديثات جديدة"
+  },
+  "networkTools": {
+    "title": "أدوات الشبكة المتطورة",
+    "qualityMonitoring": "مراقبة جودة الشبكة",
+    "signalStrength": "قوة الإشارة",
+    "networkManagement": "إدارة شبكات الاتصال",
+    "simulationSystems": "أنظمة المحاكاة"
+  },
+  "mobileMenu": {
+    "dashboard": "لوحة التحكم",
+    "tools": "الأدوات",
+    "aiAssistant": "مساعد الذكاء الصناعي",
+    "settings": "الإعدادات",
+    "helpCenter": "مركز المساعدة",
+    "login": "تسجيل دخول"
+  },
   "notFound": {
     "message": "اوبس! الصفحة مو موجودة",
     "returnHome": "ارجع للوحة التحكم",
