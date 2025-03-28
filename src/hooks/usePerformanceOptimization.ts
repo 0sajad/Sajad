@@ -29,7 +29,7 @@ export function usePerformanceOptimization() {
       
       // 1. فحص إذا كان وضع توفير البطارية مفعلاً (إذا كان متاحًا)
       const isBatteryOptimized = 'getBattery' in navigator && 
-        await navigator.getBattery().then(battery => battery.charging === false && battery.level < 0.15);
+        await (navigator as any).getBattery?.().then((battery: any) => battery.charging === false && battery.level < 0.15);
       
       // 2. فحص عدد النوى المنطقية للمعالج (إذا كان متاحًا)
       const cpuCores = navigator.hardwareConcurrency || 0;
