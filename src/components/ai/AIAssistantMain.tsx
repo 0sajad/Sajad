@@ -1,18 +1,17 @@
 
 import React, { useState, useEffect } from "react";
 import { GlassCard } from "../ui/glass-card";
-import { BrainCircuit, Moon, Sun } from "lucide-react";
-import { Badge } from "../ui/badge";
 import { useTranslation } from "react-i18next";
-import { AIStatusIndicator } from "./AIStatusIndicator";
-import { AIProgressBar } from "./AIProgressBar";
-import { AIFeatureIndicator } from "./AIFeatureIndicator";
 import { AILearningSourcesPanel } from "./AILearningSourcesPanel";
-import { AICapabilitiesGrid } from "./AICapabilitiesGrid";
-import { AICapabilitiesBadges } from "./AICapabilitiesBadges";
 import { AIFeaturesList } from "./AIFeaturesList";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useTheme } from "next-themes";
+
+// مكونات تم إعادة هيكلتها
+import { AIStatusSection } from "./assistantComponents/AIStatusSection";
+import { AIHeader } from "./assistantComponents/AIHeader";
+import { AIMinimizedButton } from "./assistantComponents/AIMinimizedButton";
+import { AICapabilitiesSection } from "./assistantComponents/AICapabilitiesSection";
 
 interface AIAssistantProps {
   minimized?: boolean;
@@ -120,66 +119,28 @@ export function AIAssistantMain({ minimized = false, onMaximize }: AIAssistantPr
   };
   
   if (minimized) {
-    return (
-      <div 
-        className="fixed bottom-4 right-4 rtl:right-auto rtl:left-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full p-3 text-white cursor-pointer shadow-lg hover:shadow-xl transition-all z-50 animate-pulse hover:animate-none"
-        onClick={onMaximize}
-        aria-label={t('aiAssistant.maximize', 'فتح مساعد الذكاء الاصطناعي')}
-        role="button"
-      >
-        <BrainCircuit size={24} className="animate-pulse" />
-      </div>
-    );
+    return <AIMinimizedButton onMaximize={onMaximize} />;
   }
   
   return (
     <GlassCard className="p-0 overflow-hidden transform transition-all duration-300 hover:shadow-lg">
-      <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <BrainCircuit size={20} className="mr-2 rtl:mr-0 rtl:ml-2" />
-            <h3 className="font-medium text-sm">{t('aiAssistant.title')}</h3>
-          </div>
-          <div className="flex items-center space-x-2 rtl:space-x-reverse">
-            <button 
-              onClick={toggleDarkModeAuto}
-              className={`text-xs p-1 rounded-full transition-colors ${isDarkModeAuto ? 'bg-white/20 hover:bg-white/30' : 'hover:bg-white/10'}`}
-              aria-label={isDarkModeAuto ? t('common.disableAutoDarkMode', 'تعطيل الوضع الليلي التلقائي') : t('common.enableAutoDarkMode', 'تفعيل الوضع الليلي التلقائي')}
-            >
-              {isDarkModeAuto ? (
-                <div className="flex items-center">
-                  <Moon size={12} className="mr-1 rtl:mr-0 rtl:ml-1" />
-                  <Sun size={12} />
-                </div>
-              ) : (
-                <div className="opacity-70">
-                  <Sun size={14} />
-                </div>
-              )}
-            </button>
-            <Badge variant="outline" className="bg-white/10 text-white text-xs hover:bg-white/20 border-none">
-              v2.5.1
-            </Badge>
-          </div>
-        </div>
-      </div>
+      <AIHeader 
+        isDarkModeAuto={isDarkModeAuto} 
+        toggleDarkModeAuto={toggleDarkModeAuto} 
+      />
       
       <div className="p-4">
-        <AIStatusIndicator status={status} progress={progress} />
-        
-        <AIProgressBar progress={progress} status={status} />
-        
-        <AIFeatureIndicator currentFeature={currentFeature} />
+        <AIStatusSection 
+          status={status} 
+          progress={progress}
+          currentFeature={currentFeature}
+        />
         
         {status === "learning" && recentSources.length > 0 && (
           <AILearningSourcesPanel recentSources={recentSources} />
         )}
         
-        <div className={isSmallScreen ? "space-y-2" : ""}>
-          <AICapabilitiesGrid isCompact={isSmallScreen} />
-          
-          <AICapabilitiesBadges isCompact={isSmallScreen} />
-        </div>
+        <AICapabilitiesSection isCompact={isSmallScreen} />
       </div>
     </GlassCard>
   );

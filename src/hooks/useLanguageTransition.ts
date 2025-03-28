@@ -1,114 +1,82 @@
 
-import { useState, useEffect, useCallback } from 'react';
-import { useA11ySound } from './useA11ySound';
-import { toast } from 'sonner';
-import { useTranslation } from 'react-i18next';
+import { useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
+import { useA11y } from "./useA11y";
 
-export interface UseLanguageTransitionReturnType {
-  isTransitioning: boolean;
-  changeLanguage: (language: string) => void;
-  supportedLanguages: Array<{code: string, name: string, nativeName: string, flag: string}>;
-}
+type SoundType = "success" | "error" | "warning" | "info" | "notification";
 
-export function useLanguageTransition(): UseLanguageTransitionReturnType {
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const { playSound } = useA11ySound();
+/**
+ * Hook لإدارة عملية تبديل اللغات مع تأثيرات انتقالية
+ */
+export function useLanguageTransition() {
   const { i18n, t } = useTranslation();
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const { announce, playNotificationSound } = useA11y();
 
-  // Supported languages
-  const supportedLanguages = [
-    { code: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦' },
-    { code: 'ar-iq', name: 'Iraqi Arabic', nativeName: 'العراقية', flag: '🇮🇶' },
-    { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸' },
-    { code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷' },
-    { code: 'ja', name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
-    { code: 'zh', name: 'Chinese', nativeName: '中文', flag: '🇨🇳' },
-  ];
+  /**
+   * تغيير اللغة مع تأثير انتقالي
+   * @param langCode كود اللغة المستهدفة
+   */
+  const changeLanguage = useCallback(
+    async (langCode: string) => {
+      // منع التغيير إذا كانت نفس اللغة الحالية أو إذا كان التحويل جارياً بالفعل
+      if (langCode === i18n.language || isTransitioning) {
+        return;
+      }
 
-  // إعداد حدث مخصص للإشعار بإكمال عملية تغيير اللغة
-  useEffect(() => {
-    const handleLanguageFullChange = (event: CustomEvent) => {
-      // يمكن إضافة منطق إضافي هنا إذا لزم الأمر
-      console.log("Language fully changed to:", event.detail.language);
-    };
+      setIsTransitioning(true);
 
-    // إضافة مستمع الحدث
-    document.addEventListener('languageFullyChanged', handleLanguageFullChange as EventListener);
-    
-    return () => {
-      // إزالة المستمع عند تفكيك المكون
-      document.removeEventListener('languageFullyChanged', handleLanguageFullChange as EventListener);
-    };
-  }, []);
-
-  // Function to change the language with transition effects
-  const changeLanguage = useCallback((language: string) => {
-    // التحقق مما إذا كانت اللغة الجديدة هي نفس اللغة الحالية
-    if (i18n.language === language) return;
-    
-    // بدء الانتقال
-    setIsTransitioning(true);
-    
-    // تأخير قصير للسماح بتأثير الانتقال
-    setTimeout(() => {
-      // تغيير اللغة
-      i18n.changeLanguage(language).then(() => {
-        // حفظ اللغة في التخزين المحلي
-        localStorage.setItem('language', language);
-        
-        // تعديل اتجاه الصفحة بناءً على اللغة
-        const isRTL = language === 'ar' || language === 'ar-iq';
-        document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+      try {
+        // تطبيق الاتجاه المناسب حسب اللغة
+        const isRTL = langCode === "ar" || langCode === "ar-iq";
+        document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
         
         if (isRTL) {
-          document.body.classList.add('rtl-active');
+          document.body.classList.add("rtl-active");
         } else {
-          document.body.classList.remove('rtl-active');
+          document.body.classList.remove("rtl-active");
         }
+
+        // تغيير اللغة
+        await i18n.changeLanguage(langCode);
         
-        // إطلاق حدث تغيير اللغة بالكامل
-        const event = new CustomEvent('languageFullyChanged', { 
-          detail: { language } 
-        });
-        document.dispatchEvent(event);
+        // حفظ اللغة في التخزين المحلي
+        localStorage.setItem("language", langCode);
         
-        // إشعار تغيير اللغة
-        const languageName = getLanguageName(language);
-        const successMessage = getTranslatedMessage(language, 'تم تغيير اللغة إلى', 'Language changed to');
-        toast.success(`${successMessage} ${languageName}`);
+        // عرض رسالة نجاح
+        const languageNames: { [key: string]: string } = {
+          "ar": "العربية",
+          "ar-iq": "العربية العراقية",
+          "en": "English",
+          "fr": "Français",
+          "ja": "日本語",
+          "zh": "中文"
+        };
+
+        const message = t("common.languageChanged", "تم تغيير اللغة إلى") + " " + languageNames[langCode];
         
-        // تشغيل صوت إشعار (إذا كان مفعلاً)
-        playSound('notification');
+        toast.success(message);
         
-        // إنهاء الانتقال بعد فترة
+        // إعلان للقارئات الشاشة
+        announce(message, "polite");
+        
+        // تشغيل صوت نجاح
+        playNotificationSound("success");
+        
+      } catch (error) {
+        console.error("Error changing language:", error);
+        toast.error(t("common.errorChangingLanguage", "خطأ في تغيير اللغة"));
+        announce(t("common.errorChangingLanguage", "خطأ في تغيير اللغة"), "assertive");
+        playNotificationSound("error");
+      } finally {
         setTimeout(() => {
           setIsTransitioning(false);
-        }, 500);
-      }).catch((error) => {
-        // إشعار خطأ في حالة فشل تغيير اللغة
-        console.error("Language change error:", error);
-        const errorMessage = i18n.language.startsWith('ar')
-          ? 'فشل في تغيير اللغة'
-          : 'Failed to change language';
-        toast.error(errorMessage);
-        setIsTransitioning(false);
-        
-        // تشغيل صوت خطأ (إذا كان مفعلاً)
-        playSound('error');
-      });
-    }, 300);
-  }, [i18n, playSound]);
-  
-  // Helper function to get translated message
-  const getTranslatedMessage = (langCode: string, arMessage: string, enMessage: string): string => {
-    return langCode.startsWith('ar') ? arMessage : enMessage;
-  };
-  
-  // Helper function to get language name
-  const getLanguageName = (code: string): string => {
-    const language = supportedLanguages.find(lang => lang.code === code);
-    return language ? language.nativeName : code;
-  };
+        }, 300);
+      }
+    },
+    [i18n, isTransitioning, t, announce, playNotificationSound]
+  );
 
-  return { isTransitioning, changeLanguage, supportedLanguages };
+  return { isTransitioning, changeLanguage };
 }
