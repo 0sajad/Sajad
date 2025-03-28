@@ -36,10 +36,10 @@ export const NetworkQualityGauge: React.FC<NetworkQualityGaugeProps> = ({
   const quality = getQualityStatus(qualityScore);
   
   return (
-    <div className="h-full">
+    <div className="h-full rounded-xl bg-white dark:bg-gray-800 shadow-md p-5">
       <div className="text-right mb-4">
-        <h2 className="text-xl font-bold text-blue-800 mb-1">{isRTL ? "مؤشر جودة الشبكة" : "Network Quality Gauge"}</h2>
-        <p className="text-sm text-gray-500">{isRTL ? "تحليل مفصل لحالة وأداء الشبكة الحالية" : "Detailed analysis of current network quality"}</p>
+        <h2 className="text-xl font-bold text-blue-800 dark:text-blue-400 mb-1">{isRTL ? "مؤشر جودة الشبكة" : "Network Quality Gauge"}</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{isRTL ? "تحليل مفصل لحالة وأداء الشبكة الحالية" : "Detailed analysis of current network quality"}</p>
       </div>
       
       <div className="flex flex-col items-center justify-center mb-6">
@@ -52,6 +52,7 @@ export const NetworkQualityGauge: React.FC<NetworkQualityGaugeProps> = ({
               fill="none"
               stroke="#f3f4f6"
               strokeWidth="8"
+              className="dark:stroke-gray-700"
             />
             <circle
               cx="50"
@@ -62,63 +63,64 @@ export const NetworkQualityGauge: React.FC<NetworkQualityGaugeProps> = ({
               strokeWidth="8"
               strokeDasharray={`${qualityScore * 2.83} 283`}
               strokeLinecap="round"
+              className="transition-all duration-700"
             />
           </svg>
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-5xl font-bold">{qualityScore}</span>
+            <span className="text-5xl font-bold dark:text-white">{qualityScore}</span>
           </div>
         </div>
         
-        <p className="text-lg font-medium text-center">{isRTL ? "الجودة" : "Quality"}: <span className={quality.color}>{quality.label}</span></p>
+        <p className="text-lg font-medium text-center dark:text-white">{isRTL ? "الجودة" : "Quality"}: <span className={quality.color}>{quality.label}</span></p>
       </div>
       
       <div className="space-y-6">
         <div>
           <div className="flex justify-between items-center mb-1">
-            <span className="text-sm font-medium">{isRTL ? "زمن الإستجابة" : "Response Time"}</span>
-            <span className="text-sm font-medium flex items-center">
+            <span className="text-sm font-medium dark:text-gray-300">{isRTL ? "زمن الإستجابة" : "Response Time"}</span>
+            <span className="text-sm font-medium flex items-center dark:text-gray-300">
               <Zap className="mx-1 h-4 w-4 text-amber-500" />
               {latency} ms
             </span>
           </div>
-          <Progress value={Math.min(100 - (latency * 2), 100)} className="h-2" />
-          <p className="text-xs text-muted-foreground mt-1">
+          <Progress value={Math.min(100 - (latency * 2), 100)} className="h-2 bg-gray-200 dark:bg-gray-700" />
+          <p className="text-xs text-muted-foreground mt-1 dark:text-gray-400">
             {isRTL ? "تم تناسب معظم التطبيقات" : "Suitable for most applications"}
           </p>
         </div>
         
         <div>
           <div className="flex justify-between items-center mb-1">
-            <span className="text-sm font-medium">{isRTL ? "فقد الحزم" : "Packet Loss"}</span>
-            <span className="text-sm font-medium flex items-center">
+            <span className="text-sm font-medium dark:text-gray-300">{isRTL ? "فقد الحزم" : "Packet Loss"}</span>
+            <span className="text-sm font-medium flex items-center dark:text-gray-300">
               <Wifi className="mx-1 h-4 w-4 text-blue-500" />
               {packetLoss}%
             </span>
           </div>
-          <Progress value={Math.max(100 - (packetLoss * 20), 0)} className="h-2" />
-          <p className="text-xs text-muted-foreground mt-1">
+          <Progress value={Math.max(100 - (packetLoss * 20), 0)} className="h-2 bg-gray-200 dark:bg-gray-700" />
+          <p className="text-xs text-muted-foreground mt-1 dark:text-gray-400">
             {isRTL ? "معدل فقد الحزم أقل من المعدل العادي" : "Packet loss rate is below average"}
           </p>
         </div>
         
         <div>
           <div className="flex justify-between items-center mb-1">
-            <span className="text-sm font-medium">{isRTL ? "تذبذب الشبكة" : "Network Jitter"}</span>
-            <span className="text-sm font-medium flex items-center">
+            <span className="text-sm font-medium dark:text-gray-300">{isRTL ? "تذبذب الشبكة" : "Network Jitter"}</span>
+            <span className="text-sm font-medium flex items-center dark:text-gray-300">
               <Activity className="mx-1 h-4 w-4 text-purple-500" />
               {jitter} ms
             </span>
           </div>
-          <Progress value={Math.max(100 - (jitter * 20), 0)} className="h-2" />
-          <p className="text-xs text-muted-foreground mt-1">
+          <Progress value={Math.max(100 - (jitter * 20), 0)} className="h-2 bg-gray-200 dark:bg-gray-700" />
+          <p className="text-xs text-muted-foreground mt-1 dark:text-gray-400">
             {isRTL ? "معدل تذبذب مستقر ممتاز" : "Excellent stable jitter level"}
           </p>
         </div>
       </div>
       
-      <div className="mt-6 p-3 bg-blue-50 rounded-md">
-        <p className="text-sm font-medium">{isRTL ? "ملخص التشخيص" : "Diagnostic Summary"}:</p>
-        <p className="text-xs text-muted-foreground mt-1">
+      <div className="mt-6 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-md">
+        <p className="text-sm font-medium dark:text-white">{isRTL ? "ملخص التشخيص" : "Diagnostic Summary"}:</p>
+        <p className="text-xs text-muted-foreground mt-1 dark:text-gray-400">
           {isRTL ? "الشبكة في حالة ممتازة. نوصي بالحفاظ على الإعدادات الحالية." : "Network is in excellent condition. We recommend maintaining current settings."}
         </p>
       </div>

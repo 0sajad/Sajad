@@ -62,14 +62,14 @@ export const SystemPerformanceMonitor = () => {
   }, [performanceData, reducedMotion]);
   
   return (
-    <Card className="border-blue-200 shadow-md">
-      <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-t-lg flex flex-row items-center justify-between p-4">
+    <Card className="border-blue-200 dark:border-blue-900 shadow-md overflow-hidden">
+      <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/20 rounded-t-lg flex flex-row items-center justify-between p-4">
         <div>
-          <CardTitle className="text-lg font-medium flex items-center gap-2">
-            <Cpu className="h-5 w-5 text-blue-600" />
+          <CardTitle className="text-lg font-medium flex items-center gap-2 dark:text-white">
+            <Cpu className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             {isRTL ? 'مراقب أداء النظام' : 'System Performance Monitor'}
           </CardTitle>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground dark:text-gray-400">
             {isRTL ? 'مراقبة موارد النظام في الوقت الفعلي' : 'Real-time monitoring of system resources'}
           </p>
         </div>
@@ -78,63 +78,63 @@ export const SystemPerformanceMonitor = () => {
           size="sm" 
           onClick={refreshData} 
           disabled={isRefreshing}
-          className="h-8 px-2"
+          className="h-8 px-2 bg-white dark:bg-gray-800"
         >
           <RefreshCw size={14} className={isRefreshing ? 'animate-spin' : ''} />
           <span className="ml-1">{isRTL ? 'تحديث' : 'Refresh'}</span>
         </Button>
       </CardHeader>
       
-      <CardContent className="p-4">
+      <CardContent className="p-4 bg-white dark:bg-gray-800">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div className="p-4 rounded-lg border shadow-sm">
+          <div className="p-4 rounded-lg border shadow-sm bg-white dark:bg-gray-800 dark:border-gray-700">
             <div className="flex items-center mb-2">
               <Cpu className="text-blue-500 mr-2 h-5 w-5" />
               <div>
-                <h3 className="font-medium text-lg">{currentValues.cpu}%</h3>
-                <p className="text-sm text-muted-foreground">CPU</p>
+                <h3 className="font-medium text-lg dark:text-white">{currentValues.cpu}%</h3>
+                <p className="text-sm text-muted-foreground dark:text-gray-400">CPU</p>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground dark:text-gray-400">
               {isRTL ? 'استخدام المعالج منخفض' : 'CPU usage is low'}
             </p>
           </div>
           
-          <div className="p-4 rounded-lg border shadow-sm">
+          <div className="p-4 rounded-lg border shadow-sm bg-white dark:bg-gray-800 dark:border-gray-700">
             <div className="flex items-center mb-2">
               <MemoryStick className="text-green-500 mr-2 h-5 w-5" />
               <div>
-                <h3 className="font-medium text-lg">{currentValues.memory}%</h3>
-                <p className="text-sm text-muted-foreground">{isRTL ? 'ذاكرة' : 'Memory'}</p>
+                <h3 className="font-medium text-lg dark:text-white">{currentValues.memory}%</h3>
+                <p className="text-sm text-muted-foreground dark:text-gray-400">{isRTL ? 'ذاكرة' : 'Memory'}</p>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground dark:text-gray-400">
               {isRTL ? 'استخدام الذاكرة معتدل' : 'Memory usage is moderate'}
             </p>
           </div>
           
-          <div className="p-4 rounded-lg border shadow-sm">
+          <div className="p-4 rounded-lg border shadow-sm bg-white dark:bg-gray-800 dark:border-gray-700">
             <div className="flex items-center mb-2">
               <HardDrive className="text-purple-500 mr-2 h-5 w-5" />
               <div>
-                <h3 className="font-medium text-lg">{currentValues.disk}%</h3>
-                <p className="text-sm text-muted-foreground">{isRTL ? 'قرص' : 'Disk'}</p>
+                <h3 className="font-medium text-lg dark:text-white">{currentValues.disk}%</h3>
+                <p className="text-sm text-muted-foreground dark:text-gray-400">{isRTL ? 'قرص' : 'Disk'}</p>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground dark:text-gray-400">
               {isRTL ? 'استخدام القرص منخفض' : 'Disk usage is low'}
             </p>
           </div>
           
-          <div className="p-4 rounded-lg border shadow-sm">
+          <div className="p-4 rounded-lg border shadow-sm bg-white dark:bg-gray-800 dark:border-gray-700">
             <div className="flex items-center mb-2">
               <Thermometer className="text-amber-500 mr-2 h-5 w-5" />
               <div>
-                <h3 className="font-medium text-lg">{currentValues.temperature}°C</h3>
-                <p className="text-sm text-muted-foreground">{isRTL ? 'درجة الحرارة' : 'Temperature'}</p>
+                <h3 className="font-medium text-lg dark:text-white">{currentValues.temperature}°C</h3>
+                <p className="text-sm text-muted-foreground dark:text-gray-400">{isRTL ? 'درجة الحرارة' : 'Temperature'}</p>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground dark:text-gray-400">
               {isRTL ? 'درجة الحرارة في النطاق الطبيعي' : 'Temperature is in normal range'}
             </p>
           </div>
