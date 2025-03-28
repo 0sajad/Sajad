@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from "react";
 
 interface ScreenReaderAnnouncerProps {
@@ -33,11 +34,8 @@ export function ScreenReaderAnnouncer({
     }
   }, [children]);
   
-  // إضافة وظيفة الإعلان العامة (Using window.announce that is defined in LiveAnnouncer)
-  useEffect(() => {
-    // We'll use the global announce function defined in LiveAnnouncer
-    // No need to redefine it here to avoid conflicts
-  }, [politeness]);
+  // Use the global announce function defined in LiveAnnouncer
+  // No need to define it again here to avoid conflicts
   
   return (
     <div 
@@ -52,15 +50,13 @@ export function ScreenReaderAnnouncer({
   );
 }
 
-// تصدير وظيفة مساعدة للإعلان
+// تصدير وظيفة مساعدة للإعلان - uses the global function safely
 export function useScreenReaderAnnouncer() {
   const announce = (message: string, politeness: "polite" | "assertive" = "polite") => {
-    if (typeof window !== 'undefined' && window.announce) {
+    if (typeof window !== 'undefined' && typeof window.announce === 'function') {
       window.announce(message, politeness);
     }
   };
   
   return { announce };
 }
-
-// Type definition moved to window.d.ts

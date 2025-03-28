@@ -4,7 +4,7 @@ import { toast as sonnerToast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useA11y } from "@/hooks/useA11y";
 import { useRTLSupport } from "@/hooks/useRTLSupport";
-import { X, Check, AlertTriangle, Info, Bell } from "lucide-react";
+import { X, Check, AlertTriangle, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface EnhancedToastProps {
@@ -32,6 +32,7 @@ const ToastIcon = ({ type }: { type: string }) => {
   }
 };
 
+// Fixed functions that don't rely on hooks directly
 export const enhancedToast = {
   success: (props: Omit<EnhancedToastProps, "type">) => {
     return showEnhancedToast({ ...props, type: "success" });
@@ -60,9 +61,15 @@ export function showEnhancedToast({
   showIcon = true,
   onClose
 }: EnhancedToastProps) {
-  // استخدام الخطافات اللازمة
-  const { soundFeedback, announce } = window.A11y || { soundFeedback: false, announce: () => {} };
-  const { isRTL } = window.RTLSupport || { isRTL: false };
+  // Safely access global functions rather than using hooks directly
+  const announce = (message: string, politeness: "polite" | "assertive" = "polite") => {
+    if (typeof window !== 'undefined' && typeof window.announce === 'function') {
+      window.announce(message, politeness);
+    }
+  };
+  
+  // Safely determine RTL
+  const isRTL = document.documentElement.dir === 'rtl';
   
   // تحديد الموضع المناسب بناءً على اتجاه اللغة
   const toastPosition = position || (isRTL ? "top-left" : "top-right");
@@ -132,46 +139,26 @@ export function showEnhancedToast({
   );
   
   // إعلان للقارئات الشاشة
-  if (typeof announce === 'function') {
-    const fullMessage = [title, description].filter(Boolean).join(": ");
-    const typeTranslation = {
-      success: "نجاح",
-      error: "خطأ",
-      warning: "تحذير",
-      info: "معلومات"
-    };
-    
-    announce(`${typeTranslation[type] || typeTranslation.info}: ${fullMessage}`, "assertive");
-  }
+  const fullMessage = [title, description].filter(Boolean).join(": ");
+  const typeTranslation = {
+    success: "نجاح",
+    error: "خطأ",
+    warning: "تحذير",
+    info: "معلومات"
+  };
   
-  // تشغيل صوت إشعار إذا كانت ميزة الصوت مفعلة
-  if (soundFeedback) {
-    try {
-      const audio = new Audio(`/sounds/${type}.mp3`);
-      audio.volume = 0.3;
-      audio.play().catch(err => console.error('فشل تشغيل الصوت:', err));
-    } catch (error) {
-      console.error('فشل تشغيل صوت الإشعار:', error);
-    }
-  }
+  announce(`${typeTranslation[type] || typeTranslation.info}: ${fullMessage}`, "assertive");
   
   return toastId;
 }
 
-/**
- * React component wrapper for enhancedToast
- */
-interface EnhancedToastComponentProps {
-  id?: string;
-  className?: string;
-  children?: React.ReactNode;
-}
-
+// Remove components that cause hooks to be called in render functions
 export const EnhancedToastViewport = forwardRef<
   HTMLDivElement,
-  EnhancedToastComponentProps
+  { className?: string, children?: React.ReactNode }
 >(({ className, ...props }, ref) => {
-  const { isRTL } = useRTLSupport();
+  // Safely determine RTL without hooks
+  const isRTL = document.documentElement.dir === 'rtl';
   
   return (
     <div
@@ -187,26 +174,3 @@ export const EnhancedToastViewport = forwardRef<
 });
 
 EnhancedToastViewport.displayName = "EnhancedToastViewport";
-
-// إضافة الميزات المحسنة للنافذة العالمية
-if (typeof window !== "undefined") {
-  window.A11y = window.A11y || {};
-  window.RTLSupport = window.RTLSupport || { isRTL: false };
-  
-  // تصدير الوظائف للاستخدام العالمي
-  window.showToast = showEnhancedToast;
-}
-
-// تعريف النافذة العالمية
-declare global {
-  interface Window {
-    A11y: {
-      soundFeedback?: boolean;
-      announce?: (message: string, politeness?: "polite" | "assertive") => void;
-    };
-    RTLSupport: {
-      isRTL: boolean;
-    };
-    showToast: typeof showEnhancedToast;
-  }
-}

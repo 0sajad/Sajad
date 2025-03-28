@@ -9,11 +9,9 @@ import { QuickAccessibilityButton } from "@/components/ui/QuickAccessibilityButt
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { usePreferenceSync } from "@/hooks/usePreferenceSync";
 import { KeyboardFocusDetector } from "@/components/ui/accessibility/keyboard-focus-detector";
-import { LiveAnnouncer } from "@/components/ui/accessibility/live-announcer";
 import { useA11y } from "@/hooks/useA11y";
 import { SkipLink } from "@/components/ui/accessibility/SkipLink";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
-import { ScreenReaderAnnouncer } from "@/components/ui/accessibility/screen-reader-announcer";
 import { MobileA11yDrawer } from "@/components/ui/accessibility/mobile-a11y-drawer";
 import { useRTLSupport } from "@/hooks/useRTLSupport";
 import { MainContent } from "@/components/sections/MainContent";
@@ -36,9 +34,10 @@ export default function Index() {
   useKeyboardShortcuts();
   usePreferenceSync();
   
-  // الإعلان عن اكتمال تحميل الصفحة
+  // الإعلان عن اكتمال تحميل الصفحة - but only once
   useEffect(() => {
-    if (pageLoaded) {
+    if (pageLoaded && announce) {
+      // Use a ref or some other mechanism to ensure this only runs once
       const announceTimeout = setTimeout(() => {
         const isArabic = i18n.language === 'ar' || i18n.language === 'ar-iq';
         const message = isArabic 
@@ -59,12 +58,6 @@ export default function Index() {
   return (
     <ErrorBoundary>
       <TooltipProvider>
-        {/* مكونات قارئ الشاشة والتنقل بلوحة المفاتيح */}
-        <LiveAnnouncer />
-        <ScreenReaderAnnouncer />
-        <KeyboardFocusDetector />
-        <SkipLink />
-        
         {/* طبقة إمكانية الوصول: تتضمن مكونات الوصول المساعدة */}
         <AccessibilityOverlay />
         

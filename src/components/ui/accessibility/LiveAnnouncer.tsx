@@ -34,8 +34,10 @@ export function LiveAnnouncer() {
     
     // Clean up
     return () => {
-      // @ts-ignore - Remove the announce function from the window object
+      // Remove the announce function from the window object safely
       if (window.announce && typeof window.announce === 'function') {
+        // We need to replace it with a no-op function rather than deleting it
+        // to avoid errors from components that might try to use it during cleanup
         window.announce = () => {};
       }
     };

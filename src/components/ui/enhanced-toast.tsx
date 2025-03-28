@@ -1,3 +1,4 @@
+
 import React, { forwardRef } from "react";
 import { toast as sonnerToast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -37,25 +38,27 @@ export const EnhancedToast = {
     } = options;
     
     // للاستخدام داخل استدعاءات واجهة برمجة التطبيقات
-    const { announce, playNotificationSound } = useA11yHelpers();
+    const { announce } = useA11yHelpers();
     
     // إعلان لقارئات الشاشة
-    announce(`${title}. ${description || ''}`, important ? 'assertive' : 'polite');
-    
-    // تشغيل صوت الإشعار بناءً على النوع
-    playNotificationSound(type);
+    if (typeof announce === 'function') {
+      announce(`${title}. ${description || ''}`, important ? 'assertive' : 'polite');
+    }
     
     // إظهار النخب المرئي
-    const { toast } = useToast();
-    return toast({
-      title,
-      description,
-      action,
-      duration,
-      variant: type === 'default' ? 'default' : 
-               type === 'error' ? 'destructive' : 
-               'default',
-    });
+    return sonnerToast.custom(
+      (id) => (
+        <div className="toast-content">
+          <div className="toast-title">{title}</div>
+          {description && <div className="toast-description">{description}</div>}
+          {action}
+        </div>
+      ),
+      {
+        duration,
+        id: `toast-${Date.now()}`,
+      }
+    );
   },
   
   // وظائف مختصرة لأنواع رسائل مختلفة
@@ -74,32 +77,15 @@ export const EnhancedToast = {
 
 // خطاف مساعد للوصول إلى وظائف إمكانية الوصول
 function useA11yHelpers() {
-  const { announce, soundFeedback, playNotificationSound: playSound } = useA11y();
-  const { t } = useTranslation();
-  
-  // تشغيل الصوت المناسب بناءً على نوع الرسالة
-  const playNotificationSound = (type: ToastType) => {
-    if (!soundFeedback) return;
-    
-    switch (type) {
-      case 'success':
-        playSound('success');
-        break;
-      case 'error':
-        playSound('error');
-        break;
-      case 'warning':
-        playSound('warning');
-        break;
-      case 'info':
-      case 'default':
-        playSound('notification');
-        break;
+  // Remove the direct useState causing infinite loops
+  // Instead, safely access announcement function
+  const announce = (message: string, politeness: 'polite' | 'assertive' = 'polite') => {
+    if (typeof window !== 'undefined' && typeof window.announce === 'function') {
+      window.announce(message, politeness);
     }
   };
   
   return {
-    announce,
-    playNotificationSound,
+    announce
   };
 }
