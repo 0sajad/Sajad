@@ -1,10 +1,9 @@
+
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppState } from './state';
 import { toast } from './use-toast';
 import { ToastAction } from '@/components/ui/toast';
-
-// Fix portions with errors related to toast and void expressions
 
 export function useOfflineSupport() {
   const { t } = useTranslation();
@@ -78,7 +77,6 @@ export function useOfflineSupport() {
       toast({
         title: t('offline.syncComplete'),
         description: t('offline.syncCompleteDesc'),
-        variant: 'default',
       });
       
       return true;
@@ -124,17 +122,8 @@ export function useOfflineSupport() {
       const shouldSync = window.confirm(t('offline.syncPrompt'));
       
       if (shouldSync) {
-        const syncResult = syncOfflineData();
-        // Handle result without testing for truthiness of void expression
-        syncResult.then(success => {
-          if (success) {
-            // Sync successful
-            console.log("Sync completed successfully");
-          } else {
-            // Sync failed
-            console.error("Sync failed");
-          }
-        });
+        // Use void to explicitly discard the Promise result
+        void syncOfflineData();
       } else {
         // Show reminder
         toast({
@@ -142,8 +131,8 @@ export function useOfflineSupport() {
           description: t('offline.syncReminderDesc', { count: unsavedChangesCount }),
           action: (
             <ToastAction 
-              altText={t('offline.syncNow')} 
-              onClick={() => syncOfflineData()}
+              altText={t('offline.syncNow')}
+              onClick={() => void syncOfflineData()}
             >
               {t('offline.syncNow')}
             </ToastAction>

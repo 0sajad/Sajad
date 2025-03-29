@@ -1,5 +1,5 @@
 
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useMemo } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./layouts/Layout";
 import SuspenseLoader from "./components/SuspenseLoader";
@@ -24,12 +24,42 @@ const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
 const App = () => {
   const { t } = useTranslation();
-  // Use a selector function to get only what's needed without causing unnecessary re-renders
-  const networkStatus = useAppState((state) => ({
-    isInitialized: true,
-    isConnected: true,
-    isOnline: true
-  }));
+  
+  // Use a stable selector to avoid frequent re-renders
+  const networkStatus = useAppState(
+    state => ({
+      isInitialized: true,
+      isConnected: true,
+      isOnline: true
+    }),
+    // Using shallow equality check
+    (a, b) => 
+      a.isInitialized === b.isInitialized && 
+      a.isConnected === b.isConnected && 
+      a.isOnline === b.isOnline
+  );
+  
+  // Memoize the routes to prevent unnecessary re-renders
+  const appRoutes = useMemo(() => (
+    <Routes>
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/fiber-optic" element={<NetworkScanner />} />
+      <Route path="/ai" element={<AIAssistant />} />
+      <Route path="/simulation" element={<Simulation />} />
+      <Route path="/tools" element={<Tools />} />
+      <Route path="/license" element={<License />} />
+      <Route path="/settings" element={<Settings />} />
+      <Route path="/help-center" element={<HelpCenter />} />
+      
+      {/* Auth Routes */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      
+      {/* 404 */}
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
+  ), []);
   
   return (
     <ModeProvider>
@@ -37,24 +67,7 @@ const App = () => {
         <Router>
           <Layout>
             <Suspense fallback={<SuspenseLoader />}>
-              <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/fiber-optic" element={<NetworkScanner />} />
-                <Route path="/ai" element={<AIAssistant />} />
-                <Route path="/simulation" element={<Simulation />} />
-                <Route path="/tools" element={<Tools />} />
-                <Route path="/license" element={<License />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/help-center" element={<HelpCenter />} />
-                
-                {/* Auth Routes */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                
-                {/* 404 */}
-                <Route path="*" element={<NotFoundPage />} />
-              </Routes>
+              {appRoutes}
             </Suspense>
           </Layout>
         </Router>

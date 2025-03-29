@@ -31,7 +31,7 @@ interface ModeProviderProps {
 }
 
 export const ModeProvider: React.FC<ModeProviderProps> = ({ children }) => {
-  // Get initial theme from Zustand store, but don't subscribe to changes to avoid loops
+  // Get initial theme from Zustand store without subscribing
   const initialTheme = useAppState.getState().theme || 'system';
   const initialMode = document.documentElement.dir === 'rtl' ? 'rtl' : 'ltr';
   
@@ -41,7 +41,7 @@ export const ModeProvider: React.FC<ModeProviderProps> = ({ children }) => {
   const [features, setFeatures] = useState<Record<string, boolean>>({});
   const [isSyncing, setIsSyncing] = useState(false);
   
-  // Get developer mode status from app state
+  // Get developer mode status from app state - but use a selector to avoid unnecessary renders
   const isDeveloperMode = useAppState(state => 
     state.preferences?.developerMode || false
   );
@@ -62,7 +62,8 @@ export const ModeProvider: React.FC<ModeProviderProps> = ({ children }) => {
     }
     
     // Only update the store if the value has actually changed
-    if (useAppState.getState().theme !== newTheme) {
+    const currentTheme = useAppState.getState().theme;
+    if (currentTheme !== newTheme) {
       useAppState.getState().setTheme(newTheme);
     }
   }, []);
@@ -101,21 +102,24 @@ export const ModeProvider: React.FC<ModeProviderProps> = ({ children }) => {
     }, 1500);
   }, []);
   
-  // Listen for system theme changes
+  // Listen for system theme changes without triggering re-renders
   useEffect(() => {
-    if (theme === 'system') {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      const handleChange = (e: MediaQueryListEvent) => {
+    const handleSystemThemeChange = (e: MediaQueryListEvent) => {
+      if (theme === 'system') {
         document.documentElement.classList.toggle('dark', e.matches);
-      };
-      
-      // Apply initial value
+      }
+    };
+    
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    // Apply initial value if in system mode
+    if (theme === 'system') {
       document.documentElement.classList.toggle('dark', mediaQuery.matches);
-      
-      // Listen for changes
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
     }
+    
+    // Modern way to listen for changes
+    mediaQuery.addEventListener('change', handleSystemThemeChange);
+    return () => mediaQuery.removeEventListener('change', handleSystemThemeChange);
   }, [theme]);
   
   // Memoize the context value to prevent unnecessary re-renders of children

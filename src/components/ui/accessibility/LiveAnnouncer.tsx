@@ -13,6 +13,7 @@ export function LiveAnnouncer() {
   const politeAnnouncerRef = useRef<HTMLDivElement>(null);
   const assertiveAnnouncerRef = useRef<HTMLDivElement>(null);
   const { i18n } = useTranslation();
+  const previousAnnounceRef = useRef<((message: string, politeness?: 'polite' | 'assertive') => void) | undefined>(undefined);
   
   // Format message based on language
   const formatAnnouncementForLang = (message: string): string => {
@@ -35,7 +36,7 @@ export function LiveAnnouncer() {
   
   useEffect(() => {
     // Store previous announce function if it exists
-    const previousAnnounce = window.announce;
+    previousAnnounceRef.current = window.announce;
     
     // Create new announce function
     window.announce = (message: string, politeness: 'polite' | 'assertive' = 'polite') => {
@@ -68,8 +69,8 @@ export function LiveAnnouncer() {
     // Cleanup
     return () => {
       // Restore previous announce function if it existed
-      if (previousAnnounce) {
-        window.announce = previousAnnounce;
+      if (previousAnnounceRef.current) {
+        window.announce = previousAnnounceRef.current;
       } else {
         // Or provide a no-op function
         window.announce = () => {};

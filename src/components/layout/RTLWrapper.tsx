@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface RTLWrapperProps {
@@ -10,7 +10,7 @@ interface RTLWrapperProps {
  * RTL Wrapper Component
  * Automatically sets the correct text direction based on the current language
  */
-export function RTLWrapper({ children }: RTLWrapperProps) {
+export const RTLWrapper = memo(({ children }: RTLWrapperProps) => {
   const { i18n } = useTranslation();
   const [direction, setDirection] = useState<'rtl' | 'ltr'>(
     document.documentElement.dir === 'rtl' ? 'rtl' : 'ltr'
@@ -37,7 +37,10 @@ export function RTLWrapper({ children }: RTLWrapperProps) {
       {children}
     </div>
   );
-}
+});
+
+// Set display name for debugging
+RTLWrapper.displayName = 'RTLWrapper';
 
 // Don't pass any arguments to useTranslation
 export const getLayoutDirection = (): 'rtl' | 'ltr' => {
