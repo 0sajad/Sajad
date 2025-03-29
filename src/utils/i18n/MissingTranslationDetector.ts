@@ -105,4 +105,11 @@ export class MissingTranslationDetector {
   public static reset(): void {
     this.missingKeys = {};
   }
+
+  /**
+   * Clear all missing keys (alias for reset)
+   */
+  public static clearMissingKeys(): void {
+    this.reset();
+  }
 }

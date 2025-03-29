@@ -10,6 +10,10 @@ export function useOfflineMode() {
   const { isOnline } = useAppState(state => ({
     isOnline: state.isOnline
   }));
+
+  // Additional properties needed by components
+  const isOffline = !isOnline;
+  const [hasPendingSync, setHasPendingSync] = useState<boolean>(false);
   
   // Calculate cache size
   useEffect(() => {
@@ -35,6 +39,26 @@ export function useOfflineMode() {
     };
     
     calculateCacheSize();
+    
+    // Check for pending sync items in localStorage
+    const checkPendingSync = () => {
+      try {
+        const pendingActions = localStorage.getItem('pendingActions');
+        setHasPendingSync(!!pendingActions && JSON.parse(pendingActions).length > 0);
+      } catch (error) {
+        console.error('Error checking pending sync:', error);
+        setHasPendingSync(false);
+      }
+    };
+    
+    checkPendingSync();
+    
+    // Set up interval to periodically check for pending sync
+    const syncCheckInterval = setInterval(checkPendingSync, 30000);
+    
+    return () => {
+      clearInterval(syncCheckInterval);
+    };
   }, []);
   
   // Clear cache data
@@ -106,10 +130,50 @@ export function useOfflineMode() {
     }, 2000);
   }, [isOnline, t]);
   
+  // Attempt to reconnect to the network
+  const attemptReconnect = useCallback(async () => {
+    toast({
+      title: t('network.checking', 'جارِ التحقق من الاتصال...'),
+      description: t('network.tryingToReconnect', 'جارِ محاولة إعادة الاتصال بالإنترنت'),
+    });
+    
+    const checkConnection = useAppState.getState().checkConnection;
+    
+    try {
+      const isConnected = await checkConnection();
+      
+      if (isConnected) {
+        toast({
+          title: t('network.connected', 'تم الاتصال'),
+          description: t('network.connectionRestored', 'تم استعادة الاتصال بالإنترنت'),
+        });
+        return true;
+      } else {
+        toast({
+          title: t('network.offline', 'غير متصل'),
+          description: t('network.stillOffline', 'ما زلت غير متصل بالإنترنت'),
+          variant: 'destructive'
+        });
+        return false;
+      }
+    } catch (error) {
+      console.error('Error checking connection:', error);
+      toast({
+        title: t('network.error', 'خطأ'),
+        description: t('network.connectionCheckFailed', 'فشل التحقق من الاتصال'),
+        variant: 'destructive'
+      });
+      return false;
+    }
+  }, [t]);
+  
   return {
     isOnline,
+    isOffline,
     cacheSize,
     clearCache,
-    refreshCachedData
+    refreshCachedData,
+    hasPendingSync,
+    attemptReconnect
   };
 }

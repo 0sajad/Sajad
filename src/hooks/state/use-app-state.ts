@@ -61,7 +61,7 @@ export const useAppState = create<AppState>()(
       setNetworkStatus: (status) => args[0]({
         isConnected: status.isConnected,
         isOnline: status.isOnline,
-        lastCheck: status.lastCheck
+        lastCheck: status.lastCheck || new Date() // Provide default value
       }),
 
       handleOfflineStatus: () => {
