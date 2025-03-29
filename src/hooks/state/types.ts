@@ -21,6 +21,7 @@ export interface AppState extends
   setIsLoading: (key: string, loading: boolean) => void;
   setError: (key: string, error: any) => void;
   setInitialized: (initialized: boolean) => void;
+  resetPreferences: () => void;
 }
 
 // حالة واجهة المستخدم
@@ -190,6 +191,11 @@ export interface AppPreferences {
   readingGuide: boolean;
   soundFeedback: boolean;
   colorBlindMode: ColorBlindMode;
+  developerMode: boolean;
+  fontSize: 'normal' | 'large' | 'x-large';
+  autoRefresh: boolean;
+  refreshRate: number;
+  analyticsEnabled: boolean;
 }
 
 // واجهة إعدادات المستخدم

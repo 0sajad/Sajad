@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useAppState } from '@/hooks/state/use-app-state';
 import { useTranslation } from 'react-i18next';
@@ -35,11 +34,9 @@ export function FeatureProvider({ children }: { children: ReactNode }) {
   const [isDevMode, setIsDevMode] = useState(isDeveloperMode);
   const [featureStates, setFeatureStates] = useState<Record<string, boolean>>({});
   
-  // مزامنة وضع المطور مع تفضيلات التطبيق
   useEffect(() => {
     setIsDevMode(isDeveloperMode);
     
-    // تحميل حالة الميزات من التخزين المحلي
     try {
       const savedFeatures = localStorage.getItem('featureStates');
       if (savedFeatures) {
@@ -50,14 +47,12 @@ export function FeatureProvider({ children }: { children: ReactNode }) {
     }
   }, [isDeveloperMode]);
   
-  // حفظ حالة الميزات عند تغييرها
   useEffect(() => {
     if (Object.keys(featureStates).length > 0) {
       localStorage.setItem('featureStates', JSON.stringify(featureStates));
     }
   }, [featureStates]);
   
-  // تعريف قائمة الميزات
   const featureDefinitions: Omit<Feature, 'toggle'>[] = [
     {
       id: 'ai_assistant',
@@ -113,7 +108,6 @@ export function FeatureProvider({ children }: { children: ReactNode }) {
     }
   ];
   
-  // الحصول على حالة ميزة معينة
   function getFeatureState(featureId: string, defaultValue: boolean): boolean {
     if (featureId in featureStates) {
       return featureStates[featureId];
@@ -121,7 +115,6 @@ export function FeatureProvider({ children }: { children: ReactNode }) {
     return defaultValue;
   }
   
-  // تبديل حالة ميزة معينة
   const toggleFeature = (featureId: string) => {
     const feature = featureDefinitions.find(f => f.id === featureId);
     
@@ -130,7 +123,6 @@ export function FeatureProvider({ children }: { children: ReactNode }) {
       return;
     }
     
-    // التحقق من متطلبات وضع المطور
     if (feature.requiresDevMode && !isDevMode) {
       toast.error(t('features.devModeRequired', 'هذه الميزة تتطلب وضع المطور'));
       return;
@@ -149,14 +141,12 @@ export function FeatureProvider({ children }: { children: ReactNode }) {
     );
   };
   
-  // التحقق من تفعيل ميزة معينة
   const isFeatureEnabled = (featureId: string) => {
     const feature = featureDefinitions.find(f => f.id === featureId);
     if (!feature) {
       return false;
     }
     
-    // إذا كانت الميزة تتطلب وضع المطور ولكنه غير مفعل
     if (feature.requiresDevMode && !isDevMode) {
       return false;
     }
@@ -164,7 +154,6 @@ export function FeatureProvider({ children }: { children: ReactNode }) {
     return getFeatureState(featureId, feature.enabled);
   };
   
-  // تبديل وضع المطور
   const toggleDevMode = () => {
     const newMode = !isDevMode;
     setIsDevMode(newMode);
@@ -177,7 +166,6 @@ export function FeatureProvider({ children }: { children: ReactNode }) {
     );
   };
   
-  // دمج الميزات مع دوال التبديل
   const features: Feature[] = featureDefinitions.map(feature => ({
     ...feature,
     toggle: () => toggleFeature(feature.id)

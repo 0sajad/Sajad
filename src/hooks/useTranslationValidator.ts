@@ -17,12 +17,12 @@ export function useTranslationValidator() {
   useEffect(() => {
     if (!isDeveloperMode) return;
     
-    const originalT = i18n.t;
+    const originalT = i18n.t.bind(i18n);
     const trackedMissingKeys: Record<string, string[]> = {};
     
     // إنشاء دالة t معدلة للكشف عن المفاتيح المفقودة
     i18n.t = function(key: any, options?: any) {
-      const result = originalT.call(i18n, key, options);
+      const result = originalT(key, options);
       
       // إذا كانت النتيجة هي المفتاح نفسه، فهذا يعني أن الترجمة مفقودة
       if (typeof key === 'string' && result === key) {

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -41,7 +40,7 @@ export function OfflineSettings() {
   // تغيير إعدادات وضع عدم الاتصال
   const handleAutoSyncChange = (checked: boolean) => {
     setAutoSyncEnabled(checked);
-    setPreference('autoRefresh', checked);
+    setPreference('autoSave', checked);
     toast.success(
       checked 
         ? t('settings.autoSyncEnabled', 'تم تفعيل المزامنة التلقائية') 
@@ -94,7 +93,7 @@ export function OfflineSettings() {
               </CardDescription>
             </div>
             <Badge 
-              variant={isOnline ? "success" : "destructive"}
+              variant={isOnline ? "default" : "destructive"}
               className="px-3 py-1"
             >
               {isOnline ? (
