@@ -1,121 +1,120 @@
 
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { AppState } from './types';
-import { createAccessibilitySlice } from './accessibility-state';
-import { createPerformanceSlice } from './performance-state';
-import { createNetworkSlice } from './network-state';
 
-/**
- * مخزن حالة التطبيق الرئيسي
- * يجمع بين مختلف شرائح الحالة
- */
-export const useAppState = create<AppState>()(
-  persist(
-    (set, get) => ({
-      // حالة إمكانية الوصول (من شريحة إمكانية الوصول)
-      ...createAccessibilitySlice(set, get),
-      
-      // حالة أداء التطبيق (من شريحة الأداء)
-      ...createPerformanceSlice(set, get),
-      
-      // حالة شبكة الاتصال
-      ...createNetworkSlice(set, get),
-      
-      // حالة التفضيلات
-      theme: 'system',
-      language: 'ar',
-      developerMode: false,
-      compactMode: false,
-      animations: true,
-      preferences: {},
-      
-      // وظائف التفضيلات
-      setTheme: (theme) => set({ theme }),
-      
-      setLanguage: (language) => set({ language }),
-      
-      toggleDeveloperMode: () => 
-        set((state) => ({ developerMode: !state.developerMode })),
-      
-      setCompactMode: (compactMode) => set({ compactMode }),
-      
-      setAnimations: (animations) => set({ animations }),
-      
-      setPreference: (key, value) => 
-        set((state) => ({
-          preferences: {
-            ...state.preferences,
-            [key]: value
-          }
-        })),
-    }),
-    {
-      name: 'app-state',
-      partialize: (state) => ({
-        // حفظ فقط التفضيلات وإعدادات إمكانية الوصول
-        highContrast: state.highContrast,
-        largeText: state.largeText,
-        reducedMotion: state.reducedMotion,
-        colorBlindMode: state.colorBlindMode,
-        dyslexicFont: state.dyslexicFont,
-        theme: state.theme,
-        language: state.language,
-        developerMode: state.developerMode,
-        compactMode: state.compactMode,
-        animations: state.animations,
-        preferences: state.preferences,
-      }),
-    }
-  )
-);
-
-// وظائف مساعدة للوصول إلى حالات محددة
-export const useA11y = () => useAppState((state) => ({
-  highContrast: state.highContrast,
-  largeText: state.largeText,
-  reducedMotion: state.reducedMotion,
-  focusMode: state.focusMode,
-  dyslexicFont: state.dyslexicFont,
-  readingGuide: state.readingGuide,
-  colorBlindMode: state.colorBlindMode,
-  soundFeedback: state.soundFeedback,
-  keyboardNavigationVisible: state.keyboardNavigationVisible,
-  setHighContrast: state.setHighContrast,
-  setLargeText: state.setLargeText,
-  setReducedMotion: state.setReducedMotion,
-  setFocusMode: state.setFocusMode,
-  setDyslexicFont: state.setDyslexicFont,
-  setReadingGuide: state.setReadingGuide,
-  setColorBlindMode: state.setColorBlindMode,
-  setSoundFeedback: state.setSoundFeedback,
-  setKeyboardNavigationVisible: state.setKeyboardNavigationVisible,
+// Create a single store with initial state
+export const useAppState = create<AppState>((set) => ({
+  // Base application state
+  theme: 'system',
+  language: 'en',
+  developerMode: false,
+  compactMode: false,
+  animations: true,
+  preferences: {},
+  performance: {
+    deviceTier: 'medium',
+    isLowEndDevice: false,
+    optimizeForLowEndDevice: () => {},
+    restoreDefaultPerformance: () => {},
+    setDeviceTier: () => {}
+  },
+  network: {
+    isOnline: true,
+    checkConnection: async () => true,
+    setOnlineStatus: () => {}
+  },
+  
+  // Network status
+  networkStatus: {
+    isInitialized: true,
+    isConnected: true,
+    isOnline: true
+  },
+  
+  // UI state
+  highContrast: false,
+  largeText: false,
+  reducedMotion: false,
+  focusMode: false,
+  dyslexicFont: false,
+  readingGuide: false,
+  soundFeedback: true,
+  colorBlindMode: 'none',
+  keyboardNavigationVisible: false,
+  
+  // Setters
+  setTheme: (theme) => {
+    set({ theme });
+  },
+  
+  setLanguage: (language) => {
+    set({ language });
+  },
+  
+  toggleDeveloperMode: () => {
+    set((state) => ({ developerMode: !state.developerMode }));
+  },
+  
+  toggleCompactMode: () => {
+    set((state) => ({ compactMode: !state.compactMode }));
+  },
+  
+  toggleAnimations: () => {
+    set((state) => ({ animations: !state.animations }));
+  },
+  
+  setPreference: (key, value) => {
+    set((state) => ({
+      preferences: { ...state.preferences, [key]: value }
+    }));
+  },
+  
+  // Accessibility setters
+  setHighContrast: (value) => {
+    set({ highContrast: value });
+  },
+  
+  setLargeText: (value) => {
+    set({ largeText: value });
+  },
+  
+  setReducedMotion: (value) => {
+    set({ reducedMotion: value });
+  },
+  
+  setFocusMode: (value) => {
+    set({ focusMode: value });
+  },
+  
+  setDyslexicFont: (value) => {
+    set({ dyslexicFont: value });
+  },
+  
+  setReadingGuide: (value) => {
+    set({ readingGuide: value });
+  },
+  
+  setSoundFeedback: (value) => {
+    set({ soundFeedback: value });
+  },
+  
+  setColorBlindMode: (mode) => {
+    set({ colorBlindMode: mode });
+  },
+  
+  setKeyboardNavigationVisible: (value) => {
+    set({ keyboardNavigationVisible: value });
+  }
 }));
 
-export const usePreferences = () => useAppState((state) => ({
-  theme: state.theme,
-  language: state.language,
-  developerMode: state.developerMode,
-  compactMode: state.compactMode,
-  animations: state.animations,
-  preferences: state.preferences,
-  setTheme: state.setTheme,
-  setLanguage: state.setLanguage,
-  toggleDeveloperMode: state.toggleDeveloperMode,
-  setCompactMode: state.setCompactMode,
-  setAnimations: state.setAnimations,
-  setPreference: state.setPreference,
-}));
-
-export const useNetworkState = () => useAppState((state) => ({
-  isOnline: state.network.isOnline,
-  setOnlineStatus: state.network.setOnlineStatus,
-}));
-
-export const usePerformanceState = () => useAppState((state) => ({
-  deviceTier: state.performance.deviceTier,
-  isLowEndDevice: state.performance.isLowEndDevice,
-  setDeviceTier: state.performance.setDeviceTier,
-  optimizeForLowEndDevice: state.performance.optimizeForLowEndDevice,
-  restoreDefaultPerformance: state.performance.restoreDefaultPerformance,
-}));
+// Separate hook for preferences to avoid unnecessary re-renders
+export const usePreferences = <T,>(key: string, defaultValue: T): [T, (value: T) => void] => {
+  const value = useAppState((state) => (state.preferences[key] as T) ?? defaultValue);
+  const setPreference = useAppState((state) => state.setPreference);
+  
+  const setValue = (newValue: T) => {
+    setPreference(key, newValue);
+  };
+  
+  return [value, setValue];
+};

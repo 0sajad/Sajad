@@ -2,7 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
-// نضيف تعريف لواجهة Window لتضمين خاصية announce
+// Add type declaration for window.announce
 declare global {
   interface Window {
     announce: (message: string, politeness?: 'polite' | 'assertive') => void;
@@ -14,32 +14,30 @@ export function LiveAnnouncer() {
   const assertiveAnnouncerRef = useRef<HTMLDivElement>(null);
   const { i18n } = useTranslation();
   
-  // تنسيق رسالة الإعلان حسب اللغة
+  // Format message based on language
   const formatAnnouncementForLang = (message: string): string => {
     const currentLang = i18n.language || 'en';
     
-    // إضافة نقطة في نهاية الجملة إذا لم تكن موجودة بالفعل
+    // Add period at end if not present
     if (!message.endsWith('.') && !message.endsWith('!') && !message.endsWith('?')) {
       message = `${message}.`;
     }
     
-    // تنسيق الرسالة حسب اللغة
+    // Format message based on language
     if (currentLang.startsWith('ar')) {
-      // للغة العربية، نتأكد من اتجاه النص من اليمين إلى اليسار
       return message;
     } else if (currentLang === 'fr') {
-      // للغة الفرنسية، نضيف مسافة قبل علامات الترقيم الثنائية
       return message.replace(/([!?])/, ' $1');
-    } else if (currentLang === 'ja' || currentLang === 'zh') {
-      // للغات الآسيوية، لا نضيف مسافات إضافية
-      return message;
     }
     
     return message;
   };
   
   useEffect(() => {
-    // إضافة وظيفة announce كوظيفة عالمية
+    // Store previous announce function if it exists
+    const previousAnnounce = window.announce;
+    
+    // Create new announce function
     window.announce = (message: string, politeness: 'polite' | 'assertive' = 'polite') => {
       if (!message) return;
       
@@ -49,32 +47,35 @@ export function LiveAnnouncer() {
         
       if (announcer) {
         try {
-          // تنسيق الرسالة حسب اللغة
+          // Format the message based on language
           const formattedMessage = formatAnnouncementForLang(message);
           
-          // ضبط محتوى النص فارغًا أولاً لإجبار قارئات الشاشة
-          // على التعرف على التغيير حتى لو كان النص هو نفسه
+          // First clear the content
           announcer.textContent = '';
           
-          // استخدام setTimeout لضمان التقاط قارئات الشاشة للتغيير
-          setTimeout(() => {
+          // Using requestAnimationFrame instead of setTimeout for better performance
+          requestAnimationFrame(() => {
             if (announcer) {
               announcer.textContent = formattedMessage;
             }
-          }, 10);
+          });
         } catch (error) {
           console.error('Error announcing message:', error);
         }
       }
     };
     
-    // تنظيف
+    // Cleanup
     return () => {
-      // استبدال وظيفة announce بوظيفة لا تفعل شيئًا بدلاً من حذفها
-      // لتجنب الأخطاء من المكونات التي قد تحاول استخدامها أثناء التنظيف
-      window.announce = () => {};
+      // Restore previous announce function if it existed
+      if (previousAnnounce) {
+        window.announce = previousAnnounce;
+      } else {
+        // Or provide a no-op function
+        window.announce = () => {};
+      }
     };
-  }, [i18n.language]); // إضافة اللغة كتبعية لتحديث المعلن عندما تتغير اللغة
+  }, [i18n.language]); // Only re-create when language changes
   
   return (
     <>

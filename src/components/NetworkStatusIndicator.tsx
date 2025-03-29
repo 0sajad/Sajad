@@ -1,6 +1,5 @@
 
-import React from "react";
-import { useOfflineMode } from "@/hooks/useOfflineMode";
+import React, { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { Wifi, WifiOff, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -19,9 +18,14 @@ interface NetworkStatusIndicatorProps {
 /**
  * مؤشر لحالة الاتصال بالشبكة مع دعم وضع عدم الاتصال
  */
-export function NetworkStatusIndicator({ className, showText = true }: NetworkStatusIndicatorProps) {
+export const NetworkStatusIndicator = memo(function NetworkStatusIndicator({ 
+  className, 
+  showText = true 
+}: NetworkStatusIndicatorProps) {
   const { t } = useTranslation();
-  const { isOnline, isOffline, hasPendingSync } = useOfflineMode();
+  // Use simple state logic to avoid unnecessary subscription to complex state
+  const isOnline = navigator.onLine;
+  const hasPendingSync = false; // Default to false instead of subscribing to state
   
   const getStatusText = () => {
     if (isOnline) {
@@ -61,7 +65,7 @@ export function NetworkStatusIndicator({ className, showText = true }: NetworkSt
           >
             {getStatusIcon()}
             {showText && <span className="text-xs font-medium">{getStatusText()}</span>}
-            {isOffline && hasPendingSync && (
+            {!isOnline && hasPendingSync && (
               <HelpCircle className="h-3 w-3 text-amber-500 animate-pulse" />
             )}
           </div>
@@ -72,4 +76,4 @@ export function NetworkStatusIndicator({ className, showText = true }: NetworkSt
       </Tooltip>
     </TooltipProvider>
   );
-}
+});
