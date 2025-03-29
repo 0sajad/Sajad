@@ -17,7 +17,7 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
   const { i18n, t } = useTranslation();
   const { isTransitioning, changeLanguage } = useLanguageTransition();
   const [mounted, setMounted] = useState(false);
-  const { reducedMotion } = useA11y();
+  const { reducedMotion } = useA11y?.() || { reducedMotion: false };
   const { isRTL } = useRTLSupport();
   
   const languages = [
@@ -47,9 +47,10 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
     // Make sure language is properly applied
     const savedLanguage = localStorage.getItem("language");
     if (savedLanguage && savedLanguage !== currentLang) {
-      i18n.changeLanguage(savedLanguage);
+      // Use the changeLanguage function from useLanguageTransition instead
+      changeLanguage(savedLanguage);
     }
-  }, [i18n.language, i18n]);
+  }, [i18n.language, i18n, changeLanguage]);
 
   // Find current language - ensure we have a default
   const currentLanguage = i18n.language || 'en';

@@ -9,7 +9,10 @@ if (!i18n.isInitialized) {
   i18n.use(initReactI18next).init(i18nConfig);
 }
 
-const changeLanguage = i18n.changeLanguage.bind(i18n);
+// Export changeLanguage properly as a function
+const changeLanguage = (language: string): Promise<any> => {
+  return i18n.changeLanguage(language);
+};
 
 export { i18n, changeLanguage };
 export type { ResourceKey, TranslationResources };

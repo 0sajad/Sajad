@@ -3,6 +3,7 @@ import { useState, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useA11y } from "./useA11y";
+import { changeLanguage as i18nChangeLanguage } from "../i18n";
 
 /**
  * Hook to manage language switching with transition effects
@@ -10,7 +11,10 @@ import { useA11y } from "./useA11y";
 export function useLanguageTransition() {
   const { i18n, t } = useTranslation();
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const { announce, playNotificationSound } = useA11y();
+  const { announce, playNotificationSound } = useA11y?.() || { 
+    announce: undefined, 
+    playNotificationSound: undefined 
+  };
   const pendingLanguageRef = useRef<string | null>(null);
 
   /**
@@ -39,8 +43,8 @@ export function useLanguageTransition() {
           document.body.classList.remove("rtl-active");
         }
 
-        // Change language
-        await i18n.changeLanguage(langCode);
+        // Change language using the correctly imported function
+        await i18nChangeLanguage(langCode);
         
         // Store language in local storage
         localStorage.setItem("language", langCode);
@@ -67,10 +71,14 @@ export function useLanguageTransition() {
         toast.success(message);
         
         // Announce for screen readers
-        announce(message, "polite");
+        if (announce) {
+          announce(message, "polite");
+        }
         
         // Play success sound
-        playNotificationSound("success");
+        if (playNotificationSound) {
+          playNotificationSound("success");
+        }
         
         // Dispatch a custom event for other components to react to language change
         const event = new CustomEvent('languageChanged', { detail: { language: langCode } });
@@ -88,8 +96,14 @@ export function useLanguageTransition() {
         }
         
         toast.error(errorMessage);
-        announce(errorMessage, "assertive");
-        playNotificationSound("error");
+        
+        if (announce) {
+          announce(errorMessage, "assertive");
+        }
+        
+        if (playNotificationSound) {
+          playNotificationSound("error");
+        }
         
         // Reset the pending language
         pendingLanguageRef.current = null;
