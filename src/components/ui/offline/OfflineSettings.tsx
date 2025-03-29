@@ -15,7 +15,13 @@ import { ArabicTextEnhancer } from '@/components/text/ArabicTextEnhancer';
 export function OfflineSettings() {
   const { t } = useTranslation();
   const { preferences, updatePreference } = useAppPreferences();
-  const { isOnline, cacheSize, clearCache, refreshCachedData } = useOfflineMode();
+  const { 
+    isOnline,
+    // Use optional chaining to safely access these properties
+    cacheSize = 0, 
+    clearCache = () => {}, 
+    refreshCachedData = async () => {} 
+  } = useOfflineMode();
   
   // معالج تبديل الوضع
   const handleToggle = (key: string, value: boolean) => {
@@ -113,7 +119,7 @@ export function OfflineSettings() {
                 variant="default"
                 size="sm"
                 disabled={!isOnline}
-                onClick={refreshCachedData}
+                onClick={() => refreshCachedData()}
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 <ArabicTextEnhancer>{t('common.refresh', 'تحديث')}</ArabicTextEnhancer>
@@ -125,7 +131,7 @@ export function OfflineSettings() {
           <Button
             variant="outline"
             className="flex-1 mr-2"
-            onClick={clearCache}
+            onClick={() => clearCache()}
           >
             <Trash2 className="h-4 w-4 mr-2" />
             <ArabicTextEnhancer>{t('offline.clearCache', 'مسح التخزين المؤقت')}</ArabicTextEnhancer>

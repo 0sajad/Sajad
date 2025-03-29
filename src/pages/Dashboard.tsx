@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { Suspense, useState, useEffect } from "react";
 import { useMode } from "@/context/ModeContext";
 import { DeveloperPanel } from "@/components/developer/DeveloperPanel";
 import { Header } from "@/components/Header";

@@ -21,7 +21,8 @@ export function ModeToggle() {
   } = useMode();
 
   const handleToggle = () => {
-    setMode(isDeveloperMode ? "client" : "developer");
+    // Use the correct mode types as defined in ModeContext
+    setMode(mode === 'rtl' ? 'ltr' : 'rtl');
   };
 
   return (

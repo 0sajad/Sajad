@@ -1,91 +1,67 @@
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 /**
- * خطاف لإدارة وتطبيق اتجاه الكتابة من اليمين إلى اليسار
+ * Hook for RTL support and helpers
  */
 export function useRTLSupport() {
   const { i18n } = useTranslation();
-  const [isRTL, setIsRTL] = useState<boolean>(false);
-  const [didMount, setDidMount] = useState<boolean>(false);
-
-  // إعداد اتجاه الكتابة بناءً على اللغة
-  useEffect(() => {
-    setDidMount(true);
-    
-    // التحقق من اللغة الحالية
-    const currentLang = i18n.language || 'en';
-    
-    // قائمة اللغات التي تستخدم اتجاه الكتابة من اليمين إلى اليسار
-    const rtlLanguages = ['ar', 'ar-iq', 'he', 'fa', 'ur'];
-    
-    // التحقق مما إذا كانت اللغة الحالية تستخدم RTL
-    const shouldBeRTL = rtlLanguages.some(lang => 
-      currentLang === lang || currentLang.startsWith(`${lang}-`)
-    );
-    
-    // تطبيق اتجاه RTL
-    if (shouldBeRTL) {
-      document.documentElement.setAttribute('dir', 'rtl');
-      document.body.classList.add('rtl-active');
-      setIsRTL(true);
-    } else {
-      document.documentElement.setAttribute('dir', 'ltr');
-      document.body.classList.remove('rtl-active');
-      setIsRTL(false);
-    }
-    
-    // إضافة فئة CSS لمساعدة التنسيق
-    document.documentElement.classList.toggle('rtl', shouldBeRTL);
-    
+  const [didMount, setDidMount] = useState(false);
+  
+  // Check if current language is RTL
+  const isRTL = useMemo(() => {
+    return i18n.language?.startsWith('ar') || i18n.language?.startsWith('he') || false;
   }, [i18n.language]);
   
-  /**
-   * تنسيق النصوص لاستخدام اتجاه الكتابة الصحيح
-   * @param text النص الذي سيتم تنسيقه
-   * @param forceRTL إجبار استخدام RTL
-   * @param forceLTR إجبار استخدام LTR
-   */
-  const formatTextDirection = (text: string, forceRTL = false, forceLTR = false): string => {
-    if (!text) return text;
+  // Apply RTL/LTR direction to text
+  const formatTextDirection = useCallback((text: string, forceRTL = false, forceLTR = false) => {
+    if (!text) return '';
     
     if (forceRTL) {
-      return `\u202B${text}\u202C`; // RLE: Right-to-Left Embedding
+      return `\u202B${text}\u202C`; // RLE + text + PDF
     } else if (forceLTR) {
-      return `\u202A${text}\u202C`; // LRE: Left-to-Right Embedding
+      return `\u202A${text}\u202C`; // LRE + text + PDF
+    } else if (isRTL) {
+      // If in RTL mode and text starts with LTR characters, wrap in LRE
+      const startsWithLTR = /^[A-Za-z0-9]/.test(text);
+      if (startsWithLTR) {
+        return `\u202A${text}\u202C`;
+      }
     }
     
-    // استخدام اتجاه الكتابة التلقائي
     return text;
-  };
+  }, [isRTL]);
   
-  /**
-   * عكس مصفوفة في حالة RTL
-   * مفيد للقوائم التي يجب أن تظهر بترتيب معكوس في RTL
-   * @param array المصفوفة التي سيتم عكسها
-   */
-  const reverseIfRTL = <T,>(array: T[]): T[] => {
-    if (isRTL) {
-      return [...array].reverse();
-    }
-    return array;
-  };
+  // Reverse array items if in RTL mode
+  const reverseIfRTL = useCallback(<T,>(array: T[]): T[] => {
+    if (!isRTL) return [...array];
+    return [...array].reverse();
+  }, [isRTL]);
   
-  /**
-   * تطبيق قيم CSS مختلفة بناءً على اتجاه الكتابة
-   * @param rtlValue القيمة في حالة RTL
-   * @param ltrValue القيمة في حالة LTR
-   */
-  const applyDirectionalValue = <T,>(rtlValue: T, ltrValue: T): T => {
+  // Apply either RTL or LTR value based on current direction
+  const applyDirectionalValue = useCallback(<T,>(rtlValue: T, ltrValue: T): T => {
     return isRTL ? rtlValue : ltrValue;
-  };
-
+  }, [isRTL]);
+  
+  // Apply RTL order to array of objects (useful for tab lists, menu items, etc.)
+  const applyRTLOrder = useCallback(<T,>(array: T[]): T[] => {
+    if (!isRTL) return array;
+    return [...array].reverse();
+  }, [isRTL]);
+  
+  // Set page direction on mount
+  useEffect(() => {
+    document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+    setDidMount(true);
+  }, [isRTL]);
+  
   return {
     isRTL,
     didMount,
     formatTextDirection,
     reverseIfRTL,
-    applyDirectionalValue
+    applyDirectionalValue,
+    applyRTLOrder
   };
 }

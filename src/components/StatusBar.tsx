@@ -34,7 +34,16 @@ interface StatusBarProps {
  */
 export function StatusBar({ className }: StatusBarProps) {
   const { t, i18n } = useTranslation();
-  const { isOnline, isOffline, lastCheck, networkInfo, hasPendingSync, syncPendingData, cacheSize } = useOfflineMode();
+  const { 
+    isOnline, 
+    isOffline, 
+    lastCheck, 
+    networkInfo,
+    hasPendingSync = false, 
+    syncPendingData = async () => true,
+    cacheSize = 0 
+  } = useOfflineMode();
+  
   const { deviceTier } = usePerformanceOptimization();
   const [showA11yMenu, setShowA11yMenu] = useState(false);
   const { announce } = useA11y();
@@ -219,5 +228,4 @@ export function StatusBar({ className }: StatusBarProps) {
   );
 }
 
-// For compatibility with React.lazy()
 export default StatusBar;

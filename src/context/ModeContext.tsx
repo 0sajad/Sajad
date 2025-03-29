@@ -6,12 +6,20 @@ import { useAppState } from '@/hooks/state';
 type Theme = 'light' | 'dark' | 'system';
 type Mode = 'rtl' | 'ltr';
 
+// Extended type to include developer mode features
 interface ModeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
   mode: Mode;
   setMode: (mode: Mode) => void;
   isRTL: boolean;
+  // Developer mode properties
+  isDeveloperMode: boolean;
+  features: Record<string, boolean>;
+  toggleFeature: (featureId: string) => void;
+  updateFeature: (featureId: string, value: boolean) => void;
+  applyConfiguration: () => void;
+  isSyncing: boolean;
 }
 
 // Create context with a default value
@@ -30,6 +38,13 @@ export const ModeProvider: React.FC<ModeProviderProps> = ({ children }) => {
   // Use local state to manage theme/mode within this component
   const [theme, setThemeState] = useState<Theme>(initialTheme as Theme);
   const [mode, setModeState] = useState<Mode>(initialMode);
+  const [features, setFeatures] = useState<Record<string, boolean>>({});
+  const [isSyncing, setIsSyncing] = useState(false);
+  
+  // Get developer mode status from app state
+  const isDeveloperMode = useAppState(state => 
+    state.preferences?.developerMode || false
+  );
   
   // Memoize the isRTL value to prevent unnecessary re-renders
   const isRTL = useMemo(() => mode === 'rtl', [mode]);
@@ -61,6 +76,31 @@ export const ModeProvider: React.FC<ModeProviderProps> = ({ children }) => {
     document.documentElement.classList.toggle('ltr', newMode === 'ltr');
   }, []);
   
+  // Toggle feature state
+  const toggleFeature = useCallback((featureId: string) => {
+    setFeatures(prev => ({
+      ...prev,
+      [featureId]: !prev[featureId]
+    }));
+  }, []);
+  
+  // Update feature with specific value
+  const updateFeature = useCallback((featureId: string, value: boolean) => {
+    setFeatures(prev => ({
+      ...prev,
+      [featureId]: value
+    }));
+  }, []);
+  
+  // Apply configuration to client mode
+  const applyConfiguration = useCallback(() => {
+    setIsSyncing(true);
+    // Simulate API call or operation that applies changes
+    setTimeout(() => {
+      setIsSyncing(false);
+    }, 1500);
+  }, []);
+  
   // Listen for system theme changes
   useEffect(() => {
     if (theme === 'system') {
@@ -84,8 +124,14 @@ export const ModeProvider: React.FC<ModeProviderProps> = ({ children }) => {
     setTheme,
     mode,
     setMode,
-    isRTL
-  }), [theme, setTheme, mode, setMode, isRTL]);
+    isRTL,
+    isDeveloperMode,
+    features,
+    toggleFeature,
+    updateFeature,
+    applyConfiguration,
+    isSyncing
+  }), [theme, setTheme, mode, setMode, isRTL, isDeveloperMode, features, toggleFeature, updateFeature, applyConfiguration, isSyncing]);
   
   return (
     <ModeContext.Provider value={contextValue}>

@@ -1,9 +1,27 @@
 
 import { ColorBlindMode } from './accessibility-state';
 
-// اكتب تعريفات الحالة هنا
+// Base network status interface
+export interface NetworkStatus {
+  isOnline: boolean;
+  isConnected: boolean;
+  lastCheck: Date | null;
+  connectionType?: string;
+  effectiveType?: string;
+  latency?: number;
+}
+
+// Network info from browser API
+export interface NetworkInfo {
+  type?: string;
+  effectiveType?: string;
+  downlink?: number;
+  rtt?: number;
+}
+
+// Base accessibility state
 export interface AccessibilityState {
-  // حالة إمكانية الوصول
+  // Accessibility state
   highContrast: boolean;
   largeText: boolean;
   reducedMotion: boolean;
@@ -14,7 +32,7 @@ export interface AccessibilityState {
   soundFeedback: boolean;
   keyboardNavigationVisible: boolean;
   
-  // وظائف تعديل الحالة
+  // Functions to modify state
   setHighContrast: (value: boolean) => void;
   setLargeText: (value: boolean) => void;
   setReducedMotion: (value: boolean) => void;
@@ -26,23 +44,18 @@ export interface AccessibilityState {
   setKeyboardNavigationVisible: (value: boolean) => void;
 }
 
-export interface NetworkStatus {
+// Network state interface
+export interface NetworkState {
   isOnline: boolean;
   isConnected: boolean;
   lastCheck: Date | null;
   connectionType?: string;
-  latency?: number;
-}
-
-export interface NetworkState {
-  isOnline: boolean;
   setOnlineStatus: (status: boolean) => void;
   networkStatus?: NetworkStatus;
   checkConnection: () => Promise<boolean>;
-  isConnected?: boolean;
-  lastCheck?: Date | null;
 }
 
+// Performance state interface
 export interface PerformanceState {
   deviceTier: 'low' | 'medium' | 'high';
   isLowEndDevice: boolean;
@@ -51,6 +64,7 @@ export interface PerformanceState {
   restoreDefaultPerformance: () => void;
 }
 
+// Preferences state interface
 export interface PreferencesState {
   theme: string;
   language: string;
@@ -66,6 +80,7 @@ export interface PreferencesState {
   setPreference: (key: string, value: any) => void;
 }
 
+// App status state
 export interface AppStatusState {
   appVersion: string;
   environment: string;
@@ -82,6 +97,7 @@ export interface AppStatusState {
   setInitialized: (initialized: boolean) => void;
 }
 
+// UI state interface
 export interface UIState {
   isSidebarOpen: boolean;
   isDrawerOpen: boolean;
@@ -97,6 +113,7 @@ export interface UIState {
   closeModal: (modalId: string) => void;
 }
 
+// User settings interface
 export interface UserSettings {
   theme: string;
   language: string;
@@ -104,6 +121,7 @@ export interface UserSettings {
   [key: string]: any;
 }
 
+// User state interface
 export interface UserState {
   isAuthenticated: boolean;
   userId: string | null;
@@ -123,6 +141,7 @@ export interface UserState {
   logout: () => void;
 }
 
+// Cache state interface
 export interface CacheState {
   cachedData: Record<string, any>;
   lastCacheUpdate: Date | null;
@@ -134,20 +153,60 @@ export interface CacheState {
   isCacheExpired: (key: string) => boolean;
 }
 
-// الحالة الشاملة للتطبيق
+// Translation metrics interface
+export interface TranslationMetrics {
+  totalLookups: number;
+  keysByLanguage: Record<string, Set<string>>;
+  uniqueKeysCount: number;
+  missingKeys: string[] | Set<string>;
+  missingKeysCount: number;
+  lastUsedKey: string | null;
+  topUsedKeys: Array<{ key: string; count: number }>;
+}
+
+// Combined app state
 export interface AppState extends AccessibilityState, PreferencesState {
+  network: NetworkState;
+  performance: PerformanceState;
+  
+  // Additional AppState properties
   isInitialized?: boolean;
   isConnected?: boolean;
   isOnline?: boolean;
   deviceTier?: 'low' | 'medium' | 'high';
-  network: NetworkState;
-  performance: PerformanceState;
   networkStatus?: NetworkStatus;
   checkNetworkStatus?: () => void;
   checkConnection?: () => Promise<boolean>;
   setNetworkStatus?: (status: { isConnected: boolean; isOnline: boolean }) => void;
+  
+  // UI State properties
+  isSidebarOpen?: boolean;
+  isDrawerOpen?: boolean;
+  activePage?: string;
+  lastVisitedPage?: string | null;
+  modals?: Record<string, boolean>;
+  
+  // User state properties
+  isAuthenticated?: boolean;
+  userId?: string | null;
+  userEmail?: string | null;
+  userDisplayName?: string | null;
+  userRole?: string | null;
+  userSettings?: UserSettings;
+  socket?: any | null;
+  
+  // App status properties
+  appVersion?: string;
+  environment?: string;
+  isLoading?: Record<string, boolean>;
+  errors?: Record<string, string | null>;
+  
+  // Cache properties
+  cachedData?: Record<string, any>;
+  lastCacheUpdate?: Date | null;
 }
 
+// Zustand store state
 export interface StoreState {
   // Device performance tier
   deviceTier: 'low' | 'medium' | 'high';
@@ -163,14 +222,4 @@ export interface StoreState {
     key: K, 
     value: StoreState['preferences'][K]
   ) => void;
-}
-
-export interface TranslationMetrics {
-  totalLookups: number;
-  keysByLanguage: Record<string, Set<string>>;
-  uniqueKeysCount: number;
-  missingKeys: string[] | Set<string>;
-  missingKeysCount: number;
-  lastUsedKey: string | null;
-  topUsedKeys: Array<{ key: string; count: number }>;
 }
