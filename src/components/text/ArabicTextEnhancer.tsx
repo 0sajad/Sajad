@@ -14,6 +14,25 @@ interface ArabicTextEnhancerProps {
   arabicDigits?: boolean;
   /** نوع الخط العربي المستخدم */
   fontType?: 'tajawal' | 'cairo' | 'noto-kufi' | 'default';
+  /** وزن الخط */
+  fontWeight?: 'normal' | 'medium' | 'bold';
+  /** حجم الخط */
+  fontSize?: 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl';
+  /** تباعد الأحرف المخصص */
+  letterSpacing?: string;
+  /** تباعد الكلمات المخصص */
+  wordSpacing?: string;
+  /** تفعيل الكاشيدا (التمديد) */
+  kashidaEnabled?: boolean;
+  /** اتجاه النص (تلقائي، يمين لليسار، يسار لليمين) */
+  textDirection?: 'auto' | 'rtl' | 'ltr';
+  /** إعدادات خصائص الخط */
+  fontFeatureSettings?: {
+    setFontFamily?: (value: string) => void;
+    setLineHeight?: (value: number) => void;
+    setLetterSpacing?: (value: number) => void;
+    setKashidaEnabled?: (value: boolean) => void;
+  };
 }
 
 /**
@@ -25,14 +44,22 @@ export function ArabicTextEnhancer({
   className,
   forceEnhance = false,
   arabicDigits = false,
-  fontType = 'default'
+  fontType = 'default',
+  fontWeight = 'normal',
+  fontSize = 'base',
+  letterSpacing,
+  wordSpacing,
+  kashidaEnabled = false,
+  textDirection = 'auto',
+  fontFeatureSettings,
+  ...props
 }: ArabicTextEnhancerProps) {
   const { i18n } = useTranslation();
   const isArabicLanguage = i18n.language?.startsWith('ar');
   
   // تطبيق التحسينات فقط للغة العربية أو عند التطبيق الإجباري
   if (!isArabicLanguage && !forceEnhance) {
-    return <>{children}</>;
+    return <span className={className} {...props}>{children}</span>;
   }
   
   // اختيار نوع الخط المناسب
@@ -43,20 +70,58 @@ export function ArabicTextEnhancer({
     default: 'font-tajawal'
   }[fontType];
   
+  // وزن الخط
+  const weightClass = {
+    normal: 'font-normal',
+    medium: 'font-medium',
+    bold: 'font-bold'
+  }[fontWeight];
+  
+  // حجم الخط
+  const sizeClass = {
+    xs: 'text-xs',
+    sm: 'text-sm',
+    base: 'text-base',
+    lg: 'text-lg',
+    xl: 'text-xl',
+    '2xl': 'text-2xl'
+  }[fontSize];
+  
+  // إعدادات خصائص الخط
+  const featureSettings = [
+    'calt',  // الأشكال البديلة السياقية
+    'kern',  // تباعد الأحرف
+    'liga',  // الربط بين الأحرف
+  ];
+  
+  if (arabicDigits) {
+    featureSettings.push('ss01'); // الأرقام العربية
+  }
+  
+  if (kashidaEnabled) {
+    featureSettings.push('jalt'); // أشكال المد العربي (الكاشيدا)
+  }
+  
+  const featureSettingsStyle = `"${featureSettings.join('", "')}"`;
+  
   return (
     <span
       className={cn(
-        'tracking-normal',   // تحسين المسافة بين الأحرف
-        fontClass,           // تطبيق الخط المناسب
-        arabicDigits && 'font-feature-settings: "ss01"', // الأرقام العربية
-        'font-feature-settings: "calt", "dlig", "kern", "liga"', // تحسينات الليجاتور
+        'tracking-normal',         // تحسين المسافة بين الأحرف
+        fontClass,                // تطبيق الخط المناسب
+        weightClass,              // تطبيق وزن الخط
+        sizeClass,                // تطبيق حجم الخط
         className
       )}
-      dir="auto"
+      dir={textDirection === 'auto' ? (isArabicLanguage ? 'rtl' : 'ltr') : textDirection}
+      lang={isArabicLanguage ? 'ar' : undefined}
       style={{
-        letterSpacing: isArabicLanguage ? '0' : 'inherit',
-        wordSpacing: isArabicLanguage ? '0.05em' : 'inherit',
+        letterSpacing: letterSpacing || (isArabicLanguage ? '0' : 'inherit'),
+        wordSpacing: wordSpacing || (isArabicLanguage ? '0.05em' : 'inherit'),
+        fontFeatureSettings: featureSettingsStyle,
+        fontVariationSettings: isArabicLanguage ? "'wght' 450" : 'inherit', // وزن خط أثقل قليلاً للعربية
       }}
+      {...props}
     >
       {children}
     </span>
@@ -74,7 +139,7 @@ export function ArabicDigits({
   const isArabicLanguage = i18n.language?.startsWith('ar');
   
   if (!isArabicLanguage) {
-    return <>{children}</>;
+    return <span className={className}>{children}</span>;
   }
   
   return (

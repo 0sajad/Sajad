@@ -1,32 +1,28 @@
 
 import { StateCreator } from 'zustand';
-import { AppState } from './types';
+import { AppState, NetworkState } from './types';
 
-export interface NetworkStatusState {
-  isConnected: boolean;
-  isOnline: boolean;
-  lastCheck: Date | null;
-}
-
+/**
+ * مخزن حالة الشبكة
+ * يحتوي على الوظائف المتعلقة بإدارة حالة الاتصال بالشبكة
+ */
 export const createNetworkSlice: StateCreator<
   AppState,
   [],
   [],
-  { networkStatus: NetworkStatusState }
+  { network: NetworkState }
 > = (set) => ({
-  networkStatus: {
-    isConnected: true,
+  network: {
+    // حالة الاتصال بالشبكة
     isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
-    lastCheck: null
-  },
+    
+    // تعيين حالة الاتصال
+    setOnlineStatus: (status) => 
+      set((state) => ({ 
+        network: { 
+          ...state.network,
+          isOnline: status 
+        } 
+      })),
+  }
 });
-
-// Export the useNetworkStatus hook for compatibility
-export const useNetworkStatus = () => {
-  return {
-    isConnected: true,
-    isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
-    lastCheck: null,
-    checkConnection: async () => true
-  };
-};

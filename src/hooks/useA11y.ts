@@ -3,6 +3,8 @@ import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppState } from './state/use-app-state';
 
+export type ColorBlindMode = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'achromatopsia';
+
 interface AnnounceOptions {
   politeness?: 'polite' | 'assertive';
   timeout?: number;
@@ -19,14 +21,43 @@ export function useA11y() {
   
   const {
     highContrast,
+    setHighContrast,
     largeText,
+    setLargeText,
     reducedMotion,
+    setReducedMotion,
     focusMode,
+    setFocusMode,
     readingGuide,
+    setReadingGuide,
     dyslexicFont,
+    setDyslexicFont,
     colorBlindMode,
-    soundFeedback
-  } = useAppState(state => state);
+    setColorBlindMode,
+    soundFeedback,
+    setSoundFeedback,
+    keyboardNavigationVisible,
+    setKeyboardNavigationVisible
+  } = useAppState(state => ({
+    highContrast: state.highContrast,
+    setHighContrast: state.setHighContrast,
+    largeText: state.largeText,
+    setLargeText: state.setLargeText,
+    reducedMotion: state.reducedMotion,
+    setReducedMotion: state.setReducedMotion,
+    focusMode: state.focusMode,
+    setFocusMode: state.setFocusMode,
+    readingGuide: state.readingGuide,
+    setReadingGuide: state.setReadingGuide,
+    dyslexicFont: state.dyslexicFont,
+    setDyslexicFont: state.setDyslexicFont,
+    colorBlindMode: state.colorBlindMode,
+    setColorBlindMode: state.setColorBlindMode,
+    soundFeedback: state.soundFeedback,
+    setSoundFeedback: state.setSoundFeedback,
+    keyboardNavigationVisible: state.keyboardNavigationVisible,
+    setKeyboardNavigationVisible: state.setKeyboardNavigationVisible
+  }));
   
   // إنشاء عناصر live region لقارئات الشاشة
   useEffect(() => {
@@ -197,7 +228,7 @@ export function useA11y() {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Alt+H للتباين العالي
       if (event.altKey && event.key === 'h') {
-        useAppState.setState({ highContrast: !highContrast });
+        setHighContrast(!highContrast);
         announce(
           highContrast 
             ? t('accessibility.highContrastDisabled', 'تم تعطيل التباين العالي') 
@@ -208,7 +239,7 @@ export function useA11y() {
       
       // Alt+T للنص الكبير
       if (event.altKey && event.key === 't') {
-        useAppState.setState({ largeText: !largeText });
+        setLargeText(!largeText);
         announce(
           largeText 
             ? t('accessibility.largeTextDisabled', 'تم تعطيل النص الكبير') 
@@ -219,7 +250,7 @@ export function useA11y() {
       
       // Alt+M لتقليل الحركة
       if (event.altKey && event.key === 'm') {
-        useAppState.setState({ reducedMotion: !reducedMotion });
+        setReducedMotion(!reducedMotion);
         announce(
           reducedMotion 
             ? t('accessibility.reducedMotionDisabled', 'تم تعطيل تقليل الحركة') 
@@ -234,7 +265,7 @@ export function useA11y() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [highContrast, largeText, reducedMotion, t, announce]);
+  }, [highContrast, largeText, reducedMotion, t, announce, setHighContrast, setLargeText, setReducedMotion]);
   
   return {
     announce,
@@ -247,7 +278,17 @@ export function useA11y() {
     readingGuide,
     dyslexicFont,
     colorBlindMode,
-    soundFeedback
+    soundFeedback,
+    keyboardNavigationVisible,
+    setHighContrast,
+    setLargeText,
+    setReducedMotion,
+    setFocusMode,
+    setReadingGuide,
+    setDyslexicFont,
+    setColorBlindMode,
+    setSoundFeedback,
+    setKeyboardNavigationVisible
   };
 }
 
@@ -258,6 +299,7 @@ import { createContext, useContext } from 'react';
 export interface A11yContextType {
   announce: (message: string, politeness?: 'polite' | 'assertive') => void;
   playSound: (soundType: 'success' | 'error' | 'warning' | 'info') => void;
+  playNotificationSound: (type: 'success' | 'error' | 'warning' | 'info') => void;
   highContrast: boolean;
   largeText: boolean;
   reducedMotion: boolean;
@@ -266,6 +308,16 @@ export interface A11yContextType {
   dyslexicFont: boolean;
   colorBlindMode: string;
   soundFeedback: boolean;
+  keyboardNavigationVisible: boolean;
+  setHighContrast: (value: boolean) => void;
+  setLargeText: (value: boolean) => void;
+  setReducedMotion: (value: boolean) => void;
+  setFocusMode: (value: boolean) => void;
+  setReadingGuide: (value: boolean) => void;
+  setDyslexicFont: (value: boolean) => void;
+  setColorBlindMode: (value: ColorBlindMode) => void;
+  setSoundFeedback: (value: boolean) => void;
+  setKeyboardNavigationVisible: (value: boolean) => void;
 }
 
 // إنشاء السياق بقيم افتراضية

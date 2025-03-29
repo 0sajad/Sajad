@@ -2,174 +2,120 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { AppState } from './types';
-import { createUISlice } from './ui-state';
-import { createPreferencesSlice } from './preferences-state';
-import { createUserSlice } from './user-state';
-import { createAppStatusSlice } from './app-status-state';
 import { createAccessibilitySlice } from './accessibility-state';
-import { createNetworkSlice } from './network-state';
 import { createPerformanceSlice } from './performance-state';
-import { createCacheSlice } from './cache-state';
+import { createNetworkSlice } from './network-state';
 
 /**
- * متجر إدارة الحالة المركزية للتطبيق
- * استخدام Zustand للحالة مع الحفظ التلقائي في localStorage
+ * مخزن حالة التطبيق الرئيسي
+ * يجمع بين مختلف شرائح الحالة
  */
 export const useAppState = create<AppState>()(
   persist(
-    (set, get, api) => ({
-      // Initialize required properties explicitly
-      isLoading: {},
-      errors: {},
-      isInitialized: false,
-      setIsLoading: (key, loading) => set((state) => ({
-        isLoading: { ...state.isLoading, [key]: loading }
-      })),
-      setError: (key, error) => set((state) => ({
-        errors: { ...state.errors, [key]: error }
-      })),
-      setInitialized: (initialized) => set({ isInitialized: initialized }),
-
-      // Network status methods
-      checkNetworkStatus: async () => {
-        try {
-          const response = await fetch('https://www.google.com/generate_204', {
-            method: 'HEAD',
-            mode: 'no-cors',
-            cache: 'no-store',
-          });
-          
-          const isOnline = response.type === 'opaque' || response.ok;
-          set({ 
-            isConnected: true,
-            isOnline,
-            lastCheck: new Date()
-          });
-          
-          return isOnline;
-        } catch (error) {
-          set({ 
-            isConnected: false,
-            isOnline: false,
-            lastCheck: new Date()
-          });
-          
-          return false;
-        }
-      },
+    (set, get) => ({
+      // حالة إمكانية الوصول (من شريحة إمكانية الوصول)
+      ...createAccessibilitySlice(set, get, {}),
       
-      setNetworkStatus: (status) => set({
-        isConnected: status.isConnected,
-        isOnline: status.isOnline,
-        lastCheck: status.lastCheck || new Date() // تصحيح: توفير قيمة افتراضية
-      }),
-
-      handleOfflineStatus: () => {
-        set({
-          isOnline: false,
-          lastCheck: new Date()
-        });
-      },
-
-      handleOnlineStatus: () => {
-        set({
-          isOnline: true,
-          lastCheck: new Date()
-        });
-      },
-
-      // Initialize network status
-      networkStatus: {
-        isConnected: true,
-        isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
-        lastCheck: null
-      },
+      // حالة أداء التطبيق (من شريحة الأداء)
+      ...createPerformanceSlice(set, get, {}),
       
-      // Initialize data loading
-      dataLoading: {
-        isLoading: false,
-        lastUpdated: null,
-        error: null
-      },
+      // حالة شبكة الاتصال
+      ...createNetworkSlice(set, get, {}),
       
-      // Additional required properties
-      isSidebarOpen: false,
-      isConnected: true,
-      isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
-      lastCheck: null,
-      
-      // UI state properties required by AppState
-      isDrawerOpen: false,
-      activePage: 'home',
-      lastVisitedPage: null,
-      modals: {},
-      
-      // Required preferences properties from AppState
+      // حالة التفضيلات
       theme: 'system',
       language: 'ar',
-      notificationsEnabled: true,
-      animations: true,
+      developerMode: false,
       compactMode: false,
+      animations: true,
+      preferences: {},
       
-      // Add the required checkConnection function
-      checkConnection: async () => {
-        try {
-          const response = await fetch('https://www.google.com/generate_204', {
-            method: 'HEAD',
-            mode: 'no-cors',
-            cache: 'no-store',
-          });
-          
-          const isOnline = response.type === 'opaque' || response.ok;
-          set({ 
-            isConnected: true,
-            isOnline,
-            lastCheck: new Date()
-          });
-          
-          return isOnline;
-        } catch (error) {
-          set({ 
-            isConnected: false,
-            isOnline: false,
-            lastCheck: new Date()
-          });
-          
-          return false;
-        }
-      },
+      // وظائف التفضيلات
+      setTheme: (theme) => set({ theme }),
       
-      // Combine all state slices - تصحيح: تمرير المعاملات الصحيحة
-      ...createUISlice(set, get, api),
-      ...createPreferencesSlice(set, get, api),
-      ...createUserSlice(set, get, api),
-      ...createAppStatusSlice(set, get, api),
-      ...createAccessibilitySlice(set, get, api),
-      ...createNetworkSlice(set, get, api),
-      ...createPerformanceSlice(set, get, api),
-      ...createCacheSlice(set, get, api),
+      setLanguage: (language) => set({ language }),
+      
+      toggleDeveloperMode: () => 
+        set((state) => ({ developerMode: !state.developerMode })),
+      
+      setCompactMode: (compactMode) => set({ compactMode }),
+      
+      setAnimations: (animations) => set({ animations }),
+      
+      setPreference: (key, value) => 
+        set((state) => ({
+          preferences: {
+            ...state.preferences,
+            [key]: value
+          }
+        })),
     }),
     {
       name: 'app-state',
       partialize: (state) => ({
-        // نحفظ فقط البيانات التي نريد بقاءها عند تحديث الصفحة
-        preferences: state.preferences,
-        lastVisitedPage: state.lastVisitedPage,
-        isAuthenticated: state.isAuthenticated,
-        userId: state.userId,
-        userRole: state.userRole,
-        userSettings: state.userSettings,
+        // حفظ فقط التفضيلات وإعدادات إمكانية الوصول
         highContrast: state.highContrast,
         largeText: state.largeText,
         reducedMotion: state.reducedMotion,
-        focusMode: state.focusMode,
-        readingGuide: state.readingGuide,
         colorBlindMode: state.colorBlindMode,
         dyslexicFont: state.dyslexicFont,
-        soundFeedback: state.soundFeedback,
-        deviceTier: state.deviceTier,
-        cachedData: state.cachedData,
+        theme: state.theme,
+        language: state.language,
+        developerMode: state.developerMode,
+        compactMode: state.compactMode,
+        animations: state.animations,
+        preferences: state.preferences,
       }),
     }
   )
 );
+
+// وظائف مساعدة للوصول إلى حالات محددة
+export const useA11y = () => useAppState((state) => ({
+  highContrast: state.highContrast,
+  largeText: state.largeText,
+  reducedMotion: state.reducedMotion,
+  focusMode: state.focusMode,
+  dyslexicFont: state.dyslexicFont,
+  readingGuide: state.readingGuide,
+  colorBlindMode: state.colorBlindMode,
+  soundFeedback: state.soundFeedback,
+  keyboardNavigationVisible: state.keyboardNavigationVisible,
+  setHighContrast: state.setHighContrast,
+  setLargeText: state.setLargeText,
+  setReducedMotion: state.setReducedMotion,
+  setFocusMode: state.setFocusMode,
+  setDyslexicFont: state.setDyslexicFont,
+  setReadingGuide: state.setReadingGuide,
+  setColorBlindMode: state.setColorBlindMode,
+  setSoundFeedback: state.setSoundFeedback,
+  setKeyboardNavigationVisible: state.setKeyboardNavigationVisible,
+}));
+
+export const usePreferences = () => useAppState((state) => ({
+  theme: state.theme,
+  language: state.language,
+  developerMode: state.developerMode,
+  compactMode: state.compactMode,
+  animations: state.animations,
+  preferences: state.preferences,
+  setTheme: state.setTheme,
+  setLanguage: state.setLanguage,
+  toggleDeveloperMode: state.toggleDeveloperMode,
+  setCompactMode: state.setCompactMode,
+  setAnimations: state.setAnimations,
+  setPreference: state.setPreference,
+}));
+
+export const useNetworkState = () => useAppState((state) => ({
+  isOnline: state.network.isOnline,
+  setOnlineStatus: state.network.setOnlineStatus,
+}));
+
+export const usePerformanceState = () => useAppState((state) => ({
+  deviceTier: state.performance.deviceTier,
+  isLowEndDevice: state.performance.isLowEndDevice,
+  setDeviceTier: state.performance.setDeviceTier,
+  optimizeForLowEndDevice: state.performance.optimizeForLowEndDevice,
+  restoreDefaultPerformance: state.performance.restoreDefaultPerformance,
+}));

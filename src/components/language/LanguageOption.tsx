@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import { ArabicTextEnhancer } from "../text/ArabicTextEnhancer";
+import { useA11y } from "@/hooks/useA11y";
 
 interface LanguageOptionProps {
   /** رمز اللغة */
@@ -21,6 +22,8 @@ interface LanguageOptionProps {
   reducedMotion?: boolean;
   /** دالة النقر */
   onClick: (langCode: string) => void;
+  /** الفئات الإضافية */
+  className?: string;
 }
 
 export function LanguageOption({
@@ -30,27 +33,49 @@ export function LanguageOption({
   isActive,
   isIraqiArabic = false,
   reducedMotion = false,
-  onClick
+  onClick,
+  className
 }: LanguageOptionProps) {
+  const { announce } = useA11y();
+  
+  const isArabic = langCode.startsWith('ar');
+  
+  // عند النقر على خيار اللغة
+  const handleClick = () => {
+    if (!isActive) {
+      onClick(langCode);
+      
+      // إعلان للقارئات الشاشية
+      if (announce) {
+        announce(`تم اختيار اللغة ${languageName}`, 'polite');
+      }
+    }
+  };
+
   return (
     <DropdownMenuItem 
       key={langCode}
       disabled={isActive}
       className={cn(
-        "flex items-center justify-between rounded-md text-sm cursor-pointer",
-        isActive && "bg-primary/10 text-primary font-medium"
+        "flex items-center justify-between rounded-md text-sm cursor-pointer py-2",
+        isActive && "bg-primary/10 text-primary font-medium",
+        isArabic && "font-tajawal",
+        className
       )}
-      onClick={() => onClick(langCode)}
+      onClick={handleClick}
+      dir={isArabic ? "rtl" : "ltr"}
     >
       <div className="flex items-center gap-2">
-        <span className="text-base">{flag}</span>
+        <span className="text-base select-none">{flag}</span>
         <ArabicTextEnhancer
           className={cn(
             "transition-colors duration-200", 
             isActive && "font-medium",
+            isArabic && "tracking-normal font-tajawal",
             isIraqiArabic && "font-feature-settings: 'ss01'"
           )}
-          forceEnhance={langCode.startsWith('ar')}
+          forceEnhance={isArabic}
+          fontType={isIraqiArabic ? "cairo" : "tajawal"}
         >
           {languageName}
         </ArabicTextEnhancer>
@@ -72,6 +97,7 @@ export function LanguageOption({
           initial={reducedMotion ? { scale: 1 } : { scale: 0.8 }} 
           animate={reducedMotion ? { scale: 1 } : { scale: 1 }} 
           transition={{ duration: 0.2 }}
+          aria-hidden="true"
         >
           <Check className="h-4 w-4" />
         </motion.div>

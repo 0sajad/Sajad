@@ -1,6 +1,8 @@
 
 import { StateCreator } from 'zustand';
-import { AppState, AccessibilityState, ColorBlindMode } from './types';
+import { AppState, AccessibilityState } from './types';
+
+export type ColorBlindMode = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'achromatopsia';
 
 /**
  * مخزن حالة إمكانية الوصول

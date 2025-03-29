@@ -1,15 +1,28 @@
 
 import React, { useState } from "react";
-import { NetworkStatusIndicator } from "./ui/NetworkStatusIndicator";
 import { useTranslation } from "react-i18next";
 import { useOfflineMode } from "@/hooks/useOfflineMode";
 import { usePerformanceOptimization } from "@/hooks/usePerformanceOptimization";
 import { cn } from "@/lib/utils";
-import { Battery, BatteryWarning, Cpu, Loader2, Wifi, WifiOff } from "lucide-react";
+import { 
+  Battery, 
+  BatteryWarning, 
+  Cpu, 
+  Wifi, 
+  WifiOff, 
+  Globe, 
+  Clock,
+  Database,
+  RefreshCw
+} from "lucide-react";
 import { AccessibilityToggleButton } from "./ui/accessibility/accessibility-toggle-button";
-import { AccessibilityMenu } from "./ui/accessibility/accessibility-menu";
 import { useA11y } from "@/hooks/useA11y";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
+import { ArabicTextEnhancer } from "./text/ArabicTextEnhancer";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { format } from "date-fns";
+import { ar, enUS } from "date-fns/locale";
 
 interface StatusBarProps {
   className?: string;
@@ -20,11 +33,26 @@ interface StatusBarProps {
  * يعرض معلومات عن حالة الشبكة والجهاز وأدوات إمكانية الوصول
  */
 export function StatusBar({ className }: StatusBarProps) {
-  const { t } = useTranslation();
-  const { isOnline } = useOfflineMode();
+  const { t, i18n } = useTranslation();
+  const { isOnline, isOffline, lastCheck, networkInfo, hasPendingSync, syncPendingData, cacheSize } = useOfflineMode();
   const { deviceTier } = usePerformanceOptimization();
   const [showA11yMenu, setShowA11yMenu] = useState(false);
   const { announce } = useA11y();
+  const isArabic = i18n.language?.startsWith('ar');
+  
+  // تحويل حجم التخزين المؤقت إلى وحدة مقروءة
+  const formatCacheSize = (bytes: number | undefined) => {
+    if (!bytes) return '0 KB';
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
+  
+  // إعداد وقت آخر فحص للشبكة
+  const formatLastCheck = () => {
+    if (!lastCheck) return '';
+    return format(lastCheck, 'HH:mm:ss', { locale: isArabic ? ar : enUS });
+  };
   
   // عندما يتغير وضع الاتصال، نعلن ذلك للقارئات الشاشية
   const handleNetworkStatusClick = () => {
@@ -48,6 +76,11 @@ export function StatusBar({ className }: StatusBarProps) {
         announce(t('accessibility.menuClosed', 'تم إغلاق قائمة إمكانية الوصول'), 'polite');
       }
     }
+  };
+  
+  // معالج المزامنة
+  const handleSync = () => {
+    syncPendingData();
   };
   
   // الحصول على نص معلومات أداء الجهاز
@@ -84,16 +117,59 @@ export function StatusBar({ className }: StatusBarProps) {
                 ) : (
                   <WifiOff className="h-3 w-3 mr-1 text-red-500" />
                 )}
-                <span>
+                <ArabicTextEnhancer>
                   {isOnline ? t('network.online', 'متصل') : t('network.offline', 'غير متصل')}
-                </span>
+                </ArabicTextEnhancer>
+                
+                {/* عند وجود بيانات معلقة للمزامنة */}
+                {isOffline && hasPendingSync && (
+                  <Badge variant="outline" className="ml-1 py-0 px-1.5">
+                    <RefreshCw className="h-2.5 w-2.5 mr-1 animate-spin-slow" />
+                    <span className="text-[0.6rem]">{t('network.pending', 'معلق')}</span>
+                  </Badge>
+                )}
               </button>
             </TooltipTrigger>
             <TooltipContent>
-              {isOnline 
-                ? t('network.onlineDetails', 'أنت متصل بالإنترنت حاليًا') 
-                : t('network.offlineDetails', 'أنت غير متصل بالإنترنت حاليًا')
-              }
+              <div className="space-y-1">
+                <p>
+                  {isOnline 
+                    ? t('network.onlineDetails', 'أنت متصل بالإنترنت حاليًا') 
+                    : t('network.offlineDetails', 'أنت غير متصل بالإنترنت حاليًا')
+                  }
+                </p>
+                <div className="text-xs text-muted-foreground flex items-center">
+                  <Clock className="h-3 w-3 mr-1" />
+                  <span>{t('network.lastCheck', 'آخر فحص')}: {formatLastCheck()}</span>
+                </div>
+                
+                {networkInfo && networkInfo.type && (
+                  <div className="text-xs text-muted-foreground flex items-center">
+                    <Globe className="h-3 w-3 mr-1" />
+                    <span>{networkInfo.type} {networkInfo.effectiveType && `(${networkInfo.effectiveType})`}</span>
+                  </div>
+                )}
+                
+                {typeof cacheSize === 'number' && (
+                  <div className="text-xs text-muted-foreground flex items-center">
+                    <Database className="h-3 w-3 mr-1" />
+                    <span>{t('network.cacheSize', 'حجم الذاكرة المؤقتة')}: {formatCacheSize(cacheSize)}</span>
+                  </div>
+                )}
+                
+                {isOffline && hasPendingSync && (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    disabled={!isOnline} 
+                    onClick={handleSync}
+                    className="w-full mt-1"
+                  >
+                    <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                    <span>{t('network.syncNow', 'مزامنة الآن')}</span>
+                  </Button>
+                )}
+              </div>
             </TooltipContent>
           </Tooltip>
           
@@ -137,10 +213,6 @@ export function StatusBar({ className }: StatusBarProps) {
               {t('accessibility.toggleMenu', 'فتح/إغلاق قائمة إمكانية الوصول')}
             </TooltipContent>
           </Tooltip>
-          
-          {showA11yMenu && (
-            <AccessibilityMenu />
-          )}
         </div>
       </div>
     </TooltipProvider>
