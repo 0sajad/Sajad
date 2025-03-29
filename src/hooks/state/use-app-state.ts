@@ -17,18 +17,18 @@ import { createCacheSlice } from './cache-state';
  */
 export const useAppState = create<AppState>()(
   persist(
-    (...args) => ({
+    (set, get, ...rest) => ({
       // Initialize required properties explicitly
       isLoading: {},
       errors: {},
       isInitialized: false,
-      setIsLoading: (key, loading) => args[0]((state) => ({
+      setIsLoading: (key, loading) => set((state) => ({
         isLoading: { ...state.isLoading, [key]: loading }
       })),
-      setError: (key, error) => args[0]((state) => ({
+      setError: (key, error) => set((state) => ({
         errors: { ...state.errors, [key]: error }
       })),
-      setInitialized: (initialized) => args[0]({ isInitialized: initialized }),
+      setInitialized: (initialized) => set({ isInitialized: initialized }),
 
       // Network status methods
       checkNetworkStatus: async () => {
@@ -40,7 +40,7 @@ export const useAppState = create<AppState>()(
           });
           
           const isOnline = response.type === 'opaque' || response.ok;
-          args[0]({ 
+          set({ 
             isConnected: true,
             isOnline,
             lastCheck: new Date()
@@ -48,7 +48,7 @@ export const useAppState = create<AppState>()(
           
           return isOnline;
         } catch (error) {
-          args[0]({ 
+          set({ 
             isConnected: false,
             isOnline: false,
             lastCheck: new Date()
@@ -58,21 +58,21 @@ export const useAppState = create<AppState>()(
         }
       },
       
-      setNetworkStatus: (status) => args[0]({
+      setNetworkStatus: (status) => set({
         isConnected: status.isConnected,
         isOnline: status.isOnline,
-        lastCheck: status.lastCheck || new Date() // Provide default value
+        lastCheck: status.lastCheck || new Date() // Fixed: Provide default value
       }),
 
       handleOfflineStatus: () => {
-        args[0]({
+        set({
           isOnline: false,
           lastCheck: new Date()
         });
       },
 
       handleOnlineStatus: () => {
-        args[0]({
+        set({
           isOnline: true,
           lastCheck: new Date()
         });
@@ -81,7 +81,7 @@ export const useAppState = create<AppState>()(
       // Initialize network status
       networkStatus: {
         isConnected: true,
-        isOnline: true,
+        isOnline: navigator.onLine,
         lastCheck: null
       },
       
@@ -121,7 +121,7 @@ export const useAppState = create<AppState>()(
           });
           
           const isOnline = response.type === 'opaque' || response.ok;
-          args[0]({ 
+          set({ 
             isConnected: true,
             isOnline,
             lastCheck: new Date()
@@ -129,7 +129,7 @@ export const useAppState = create<AppState>()(
           
           return isOnline;
         } catch (error) {
-          args[0]({ 
+          set({ 
             isConnected: false,
             isOnline: false,
             lastCheck: new Date()
@@ -139,15 +139,15 @@ export const useAppState = create<AppState>()(
         }
       },
       
-      // Combine all state slices
-      ...createUISlice(...args),
-      ...createPreferencesSlice(...args),
-      ...createUserSlice(...args),
-      ...createAppStatusSlice(...args),
-      ...createAccessibilitySlice(...args),
-      ...createNetworkSlice(...args),
-      ...createPerformanceSlice(...args),
-      ...createCacheSlice(...args),
+      // Combine all state slices - fixed by properly passing the parameters
+      ...createUISlice(set, get, ...rest),
+      ...createPreferencesSlice(set, get, ...rest),
+      ...createUserSlice(set, get, ...rest),
+      ...createAppStatusSlice(set, get, ...rest),
+      ...createAccessibilitySlice(set, get, ...rest),
+      ...createNetworkSlice(set, get, ...rest),
+      ...createPerformanceSlice(set, get, ...rest),
+      ...createCacheSlice(set, get, ...rest),
     }),
     {
       name: 'app-state',

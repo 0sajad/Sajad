@@ -10,7 +10,7 @@ import { MissingTranslationDetector } from '@/utils/i18n/MissingTranslationDetec
  */
 export function TranslationManager() {
   const { i18n } = useTranslation();
-  const isDeveloperMode = useAppState(state => state.preferences.developerMode);
+  const isDeveloperMode = useAppState(state => state.preferences?.developerMode);
   
   // تهيئة كاشف الترجمات المفقودة
   useEffect(() => {
@@ -24,6 +24,7 @@ export function TranslationManager() {
     if (!isDeveloperMode) return;
 
     const handleMissingKey = (lng: string, ns: string, key: string) => {
+      MissingTranslationDetector.addMissingKey(lng, key);
       console.debug(`[i18n] Missing translation: ${lng}:${ns}:${key}`);
     };
 

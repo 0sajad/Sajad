@@ -11,10 +11,28 @@ import { MissingTranslationDetector } from '@/utils/i18n/MissingTranslationDetec
 export function MissingKeysIndicator() {
   const { t } = useTranslation();
   const [totalMissingKeys, setTotalMissingKeys] = useState(0);
-  const isDeveloperMode = useAppState(state => state.preferences.developerMode);
+  const isDeveloperMode = useAppState(state => state.preferences?.developerMode);
   
   // استدعاء النموذج للحصول على المفاتيح المفقودة
-  const missingKeys = MissingTranslationDetector.getMissingKeys();
+  const [missingKeys, setMissingKeys] = useState<Record<string, string[]>>({});
+  
+  // جلب المفاتيح المفقودة وتحديث الحالة
+  useEffect(() => {
+    if (!isDeveloperMode) return;
+    
+    const keys = MissingTranslationDetector.getMissingKeys();
+    setMissingKeys(keys);
+    
+    // إعداد مؤقت لتحديث المفاتيح المفقودة كل 5 ثواني
+    const interval = setInterval(() => {
+      const updatedKeys = MissingTranslationDetector.getMissingKeys();
+      setMissingKeys(updatedKeys);
+    }, 5000);
+    
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isDeveloperMode]);
   
   // حساب إجمالي المفاتيح المفقودة
   useEffect(() => {

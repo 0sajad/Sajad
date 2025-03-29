@@ -7,9 +7,9 @@ import { useTranslation } from 'react-i18next';
 export function useOfflineMode() {
   const { t } = useTranslation();
   const [cacheSize, setCacheSize] = useState<number>(0);
-  const { isOnline } = useAppState(state => ({
-    isOnline: state.isOnline
-  }));
+  
+  // Using the fixed AppState
+  const isOnline = useAppState(state => state.isOnline);
 
   // Additional properties needed by components
   const isOffline = !isOnline;

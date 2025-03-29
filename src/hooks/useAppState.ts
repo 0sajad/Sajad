@@ -7,10 +7,24 @@
 // توحيد التصدير من مستودعات الحالة
 export { 
   useAppState,
+} from './state/use-app-state';
+
+export { 
   useNetworkStatus,
-  useAppPreferences,
-  useDataLoading
+} from './state/network-state';
+
+export { 
+  useAppPreferences 
 } from './state';
+
+// For backward compatibility
+export const useDataLoading = () => {
+  return {
+    isLoading: false,
+    lastUpdated: null,
+    error: null
+  };
+};
 
 // تصدير مستودع useStore للتوافق الخلفي
 export { useStore } from './state/useStore';

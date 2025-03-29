@@ -16,7 +16,7 @@ export const createNetworkSlice: StateCreator<
 > = (set) => ({
   networkStatus: {
     isConnected: true,
-    isOnline: navigator.onLine,
+    isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
     lastCheck: null
   },
 });
@@ -25,7 +25,7 @@ export const createNetworkSlice: StateCreator<
 export const useNetworkStatus = () => {
   return {
     isConnected: true,
-    isOnline: navigator.onLine,
+    isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
     lastCheck: null,
     checkConnection: async () => true
   };
