@@ -1,179 +1,73 @@
 
-import { useState, useEffect, useCallback } from 'react';
-import { useAppState } from '@/hooks/state/use-app-state';
-import { toast } from '@/hooks/use-toast';
-import { useTranslation } from 'react-i18next';
+import { useEffect, useState } from 'react';
+import { useAppState } from './state/use-app-state';
 
+/**
+ * خطاف لإدارة وضع عدم الاتصال
+ * يوفر حالة الاتصال والوظائف المساعدة للتعامل مع حالات الاتصال وعدم الاتصال
+ */
 export function useOfflineMode() {
-  const { t } = useTranslation();
-  const [cacheSize, setCacheSize] = useState<number>(0);
+  const { 
+    isOnline, 
+    networkStatus, 
+    handleOfflineStatus, 
+    handleOnlineStatus, 
+    checkNetworkStatus 
+  } = useAppState(state => state);
   
-  // Using the fixed AppState
-  const isOnline = useAppState(state => state.isOnline);
-
-  // Additional properties needed by components
-  const isOffline = !isOnline;
-  const [hasPendingSync, setHasPendingSync] = useState<boolean>(false);
+  // استخدام حالة محلية لتفادي مشاكل التزامن
+  const [offlineMode, setOfflineMode] = useState(!isOnline);
+  const [lastCheckTime, setLastCheckTime] = useState<Date | null>(networkStatus?.lastCheck || null);
   
-  // Calculate cache size
+  // مراقبة تغيرات حالة الاتصال
   useEffect(() => {
-    const calculateCacheSize = async () => {
-      if ('storage' in navigator && 'estimate' in navigator.storage) {
-        try {
-          const estimate = await navigator.storage.estimate();
-          if (estimate.usage) {
-            // Convert bytes to megabytes
-            setCacheSize(estimate.usage / (1024 * 1024));
-          }
-        } catch (error) {
-          console.error('Error calculating cache size:', error);
-        }
-      } else {
-        // Fallback for browsers that don't support the Storage API
-        setCacheSize(
-          Object.keys(localStorage).reduce((size, key) => {
-            return size + (localStorage[key].length * 2) / (1024 * 1024);
-          }, 0)
-        );
-      }
+    const handleOnline = () => {
+      handleOnlineStatus();
+      setOfflineMode(false);
+      console.log('[Network] Browser went online');
     };
     
-    calculateCacheSize();
-    
-    // Check for pending sync items in localStorage
-    const checkPendingSync = () => {
-      try {
-        const pendingActions = localStorage.getItem('pendingActions');
-        setHasPendingSync(!!pendingActions && JSON.parse(pendingActions).length > 0);
-      } catch (error) {
-        console.error('Error checking pending sync:', error);
-        setHasPendingSync(false);
-      }
+    const handleOffline = () => {
+      handleOfflineStatus();
+      setOfflineMode(true);
+      console.log('[Network] Browser went offline');
     };
     
-    checkPendingSync();
+    // إضافة مستمعي الأحداث
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
     
-    // Set up interval to periodically check for pending sync
-    const syncCheckInterval = setInterval(checkPendingSync, 30000);
+    // التحقق من حالة الاتصال عند التحميل
+    checkNetworkStatus().then(isConnected => {
+      setOfflineMode(!isConnected);
+      setLastCheckTime(new Date());
+    });
     
+    // إزالة مستمعي الأحداث عند التنظيف
     return () => {
-      clearInterval(syncCheckInterval);
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
     };
-  }, []);
+  }, [handleOfflineStatus, handleOnlineStatus, checkNetworkStatus]);
   
-  // Clear cache data
-  const clearCache = useCallback(() => {
-    if ('caches' in window) {
-      // Clear all cache storage
-      caches.keys().then(cacheNames => {
-        return Promise.all(
-          cacheNames.map(cacheName => {
-            return caches.delete(cacheName);
-          })
-        );
-      }).then(() => {
-        // Clear localStorage items that are cache-related
-        const localStorageKeys = Object.keys(localStorage);
-        localStorageKeys.forEach(key => {
-          if (key.includes('cache') || key.includes('offline-data')) {
-            localStorage.removeItem(key);
-          }
-        });
-        
-        setCacheSize(0);
-        
-        toast({
-          title: t('offline.cacheCleared', 'تم مسح ذاكرة التخزين المؤقت'),
-          description: t('offline.cacheRefreshed', 'تم تنظيف جميع البيانات المخزنة مؤقتاً'),
-        });
-      });
-    } else {
-      // Fallback for browsers without Cache API
-      const localStorageKeys = Object.keys(localStorage);
-      localStorageKeys.forEach(key => {
-        if (key.includes('cache') || key.includes('offline-data')) {
-          localStorage.removeItem(key);
-        }
-      });
-      
-      setCacheSize(0);
-      
-      toast({
-        title: t('offline.cacheCleared', 'تم مسح ذاكرة التخزين المؤقت'),
-        description: t('offline.cacheRefreshed', 'تم تنظيف جميع البيانات المخزنة مؤقتاً'),
-      });
-    }
-  }, [t]);
+  // التحقق يدويًا من الاتصال
+  const checkConnection = async () => {
+    const isConnected = await checkNetworkStatus();
+    setOfflineMode(!isConnected);
+    setLastCheckTime(new Date());
+    return isConnected;
+  };
   
-  // Refresh cached data
-  const refreshCachedData = useCallback(() => {
-    if (!isOnline) {
-      toast({
-        title: t('offline.error', 'خطأ'),
-        description: t('offline.needsConnection', 'يجب أن تكون متصلاً بالإنترنت لتحديث البيانات'),
-        variant: 'destructive'
-      });
-      return;
-    }
-    
-    toast({
-      title: t('offline.refreshing', 'جارِ التحديث...'),
-      description: t('offline.refreshingDescription', 'جارِ تحديث البيانات المخزنة مؤقتاً'),
-    });
-    
-    // Simulate data refresh - in a real app, you would reload API data
-    setTimeout(() => {
-      toast({
-        title: t('offline.refreshed', 'تم التحديث'),
-        description: t('offline.refreshedDescription', 'تم تحديث جميع البيانات المخزنة مؤقتاً'),
-      });
-    }, 2000);
-  }, [isOnline, t]);
-  
-  // Attempt to reconnect to the network
-  const attemptReconnect = useCallback(async () => {
-    toast({
-      title: t('network.checking', 'جارِ التحقق من الاتصال...'),
-      description: t('network.tryingToReconnect', 'جارِ محاولة إعادة الاتصال بالإنترنت'),
-    });
-    
-    const checkConnection = useAppState.getState().checkConnection;
-    
-    try {
-      const isConnected = await checkConnection();
-      
-      if (isConnected) {
-        toast({
-          title: t('network.connected', 'تم الاتصال'),
-          description: t('network.connectionRestored', 'تم استعادة الاتصال بالإنترنت'),
-        });
-        return true;
-      } else {
-        toast({
-          title: t('network.offline', 'غير متصل'),
-          description: t('network.stillOffline', 'ما زلت غير متصل بالإنترنت'),
-          variant: 'destructive'
-        });
-        return false;
-      }
-    } catch (error) {
-      console.error('Error checking connection:', error);
-      toast({
-        title: t('network.error', 'خطأ'),
-        description: t('network.connectionCheckFailed', 'فشل التحقق من الاتصال'),
-        variant: 'destructive'
-      });
-      return false;
-    }
-  }, [t]);
+  // التبديل اليدوي لوضع عدم الاتصال (مفيد للاختبار)
+  const toggleOfflineMode = () => {
+    setOfflineMode(prev => !prev);
+  };
   
   return {
-    isOnline,
-    isOffline,
-    cacheSize,
-    clearCache,
-    refreshCachedData,
-    hasPendingSync,
-    attemptReconnect
+    isOffline: offlineMode,
+    isOnline: !offlineMode,
+    lastCheck: lastCheckTime,
+    checkConnection,
+    toggleOfflineMode,
   };
 }

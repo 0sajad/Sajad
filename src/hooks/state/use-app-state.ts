@@ -17,7 +17,7 @@ import { createCacheSlice } from './cache-state';
  */
 export const useAppState = create<AppState>()(
   persist(
-    (set, get, ...rest) => ({
+    (set, get, api) => ({
       // Initialize required properties explicitly
       isLoading: {},
       errors: {},
@@ -61,7 +61,7 @@ export const useAppState = create<AppState>()(
       setNetworkStatus: (status) => set({
         isConnected: status.isConnected,
         isOnline: status.isOnline,
-        lastCheck: status.lastCheck || new Date() // Fixed: Provide default value
+        lastCheck: status.lastCheck || new Date() // تصحيح: توفير قيمة افتراضية
       }),
 
       handleOfflineStatus: () => {
@@ -81,7 +81,7 @@ export const useAppState = create<AppState>()(
       // Initialize network status
       networkStatus: {
         isConnected: true,
-        isOnline: navigator.onLine,
+        isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
         lastCheck: null
       },
       
@@ -95,7 +95,7 @@ export const useAppState = create<AppState>()(
       // Additional required properties
       isSidebarOpen: false,
       isConnected: true,
-      isOnline: true,
+      isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
       lastCheck: null,
       
       // UI state properties required by AppState
@@ -139,15 +139,15 @@ export const useAppState = create<AppState>()(
         }
       },
       
-      // Combine all state slices - fixed by properly passing the parameters
-      ...createUISlice(set, get, ...rest),
-      ...createPreferencesSlice(set, get, ...rest),
-      ...createUserSlice(set, get, ...rest),
-      ...createAppStatusSlice(set, get, ...rest),
-      ...createAccessibilitySlice(set, get, ...rest),
-      ...createNetworkSlice(set, get, ...rest),
-      ...createPerformanceSlice(set, get, ...rest),
-      ...createCacheSlice(set, get, ...rest),
+      // Combine all state slices - تصحيح: تمرير المعاملات الصحيحة
+      ...createUISlice(set, get, api),
+      ...createPreferencesSlice(set, get, api),
+      ...createUserSlice(set, get, api),
+      ...createAppStatusSlice(set, get, api),
+      ...createAccessibilitySlice(set, get, api),
+      ...createNetworkSlice(set, get, api),
+      ...createPerformanceSlice(set, get, api),
+      ...createCacheSlice(set, get, api),
     }),
     {
       name: 'app-state',
