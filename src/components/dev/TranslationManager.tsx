@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,11 +24,10 @@ export function TranslationManager() {
     // تنفيذ فحص المفاتيح الناقصة
     setTimeout(() => {
       // استخدام كاشف الترجمات المفقودة
-      const detector = new MissingTranslationDetector();
-      detector.init();
+      MissingTranslationDetector.init();
       
       // إجراء مسح وهمي للصفحة للعثور على النصوص غير المترجمة
-      const results = detector.scanPageForUntranslated();
+      const results = MissingTranslationDetector.scanPageForUntranslated();
       
       // تحديث النتائج
       setMissingKeys({

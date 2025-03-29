@@ -20,7 +20,15 @@ export function PingTool() {
   const { t } = useTranslation();
   const [host, setHost] = useState('example.com');
   const [pingActive, setPingActive] = useState(false);
-  const { pingResults, pingHost, stopPing, currentPingDelay, pingHistory } = usePingData();
+  const { 
+    pingResults, 
+    isPinging, 
+    error, 
+    pingHost, 
+    stopPing, 
+    currentPingDelay, 
+    pingHistory 
+  } = usePingData();
   
   useEffect(() => {
     return () => {
@@ -46,6 +54,20 @@ export function PingTool() {
     if (ping < 400) return 'bg-orange-500';
     return 'bg-red-500';
   };
+  
+  // Calculate average and maximum ping
+  const calculateStats = () => {
+    if (pingResults.length === 0) return { avg: 0, max: 0 };
+    
+    const times = pingResults.map(result => result.time);
+    const sum = times.reduce((acc, time) => acc + time, 0);
+    const avg = Math.round(sum / times.length);
+    const max = Math.max(...times);
+    
+    return { avg, max };
+  };
+  
+  const stats = calculateStats();
   
   return (
     <Card>
@@ -118,10 +140,10 @@ export function PingTool() {
         {pingResults.length > 0 && (
           <div className="flex items-center">
             <span className="mr-2">
-              {t('tools.avgPing', 'المتوسط')}: {Math.round(pingResults.reduce((sum, val) => sum + val, 0) / pingResults.length)} ms
+              {t('tools.avgPing', 'المتوسط')}: {stats.avg} ms
             </span>
             <span>
-              {t('tools.maxPing', 'الأقصى')}: {Math.max(...pingResults)} ms
+              {t('tools.maxPing', 'الأقصى')}: {stats.max} ms
             </span>
           </div>
         )}

@@ -30,6 +30,54 @@ export const useAppState = create<AppState>()(
       })),
       setInitialized: (initialized) => args[0]({ isInitialized: initialized }),
 
+      // Network status methods
+      checkNetworkStatus: async () => {
+        try {
+          const response = await fetch('https://www.google.com/generate_204', {
+            method: 'HEAD',
+            mode: 'no-cors',
+            cache: 'no-store',
+          });
+          
+          const isOnline = response.type === 'opaque' || response.ok;
+          args[0]({ 
+            isConnected: true,
+            isOnline,
+            lastCheck: new Date()
+          });
+          
+          return isOnline;
+        } catch (error) {
+          args[0]({ 
+            isConnected: false,
+            isOnline: false,
+            lastCheck: new Date()
+          });
+          
+          return false;
+        }
+      },
+      
+      setNetworkStatus: (status) => args[0]({
+        isConnected: status.isConnected,
+        isOnline: status.isOnline,
+        lastCheck: status.lastCheck
+      }),
+
+      handleOfflineStatus: () => {
+        args[0]({
+          isOnline: false,
+          lastCheck: new Date()
+        });
+      },
+
+      handleOnlineStatus: () => {
+        args[0]({
+          isOnline: true,
+          lastCheck: new Date()
+        });
+      },
+
       // Initialize network status
       networkStatus: {
         isConnected: true,

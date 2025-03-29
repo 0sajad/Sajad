@@ -1,108 +1,108 @@
 
 /**
- * كاشف الترجمات المفقودة
- * يوفر آلية للكشف عن مفاتيح الترجمة المفقودة أثناء تطوير التطبيق
- */
-
-// تخزين المفاتيح المفقودة بنمط الوحدة
-let missingKeys: Record<string, string[]> = {};
-let isInitialized = false;
-
-// Handle i18next potentially not available immediately
-const getI18next = () => {
-  // Check if we're in a browser environment
-  if (typeof window !== 'undefined') {
-    // Return i18next from window if it exists
-    return (window as any).i18next;
-  }
-  return null;
-};
-
-/**
- * فئة تمثل كاشف الترجمات المفقودة
+ * Utility class to detect and manage missing translations
  */
 export class MissingTranslationDetector {
+  private static missingKeys: Record<string, string[]> = {};
+  private static isInitialized = false;
+
   /**
-   * تهيئة الكاشف
+   * Initialize the missing translation detector
    */
-  static init() {
-    if (isInitialized) return;
+  public static init(): void {
+    if (this.isInitialized) return;
     
-    // تسجيل المفاتيح المفقودة في وحدة i18n
-    const i18next = getI18next();
-    if (i18next) {
-      i18next.on('missingKey', (lng: string, namespace: string, key: string) => {
-        if (!missingKeys[lng]) {
-          missingKeys[lng] = [];
-        }
-        
-        // تجنب تكرار المفاتيح المفقودة
-        if (!missingKeys[lng].includes(key)) {
-          missingKeys[lng].push(key);
-        }
+    this.isInitialized = true;
+    this.missingKeys = {};
+    
+    // Subscribe to i18next initialization event if needed
+    if (typeof window !== 'undefined') {
+      window.addEventListener('i18nextInitialized', () => {
+        console.debug('[MissingTranslationDetector] Initialized with i18next');
       });
     }
-    
-    isInitialized = true;
   }
-  
+
   /**
-   * الحصول على المفاتيح المفقودة لجميع اللغات
+   * Add a missing key to the collection
    */
-  static getMissingKeys(): Record<string, string[]> {
-    return missingKeys;
-  }
-  
-  /**
-   * مسح جميع المفاتيح المفقودة
-   */
-  static clearMissingKeys(): void {
-    missingKeys = {};
-  }
-  
-  /**
-   * استخراج المفاتيح المفقودة كتنسيق JSON
-   */
-  static exportMissingKeys(): string {
-    return JSON.stringify(missingKeys, null, 2);
-  }
-  
-  /**
-   * فحص الصفحة الحالية للبحث عن نصوص غير مترجمة
-   */
-  static scanPageForUntranslated(): { hardcodedTexts: { element: HTMLElement, text: string }[] } {
-    const hardcodedTexts: { element: HTMLElement, text: string }[] = [];
-    
-    // تجنب البحث في المستندات غير الموجودة (مثل SSR)
-    if (typeof document === 'undefined') {
-      return { hardcodedTexts };
+  public static addMissingKey(language: string, key: string): void {
+    if (!this.missingKeys[language]) {
+      this.missingKeys[language] = [];
     }
     
-    // البحث عن النصوص في عناصر HTML المختلفة
-    const textElements = document.querySelectorAll('p, span, h1, h2, h3, h4, h5, h6, button, a, label, div');
+    if (!this.missingKeys[language].includes(key)) {
+      this.missingKeys[language].push(key);
+      console.debug(`[i18n] Missing translation for ${language}:${key}`);
+    }
+  }
+
+  /**
+   * Get all missing keys
+   */
+  public static getMissingKeys(): Record<string, string[]> {
+    return this.missingKeys;
+  }
+
+  /**
+   * Export missing keys as JSON string
+   */
+  public static exportMissingKeys(): string {
+    return JSON.stringify(this.missingKeys, null, 2);
+  }
+
+  /**
+   * Scan the page for untranslated texts
+   */
+  public static scanPageForUntranslated(): Record<string, string[]> {
+    const textNodes: { element: HTMLElement; text: string }[] = [];
     
-    textElements.forEach((element) => {
-      const text = element.textContent?.trim();
-      
-      // تجاهل النصوص الفارغة أو القصيرة جدًا
-      if (!text || text.length < 3) return;
-      
-      // التحقق من أن النص لا يحتوي على أقواس تدل على الترجمة
-      if (!text.includes('{{') && !text.includes('}}')) {
-        // فحص إضافي لتجنب الإيجابيات الكاذبة
-        if (text.match(/[a-zA-Z\u0600-\u06FF]{3,}/)) {
-          hardcodedTexts.push({
-            element: element as HTMLElement,
+    if (typeof document === 'undefined') return this.missingKeys;
+    
+    const walkDOM = (node: Node, callback: (node: Node) => void) => {
+      callback(node);
+      let child = node.firstChild;
+      while (child) {
+        walkDOM(child, callback);
+        child = child.nextSibling;
+      }
+    };
+    
+    walkDOM(document.body, (node) => {
+      if (
+        node.nodeType === 3 && // Text node
+        node.nodeValue && 
+        node.nodeValue.trim() !== '' &&
+        node.parentElement && 
+        !['SCRIPT', 'STYLE'].includes(node.parentElement.tagName)
+      ) {
+        const text = node.nodeValue.trim();
+        // Skip very short texts, numbers, and some common patterns
+        if (
+          text.length > 3 && 
+          !/^\d+$/.test(text) && 
+          !text.startsWith('{{') && 
+          !text.startsWith('t(')
+        ) {
+          textNodes.push({
+            element: node.parentElement as HTMLElement,
             text
           });
         }
       }
     });
     
-    return { hardcodedTexts };
+    // For now, we just gather the texts but don't add them to missingKeys
+    // In a real implementation, we would need to determine which texts are untranslated
+    console.debug(`[i18n] Found ${textNodes.length} text nodes that might need translation`);
+    
+    return this.missingKeys;
+  }
+
+  /**
+   * Reset the missing keys collection
+   */
+  public static reset(): void {
+    this.missingKeys = {};
   }
 }
-
-// تصدير الكاشف كدالة بسيطة
-export const initMissingTranslationDetector = MissingTranslationDetector.init;
-export const getMissingTranslationDetector = () => MissingTranslationDetector;
