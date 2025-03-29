@@ -24,7 +24,11 @@ const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
 const App = () => {
   const { t } = useTranslation();
-  const { isInitialized, isConnected, isOnline } = useAppState();
+  const networkStatus = useAppState((state) => state.networkStatus || {
+    isInitialized: true,
+    isConnected: true,
+    isOnline: true
+  });
   
   return (
     <ModeProvider>

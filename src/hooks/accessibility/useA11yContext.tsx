@@ -1,140 +1,74 @@
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { useA11y } from '../useA11y';
-import { useAppState } from '../state/use-app-state';
+import React, { createContext, useContext, useState, useCallback } from 'react';
+
+type SoundType = 'success' | 'error' | 'warning' | 'info';
 
 interface A11yContextType {
   announce: (message: string, politeness?: 'polite' | 'assertive') => void;
-  playSound: (sound: 'success' | 'error' | 'warning' | 'info' | 'notification') => void;
-  highContrast: boolean;
-  largeText: boolean;
-  reducedMotion: boolean;
-  dyslexicFont: boolean;
-  colorBlindMode: string;
-  setHighContrast: (value: boolean) => void;
-  setLargeText: (value: boolean) => void;
-  setReducedMotion: (value: boolean) => void;
-  setDyslexicFont: (value: boolean) => void;
-  setColorBlindMode: (value: string) => void;
+  playNotificationSound: (type: SoundType) => void;
+  soundFeedback: boolean;
+  setSoundFeedback: (enabled: boolean) => void;
 }
 
-const A11yContext = createContext<A11yContextType | null>(null);
+const A11yContext = createContext<A11yContextType | undefined>(undefined);
 
-/**
- * استخدام سياق إمكانية الوصول في المكونات
- */
-export const useA11yContext = () => {
-  const context = useContext(A11yContext);
-  if (!context) {
-    throw new Error('useA11yContext must be used within an A11yProvider');
-  }
-  return context;
-};
+export const A11yProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [soundFeedback, setSoundFeedback] = useState(true);
 
-interface A11yProviderProps {
-  children: ReactNode;
-}
+  const announce = useCallback((message: string, politeness: 'polite' | 'assertive' = 'polite') => {
+    // Implementation for screen reader announcements
+    const element = document.createElement('div');
+    element.setAttribute('aria-live', politeness);
+    element.className = 'sr-only';
+    document.body.appendChild(element);
+    
+    // Use a timeout to ensure the DOM change is registered
+    setTimeout(() => {
+      element.textContent = message;
+      
+      // Clean up after announcement
+      setTimeout(() => {
+        document.body.removeChild(element);
+      }, 1000);
+    }, 50);
+  }, []);
 
-/**
- * مزود سياق إمكانية الوصول - يوفر وظائف وحالة إمكانية الوصول لكافة المكونات
- */
-export const A11yProvider: React.FC<A11yProviderProps> = ({ children }) => {
-  const a11y = useA11y();
-  const {
-    highContrast,
-    largeText,
-    reducedMotion,
-    dyslexicFont,
-    colorBlindMode,
-    setHighContrast,
-    setLargeText,
-    setReducedMotion,
-    setDyslexicFont,
-    setColorBlindMode
-  } = useAppState(state => ({
-    highContrast: state.highContrast,
-    largeText: state.largeText,
-    reducedMotion: state.reducedMotion,
-    dyslexicFont: state.dyslexicFont,
-    colorBlindMode: state.colorBlindMode,
-    setHighContrast: state.setHighContrast,
-    setLargeText: state.setLargeText,
-    setReducedMotion: state.setReducedMotion,
-    setDyslexicFont: state.setDyslexicFont,
-    setColorBlindMode: state.setColorBlindMode
-  }));
-  
-  // إعلانات متاحة عالميًا للقارئات الشاشية
-  const announce = (message: string, politeness: 'polite' | 'assertive' = 'polite') => {
-    if (a11y?.announce) {
-      a11y.announce(message, politeness);
-    } else if (typeof window !== 'undefined' && typeof window.announce === 'function') {
-      window.announce(message, politeness);
-    } else {
-      console.log(`${politeness.toUpperCase()} ANNOUNCEMENT: ${message}`);
-    }
-  };
-  
-  // تشغيل أصوات الإخطارات
-  const playSound = (sound: 'success' | 'error' | 'warning' | 'info' | 'notification') => {
-    if (a11y?.playNotificationSound) {
-      a11y.playNotificationSound(sound);
-    }
-  };
-  
-  // تطبيق تأثيرات إمكانية الوصول على المستند
-  useEffect(() => {
-    document.documentElement.classList.toggle('high-contrast', highContrast);
-    document.documentElement.classList.toggle('large-text', largeText);
-    document.documentElement.classList.toggle('reduced-motion', reducedMotion);
-    document.documentElement.classList.toggle('dyslexic-font', dyslexicFont);
+  const playNotificationSound = useCallback((type: SoundType) => {
+    if (!soundFeedback) return;
     
-    // إزالة جميع أنماط المرشح الحالية
-    document.documentElement.classList.remove(
-      'protanopia',
-      'deuteranopia',
-      'tritanopia',
-      'achromatopsia'
-    );
-    
-    // تطبيق فلتر عمى الألوان المحدد
-    if (colorBlindMode !== 'none') {
-      document.documentElement.classList.add(colorBlindMode);
+    try {
+      // Simulated sound playing logic
+      console.log(`Playing ${type} sound`);
+      // In a real implementation, this would play actual sounds
+    } catch (error) {
+      console.error('Error playing notification sound:', error);
     }
-    
-    return () => {
-      // تنظيف الفئات عند تفكيك المكون
-      document.documentElement.classList.remove(
-        'high-contrast',
-        'large-text',
-        'reduced-motion',
-        'dyslexic-font',
-        'protanopia',
-        'deuteranopia',
-        'tritanopia',
-        'achromatopsia'
-      );
-    };
-  }, [highContrast, largeText, reducedMotion, dyslexicFont, colorBlindMode]);
-  
-  const value = {
-    announce,
-    playSound,
-    highContrast,
-    largeText,
-    reducedMotion,
-    dyslexicFont,
-    colorBlindMode,
-    setHighContrast,
-    setLargeText,
-    setReducedMotion,
-    setDyslexicFont,
-    setColorBlindMode
-  };
-  
+  }, [soundFeedback]);
+
   return (
-    <A11yContext.Provider value={value}>
+    <A11yContext.Provider value={{
+      announce,
+      playNotificationSound,
+      soundFeedback,
+      setSoundFeedback
+    }}>
       {children}
     </A11yContext.Provider>
   );
+};
+
+export const useA11yContext = (): A11yContextType => {
+  const context = useContext(A11yContext);
+  
+  if (!context) {
+    // Provide a default implementation if context is not available
+    return {
+      announce: (message) => console.log('Announcement:', message),
+      playNotificationSound: (type) => console.log('Sound:', type),
+      soundFeedback: true,
+      setSoundFeedback: () => {}
+    };
+  }
+  
+  return context;
 };

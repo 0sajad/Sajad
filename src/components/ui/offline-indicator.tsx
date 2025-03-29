@@ -8,6 +8,7 @@ import { Button } from './button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip';
 import { Badge } from './badge';
+import { NetworkStatus } from '@/hooks/state/types';
 
 interface OfflineIndicatorProps {
   className?: string;
@@ -30,9 +31,10 @@ export function OfflineIndicator({
   
   // الحصول على أيقونة مناسبة لسرعة الاتصال
   const getConnectionIcon = () => {
-    if (!networkInfo.connectionType || isOffline) return <WifiOff size={16} className="shrink-0" />;
+    const info = networkInfo as any;
+    if (!info?.connectionType || isOffline) return <WifiOff size={16} className="shrink-0" />;
     
-    switch(networkInfo.connectionType) {
+    switch(info?.connectionType) {
       case '4g':
         return <SignalHigh size={16} className="shrink-0" />;
       case '3g':
@@ -56,7 +58,7 @@ export function OfflineIndicator({
   // تعيين لون الخلفية بناءً على حالة الاتصال
   const bgColorClass = isOffline 
     ? 'bg-red-500 text-white' 
-    : networkInfo.latency && networkInfo.latency > 500
+    : (networkInfo as any)?.latency && (networkInfo as any)?.latency > 500
       ? 'bg-amber-500 text-white'
       : 'bg-green-500 text-white';
   
@@ -73,10 +75,11 @@ export function OfflineIndicator({
   
   // الحصول على نص سرعة الاتصال
   const getConnectionSpeed = () => {
+    const info = networkInfo as any;
     if (isOffline) return t('network.offline', 'غير متصل');
-    if (!networkInfo.connectionType) return t('network.unknown', 'غير معروف');
+    if (!info?.connectionType) return t('network.unknown', 'غير معروف');
     
-    switch(networkInfo.connectionType) {
+    switch(info?.connectionType) {
       case '4g':
         return t('network.fastConnection', 'اتصال سريع');
       case '3g':
@@ -85,7 +88,7 @@ export function OfflineIndicator({
       case 'slow-2g':
         return t('network.slowConnection', 'اتصال بطيء');
       default:
-        return networkInfo.connectionType;
+        return info?.connectionType;
     }
   };
   
@@ -111,9 +114,9 @@ export function OfflineIndicator({
               }
             </span>
             
-            {networkInfo.latency && !isOffline && (
+            {(networkInfo as any)?.latency && !isOffline && (
               <Badge variant="outline" className="bg-white/20 border-white/30 text-white text-[10px]">
-                {networkInfo.latency}ms
+                {(networkInfo as any)?.latency}ms
               </Badge>
             )}
           </div>
@@ -139,8 +142,8 @@ export function OfflineIndicator({
               <div className="text-xs space-y-1">
                 <p>{t('network.lastCheck', 'آخر فحص')}: {getFormattedTime()}</p>
                 <p>{t('network.connectionType', 'نوع الاتصال')}: {getConnectionSpeed()}</p>
-                {networkInfo.latency && (
-                  <p>{t('network.latency', 'زمن الاستجابة')}: {networkInfo.latency}ms</p>
+                {(networkInfo as any)?.latency && (
+                  <p>{t('network.latency', 'زمن الاستجابة')}: {(networkInfo as any)?.latency}ms</p>
                 )}
               </div>
             </TooltipContent>

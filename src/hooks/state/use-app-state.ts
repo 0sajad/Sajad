@@ -14,13 +14,13 @@ export const useAppState = create<AppState>()(
   persist(
     (set, get) => ({
       // حالة إمكانية الوصول (من شريحة إمكانية الوصول)
-      ...createAccessibilitySlice(set, get, {}),
+      ...createAccessibilitySlice(set, get),
       
       // حالة أداء التطبيق (من شريحة الأداء)
-      ...createPerformanceSlice(set, get, {}),
+      ...createPerformanceSlice(set, get),
       
       // حالة شبكة الاتصال
-      ...createNetworkSlice(set, get, {}),
+      ...createNetworkSlice(set, get),
       
       // حالة التفضيلات
       theme: 'system',

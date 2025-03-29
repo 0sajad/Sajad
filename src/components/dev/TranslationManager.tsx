@@ -24,7 +24,14 @@ export function TranslationManager() {
   // تحويل مجموعة المفاتيح المفقودة إلى مصفوفة
   const missingKeys = useMemo(() => {
     if (!metrics || !metrics.missingKeys) return [];
-    return Array.from(metrics.missingKeys || []);
+    
+    // تحويل المجموعة إلى مصفوفة إذا كانت مجموعة
+    if (metrics.missingKeys instanceof Set) {
+      return Array.from(metrics.missingKeys);
+    }
+    
+    // إذا كان المفاتيح بالفعل مصفوفة، استخدمها مباشرة
+    return metrics.missingKeys;
   }, [metrics]);
 
   // تحويل مجموعة جميع المفاتيح المستخدمة إلى مصفوفة
@@ -32,7 +39,7 @@ export function TranslationManager() {
     const keys = new Set<string>();
     if (metrics && metrics.keysByLanguage) {
       Object.values(metrics.keysByLanguage).forEach(langKeys => {
-        langKeys.forEach(key => keys.add(key));
+        langKeys.forEach(key => keys.add(key.toString()));
       });
     }
     return Array.from(keys);
@@ -50,14 +57,16 @@ export function TranslationManager() {
     const searchLower = filter.toLowerCase();
     const keys = activeTab === "missing" ? missingKeys : allKeys;
     
-    return keys.filter(key => key.toLowerCase().includes(searchLower));
+    return keys.filter(key => typeof key === 'string' && key.toLowerCase().includes(searchLower));
   }, [filter, activeTab, missingKeys, allKeys]);
   
   // نسخ مفاتيح مفقودة إلى الحافظة
   const copyMissingKeys = () => {
     const keysObject: Record<string, string> = {};
     missingKeys.forEach(key => {
-      keysObject[key] = "";
+      if (typeof key === 'string') {
+        keysObject[key] = "";
+      }
     });
     
     const jsonContent = JSON.stringify(keysObject, null, 2);
@@ -68,18 +77,18 @@ export function TranslationManager() {
         setTimeout(() => setCopiedMessage(""), 3000);
       })
       .catch(err => {
-        toast.error("فشل نسخ المفاتيح: " + err.message);
+        toast.error("فشل نسخ المفاتيح: " + (err instanceof Error ? err.message : String(err)));
       });
   };
   
   // توليد مفتاح تعريف فريد للون الشارة
-  const getBadgeColor = (key: string) => {
+  const getBadgeColor = (key: string): "default" | "outline" | "secondary" | "destructive" => {
     if (key.includes("error")) return "destructive";
-    if (key.includes("success")) return "success";
-    if (key.includes("warning")) return "warning";
-    if (key.includes("info")) return "info";
-    if (key.includes("accessibility")) return "purple";
-    return "secondary";
+    if (key.includes("success")) return "secondary";
+    if (key.includes("warning")) return "secondary";
+    if (key.includes("info")) return "secondary";
+    if (key.includes("accessibility")) return "secondary";
+    return "default";
   };
   
   // جلب الترجمة الحالية للمفتاح إذا كانت متوفرة
@@ -159,14 +168,14 @@ export function TranslationManager() {
             <ScrollArea className="h-[400px] border rounded-md">
               {filteredKeys.length > 0 ? (
                 <div className="p-4 space-y-3">
-                  {filteredKeys.map(key => (
-                    <div key={key} className="flex flex-col gap-1 pb-2 border-b">
+                  {filteredKeys.map((key, index) => (
+                    <div key={index} className="flex flex-col gap-1 pb-2 border-b">
                       <div className="flex items-center gap-2">
-                        <Badge variant={getBadgeColor(key)}>
-                          {getNamespace(key)}
+                        <Badge variant={getBadgeColor(key.toString())}>
+                          {getNamespace(key.toString())}
                         </Badge>
                         <code className="text-sm bg-muted px-1 py-0.5 rounded">
-                          {key}
+                          {key.toString()}
                         </code>
                       </div>
                     </div>
@@ -188,18 +197,18 @@ export function TranslationManager() {
             <ScrollArea className="h-[400px] border rounded-md">
               {filteredKeys.length > 0 ? (
                 <div className="p-4 space-y-3">
-                  {filteredKeys.map(key => (
-                    <div key={key} className="flex flex-col gap-1 pb-2 border-b">
+                  {filteredKeys.map((key, index) => (
+                    <div key={index} className="flex flex-col gap-1 pb-2 border-b">
                       <div className="flex items-center gap-2">
-                        <Badge variant={getBadgeColor(key)}>
-                          {getNamespace(key)}
+                        <Badge variant={getBadgeColor(key.toString())}>
+                          {getNamespace(key.toString())}
                         </Badge>
                         <code className="text-sm bg-muted px-1 py-0.5 rounded">
-                          {key}
+                          {key.toString()}
                         </code>
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        <span className="font-medium">Translated:</span> {getKeyTranslation(key) || <em>No translation</em>}
+                        <span className="font-medium">Translated:</span> {getKeyTranslation(key.toString()) || <em>No translation</em>}
                       </div>
                     </div>
                   ))}
@@ -220,21 +229,21 @@ export function TranslationManager() {
             <ScrollArea className="h-[400px] border rounded-md">
               {mostUsedKeys.length > 0 ? (
                 <div className="p-4 space-y-3">
-                  {mostUsedKeys.map(({ key, count }) => (
-                    <div key={key} className="flex flex-col gap-1 pb-2 border-b">
+                  {mostUsedKeys.map((item, index) => (
+                    <div key={index} className="flex flex-col gap-1 pb-2 border-b">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <Badge variant={getBadgeColor(key)}>
-                            {getNamespace(key)}
+                          <Badge variant={getBadgeColor(item.key)}>
+                            {getNamespace(item.key)}
                           </Badge>
                           <code className="text-sm bg-muted px-1 py-0.5 rounded">
-                            {key}
+                            {item.key}
                           </code>
                         </div>
-                        <Badge variant="outline">{count} {count === 1 ? 'use' : 'uses'}</Badge>
+                        <Badge variant="outline">{item.count} {item.count === 1 ? 'use' : 'uses'}</Badge>
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        <span className="font-medium">Translated:</span> {getKeyTranslation(key) || <em>No translation</em>}
+                        <span className="font-medium">Translated:</span> {getKeyTranslation(item.key) || <em>No translation</em>}
                       </div>
                     </div>
                   ))}

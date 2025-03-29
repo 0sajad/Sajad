@@ -1,9 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MissingTranslationDetector, MissingTranslationStats } from '@/utils/i18n/MissingTranslationDetector';
-import { useTranslationValidator } from '@/hooks/useTranslationValidator';
-import { useTranslationMetrics } from '@/hooks/i18n/useTranslationMetrics';
 
 /**
  * مدير الترجمات - يقوم بتهيئة ومراقبة ترجمات التطبيق
@@ -11,8 +8,6 @@ import { useTranslationMetrics } from '@/hooks/i18n/useTranslationMetrics';
  */
 export function TranslationManager() {
   const { i18n } = useTranslation();
-  const { stats, missingKeys } = useTranslationValidator();
-  const translationMetrics = useTranslationMetrics();
   const [translationStatus, setTranslationStatus] = useState({
     totalLanguages: 0,
     availableLanguages: [] as string[],

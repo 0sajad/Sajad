@@ -1,265 +1,134 @@
 
-import { useEffect, useState, useCallback } from 'react';
-import { toast } from 'sonner';
+import { useState, useEffect, useCallback } from 'react';
+import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
-import { useAppState } from './state/use-app-state';
 
-export interface NetworkStatus {
-  downlink: number | null;
-  effectiveType: string | null;
-  rtt: number | null;
-  saveData: boolean | null;
-  type: string | null;
+interface NetworkInfo {
+  connectionType?: string;
+  effectiveType?: string; 
+  downlink?: number;
+  rtt?: number;
+  saveData?: boolean;
+  latency?: number;
+}
+
+interface UseOfflineModeReturn {
+  isOffline: boolean;
+  isOnline: boolean;
+  isChecking: boolean;
+  lastCheck: Date | null;
+  networkInfo: NetworkInfo;
+  checkConnection: () => Promise<boolean>;
 }
 
 /**
- * خطاف لإدارة وضع عدم الاتصال وحالة الشبكة
+ * خطاف لإدارة حالة الاتصال بالإنترنت وتوفير معلومات عن الشبكة
  */
-export function useOfflineMode() {
+export function useOfflineMode(): UseOfflineModeReturn {
+  const { toast } = useToast();
   const { t } = useTranslation();
+  
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [isChecking, setIsChecking] = useState(false);
-  const [lastCheck, setLastCheck] = useState<Date>(new Date());
-  const [networkInfo, setNetworkInfo] = useState<NetworkStatus>({
-    downlink: null,
-    effectiveType: null,
-    rtt: null,
-    saveData: null,
-    type: null,
-  });
-  const [pendingActions, setPendingActions] = useState<any[]>([]);
-  const [cacheSize, setCacheSize] = useState<number>(0);
-  const [hasPendingSync, setHasPendingSync] = useState<boolean>(false);
-
-  // الحصول على حالة الاتصال من مخزن الحالة
-  const isOnline = useAppState(state => state.network.isOnline);
-  const isOffline = !isOnline;
-  const setOnlineStatus = useAppState(state => state.network.setOnlineStatus);
-
-  // التحقق من حالة الاتصال بالشبكة
-  const checkConnection = useCallback(async (): Promise<boolean> => {
+  const [lastCheck, setLastCheck] = useState<Date | null>(null);
+  const [networkInfo, setNetworkInfo] = useState<NetworkInfo>({});
+  
+  // فحص الاتصال بالإنترنت
+  const checkConnection = useCallback(async () => {
     setIsChecking(true);
-
+    
     try {
-      // إنشاء إشارة لإلغاء الطلب إذا استغرق وقتًا طويلاً
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-      // إجراء طلب للتحقق من الاتصال (URL صغير للتحقق فقط)
-      const response = await fetch('/api/ping', {
-        method: 'GET',
-        cache: 'no-store',
-        signal: controller.signal,
+      // محاولة طلب لفحص الاتصال
+      const startTime = Date.now();
+      const response = await fetch('/api/ping', { 
+        method: 'HEAD',
+        cache: 'no-cache',
+        mode: 'no-cors',
+        headers: { 'Cache-Control': 'no-cache' }
       });
-
-      clearTimeout(timeoutId);
       
-      const online = response.ok;
-      setOnlineStatus(online);
+      const endTime = Date.now();
+      const latency = endTime - startTime;
+      
+      // تحديث معلومات الشبكة
+      setNetworkInfo(prev => ({
+        ...prev,
+        latency
+      }));
+      
+      // تحديث حالة الاتصال والوقت
+      setIsOffline(!response.ok);
       setLastCheck(new Date());
-      
-      // جمع معلومات الشبكة إذا كانت متوفرة
-      if (online && navigator.connection) {
-        const conn = navigator.connection as any;
-        setNetworkInfo({
-          downlink: conn.downlink || null,
-          effectiveType: conn.effectiveType || null,
-          rtt: conn.rtt || null,
-          saveData: conn.saveData || null,
-          type: conn.type || null,
-        });
-      }
-      
-      return online;
-    } catch (error) {
-      console.error('فشل التحقق من الاتصال:', error);
-      setOnlineStatus(false);
-      return false;
-    } finally {
       setIsChecking(false);
+      
+      return response.ok;
+    } catch (error) {
+      // فشل الاتصال
+      setIsOffline(true);
+      setLastCheck(new Date());
+      setIsChecking(false);
+      return false;
     }
-  }, [setOnlineStatus]);
-
-  // استمع إلى تغييرات حالة الاتصال
+  }, []);
+  
+  // الحصول على معلومات الاتصال إذا كانت متوفرة
   useEffect(() => {
+    const updateConnectionInfo = () => {
+      if (navigator && 'connection' in navigator) {
+        const connection = (navigator as any).connection;
+        
+        if (connection) {
+          setNetworkInfo({
+            connectionType: connection.type,
+            effectiveType: connection.effectiveType,
+            downlink: connection.downlink,
+            rtt: connection.rtt,
+            saveData: connection.saveData
+          });
+        }
+      }
+    };
+    
+    // تحديث معلومات الاتصال عند تغيير الاتصال
     const handleOnline = () => {
-      setOnlineStatus(true);
-      syncPendingData();
+      setIsOffline(false);
+      updateConnectionInfo();
+      toast({
+        title: t('network.reconnected', 'تم استعادة الاتصال'),
+        description: t('network.deviceOnline', 'جهازك متصل بالإنترنت الآن')
+      });
     };
     
     const handleOffline = () => {
-      setOnlineStatus(false);
+      setIsOffline(true);
+      toast({
+        title: t('network.disconnected', 'انقطع الاتصال'),
+        description: t('network.deviceOffline', 'جهازك غير متصل بالإنترنت'),
+        variant: 'destructive'
+      });
     };
-
+    
+    // إضافة مستمعي الأحداث
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
-
-    // التحقق من الاتصال مباشرة عند التحميل
+    
+    // فحص الاتصال مبدئياً
+    updateConnectionInfo();
     checkConnection();
-
-    // إعداد فاصل زمني للتحقق الدوري
-    const interval = setInterval(() => {
-      if (document.visibilityState === 'visible') {
-        checkConnection();
-      }
-    }, 30000);
-
+    
+    // إزالة مستمعي الأحداث عند التنظيف
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
-      clearInterval(interval);
     };
-  }, [checkConnection, setOnlineStatus]);
-
-  // تبديل وضع عدم الاتصال
-  const toggleOfflineMode = () => {
-    setOnlineStatus(!isOnline);
-  };
-
-  // إضافة إجراء معلق للمزامنة
-  const addPendingAction = useCallback((action: any) => {
-    setPendingActions(prev => [...prev, action]);
-    setHasPendingSync(true);
-    
-    // تخزين الإجراءات المعلقة في التخزين المحلي
-    try {
-      const storedActions = JSON.parse(localStorage.getItem('pendingActions') || '[]');
-      localStorage.setItem('pendingActions', JSON.stringify([...storedActions, action]));
-    } catch (error) {
-      console.error('فشل تخزين الإجراء المعلق:', error);
-    }
-    
-    toast.info(t('network.actionSaved', 'تم حفظ الإجراء للمزامنة عند استعادة الاتصال'));
-  }, [t]);
-
-  // مزامنة البيانات المعلقة
-  const syncPendingData = useCallback(async () => {
-    if (!isOnline || pendingActions.length === 0) return;
-    
-    let successCount = 0;
-    let failCount = 0;
-    
-    toast.info(t('network.syncingData', 'جاري مزامنة البيانات المعلقة...'));
-    
-    for (const action of pendingActions) {
-      try {
-        // محاولة تنفيذ الإجراء
-        await fetch(action.url, {
-          method: action.method,
-          headers: action.headers,
-          body: action.body,
-        });
-        
-        successCount++;
-      } catch (error) {
-        console.error('فشل مزامنة الإجراء:', error);
-        failCount++;
-      }
-    }
-    
-    // تحديث الإجراءات المعلقة بعد المزامنة
-    if (successCount > 0) {
-      setPendingActions([]);
-      localStorage.removeItem('pendingActions');
-      setHasPendingSync(false);
-      
-      toast.success(
-        t('network.syncComplete', 'تمت مزامنة البيانات بنجاح', {
-          count: successCount
-        })
-      );
-    }
-    
-    if (failCount > 0) {
-      toast.error(
-        t('network.syncFailed', 'فشلت مزامنة بعض البيانات', {
-          count: failCount
-        })
-      );
-    }
-  }, [isOnline, pendingActions, t]);
-
-  // مسح ذاكرة التخزين المؤقت
-  const clearCache = useCallback(async () => {
-    if ('caches' in window) {
-      try {
-        const cacheNames = await caches.keys();
-        await Promise.all(
-          cacheNames.map(cacheName => caches.delete(cacheName))
-        );
-        setCacheSize(0);
-        toast.success(t('network.cacheCleared', 'تم مسح ذاكرة التخزين المؤقت'));
-      } catch (error) {
-        console.error('فشل مسح ذاكرة التخزين المؤقت:', error);
-        toast.error(t('network.cacheClearFailed', 'فشل مسح ذاكرة التخزين المؤقت'));
-      }
-    }
-  }, [t]);
-
-  // تحديث البيانات المخزنة مؤقتًا
-  const refreshCachedData = useCallback(async () => {
-    if (isOnline) {
-      try {
-        // تحديث البيانات المخزنة مؤقتًا
-        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-          navigator.serviceWorker.controller.postMessage({
-            type: 'REFRESH_CACHED_DATA'
-          });
-          
-          toast.success(t('network.refreshingCache', 'جاري تحديث البيانات المخزنة مؤقتًا'));
-        } else {
-          // بديل - إعادة تحميل الصفحة مع تعطيل التخزين المؤقت
-          window.location.reload();
-        }
-      } catch (error) {
-        console.error('فشل تحديث البيانات المخزنة مؤقتًا:', error);
-        toast.error(t('network.refreshFailed', 'فشل تحديث البيانات المخزنة مؤقتًا'));
-      }
-    } else {
-      toast.error(t('network.refreshRequiresConnection', 'يتطلب تحديث البيانات اتصالاً بالإنترنت'));
-    }
-  }, [isOnline, t]);
-
-  // حساب حجم التخزين المؤقت
-  useEffect(() => {
-    const calculateCacheSize = async () => {
-      if ('storage' in navigator && navigator.storage.estimate) {
-        try {
-          const estimate = await navigator.storage.estimate();
-          setCacheSize(estimate.usage || 0);
-        } catch (error) {
-          console.error('فشل حساب حجم التخزين المؤقت:', error);
-        }
-      }
-    };
-    
-    calculateCacheSize();
-    
-    // تحميل الإجراءات المعلقة عند بدء التشغيل
-    try {
-      const storedActions = JSON.parse(localStorage.getItem('pendingActions') || '[]');
-      if (storedActions.length > 0) {
-        setPendingActions(storedActions);
-        setHasPendingSync(true);
-      }
-    } catch (error) {
-      console.error('فشل تحميل الإجراءات المعلقة:', error);
-    }
-  }, []);
-
+  }, [checkConnection, t, toast]);
+  
   return {
     isOffline,
-    isOnline,
+    isOnline: !isOffline,
+    isChecking,
     lastCheck,
     networkInfo,
-    isChecking,
-    checkConnection,
-    toggleOfflineMode,
-    hasPendingSync,
-    pendingActions,
-    addPendingAction,
-    syncPendingData,
-    cacheSize,
-    clearCache,
-    refreshCachedData
+    checkConnection
   };
 }

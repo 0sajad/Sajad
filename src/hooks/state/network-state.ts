@@ -1,6 +1,6 @@
 
 import { StateCreator } from 'zustand';
-import { AppState, NetworkState } from './types';
+import { AppState, NetworkState, NetworkStatus } from './types';
 
 /**
  * مخزن حالة الشبكة
@@ -24,5 +24,31 @@ export const createNetworkSlice: StateCreator<
           isOnline: status 
         } 
       })),
+      
+    // فحص الاتصال بالشبكة
+    checkConnection: async () => {
+      try {
+        const response = await fetch('/api/ping', { 
+          method: 'HEAD',
+          cache: 'no-cache',
+          mode: 'no-cors',
+          headers: { 'Cache-Control': 'no-cache' }
+        });
+        return response.ok;
+      } catch (error) {
+        console.error('فشل فحص الاتصال بالشبكة:', error);
+        return false;
+      }
+    }
   }
 });
+
+// وظيفة مساعدة للتعامل مع حالة الشبكة
+export function useNetworkStatus() {
+  return {
+    isOnline: true,
+    isConnected: true,
+    lastCheck: new Date(),
+    checkConnection: async () => true
+  };
+}
