@@ -86,7 +86,7 @@ export function LiveAnnouncer() {
         aria-atomic="true" 
         className="sr-only"
         lang={i18n.language}
-        dir={i18n.language.startsWith('ar') ? 'rtl' : 'ltr'}
+        dir={i18n.language?.startsWith('ar') ? 'rtl' : 'ltr'}
       />
       <div 
         ref={assertiveAnnouncerRef} 
@@ -94,7 +94,7 @@ export function LiveAnnouncer() {
         aria-atomic="true" 
         className="sr-only"
         lang={i18n.language}
-        dir={i18n.language.startsWith('ar') ? 'rtl' : 'ltr'}
+        dir={i18n.language?.startsWith('ar') ? 'rtl' : 'ltr'}
       />
     </>
   );

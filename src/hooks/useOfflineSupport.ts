@@ -123,7 +123,7 @@ export function useOfflineSupport() {
       
       if (shouldSync) {
         // Use void to explicitly discard the Promise result
-        void syncOfflineData();
+        syncOfflineData().catch(console.error);
       } else {
         // Show reminder
         toast({
@@ -132,7 +132,7 @@ export function useOfflineSupport() {
           action: (
             <ToastAction 
               altText={t('offline.syncNow')}
-              onClick={() => void syncOfflineData()}
+              onClick={() => void syncOfflineData().catch(console.error)}
             >
               {t('offline.syncNow')}
             </ToastAction>

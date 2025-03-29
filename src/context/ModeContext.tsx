@@ -31,13 +31,28 @@ interface ModeProviderProps {
 }
 
 export const ModeProvider: React.FC<ModeProviderProps> = ({ children }) => {
-  // Get initial theme from Zustand store without subscribing
-  const initialTheme = useAppState.getState().theme || 'system';
-  const initialMode = document.documentElement.dir === 'rtl' ? 'rtl' : 'ltr';
+  // Get initial theme from localStorage or default to system
+  const getInitialTheme = (): Theme => {
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system')) {
+        return savedTheme as Theme;
+      }
+    }
+    return 'system';
+  };
+  
+  // Get initial mode from document direction
+  const getInitialMode = (): Mode => {
+    if (typeof document !== 'undefined') {
+      return document.documentElement.dir === 'rtl' ? 'rtl' : 'ltr';
+    }
+    return 'ltr';
+  };
   
   // Use local state to manage theme/mode within this component
-  const [theme, setThemeState] = useState<Theme>(initialTheme as Theme);
-  const [mode, setModeState] = useState<Mode>(initialMode);
+  const [theme, setThemeState] = useState<Theme>(getInitialTheme);
+  const [mode, setModeState] = useState<Mode>(getInitialMode);
   const [features, setFeatures] = useState<Record<string, boolean>>({});
   const [isSyncing, setIsSyncing] = useState(false);
   
@@ -53,28 +68,30 @@ export const ModeProvider: React.FC<ModeProviderProps> = ({ children }) => {
   const setTheme = useCallback((newTheme: Theme) => {
     setThemeState(newTheme);
     
-    // Apply theme to document
-    if (newTheme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      document.documentElement.classList.toggle('dark', systemTheme === 'dark');
-    } else {
-      document.documentElement.classList.toggle('dark', newTheme === 'dark');
-    }
-    
-    // Only update the store if the value has actually changed
-    const currentTheme = useAppState.getState().theme;
-    if (currentTheme !== newTheme) {
-      useAppState.getState().setTheme(newTheme);
+    if (typeof window !== 'undefined') {
+      // Store in localStorage
+      localStorage.setItem('theme', newTheme);
+      
+      // Apply theme to document
+      if (newTheme === 'system') {
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.classList.toggle('dark', systemTheme === 'dark');
+      } else {
+        document.documentElement.classList.toggle('dark', newTheme === 'dark');
+      }
     }
   }, []);
   
   // Handle mode changes with a useCallback
   const setMode = useCallback((newMode: Mode) => {
     setModeState(newMode);
-    document.documentElement.dir = newMode;
-    document.documentElement.lang = newMode === 'rtl' ? 'ar' : 'en';
-    document.documentElement.classList.toggle('rtl', newMode === 'rtl');
-    document.documentElement.classList.toggle('ltr', newMode === 'ltr');
+    
+    if (typeof document !== 'undefined') {
+      document.documentElement.dir = newMode;
+      document.documentElement.lang = newMode === 'rtl' ? 'ar' : 'en';
+      document.documentElement.classList.toggle('rtl', newMode === 'rtl');
+      document.documentElement.classList.toggle('ltr', newMode === 'ltr');
+    }
   }, []);
   
   // Toggle feature state
@@ -104,6 +121,8 @@ export const ModeProvider: React.FC<ModeProviderProps> = ({ children }) => {
   
   // Listen for system theme changes without triggering re-renders
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     const handleSystemThemeChange = (e: MediaQueryListEvent) => {
       if (theme === 'system') {
         document.documentElement.classList.toggle('dark', e.matches);
@@ -135,7 +154,19 @@ export const ModeProvider: React.FC<ModeProviderProps> = ({ children }) => {
     updateFeature,
     applyConfiguration,
     isSyncing
-  }), [theme, setTheme, mode, setMode, isRTL, isDeveloperMode, features, toggleFeature, updateFeature, applyConfiguration, isSyncing]);
+  }), [
+    theme, 
+    setTheme, 
+    mode, 
+    setMode, 
+    isRTL, 
+    isDeveloperMode, 
+    features, 
+    toggleFeature, 
+    updateFeature, 
+    applyConfiguration, 
+    isSyncing
+  ]);
   
   return (
     <ModeContext.Provider value={contextValue}>

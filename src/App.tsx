@@ -6,8 +6,8 @@ import SuspenseLoader from "./components/SuspenseLoader";
 import Dashboard from "./pages/Dashboard";
 import { ErrorBoundary } from "./components/ui/error/ErrorBoundary";
 import { useTranslation } from "react-i18next";
-import { useAppState } from "./hooks/state";
 import { ModeProvider } from "./context/ModeContext";
+import { RTLWrapper } from "./components/layout/RTLWrapper";
 
 // التحميل الكسول للصفحات لتحسين أداء التطبيق
 const NetworkScanner = lazy(() => import("./pages/NetworkScanner"));
@@ -24,20 +24,6 @@ const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
 const App = () => {
   const { t } = useTranslation();
-  
-  // Use a stable selector to avoid frequent re-renders
-  const networkStatus = useAppState(
-    state => ({
-      isInitialized: true,
-      isConnected: true,
-      isOnline: true
-    }),
-    // Using shallow equality check
-    (a, b) => 
-      a.isInitialized === b.isInitialized && 
-      a.isConnected === b.isConnected && 
-      a.isOnline === b.isOnline
-  );
   
   // Memoize the routes to prevent unnecessary re-renders
   const appRoutes = useMemo(() => (
@@ -65,11 +51,13 @@ const App = () => {
     <ModeProvider>
       <ErrorBoundary>
         <Router>
-          <Layout>
-            <Suspense fallback={<SuspenseLoader />}>
-              {appRoutes}
-            </Suspense>
-          </Layout>
+          <RTLWrapper>
+            <Layout>
+              <Suspense fallback={<SuspenseLoader />}>
+                {appRoutes}
+              </Suspense>
+            </Layout>
+          </RTLWrapper>
         </Router>
       </ErrorBoundary>
     </ModeProvider>
