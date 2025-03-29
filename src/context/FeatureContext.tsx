@@ -1,195 +1,181 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useAppState } from '@/hooks/state/use-app-state';
+
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { useAppState } from '@/hooks/state/use-app-state';
 
-interface Feature {
-  id: string;
-  name: string;
-  description: string;
-  enabled: boolean;
-  toggle: () => void;
-  available: boolean;
-  requiresDevMode?: boolean;
+// تعريف واجهة الميزات المتاحة
+interface Features {
+  advancedSecurity: boolean;
+  aiAssistant: boolean;
+  zeroPower: boolean;
+  holographicUI: boolean;
+  networkIsolation: boolean;
+  dnsOptimization: boolean;
+  latencyHeatmap: boolean;
+  trafficShaping: boolean;
+  invisibleMode: boolean;
+  networkCloning: boolean;
+  multiNetwork: boolean;
+  autoHealing: boolean;
+  signalBooster: boolean;
+  darkWebProtection: boolean;
+  deviceHeat: boolean;
 }
 
-interface FeatureContextType {
-  features: Feature[];
-  isFeatureEnabled: (featureId: string) => boolean;
-  toggleFeature: (featureId: string) => void;
-  isDevMode: boolean;
-  toggleDevMode: () => void;
+// نوع سياق وضع الميزات
+interface ModeContextType {
+  features: Features;
+  isProMode: boolean;
+  isDemoMode: boolean;
+  toggleFeature: (feature: keyof Features) => void;
+  enableAllFeatures: () => void;
+  disableAllFeatures: () => void;
+  upgradeToProMode: () => void;
 }
 
-const FeatureContext = createContext<FeatureContextType | null>(null);
+// إنشاء سياق لوضع الميزات
+const ModeContext = createContext<ModeContextType | undefined>(undefined);
 
-/**
- * مزود سياق الميزات
- * يدير حالة تفعيل ميزات التطبيق المختلفة
- */
-export function FeatureProvider({ children }: { children: ReactNode }) {
+// حالة الميزات الافتراضية (الإصدار المجاني)
+const defaultFeatures: Features = {
+  advancedSecurity: false,
+  aiAssistant: false,
+  zeroPower: true,
+  holographicUI: false,
+  networkIsolation: false,
+  dnsOptimization: true,
+  latencyHeatmap: false,
+  trafficShaping: false,
+  invisibleMode: false,
+  networkCloning: false,
+  multiNetwork: false,
+  autoHealing: true,
+  signalBooster: false,
+  darkWebProtection: false,
+  deviceHeat: true
+};
+
+// مزود سياق وضع الميزات
+export const ModeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [features, setFeatures] = useState<Features>(defaultFeatures);
+  const [isProMode, setIsProMode] = useState<boolean>(false);
+  const [isDemoMode, setIsDemoMode] = useState<boolean>(false);
   const { t } = useTranslation();
-  const { preferences } = useAppState(state => state);
-  const setPreference = useAppState(state => state.setPreference);
-  const [isDevMode, setIsDevMode] = useState(preferences.developerMode || false);
-  const [featureStates, setFeatureStates] = useState<Record<string, boolean>>({});
+  const { preferences, setPreference } = useAppState();
   
+  // التحقق مما إذا كان المستخدم في وضع المطور
   useEffect(() => {
-    setIsDevMode(preferences.developerMode || false);
+    // استخدام developMode بدلاً من developerMode لأنه موجود في نوع AppPreferences
+    const devMode = preferences.developerMode;
     
-    try {
-      const savedFeatures = localStorage.getItem('featureStates');
-      if (savedFeatures) {
-        setFeatureStates(JSON.parse(savedFeatures));
-      }
-    } catch (error) {
-      console.error('Error loading feature states:', error);
+    // إذا كان في وضع المطور، فعّل وضع العرض التوضيحي
+    if (devMode) {
+      setIsDemoMode(true);
+      
+      // في وضع المطور، افتراضيًا نمكّن بعض الميزات الإضافية
+      setFeatures(prev => ({
+        ...prev,
+        holographicUI: true,
+        latencyHeatmap: true,
+        aiAssistant: true,
+        advancedSecurity: true
+      }));
+      
+      toast.info(t('mode.developerModeEnabled', 'تم تفعيل وضع المطور'));
     }
-  }, [preferences.developerMode]);
+  }, [preferences.developerMode, t]);
   
-  useEffect(() => {
-    if (Object.keys(featureStates).length > 0) {
-      localStorage.setItem('featureStates', JSON.stringify(featureStates));
-    }
-  }, [featureStates]);
-  
-  const featureDefinitions: Omit<Feature, 'toggle'>[] = [
-    {
-      id: 'ai_assistant',
-      name: t('features.aiAssistant', 'المساعد الذكي'),
-      description: t('features.aiAssistantDesc', 'مساعد ذكاء اصطناعي متكامل للمساعدة في تحليل الشبكة'),
-      enabled: getFeatureState('ai_assistant', true),
-      available: true
-    },
-    {
-      id: 'network_scanner',
-      name: t('features.networkScanner', 'ماسح الشبكة'),
-      description: t('features.networkScannerDesc', 'أداة متقدمة لمسح الشبكات واكتشاف الأجهزة'),
-      enabled: getFeatureState('network_scanner', true),
-      available: true
-    },
-    {
-      id: 'security_analyzer',
-      name: t('features.securityAnalyzer', 'محلل الأمان'),
-      description: t('features.securityAnalyzerDesc', 'فحص وتحليل ثغرات الأمان في الشبكة'),
-      enabled: getFeatureState('security_analyzer', true),
-      available: true
-    },
-    {
-      id: 'advanced_tools',
-      name: t('features.advancedTools', 'أدوات متقدمة'),
-      description: t('features.advancedToolsDesc', 'أدوات شبكة متقدمة للتحليل العميق'),
-      enabled: getFeatureState('advanced_tools', false),
-      available: true,
-      requiresDevMode: true
-    },
-    {
-      id: 'offline_mode',
-      name: t('features.offlineMode', 'وضع عدم الاتصال'),
-      description: t('features.offlineModeDesc', 'استخدام الأدوات والمحتوى دون اتصال بالإنترنت'),
-      enabled: getFeatureState('offline_mode', true),
-      available: true
-    },
-    {
-      id: 'data_analytics',
-      name: t('features.dataAnalytics', 'تحليل البيانات'),
-      description: t('features.dataAnalyticsDesc', 'تحليل متقدم للبيانات ومخططات تفاعلية'),
-      enabled: getFeatureState('data_analytics', false),
-      available: true,
-      requiresDevMode: true
-    },
-    {
-      id: 'experimental',
-      name: t('features.experimental', 'ميزات تجريبية'),
-      description: t('features.experimentalDesc', 'ميزات قيد التطوير وقد تكون غير مستقرة'),
-      enabled: getFeatureState('experimental', false),
-      available: isDevMode,
-      requiresDevMode: true
-    }
-  ];
-  
-  function getFeatureState(featureId: string, defaultValue: boolean): boolean {
-    if (featureId in featureStates) {
-      return featureStates[featureId];
-    }
-    return defaultValue;
-  }
-  
-  const toggleFeature = (featureId: string) => {
-    const feature = featureDefinitions.find(f => f.id === featureId);
+  // تبديل حالة ميزة معينة
+  const toggleFeature = (feature: keyof Features) => {
+    // التحقق مما إذا كانت الميزة متاحة فقط في الإصدار المدفوع
+    const premiumFeatures: (keyof Features)[] = [
+      'advancedSecurity', 
+      'aiAssistant', 
+      'holographicUI', 
+      'networkIsolation',
+      'trafficShaping',
+      'darkWebProtection',
+      'networkCloning'
+    ];
     
-    if (!feature) {
-      console.error(`Feature with ID ${featureId} not found`);
+    if (premiumFeatures.includes(feature) && !isProMode && !isDemoMode) {
+      toast.error(t('mode.premiumFeatureError', 'هذه الميزة متوفرة فقط في الإصدار المدفوع'));
       return;
     }
     
-    if (feature.requiresDevMode && !isDevMode) {
-      toast.error(t('features.devModeRequired', 'هذه الميزة تتطلب وضع المطور'));
+    setFeatures(prev => {
+      const newFeatures = { ...prev, [feature]: !prev[feature] };
+      
+      // عرض إشعار بتغيير حالة الميزة
+      const status = newFeatures[feature] ? 
+        t('mode.featureEnabled', 'تم تفعيل') : 
+        t('mode.featureDisabled', 'تم تعطيل');
+      
+      toast.success(`${status} ${t(`features.${feature}`, feature)}`);
+      
+      return newFeatures;
+    });
+  };
+  
+  // تمكين جميع الميزات (مفيد في وضع العرض التوضيحي)
+  const enableAllFeatures = () => {
+    if (!isProMode && !isDemoMode) {
+      toast.error(t('mode.enableAllError', 'يجب الترقية إلى الإصدار المدفوع لتفعيل جميع الميزات'));
       return;
     }
     
-    const newEnabled = !getFeatureState(featureId, feature.enabled);
-    setFeatureStates(prev => ({
-      ...prev,
-      [featureId]: newEnabled
-    }));
+    const allEnabled = Object.keys(features).reduce((acc, key) => {
+      acc[key as keyof Features] = true;
+      return acc;
+    }, {} as Features);
     
-    toast.success(
-      newEnabled 
-        ? t('features.featureEnabled', 'تم تفعيل الميزة') 
-        : t('features.featureDisabled', 'تم تعطيل الميزة')
-    );
+    setFeatures(allEnabled);
+    toast.success(t('mode.allFeaturesEnabled', 'تم تفعيل جميع الميزات'));
   };
   
-  const isFeatureEnabled = (featureId: string) => {
-    const feature = featureDefinitions.find(f => f.id === featureId);
-    if (!feature) {
-      return false;
-    }
+  // تعطيل جميع الميزات
+  const disableAllFeatures = () => {
+    const allDisabled = Object.keys(features).reduce((acc, key) => {
+      acc[key as keyof Features] = false;
+      return acc;
+    }, {} as Features);
     
-    if (feature.requiresDevMode && !isDevMode) {
-      return false;
-    }
-    
-    return getFeatureState(featureId, feature.enabled);
+    setFeatures(allDisabled);
+    toast.success(t('mode.allFeaturesDisabled', 'تم تعطيل جميع الميزات'));
   };
   
-  const toggleDevMode = () => {
-    const newMode = !isDevMode;
-    setIsDevMode(newMode);
-    setPreference("developerMode", !isDevMode);
+  // الترقية إلى الإصدار المدفوع
+  const upgradeToProMode = () => {
+    setIsProMode(true);
+    toast.success(t('mode.upgradedToProMode', 'تمت الترقية إلى الإصدار المدفوع'));
     
-    toast.success(
-      newMode 
-        ? t('features.devModeEnabled', 'تم تفعيل وضع المطور') 
-        : t('features.devModeDisabled', 'تم تعطيل وضع المطور')
-    );
+    // فتح وضع المطور تلقائيًا مع الترقية إلى الإصدار المدفوع
+    setPreference("developerMode", true);
   };
-  
-  const features: Feature[] = featureDefinitions.map(feature => ({
-    ...feature,
-    toggle: () => toggleFeature(feature.id)
-  }));
   
   return (
-    <FeatureContext.Provider 
-      value={{ 
-        features, 
-        isFeatureEnabled, 
-        toggleFeature, 
-        isDevMode,
-        toggleDevMode
+    <ModeContext.Provider 
+      value={{
+        features,
+        isProMode,
+        isDemoMode,
+        toggleFeature,
+        enableAllFeatures,
+        disableAllFeatures,
+        upgradeToProMode
       }}
     >
       {children}
-    </FeatureContext.Provider>
+    </ModeContext.Provider>
   );
-}
+};
 
-export function useFeatures() {
-  const context = useContext(FeatureContext);
-  if (!context) {
-    throw new Error('useFeatures must be used within a FeatureProvider');
+// الخطاف لاستخدام سياق وضع الميزات
+export const useMode = (): ModeContextType => {
+  const context = useContext(ModeContext);
+  if (context === undefined) {
+    throw new Error('useMode must be used within a ModeProvider');
   }
   return context;
-}
+};

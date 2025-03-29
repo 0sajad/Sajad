@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -25,13 +26,14 @@ export function OfflineSettings() {
   
   // تحميل حالة المزامنة التلقائية من التفضيلات
   useEffect(() => {
-    setIsAutoSyncEnabled(preferences.autoRefresh);
-  }, [preferences.autoRefresh]);
+    // تغيير autoRefresh إلى syncSystemPreferences وهو موجود في واجهة AppPreferences
+    setIsAutoSyncEnabled(preferences.syncSystemPreferences);
+  }, [preferences.syncSystemPreferences]);
   
   // تبديل حالة المزامنة التلقائية
   const toggleAutoSync = useCallback((checked: boolean) => {
-    // تغيير استخدام المفتاح غير المدعوم "autoRefresh" إلى المفتاح المدعوم في واجهة AppPreferences
-    setPreference("autoRefresh", checked);
+    // تغيير autoRefresh إلى syncSystemPreferences
+    setPreference("syncSystemPreferences", checked);
     setIsAutoSyncEnabled(checked);
     
     // إعلان حالة المزامنة التلقائية الجديدة

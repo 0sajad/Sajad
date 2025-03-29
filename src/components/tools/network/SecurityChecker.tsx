@@ -252,9 +252,9 @@ export function SecurityChecker() {
         
         <div className="sm:mt-8">
           <Button 
-            onClick={handleSecurityCheck} 
-            className="w-full bg-green-600 hover:bg-green-700 text-white"
             variant="default"
+            className="w-full bg-green-600 hover:bg-green-700 text-white"
+            onClick={handleSecurityCheck} 
             disabled={isLoading}
           >
             {isLoading ? (

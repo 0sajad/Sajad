@@ -1,132 +1,74 @@
 
+import { useCallback } from 'react';
 import { useAppState } from './state/use-app-state';
-import { useCallback, useEffect } from 'react';
-import { useTheme } from '@/hooks/useTheme';
-import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
-import { AppPreferences } from './state/types';
+import { AppPreferences } from './state/preferences-state';
+import { useTheme } from './useTheme';
 
 /**
- * خطاف لإدارة تفضيلات التطبيق بشكل سهل
+ * خطاف لسهولة استخدام تفضيلات التطبيق
  */
 export function useAppPreferences() {
-  const { i18n } = useTranslation();
+  const { 
+    preferences, 
+    setPreference 
+  } = useAppState(state => ({
+    preferences: state.preferences,
+    setPreference: state.setPreference
+  }));
+  
   const { setTheme } = useTheme();
   
-  const preferences = useAppState(state => state.preferences);
-  const setPreference = useAppState(state => state.setPreference);
-  const resetPreferences = useAppState(state => state.resetPreferences);
-  
-  // تطبيق التفضيلات عند تحميل المكون
-  useEffect(() => {
-    // تطبيق السمة
-    if (preferences.theme) {
-      setTheme(preferences.theme);
-    }
+  /**
+   * إعادة تعيين جميع التفضيلات إلى القيم الافتراضية
+   */
+  const resetPreferences = useCallback(() => {
+    // بدلاً من استخدام resetPreferences الذي لا يوجد في AppState
+    // سنستخدم defaultPreferences ونعين كل قيمة يدوياً
+    const { defaultPreferences } = require('./state/preferences-state');
     
-    // تطبيق اللغة
-    if (preferences.language && i18n.language !== preferences.language) {
-      i18n.changeLanguage(preferences.language);
-    }
-    
-    // تطبيق التفضيلات الأخرى...
-  }, [preferences.theme, preferences.language, setTheme, i18n]);
-  
-  // تحديث جميع التفضيلات في مرة واحدة
-  const updatePreferences = useCallback((newPreferences: Partial<AppPreferences>) => {
-    Object.entries(newPreferences).forEach(([key, value]) => {
-      // التحقق من أن المفتاح موجود في التفضيلات قبل تحديثه
-      if (key in preferences) {
-        setPreference(key as keyof AppPreferences, value as any);
-      }
+    Object.keys(defaultPreferences).forEach((key) => {
+      setPreference(key as keyof AppPreferences, defaultPreferences[key as keyof AppPreferences]);
     });
     
-    // تطبيق التغييرات المباشرة
-    if (newPreferences.theme && newPreferences.theme !== preferences.theme) {
-      setTheme(newPreferences.theme);
+    // تعيين السمة بشكل منفصل نظراً لأنها تحتاج معالجة خاصة
+    setTheme(defaultPreferences.theme);
+  }, [setPreference, setTheme]);
+  
+  /**
+   * تغيير إعداد بناءً على اسمه والقيمة المطلوبة
+   */
+  const updatePreference = useCallback(<K extends keyof AppPreferences>(
+    key: K, 
+    value: AppPreferences[K]
+  ) => {
+    // معالجة خاصة للسمة
+    if (key === 'theme') {
+      setTheme(value as 'light' | 'dark' | 'system');
     }
     
-    if (newPreferences.language && newPreferences.language !== preferences.language) {
-      i18n.changeLanguage(newPreferences.language);
-    }
-    
-    toast.success('تم تحديث التفضيلات بنجاح');
-  }, [preferences, setPreference, setTheme, i18n]);
+    // تحديث التفضيل في حالة التطبيق
+    setPreference(key, value);
+  }, [setPreference, setTheme]);
   
-  // تصدير التفضيلات إلى ملف
-  const exportPreferences = useCallback(() => {
-    try {
-      const dataStr = JSON.stringify(preferences, null, 2);
-      const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(dataStr)}`;
-      
-      const exportFileDefaultName = `octa-preferences-${new Date().toISOString().slice(0, 10)}.json`;
-      
-      const linkElement = document.createElement('a');
-      linkElement.setAttribute('href', dataUri);
-      linkElement.setAttribute('download', exportFileDefaultName);
-      linkElement.click();
-      
-      toast.success('تم تصدير التفضيلات بنجاح');
-    } catch (error) {
-      console.error('Error exporting preferences:', error);
-      toast.error('فشل تصدير التفضيلات');
+  /**
+   * تبديل قيمة إعداد ثنائي بين الصواب والخطأ
+   */
+  const togglePreference = useCallback((key: keyof AppPreferences) => {
+    // التأكد من أن الإعداد هو قيمة ثنائية
+    if (
+      typeof preferences[key] === 'boolean' ||
+      preferences[key] === true ||
+      preferences[key] === false
+    ) {
+      const currentValue = Boolean(preferences[key]);
+      updatePreference(key, !currentValue as any);
     }
-  }, [preferences]);
-  
-  // استيراد التفضيلات من ملف
-  const importPreferences = useCallback((file: File): Promise<boolean> => {
-    return new Promise((resolve) => {
-      try {
-        const reader = new FileReader();
-        
-        reader.onload = (event) => {
-          try {
-            if (!event.target?.result) {
-              toast.error('فشل قراءة الملف');
-              resolve(false);
-              return;
-            }
-            
-            const importedPrefs = JSON.parse(event.target.result as string);
-            
-            // التحقق من صحة المحتوى المستورد
-            if (!importedPrefs || typeof importedPrefs !== 'object') {
-              toast.error('ملف تفضيلات غير صالح');
-              resolve(false);
-              return;
-            }
-            
-            // تحديث التفضيلات
-            updatePreferences(importedPrefs);
-            toast.success('تم استيراد التفضيلات بنجاح');
-            resolve(true);
-          } catch (parseError) {
-            console.error('Error parsing imported preferences:', parseError);
-            toast.error('فشل تحليل ملف التفضيلات');
-            resolve(false);
-          }
-        };
-        
-        reader.onerror = () => {
-          toast.error('فشل قراءة الملف');
-          resolve(false);
-        };
-        
-        reader.readAsText(file);
-      } catch (error) {
-        console.error('Error importing preferences:', error);
-        toast.error('فشل استيراد التفضيلات');
-        resolve(false);
-      }
-    });
-  }, [updatePreferences]);
+  }, [preferences, updatePreference]);
   
   return {
     preferences,
-    setPreference,
-    resetPreferences,
-    updatePreferences,
-    exportPreferences,
-    importPreferences
+    updatePreference,
+    togglePreference,
+    resetPreferences
   };
 }
