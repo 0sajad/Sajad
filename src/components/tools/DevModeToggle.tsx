@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useFeatures } from "@/context/FeatureContext";
+import { useAppState } from '@/hooks/state/use-app-state';
 import { useTranslation } from "react-i18next";
 import { Code, Terminal, CheckIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -15,10 +15,19 @@ import { Label } from "@/components/ui/label";
  */
 export function DevModeToggle() {
   const { t } = useTranslation();
-  const { isDevMode, toggleDevMode } = useFeatures();
+  const { preferences, setPreference } = useAppState(state => ({
+    preferences: state.preferences,
+    setPreference: state.setPreference
+  }));
+  const isDevMode = preferences.developerMode;
   const [devCode, setDevCode] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  // تبديل وضع المطور
+  const toggleDevMode = () => {
+    setPreference('developerMode', !isDevMode);
+  };
   
   // هذا مجرد رمز توضيحي للتحقق - في التطبيق الحقيقي،
   // سيتم استخدام طرق أكثر أمانًا للمصادقة

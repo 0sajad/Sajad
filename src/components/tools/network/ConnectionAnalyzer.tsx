@@ -127,6 +127,33 @@ export function ConnectionAnalyzer() {
     }
   };
   
+  const getVariantFromStatus = (status: string): "default" | "destructive" | "outline" | "secondary" => {
+    switch (status) {
+      case "good":
+        return "default";
+      case "warning":
+        return "secondary";
+      case "critical":
+        return "destructive";
+      default:
+        return "outline";
+    }
+  };
+  
+  const getStatusCategory = () => {
+    if (results.length === 0) return "good";
+    if (results.some(result => result.status === "error")) return "critical";
+    if (results.some(result => result.status === "warning")) return "warning";
+    return "good";
+  };
+  
+  const getStatusText = () => {
+    if (results.length === 0) return t('networkTools.connection.good', 'الاتصال جيد');
+    if (results.some(result => result.status === "error")) return t('networkTools.connection.critical', 'الاتصال غير متاح');
+    if (results.some(result => result.status === "warning")) return t('networkTools.connection.warning', 'الاتصال محدود');
+    return t('networkTools.connection.good', 'الاتصال جيد');
+  };
+  
   return (
     <div className="space-y-4">
       <div className="flex justify-end">

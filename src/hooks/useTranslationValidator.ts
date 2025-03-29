@@ -1,108 +1,84 @@
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppState } from './state/use-app-state';
+import { MissingTranslationDetector } from '@/utils/i18n/MissingTranslationDetector';
 
 /**
- * خطاف للتحقق من مفاتيح الترجمة المفقودة والإبلاغ عنها
- * يساعد في اكتشاف المفاتيح غير المترجمة أثناء التطوير
+ * خطاف للتحقق من الترجمات المفقودة وتوفير أدوات لإدارتها
  */
 export function useTranslationValidator() {
-  const { i18n } = useTranslation();
-  const [missingKeys, setMissingKeys] = useState<Record<string, string[]>>({});
+  const { i18n, t } = useTranslation();
   const isDeveloperMode = useAppState(state => state.preferences.developerMode);
+  const [missingKeys, setMissingKeys] = useState<Record<string, string[]>>({});
   
-  // فقط تفعيل هذه الوظيفة في وضع المطور
+  // تهيئة كاشف الترجمات المفقودة
+  useEffect(() => {
+    if (isDeveloperMode) {
+      MissingTranslationDetector.init();
+    }
+  }, [isDeveloperMode]);
+  
+  // جلب المفاتيح المفقودة من الكاشف
+  const updateMissingKeys = useCallback(() => {
+    if (!isDeveloperMode) return;
+    setMissingKeys(MissingTranslationDetector.getMissingKeys());
+  }, [isDeveloperMode]);
+  
+  // مراقبة الترجمات المفقودة
   useEffect(() => {
     if (!isDeveloperMode) return;
     
-    const originalT = i18n.t;
-    const trackedMissingKeys: Record<string, string[]> = {};
-    
-    // إنشاء دالة t معدلة للكشف عن المفاتيح المفقودة
-    const modifiedT = function(key: any, options?: any) {
-      const result = originalT(key, options);
-      
-      // إذا كانت النتيجة هي المفتاح نفسه، فهذا يعني أن الترجمة مفقودة
-      if (typeof key === 'string' && result === key) {
-        const language = i18n.language || 'unknown';
-        
-        if (!trackedMissingKeys[language]) {
-          trackedMissingKeys[language] = [];
-        }
-        
-        if (!trackedMissingKeys[language].includes(key)) {
-          trackedMissingKeys[language].push(key);
-          setMissingKeys({ ...trackedMissingKeys });
-          
-          // لوج في وحدة التحكم للمطورين
-          console.warn(`Missing translation for key [${key}] in language [${language}]`);
-        }
-      }
-      
-      return result;
+    // تسجيل المفاتيح المفقودة
+    const onMissingKey = (lng: string, ns: string, key: string) => {
+      updateMissingKeys();
+      console.debug(`[i18n] Missing translation: ${lng}:${ns}:${key}`);
     };
     
-    // تطبيق التعديل
-    i18n.t = modifiedT as typeof i18n.t;
+    i18n.on('missingKey', onMissingKey);
     
-    // ترجع الدالة t الأصلية عند تفكيك المكون
+    // تنظيف عند تفكيك المكون
     return () => {
-      i18n.t = originalT;
+      i18n.off('missingKey', onMissingKey);
     };
-  }, [i18n, isDeveloperMode]);
+  }, [i18n, isDeveloperMode, updateMissingKeys]);
   
-  /**
-   * يحصل على جميع المفاتيح من كائن الترجمة بشكل تكراري
-   */
-  const extractAllTranslationKeys = (obj: any, prefix = ''): string[] => {
-    let keys: string[] = [];
-    
-    for (const key in obj) {
-      const currentKey = prefix ? `${prefix}.${key}` : key;
-      
-      if (typeof obj[key] === 'object' && obj[key] !== null) {
-        keys = [...keys, ...extractAllTranslationKeys(obj[key], currentKey)];
-      } else {
-        keys.push(currentKey);
-      }
-    }
-    
-    return keys;
-  };
-  
-  /**
-   * مقارنة مفاتيح الترجمة بين لغتين
-   */
-  const compareLanguageKeys = (sourceLanguage: string, targetLanguage: string): string[] => {
-    try {
-      const allResources = i18n.options.resources || {};
-      const sourceKeys = extractAllTranslationKeys(allResources[sourceLanguage]);
-      const targetKeys = extractAllTranslationKeys(allResources[targetLanguage]);
-      
-      // إيجاد المفاتيح الموجودة في sourceLanguage ولكن مفقودة في targetLanguage
-      return sourceKeys.filter(key => !targetKeys.includes(key));
-    } catch (error) {
-      console.error('Error comparing language keys:', error);
-      return [];
-    }
-  };
-  
-  /**
-   * تصدير ملف JSON للمفاتيح المفقودة (فقط للتطوير)
-   */
-  const exportMissingKeys = () => {
+  // تحديث المفاتيح المفقودة دوريًا
+  useEffect(() => {
     if (!isDeveloperMode) return;
     
-    const missingKeysBlob = new Blob(
-      [JSON.stringify(missingKeys, null, 2)], 
-      { type: 'application/json' }
-    );
+    // التحديث الأولي
+    updateMissingKeys();
     
-    const url = URL.createObjectURL(missingKeysBlob);
+    // تحديث دوري
+    const interval = setInterval(updateMissingKeys, 5000);
+    
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isDeveloperMode, updateMissingKeys]);
+  
+  // مسح المفاتيح المفقودة
+  const clearMissingKeys = () => {
+    MissingTranslationDetector.clearMissingKeys();
+    setMissingKeys({});
+  };
+  
+  // فحص الصفحة للمفاتيح المفقودة
+  const scanPageForMissingTranslations = () => {
+    return MissingTranslationDetector.scanPageForUntranslated();
+  };
+  
+  // تصدير المفاتيح المفقودة
+  const exportMissingKeys = () => {
+    const exportedData = MissingTranslationDetector.exportMissingKeys();
+    
+    // إنشاء ملف للتنزيل
+    const blob = new Blob([exportedData], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'missing_translation_keys.json';
+    a.download = 'missing-translations.json';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -111,7 +87,8 @@ export function useTranslationValidator() {
   
   return {
     missingKeys,
-    compareLanguageKeys,
+    clearMissingKeys,
+    scanPageForMissingTranslations,
     exportMissingKeys
   };
 }

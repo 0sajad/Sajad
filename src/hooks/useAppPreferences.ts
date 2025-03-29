@@ -56,9 +56,7 @@ export function useAppPreferences() {
   const togglePreference = useCallback((key: keyof AppPreferences) => {
     // التأكد من أن الإعداد هو قيمة ثنائية
     if (
-      typeof preferences[key] === 'boolean' ||
-      preferences[key] === true ||
-      preferences[key] === false
+      typeof preferences[key] === 'boolean'
     ) {
       const currentValue = Boolean(preferences[key]);
       updatePreference(key, !currentValue as any);

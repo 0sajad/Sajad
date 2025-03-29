@@ -6,7 +6,7 @@ import { NetworkToolsSection } from "@/components/tools/NetworkToolsSection";
 import { Button } from "@/components/ui/button";
 import { Sliders, WifiIcon, Shield, Wrench, BrainCircuit, Settings2 } from "lucide-react";
 import Layout from "@/layouts/Layout";
-import { FeatureProvider, useFeatures } from "@/context/FeatureContext";
+import { FeatureProvider, useFeatureContext } from "@/context/FeatureContext";
 import { NetworkSecuritySection } from "@/components/tools/NetworkSecuritySection";
 import { AIToolsSection } from "@/components/tools/AIToolsSection";
 import { UtilityToolsSection } from "@/components/tools/UtilityToolsSection";
@@ -26,7 +26,7 @@ function ToolsPage() {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("network");
   const { isOnline } = useOfflineSupport();
-  const { features, isDevMode, toggleDevMode } = useFeatures();
+  const { isDevMode, features } = useFeatureContext();
   
   return (
     <div className="container mx-auto py-8 px-4">

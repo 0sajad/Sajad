@@ -1,4 +1,3 @@
-
 import { AppPreferences } from './preferences-state';
 import { AppState, ColorBlindMode } from './types';
 
@@ -44,6 +43,30 @@ export const applyColorBlindMode = (mode: ColorBlindMode) => {
   if (mode !== 'none') {
     body.classList.add(mode);
   }
+};
+
+/**
+ * التفضيلات الافتراضية للتطبيق
+ */
+export const defaultPreferences: AppPreferences = {
+  language: 'ar',  // اللغة الافتراضية
+  theme: 'system', // السمة: نظام، فاتح، داكن
+  notificationsEnabled: true,
+  autoRefresh: true,
+  refreshRate: 30,
+  compactMode: false,
+  developerMode: false, // وضع المطور معطل افتراضيًا
+  analyticsEnabled: true,
+  soundEffects: false,
+  highContrast: false,
+  largeText: false,
+  reducedMotion: false,
+  animationsEnabled: true, // إضافة هذا الإعداد الناقص
+  focusMode: false,
+  readingGuide: false,
+  dyslexicFont: false,
+  colorBlindMode: 'none',
+  soundFeedback: false
 };
 
 /**
