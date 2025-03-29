@@ -1,71 +1,90 @@
 
-import React, { ReactNode, useMemo } from 'react';
-import { useArabicSupport } from '@/hooks/useArabicSupport';
-import { useArabicText } from './ArabicTextProvider';
+import React, { PropsWithChildren } from 'react';
+import { useTranslation } from 'react-i18next';
+import { cn } from '@/lib/utils';
 
 interface ArabicTextEnhancerProps {
-  children: ReactNode;
+  /** النص الذي سيتم تحسينه */
+  children: React.ReactNode;
+  /** فئات CSS إضافية */
   className?: string;
-  numerals?: boolean;
-  enhanceFormat?: boolean;
-  autoDirection?: boolean;
+  /** ما إذا كان سيتم تطبيق التحسين بغض النظر عن اللغة الحالية */
+  forceEnhance?: boolean;
+  /** استخدام خط مخصص للأرقام العربية */
+  arabicDigits?: boolean;
+  /** نوع الخط العربي المستخدم */
+  fontType?: 'tajawal' | 'cairo' | 'noto-kufi' | 'default';
 }
 
 /**
- * مكون لتحسين عرض النص العربي
- * يقوم بتطبيق تنسيق أفضل وتحسين عرض الأرقام والاتجاه
+ * مكون لتحسين عرض النصوص العربية
+ * يطبق أنماط محسنة للنصوص العربية مثل المسافة بين الأحرف ووزن الخط
  */
 export function ArabicTextEnhancer({
   children,
-  className = '',
-  numerals = true,
-  enhanceFormat = true,
-  autoDirection = true
+  className,
+  forceEnhance = false,
+  arabicDigits = false,
+  fontType = 'default'
 }: ArabicTextEnhancerProps) {
-  const { isArabic, formatNumber, formatArabicText, getDirectionByContent } = useArabicSupport();
-  const { fontFamily } = useArabicText?.() || { fontFamily: 'default' };
+  const { i18n } = useTranslation();
+  const isArabicLanguage = i18n.language?.startsWith('ar');
   
-  // تحويل النص العربي بالأرقام والتنسيق المحسن
-  const enhancedText = useMemo(() => {
-    if (!isArabic || typeof children !== 'string') {
-      return children;
-    }
-    
-    let result = children;
-    
-    // تطبيق تنسيق الأرقام العربية
-    if (numerals) {
-      result = result.replace(/\d+/g, match => formatNumber(parseInt(match, 10)));
-    }
-    
-    // تطبيق تحسينات تنسيق النص العربي
-    if (enhanceFormat) {
-      result = formatArabicText(result);
-    }
-    
-    return result;
-  }, [children, isArabic, numerals, enhanceFormat, formatNumber, formatArabicText]);
+  // تطبيق التحسينات فقط للغة العربية أو عند التطبيق الإجباري
+  if (!isArabicLanguage && !forceEnhance) {
+    return <>{children}</>;
+  }
   
-  // اكتشاف الاتجاه تلقائيًا
-  const textDir = useMemo(() => {
-    if (!autoDirection || typeof children !== 'string') {
-      return undefined;
-    }
-    
-    return getDirectionByContent(children);
-  }, [children, autoDirection, getDirectionByContent]);
-  
-  // تطبيق الفئات CSS المناسبة
-  const arabicClasses = useMemo(() => {
-    if (!isArabic) return className;
-    
-    const fontClass = fontFamily === 'default' ? '' : `font-${fontFamily}`;
-    return `${className} ${fontClass} arabic-text`.trim();
-  }, [className, isArabic, fontFamily]);
+  // اختيار نوع الخط المناسب
+  const fontClass = {
+    tajawal: 'font-tajawal',
+    cairo: 'font-cairo',
+    'noto-kufi': 'font-noto-kufi-arabic',
+    default: 'font-tajawal'
+  }[fontType];
   
   return (
-    <span className={arabicClasses} dir={textDir}>
-      {enhancedText}
+    <span
+      className={cn(
+        'tracking-normal',   // تحسين المسافة بين الأحرف
+        fontClass,           // تطبيق الخط المناسب
+        arabicDigits && 'font-feature-settings: "ss01"', // الأرقام العربية
+        'font-feature-settings: "calt", "dlig", "kern", "liga"', // تحسينات الليجاتور
+        className
+      )}
+      dir="auto"
+      style={{
+        letterSpacing: isArabicLanguage ? '0' : 'inherit',
+        wordSpacing: isArabicLanguage ? '0.05em' : 'inherit',
+      }}
+    >
+      {children}
+    </span>
+  );
+}
+
+/**
+ * مكون لتحسين عرض الأرقام العربية
+ */
+export function ArabicDigits({
+  children,
+  className
+}: PropsWithChildren<{ className?: string }>) {
+  const { i18n } = useTranslation();
+  const isArabicLanguage = i18n.language?.startsWith('ar');
+  
+  if (!isArabicLanguage) {
+    return <>{children}</>;
+  }
+  
+  return (
+    <span
+      className={cn(
+        'font-feature-settings: "ss01"', // الأرقام العربية
+        className
+      )}
+    >
+      {children}
     </span>
   );
 }

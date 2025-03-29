@@ -1,8 +1,9 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAppState } from '@/hooks/state/use-app-state';
-import { MissingTranslationDetector } from '@/utils/i18n/MissingTranslationDetector';
+import { MissingTranslationDetector, MissingTranslationStats } from '@/utils/i18n/MissingTranslationDetector';
+import { useTranslationValidator } from '@/hooks/useTranslationValidator';
+import { useTranslationMetrics } from '@/hooks/i18n/useTranslationMetrics';
 
 /**
  * مدير الترجمات - يقوم بتهيئة ومراقبة ترجمات التطبيق
@@ -10,31 +11,78 @@ import { MissingTranslationDetector } from '@/utils/i18n/MissingTranslationDetec
  */
 export function TranslationManager() {
   const { i18n } = useTranslation();
-  const isDeveloperMode = useAppState(state => state.preferences?.developerMode);
+  const { stats, missingKeys } = useTranslationValidator();
+  const translationMetrics = useTranslationMetrics();
+  const [translationStatus, setTranslationStatus] = useState({
+    totalLanguages: 0,
+    availableLanguages: [] as string[],
+    currentLanguage: '',
+    totalNamespaces: 0,
+    loadedResources: 0,
+    totalResources: 0
+  });
   
-  // تهيئة كاشف الترجمات المفقودة
+  // تهيئة وتحديث إحصاءات الترجمات
   useEffect(() => {
-    if (isDeveloperMode) {
-      MissingTranslationDetector.init();
-    }
-  }, [isDeveloperMode]);
-
-  // تسجيل الترجمات المفقودة
-  useEffect(() => {
-    if (!isDeveloperMode) return;
-
-    const handleMissingKey = (lng: string, ns: string, key: string) => {
-      MissingTranslationDetector.addMissingKey(lng, key);
-      console.debug(`[i18n] Missing translation: ${lng}:${ns}:${key}`);
+    const updateTranslationStatus = () => {
+      // الحصول على قائمة اللغات المتاحة
+      const languages = i18n.languages || [];
+      
+      // الحصول على اللغة الحالية
+      const currentLanguage = i18n.language || '';
+      
+      // الحصول على أسماء المساحات
+      const namespaces = i18n.options.ns || [];
+      
+      // حساب إجمالي الموارد وعدد الموارد المحملة
+      let loadedResources = 0;
+      let totalResources = 0;
+      
+      languages.forEach(lang => {
+        if (typeof namespaces === 'string') {
+          // إذا كان هناك مساحة اسمية واحدة فقط
+          totalResources += 1;
+          if (i18n.hasResourceBundle(lang, namespaces)) {
+            loadedResources += 1;
+          }
+        } else {
+          // إذا كان هناك عدة مساحات اسمية
+          namespaces.forEach(ns => {
+            totalResources += 1;
+            if (i18n.hasResourceBundle(lang, ns)) {
+              loadedResources += 1;
+            }
+          });
+        }
+      });
+      
+      setTranslationStatus({
+        totalLanguages: languages.length,
+        availableLanguages: languages,
+        currentLanguage,
+        totalNamespaces: Array.isArray(namespaces) ? namespaces.length : 1,
+        loadedResources,
+        totalResources
+      });
     };
-
-    i18n.on('missingKey', handleMissingKey);
+    
+    updateTranslationStatus();
+    
+    // تحديث الحالة عند تغيير اللغة
+    const handleLanguageChanged = () => {
+      updateTranslationStatus();
+    };
+    
+    i18n.on('languageChanged', handleLanguageChanged);
     
     return () => {
-      i18n.off('missingKey', handleMissingKey);
+      i18n.off('languageChanged', handleLanguageChanged);
     };
-  }, [i18n, isDeveloperMode]);
-
-  // هذا المكون لا يرسم أي شيء، فهو مكون منطقي فقط
+  }, [i18n]);
+  
+  // لا يقدم هذا المكون أي واجهة مستخدم، فهو مكون منطقي فقط
   return null;
 }
+
+// تصدير المكون كمكون افتراضي لدعم React.lazy
+export default TranslationManager;

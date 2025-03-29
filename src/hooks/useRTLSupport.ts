@@ -1,82 +1,91 @@
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface RTLOptions {
-  enforceRTL?: boolean;
-  enforceSpecificLanguages?: string[];
-}
-
 /**
- * خطاف لدعم اللغات التي تكتب من اليمين إلى اليسار مثل العربية
+ * خطاف لإدارة وتطبيق اتجاه الكتابة من اليمين إلى اليسار
  */
-export function useRTLSupport(options: RTLOptions = {}) {
-  const { enforceRTL = false, enforceSpecificLanguages = ['ar', 'ar-iq', 'he', 'ur', 'fa'] } = options;
+export function useRTLSupport() {
   const { i18n } = useTranslation();
-  const [isRTL, setIsRTL] = useState(false);
-  
-  // تحديث اتجاه المستند عند تغيير اللغة
+  const [isRTL, setIsRTL] = useState<boolean>(false);
+  const [didMount, setDidMount] = useState<boolean>(false);
+
+  // إعداد اتجاه الكتابة بناءً على اللغة
   useEffect(() => {
-    // التأكد من أن اللغة الحالية موجودة قبل استخدامها
+    setDidMount(true);
+    
+    // التحقق من اللغة الحالية
     const currentLang = i18n.language || 'en';
     
-    // تحديد ما إذا كانت اللغة الحالية هي RTL
-    const rtlLanguages = enforceSpecificLanguages;
-    const shouldBeRTL = enforceRTL || rtlLanguages.some(lang => 
-      currentLang === lang || (currentLang && currentLang.startsWith(`${lang}-`))
+    // قائمة اللغات التي تستخدم اتجاه الكتابة من اليمين إلى اليسار
+    const rtlLanguages = ['ar', 'ar-iq', 'he', 'fa', 'ur'];
+    
+    // التحقق مما إذا كانت اللغة الحالية تستخدم RTL
+    const shouldBeRTL = rtlLanguages.some(lang => 
+      currentLang === lang || currentLang.startsWith(`${lang}-`)
     );
     
-    // تطبيق الاتجاه على المستند
+    // تطبيق اتجاه RTL
     if (shouldBeRTL) {
       document.documentElement.setAttribute('dir', 'rtl');
       document.body.classList.add('rtl-active');
+      setIsRTL(true);
     } else {
       document.documentElement.setAttribute('dir', 'ltr');
       document.body.classList.remove('rtl-active');
+      setIsRTL(false);
     }
     
-    // تحديث الحالة
-    setIsRTL(shouldBeRTL);
+    // إضافة فئة CSS لمساعدة التنسيق
+    document.documentElement.classList.toggle('rtl', shouldBeRTL);
     
-    // إضافة معلومات RTL إلى النافذة العالمية للاستخدام في المكونات الأخرى
-    if (typeof window !== 'undefined') {
-      (window as any).RTLSupport = (window as any).RTLSupport || {};
-      (window as any).RTLSupport.isRTL = shouldBeRTL;
-    }
-  }, [i18n.language, enforceRTL, enforceSpecificLanguages]);
+  }, [i18n.language]);
   
   /**
-   * إضافة خاصية التدفق النصي المعكوس إلى عناصر المفاتيح-القيم
-   * مثل: { name: 'اسم', value: 'قيمة' } => { name: 'اسم', value: 'قيمة', textFlow: 'rtl' }
+   * تنسيق النصوص لاستخدام اتجاه الكتابة الصحيح
+   * @param text النص الذي سيتم تنسيقه
+   * @param forceRTL إجبار استخدام RTL
+   * @param forceLTR إجبار استخدام LTR
    */
-  const addRTLTextFlow = <T extends Record<string, any>>(
-    items: T[],
-    textProperties: (keyof T)[] = ['label', 'title', 'text', 'name', 'description']
-  ): (T & { textFlow?: 'rtl' | 'ltr' })[] => {
-    if (!isRTL) return items as (T & { textFlow?: 'rtl' | 'ltr' })[];
+  const formatTextDirection = (text: string, forceRTL = false, forceLTR = false): string => {
+    if (!text) return text;
     
-    return items.map(item => {
-      // التحقق مما إذا كانت أي من خصائص النص تحتوي على نص باللغة العربية
-      const hasArabicText = textProperties.some(prop => {
-        const value = item[prop];
-        return typeof value === 'string' && /[\u0600-\u06FF]/.test(value);
-      });
-      
-      // إضافة خاصية textFlow إذا كان النص عربيًا
-      return hasArabicText ? { ...item, textFlow: 'rtl' as const } : { ...item, textFlow: 'ltr' as const };
-    });
+    if (forceRTL) {
+      return `\u202B${text}\u202C`; // RLE: Right-to-Left Embedding
+    } else if (forceLTR) {
+      return `\u202A${text}\u202C`; // LRE: Left-to-Right Embedding
+    }
+    
+    // استخدام اتجاه الكتابة التلقائي
+    return text;
   };
   
   /**
-   * عكس ترتيب المصفوفة إذا كان الاتجاه من اليمين إلى اليسار
+   * عكس مصفوفة في حالة RTL
+   * مفيد للقوائم التي يجب أن تظهر بترتيب معكوس في RTL
+   * @param array المصفوفة التي سيتم عكسها
    */
-  const applyRTLOrder = <T>(items: T[]): T[] => {
-    return isRTL ? [...items].reverse() : items;
+  const reverseIfRTL = <T,>(array: T[]): T[] => {
+    if (isRTL) {
+      return [...array].reverse();
+    }
+    return array;
   };
   
+  /**
+   * تطبيق قيم CSS مختلفة بناءً على اتجاه الكتابة
+   * @param rtlValue القيمة في حالة RTL
+   * @param ltrValue القيمة في حالة LTR
+   */
+  const applyDirectionalValue = <T,>(rtlValue: T, ltrValue: T): T => {
+    return isRTL ? rtlValue : ltrValue;
+  };
+
   return {
     isRTL,
-    addRTLTextFlow,
-    applyRTLOrder,
+    didMount,
+    formatTextDirection,
+    reverseIfRTL,
+    applyDirectionalValue
   };
 }
