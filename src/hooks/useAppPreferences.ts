@@ -4,7 +4,7 @@ import { useCallback, useEffect } from 'react';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { AppPreferences } from './state/preferences-state';
+import { AppPreferences } from './state/types';
 
 /**
  * خطاف لإدارة تفضيلات التطبيق بشكل سهل

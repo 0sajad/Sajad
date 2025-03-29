@@ -2,7 +2,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { StateCreator } from 'zustand';
-import { AppState } from './types';
+import { AppState, ColorBlindMode } from './types';
 
 export interface AppPreferences {
   language: string;

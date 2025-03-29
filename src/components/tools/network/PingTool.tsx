@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -140,6 +139,8 @@ export function PingTool() {
       <div className="flex justify-end">
         <Button 
           onClick={handlePing} 
+          className="w-full bg-green-600 hover:bg-green-700 text-white"
+          variant="default"
           disabled={isRunning || !host || !isOnline}
         >
           {isRunning ? (

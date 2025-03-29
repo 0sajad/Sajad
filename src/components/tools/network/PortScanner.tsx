@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +26,7 @@ export function PortScanner() {
   const [results, setResults] = useState<Port[]>([]);
   const [scanMode, setScanMode] = useState<'common' | 'range' | 'specific'>('common');
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   
   // وظيفة محاكاة لفحص المنافذ
   const handleScan = async () => {
@@ -129,7 +129,9 @@ export function PortScanner() {
       <div className="flex justify-end">
         <Button 
           onClick={handleScan} 
-          disabled={isScanning || !hostInput}
+          className="w-full bg-green-600 hover:bg-green-700 text-white"
+          variant="default"
+          disabled={isLoading || !hostInput}
         >
           {isScanning ? (
             <>

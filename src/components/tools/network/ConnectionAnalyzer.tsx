@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -27,7 +26,6 @@ export function ConnectionAnalyzer() {
   const [results, setResults] = useState<ConnectionTestResult[]>([]);
   const { isOnline, networkStatus, checkConnection } = useOfflineSupport();
   
-  // تحديث التقدم أثناء التحليل
   useEffect(() => {
     if (!isAnalyzing) {
       return;
@@ -51,20 +49,16 @@ export function ConnectionAnalyzer() {
     return () => clearInterval(progressTimer);
   }, [isAnalyzing]);
   
-  // وظيفة محاكاة لتحليل الاتصال
-  const handleAnalyze = async () => {
+  const handleConnectionTest = async () => {
     setIsAnalyzing(true);
     setProgress(0);
     setResults([]);
     
     try {
-      // محاكاة اختبارات الاتصال المختلفة
       await checkConnection();
       
-      // إنشاء تأخير في ظهور النتائج
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // إنشاء نتائج مزيفة
       const mockResults: ConnectionTestResult[] = [
         {
           name: t('networkTools.analyzer.internetConnection', 'اتصال الإنترنت'),
@@ -95,7 +89,7 @@ export function ConnectionAnalyzer() {
           name: t('networkTools.analyzer.latency', 'زمن الوصول'),
           status: Math.random() > 0.5 ? 'success' : 'warning',
           message: Math.random() > 0.5 
-            ? t('networkTools.analyzer.lowLatency', 'زمن وصول منخفض (25ms)') 
+            ? t('networkTools.analyzer.lowLatency', 'زمن وصو�� منخفض (25ms)') 
             : t('networkTools.analyzer.highLatency', 'زمن وصول مرتفع (120ms)'),
           details: Math.random() > 0.5 
             ? t('networkTools.analyzer.goodForGaming', 'مناسب للألعاب والتطبيقات التفاعلية') 
@@ -137,18 +131,20 @@ export function ConnectionAnalyzer() {
     <div className="space-y-4">
       <div className="flex justify-end">
         <Button 
-          onClick={handleAnalyze} 
+          onClick={handleConnectionTest} 
+          className="w-full bg-green-600 hover:bg-green-700 text-white"
+          variant="default"
           disabled={isAnalyzing}
         >
           {isAnalyzing ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              <ArabicTextEnhancer>{t('networkTools.analyzing', 'جارِ التحليل...')}</ArabicTextEnhancer>
+              {t('networkTools.connection.testing', 'جاري الاختبار...')}
             </>
           ) : (
             <>
               <Network className="mr-2 h-4 w-4" />
-              <ArabicTextEnhancer>{t('networkTools.analyzeConnection', 'تحليل الاتصال')}</ArabicTextEnhancer>
+              {t('networkTools.connection.test', 'اختبار الاتصال')}
             </>
           )}
         </Button>
@@ -234,7 +230,7 @@ export function ConnectionAnalyzer() {
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={handleAnalyze} 
+            onClick={handleConnectionTest} 
             disabled={isAnalyzing}
             className="text-xs"
           >

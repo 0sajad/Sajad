@@ -29,13 +29,13 @@ const FeatureContext = createContext<FeatureContextType | null>(null);
  */
 export function FeatureProvider({ children }: { children: ReactNode }) {
   const { t } = useTranslation();
-  const isDeveloperMode = useAppState(state => state.preferences.developerMode);
+  const { preferences } = useAppState(state => state);
   const setPreference = useAppState(state => state.setPreference);
-  const [isDevMode, setIsDevMode] = useState(isDeveloperMode);
+  const [isDevMode, setIsDevMode] = useState(preferences.developerMode || false);
   const [featureStates, setFeatureStates] = useState<Record<string, boolean>>({});
   
   useEffect(() => {
-    setIsDevMode(isDeveloperMode);
+    setIsDevMode(preferences.developerMode || false);
     
     try {
       const savedFeatures = localStorage.getItem('featureStates');
@@ -45,7 +45,7 @@ export function FeatureProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error('Error loading feature states:', error);
     }
-  }, [isDeveloperMode]);
+  }, [preferences.developerMode]);
   
   useEffect(() => {
     if (Object.keys(featureStates).length > 0) {
@@ -157,7 +157,7 @@ export function FeatureProvider({ children }: { children: ReactNode }) {
   const toggleDevMode = () => {
     const newMode = !isDevMode;
     setIsDevMode(newMode);
-    setPreference('developerMode', newMode);
+    setPreference("developerMode", !isDevMode);
     
     toast.success(
       newMode 

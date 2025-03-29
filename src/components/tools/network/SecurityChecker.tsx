@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,19 +25,19 @@ interface SecurityCheckItem {
  */
 export function SecurityChecker() {
   const { t } = useTranslation();
-  const [isChecking, setIsChecking] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [domain, setDomain] = useState('');
   const [results, setResults] = useState<SecurityCheckItem[]>([]);
   const { isOnline } = useOfflineSupport();
   
   // وظيفة محاكاة لفحص الأمان
-  const handleCheck = async () => {
+  const handleSecurityCheck = async () => {
     if (!domain || !isOnline) {
       return;
     }
     
-    setIsChecking(true);
+    setIsLoading(true);
     setProgress(0);
     setResults([]);
     
@@ -191,7 +190,7 @@ export function SecurityChecker() {
     } catch (error) {
       console.error('Security check error:', error);
     } finally {
-      setIsChecking(false);
+      setIsLoading(false);
       setProgress(100);
     }
   };
@@ -247,16 +246,18 @@ export function SecurityChecker() {
             value={domain}
             onChange={(e) => setDomain(e.target.value)}
             placeholder="example.com"
-            disabled={isChecking}
+            disabled={isLoading}
           />
         </div>
         
         <div className="sm:mt-8">
           <Button 
-            onClick={handleCheck} 
-            disabled={isChecking || !domain || !isOnline}
+            onClick={handleSecurityCheck} 
+            className="w-full bg-green-600 hover:bg-green-700 text-white"
+            variant="default"
+            disabled={isLoading}
           >
-            {isChecking ? (
+            {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 <ArabicTextEnhancer>{t('networkTools.security.checking', 'جارِ الفحص...')}</ArabicTextEnhancer>
@@ -284,7 +285,7 @@ export function SecurityChecker() {
         </Alert>
       )}
       
-      {isChecking && (
+      {isLoading && (
         <div className="space-y-2">
           <div className="flex justify-between">
             <div className="flex items-center">

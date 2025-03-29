@@ -1,4 +1,3 @@
-
 import { AppState } from './types';
 import { toast } from 'sonner';
 
@@ -150,7 +149,7 @@ export function resetState(
       autoSave: true,
       notificationsEnabled: true,
       fontSize: 'normal',
-      animationsEnabled: true,
+      animations: true,
       autoRefresh: true,
       refreshRate: 30,
       developerMode: false,

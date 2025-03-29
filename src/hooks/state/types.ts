@@ -1,3 +1,4 @@
+
 /**
  * أنواع بيانات مخزن الحالة
  * تعريف الواجهات والأنواع المستخدمة في إدارة حالة التطبيق
@@ -196,6 +197,7 @@ export interface AppPreferences {
   autoRefresh: boolean;
   refreshRate: number;
   analyticsEnabled: boolean;
+  animationsEnabled: boolean;
 }
 
 // واجهة إعدادات المستخدم

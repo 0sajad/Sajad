@@ -1,7 +1,6 @@
 
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { i18n } from '../i18n';
 import { useAppState } from './state/use-app-state';
 
 /**
@@ -17,11 +16,11 @@ export function useTranslationValidator() {
   useEffect(() => {
     if (!isDeveloperMode) return;
     
-    const originalT = i18n.t.bind(i18n);
+    const originalT = i18n.t;
     const trackedMissingKeys: Record<string, string[]> = {};
     
     // إنشاء دالة t معدلة للكشف عن المفاتيح المفقودة
-    i18n.t = function(key: any, options?: any) {
+    const modifiedT = function(key: any, options?: any) {
       const result = originalT(key, options);
       
       // إذا كانت النتيجة هي المفتاح نفسه، فهذا يعني أن الترجمة مفقودة
@@ -43,6 +42,9 @@ export function useTranslationValidator() {
       
       return result;
     };
+    
+    // تطبيق التعديل
+    i18n.t = modifiedT as typeof i18n.t;
     
     // ترجع الدالة t الأصلية عند تفكيك المكون
     return () => {
