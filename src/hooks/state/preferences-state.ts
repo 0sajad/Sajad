@@ -26,6 +26,10 @@ export interface AppPreferences {
   animations: boolean;      // رسوم متحركة
   fullWidthLayout: boolean; // تخطيط بعرض كامل
   syncSystemPreferences: boolean; // مزامنة تفضيلات النظام
+  soundEffects: boolean;    // تأثيرات صوتية
+  arabicNumerals: boolean;  // أرقام عربية
+  autoSave: boolean;        // حفظ تلقائي
+  fontSize: 'normal' | 'large' | 'x-large'; // حجم الخط
 }
 
 /**
@@ -54,7 +58,11 @@ export const defaultPreferences: AppPreferences = {
   telemetry: true,
   animations: true,
   fullWidthLayout: false,
-  syncSystemPreferences: true
+  syncSystemPreferences: true,
+  soundEffects: false,
+  arabicNumerals: false,
+  autoSave: true,
+  fontSize: 'normal'
 };
 
 // Export this function to support app-state-utils.ts
@@ -68,7 +76,7 @@ export const createPreferencesSlice = (set: any) => ({
       },
     })),
   resetPreferences: () =>
-    set((state: any) => ({
+    set((_state: any) => ({
       preferences: { ...defaultPreferences },
     })),
 });

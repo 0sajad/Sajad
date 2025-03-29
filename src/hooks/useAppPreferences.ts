@@ -29,7 +29,7 @@ export function useAppPreferences() {
     Object.keys(defaultPreferences).forEach((key) => {
       // Use type assertion to ensure the compiler recognizes compatibility
       const prefKey = key as keyof AppPreferences;
-      // Use type assertion to ensure the correct type is assigned
+      // Use setPreference directly with the key and value
       setPreference(prefKey, defaultPreferences[prefKey]);
     });
     

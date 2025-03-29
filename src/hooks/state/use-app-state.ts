@@ -63,36 +63,6 @@ export const useAppState = create<AppState>()(
       animations: true,
       compactMode: false,
       
-      // Updated preferences initialization to match complete AppPreferences interface
-      preferences: {
-        theme: 'system',
-        language: 'ar',
-        notifications: true,
-        telemetry: false,
-        animations: true,
-        fullWidthLayout: false,
-        compactMode: false,
-        soundEffects: false,
-        highContrast: false,
-        largeText: false,
-        reducedMotion: false,
-        focusMode: false,
-        arabicNumerals: false,
-        autoSave: true,
-        notificationsEnabled: true,
-        fontSize: 'normal',
-        animationsEnabled: true,
-        autoRefresh: true,
-        refreshRate: 30,
-        developerMode: false,
-        analyticsEnabled: true,
-        colorBlindMode: 'none',
-        dyslexicFont: false,
-        readingGuide: false,
-        soundFeedback: false,
-        syncSystemPreferences: true
-      },
-      
       // Add the required checkConnection function
       checkConnection: async () => {
         try {
