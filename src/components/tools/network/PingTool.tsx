@@ -1,156 +1,131 @@
+
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Zap, Wifi, BarChart2, RefreshCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Loader2, CheckCircle, AlertTriangle, XCircle, Square } from 'lucide-react';
+import { usePingData } from '@/hooks/usePingData';
 
-interface PingResult {
-  host: string;
-  result: number | null;
-  timestamp: Date;
-}
-
-function getPingStatusText(latency: number | null): string {
-  if (latency === null) {
-    return "لم يتم الفحص";
-  } else if (latency < 100) {
-    return `جيد (${latency}ms)`;
-  } else if (latency < 200) {
-    return `متوسط (${latency}ms)`;
-  } else {
-    return `سيء (${latency}ms)`;
-  }
-}
-
-import { Square } from 'lucide-react';
-// تم استبدال Stop المفقود بـ Square الموجود بالفعل
-
-// دالة تحويل الحالة إلى variant زر مدعوم
-const getPingStatusVariant = (latency: number | null): "default" | "destructive" | "outline" | "secondary" => {
-  if (latency === null) return "outline";
-  if (latency < 100) return "default"; // جيد - استخدام default مع css مخصص
-  if (latency < 200) return "secondary"; // متوسط
-  return "destructive"; // سيء
-};
+// Create a unique component name for the Square component
+const PingSquare = ({ value, color }: { value: number; color: string }) => (
+  <div
+    className={`h-4 w-4 transition-colors duration-300 ${color}`}
+    title={`${value}ms`}
+  ></div>
+);
 
 export function PingTool() {
   const { t } = useTranslation();
-  const [host, setHost] = useState('google.com');
-  const [isPinging, setIsPinging] = useState(false);
-  const [pingResults, setPingResults] = useState<PingResult[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [host, setHost] = useState('example.com');
+  const [pingActive, setPingActive] = useState(false);
+  const { pingResults, pingHost, stopPing, currentPingDelay, pingHistory } = usePingData();
   
-  // فحص الاتصال
-  const handlePing = async () => {
-    setIsPinging(true);
-    setError(null);
-    
-    try {
-      // إرسال طلب HTTP بسيط لقياس زمن الوصول
-      const startTime = Date.now();
-      await fetch(`https://${host}`, { mode: 'no-cors' });
-      const endTime = Date.now();
-      const latency = endTime - startTime;
-      
-      // إضافة النتيجة إلى سجل النتائج
-      setPingResults(prevResults => [
-        ...prevResults,
-        { host, result: latency, timestamp: new Date() }
-      ]);
-    } catch (e: any) {
-      // تسجيل الخطأ
-      setError(e.message || 'فشل الاتصال');
-      
-      // إضافة نتيجة الخطأ إلى سجل النتائج
-      setPingResults(prevResults => [
-        ...prevResults,
-        { host, result: null, timestamp: new Date() }
-      ]);
-    } finally {
-      setIsPinging(false);
-    }
+  useEffect(() => {
+    return () => {
+      stopPing();
+    };
+  }, [stopPing]);
+  
+  const handleStartPing = () => {
+    setPingActive(true);
+    pingHost(host);
+  };
+  
+  const handleStopPing = () => {
+    setPingActive(false);
+    stopPing();
+  };
+  
+  const getPingColor = (ping: number) => {
+    if (ping === 0) return 'bg-gray-200';
+    if (ping < 50) return 'bg-green-500';
+    if (ping < 100) return 'bg-blue-500';
+    if (ping < 200) return 'bg-yellow-500';
+    if (ping < 400) return 'bg-orange-500';
+    return 'bg-red-500';
   };
   
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>{t('pingTool.title', 'أداة فحص الاتصال')}</CardTitle>
-        <CardDescription>{t('pingTool.description', 'تحقق من زمن الوصول إلى أي مضيف')}</CardDescription>
+    <Card>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-lg flex items-center">
+          <Zap className="w-5 h-5 mr-2 text-blue-500" />
+          {t('tools.pingTool', 'اختبار زمن الاستجابة')}
+        </CardTitle>
+        <CardDescription>
+          {t('tools.pingDescription', 'قياس زمن الاستجابة للخوادم والمواقع المختلفة')}
+        </CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
-          <Label htmlFor="host">{t('pingTool.hostLabel', 'المضيف')}</Label>
-          <Input
-            id="host"
-            value={host}
-            onChange={(e) => setHost(e.target.value)}
-            className="col-span-2"
-            placeholder="google.com"
-          />
-        </div>
-        <Button onClick={handlePing} disabled={isPinging}>
-          {isPinging ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {t('common.loading', 'جاري الفحص...')}
-            </>
-          ) : (
-            t('pingTool.pingButton', 'فحص الاتصال')
-          )}
-        </Button>
-        
-        {error && (
-          <div className="text-red-500 mt-2 flex items-center">
-            <AlertTriangle className="h-4 w-4 mr-2" />
-            {error}
+      <CardContent className="space-y-4">
+        <div className="flex space-x-2">
+          <div className="flex-1">
+            <Label htmlFor="ping-host" className="sr-only">{t('tools.hostToPing', 'مضيف الاختبار')}</Label>
+            <Input
+              id="ping-host"
+              value={host}
+              onChange={(e) => setHost(e.target.value)}
+              disabled={pingActive}
+              placeholder="example.com"
+              className="w-full"
+            />
           </div>
-        )}
+          {!pingActive ? (
+            <Button onClick={handleStartPing} disabled={!host.trim()} variant="outline">
+              {t('tools.startPing', 'بدء')}
+            </Button>
+          ) : (
+            <Button onClick={handleStopPing} variant="outline" className="bg-red-50 text-red-600 border-red-200 hover:bg-red-100 hover:text-red-700">
+              {t('tools.stopPing', 'إيقاف')}
+            </Button>
+          )}
+        </div>
         
-        {pingResults.length > 0 && (
-          <div className="mt-4">
-            <h3 className="text-sm font-medium">{t('pingTool.results', 'النتائج')}</h3>
-            <div className="mt-2 space-y-1">
-              {pingResults.map((ping, index) => (
-                <div key={index} className="flex items-center justify-between border rounded-md p-2">
-                  <div>
-                    <span className="font-mono text-sm">{ping.host}</span>
-                    <span className="text-xs text-muted-foreground ml-2">
-                      {ping.timestamp.toLocaleTimeString()}
-                    </span>
-                  </div>
-                  
-                  {ping.result === null ? (
-                    <Button 
-                      variant={getPingStatusVariant(ping.result)}
-                      size="sm"
-                      className={`min-w-24 ${
-                        ping.result !== null && ping.result < 100 ? "bg-green-500 hover:bg-green-600" : ""
-                      }`}
-                    >
-                      {getPingStatusText(ping.result)}
-                    </Button>
-                  ) : (
-                    <Button 
-                      variant={getPingStatusVariant(ping.result)}
-                      size="sm"
-                      className={`min-w-24 ${
-                        ping.result !== null && ping.result < 100 ? "bg-green-500 hover:bg-green-600" : ""
-                      }`}
-                    >
-                      {getPingStatusText(ping.result)}
-                    </Button>
-                  )}
-                </div>
-              ))}
+        {pingActive && (
+          <div className="text-center">
+            <div className="text-3xl font-bold mb-2">
+              {currentPingDelay > 0 ? `${currentPingDelay} ms` : '...'}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {currentPingDelay > 0 ? t('tools.currentPing', 'زمن الاستجابة الحالي') : t('tools.waitingForResponse', 'بانتظار الاستجابة...')}
             </div>
           </div>
         )}
+        
+        <div className="mt-4">
+          <div className="text-sm font-medium mb-2 flex items-center">
+            <BarChart2 className="h-4 w-4 mr-1" />
+            {t('tools.pingHistory', 'سجل الاستجابة')}
+          </div>
+          <div className="flex space-x-1 h-4">
+            {pingHistory.map((ping, index) => (
+              <PingSquare key={index} value={ping} color={getPingColor(ping)} />
+            ))}
+            {pingHistory.length === 0 && (
+              <div className="text-sm text-muted-foreground italic">
+                {t('tools.noPingDataYet', 'لا توجد بيانات بعد')}
+              </div>
+            )}
+          </div>
+        </div>
       </CardContent>
+      <CardFooter className="pt-2 text-xs text-muted-foreground border-t flex justify-between items-center">
+        <div className="flex items-center">
+          <Wifi className="h-3 w-3 mr-1" />
+          {t('tools.pingCount', 'عدد الفحوصات')}: {pingResults.length}
+        </div>
+        {pingResults.length > 0 && (
+          <div className="flex items-center">
+            <span className="mr-2">
+              {t('tools.avgPing', 'المتوسط')}: {Math.round(pingResults.reduce((sum, val) => sum + val, 0) / pingResults.length)} ms
+            </span>
+            <span>
+              {t('tools.maxPing', 'الأقصى')}: {Math.max(...pingResults)} ms
+            </span>
+          </div>
+        )}
+      </CardFooter>
     </Card>
   );
 }
-
-// في مكان استخدام Stop
-<Square className="h-4 w-4 mr-2" />

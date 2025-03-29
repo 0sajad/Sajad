@@ -1,271 +1,340 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { useTranslation } from "react-i18next";
-import { Loader2, RefreshCw, Network, CheckCircle2, XCircle } from "lucide-react";
-import { ArabicTextEnhancer } from '@/components/text/ArabicTextEnhancer';
-import { useOfflineSupport } from '@/hooks/useOfflineSupport';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  Activity, 
+  Wifi, 
+  Share2, 
+  Globe, 
+  Server, 
+  Clock, 
+  BarChart2, 
+  Download,
+  UploadCloud,
+  Zap,
+  Shield
+} from "lucide-react";
+import { useTranslation } from 'react-i18next';
+import { cn } from "@/lib/utils";
+import { LatencyChart } from '@/components/analytics/monitoring/LatencyChart';
+import { SpeedChart } from '@/components/analytics/monitoring/SpeedChart';
 
-interface ConnectionTestResult {
-  name: string;
-  status: 'success' | 'warning' | 'error' | 'info';
-  message: string;
-  details?: string;
-}
+// Sample data for charts
+const sampleData = [
+  { time: "12:00", download: 45, upload: 22, latency: 15 },
+  { time: "12:05", download: 52, upload: 24, latency: 12 },
+  { time: "12:10", download: 48, upload: 20, latency: 14 },
+  { time: "12:15", download: 58, upload: 25, latency: 10 },
+  { time: "12:20", download: 35, upload: 18, latency: 25 },
+  { time: "12:25", download: 42, upload: 22, latency: 18 },
+  { time: "12:30", download: 50, upload: 24, latency: 12 },
+];
 
-/**
- * أداة تحليل الاتصال - تفحص حالة الشبكة والاتصال بالإنترنت
- */
 export function ConnectionAnalyzer() {
   const { t } = useTranslation();
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
+  const [analyzing, setAnalyzing] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [results, setResults] = useState<ConnectionTestResult[]>([]);
-  const { isOnline, networkStatus, checkConnection } = useOfflineSupport();
+  const [analysisComplete, setAnalysisComplete] = useState(false);
   
-  useEffect(() => {
-    if (!isAnalyzing) {
-      return;
-    }
-    
-    let progressTimer: NodeJS.Timeout;
-    let currentProgress = 0;
-    
-    const updateProgress = () => {
-      currentProgress += 5;
-      setProgress(Math.min(currentProgress, 100));
-      
-      if (currentProgress >= 100) {
-        clearInterval(progressTimer);
-        setIsAnalyzing(false);
-      }
-    };
-    
-    progressTimer = setInterval(updateProgress, 200);
-    
-    return () => clearInterval(progressTimer);
-  }, [isAnalyzing]);
+  // Simulated connection details
+  const connectionDetails = {
+    type: "Ethernet",
+    speed: "1 Gbps",
+    ipAddress: "192.168.1.105",
+    gateway: "192.168.1.1",
+    dns1: "8.8.8.8",
+    dns2: "8.8.4.4",
+    downloadSpeed: 85.4,
+    uploadSpeed: 42.2,
+    latency: 18,
+    packetLoss: 0.2,
+  };
   
-  const handleConnectionTest = async () => {
-    setIsAnalyzing(true);
+  // Speed quality calculation
+  const getSpeedQuality = (speed: number) => {
+    if (speed > 100) return { text: t('speedTest.excellent'), color: "text-green-600" };
+    if (speed > 50) return { text: t('speedTest.good'), color: "text-blue-600" };
+    if (speed > 25) return { text: t('speedTest.fair'), color: "text-yellow-600" };
+    if (speed > 10) return { text: t('speedTest.poor'), color: "text-orange-600" };
+    return { text: t('speedTest.veryPoor'), color: "text-red-600" };
+  };
+  
+  // Latency quality calculation
+  const getLatencyQuality = (latency: number) => {
+    if (latency < 20) return { text: t('speedTest.excellent'), color: "text-green-600" };
+    if (latency < 50) return { text: t('speedTest.good'), color: "text-blue-600" };
+    if (latency < 100) return { text: t('speedTest.fair'), color: "text-yellow-600" };
+    if (latency < 150) return { text: t('speedTest.poor'), color: "text-orange-600" };
+    return { text: t('speedTest.veryPoor'), color: "text-red-600" };
+  };
+  
+  // Simulate connection analysis
+  const startAnalysis = () => {
+    setAnalyzing(true);
     setProgress(0);
-    setResults([]);
+    setAnalysisComplete(false);
     
-    try {
-      await checkConnection();
-      
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const mockResults: ConnectionTestResult[] = [
-        {
-          name: t('networkTools.analyzer.internetConnection', 'اتصال الإنترنت'),
-          status: isOnline ? 'success' : 'error',
-          message: isOnline 
-            ? t('networkTools.analyzer.connected', 'متصل بالإنترنت') 
-            : t('networkTools.analyzer.notConnected', 'غير متصل بالإنترنت')
-        },
-        {
-          name: t('networkTools.analyzer.dnsResolution', 'تحليل DNS'),
-          status: isOnline ? 'success' : 'error',
-          message: isOnline 
-            ? t('networkTools.analyzer.dnsWorking', 'تحليل DNS يعمل بشكل صحيح') 
-            : t('networkTools.analyzer.dnsNotWorking', 'مشكلة في تحليل DNS')
-        },
-        {
-          name: t('networkTools.analyzer.gatewayConnection', 'اتصال البوابة'),
-          status: 'success',
-          message: t('networkTools.analyzer.gatewayReachable', 'البوابة يمكن الوصول إليها')
-        },
-        {
-          name: t('networkTools.analyzer.bandwidthUsage', 'استخدام عرض النطاق'),
-          status: 'warning',
-          message: t('networkTools.analyzer.highUsage', 'استخدام عرض النطاق مرتفع (75%)'),
-          details: t('networkTools.analyzer.bandwidthDetails', 'قد يؤثر على أداء التطبيقات التي تتطلب عرض نطاق عالي')
-        },
-        {
-          name: t('networkTools.analyzer.latency', 'زمن الوصول'),
-          status: Math.random() > 0.5 ? 'success' : 'warning',
-          message: Math.random() > 0.5 
-            ? t('networkTools.analyzer.lowLatency', 'زمن وصو�� منخفض (25ms)') 
-            : t('networkTools.analyzer.highLatency', 'زمن وصول مرتفع (120ms)'),
-          details: Math.random() > 0.5 
-            ? t('networkTools.analyzer.goodForGaming', 'مناسب للألعاب والتطبيقات التفاعلية') 
-            : t('networkTools.analyzer.mayAffectExperience', 'قد يؤثر على تجربة التطبيقات التفاعلية')
-        },
-        {
-          name: t('networkTools.analyzer.packetLoss', 'فقدان الحزم'),
-          status: Math.random() > 0.8 ? 'warning' : 'success',
-          message: Math.random() > 0.8 
-            ? t('networkTools.analyzer.moderateLoss', 'فقدان حزم متوسط (3%)') 
-            : t('networkTools.analyzer.noLoss', 'لا يوجد فقدان للحزم (0%)')
-        },
-        {
-          name: t('networkTools.analyzer.networkType', 'نوع الشبكة'),
-          status: 'info',
-          message: Math.random() > 0.5 
-            ? t('networkTools.analyzer.wired', 'شبكة سلكية (Ethernet)') 
-            : t('networkTools.analyzer.wireless', 'شبكة لاسلكية (Wi-Fi)')
-        },
-        {
-          name: t('networkTools.analyzer.ipVersion', 'إصدار IP'),
-          status: 'info',
-          message: Math.random() > 0.3 
-            ? t('networkTools.analyzer.dualStack', 'مزدوج (IPv4 & IPv6)') 
-            : t('networkTools.analyzer.ipv4Only', 'IPv4 فقط')
+    const timer = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(timer);
+          setAnalyzing(false);
+          setAnalysisComplete(true);
+          return 100;
         }
-      ];
-      
-      setResults(mockResults);
-    } catch (error) {
-      console.error('Connection analysis error:', error);
-    } finally {
-      setIsAnalyzing(false);
-      setProgress(100);
-    }
-  };
-  
-  const getVariantFromStatus = (status: string): "default" | "destructive" | "outline" | "secondary" => {
-    switch (status) {
-      case "good":
-        return "default";
-      case "warning":
-        return "secondary";
-      case "critical":
-        return "destructive";
-      default:
-        return "outline";
-    }
-  };
-  
-  const getStatusCategory = () => {
-    if (results.length === 0) return "good";
-    if (results.some(result => result.status === "error")) return "critical";
-    if (results.some(result => result.status === "warning")) return "warning";
-    return "good";
-  };
-  
-  const getStatusText = () => {
-    if (results.length === 0) return t('networkTools.connection.good', 'الاتصال جيد');
-    if (results.some(result => result.status === "error")) return t('networkTools.connection.critical', 'الاتصال غير متاح');
-    if (results.some(result => result.status === "warning")) return t('networkTools.connection.warning', 'الاتصال محدود');
-    return t('networkTools.connection.good', 'الاتصال جيد');
+        return prev + 5;
+      });
+    }, 200);
   };
   
   return (
-    <div className="space-y-4">
-      <div className="flex justify-end">
-        <Button 
-          variant="default"
-          className="w-full bg-green-600 hover:bg-green-700 text-white"
-          onClick={handleConnectionTest} 
-          disabled={isAnalyzing}
-        >
-          {isAnalyzing ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {t('networkTools.connection.testing', 'جاري الاختبار...')}
-            </>
-          ) : (
-            <>
-              <Network className="mr-2 h-4 w-4" />
-              {t('networkTools.connection.test', 'اختبار الاتصال')}
-            </>
-          )}
-        </Button>
-      </div>
-      
-      {isAnalyzing && (
-        <div className="space-y-2">
-          <div className="flex justify-between">
-            <div className="flex items-center">
-              <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-              <span className="text-sm">
-                <ArabicTextEnhancer>{t('networkTools.runningTests', 'جارِ تشغيل اختبارات الشبكة...')}</ArabicTextEnhancer>
-              </span>
-            </div>
-            <span className="text-sm">{progress}%</span>
-          </div>
-          <Progress value={progress} className="h-2" />
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg flex items-center">
+            <Activity className="w-5 h-5 mr-2 text-blue-500" />
+            {t('tools.connectionAnalyzer', 'محلل الاتصال')}
+          </CardTitle>
+          <Badge>{connectionDetails.type}</Badge>
         </div>
-      )}
-      
-      {!isOnline && !isAnalyzing && results.length === 0 && (
-        <Alert variant="destructive">
-          <AlertDescription>
-            <div className="flex items-center">
-              <XCircle className="h-4 w-4 mr-2" />
-              <ArabicTextEnhancer>
-                {t('networkTools.offlineAlert', 'أنت حاليًا في وضع عدم الاتصال. بعض اختبارات الشبكة قد لا تعمل بشكل صحيح.')}
-              </ArabicTextEnhancer>
-            </div>
-          </AlertDescription>
-        </Alert>
-      )}
-      
-      {results.length > 0 && (
-        <Card>
-          <CardContent className="p-4">
-            <div className="space-y-4">
-              {results.map((result, index) => (
-                <div key={index} className="border-b pb-3 last:border-b-0 last:pb-0">
-                  <div className="flex items-center justify-between">
-                    <div className="font-medium">
-                      {result.name}
+        <CardDescription>
+          {t('tools.analyzerDescription', 'تحليل شامل لجودة واستقرار اتصال الشبكة')}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {!analysisComplete ? (
+          <div className="space-y-6">
+            {analyzing ? (
+              <div className="space-y-4">
+                <div className="text-center text-sm font-medium">
+                  {t('tools.analyzing', 'جاري تحليل الاتصال...')}
+                </div>
+                <Progress value={progress} className="h-2" />
+                <div className="grid grid-cols-4 gap-2 text-center text-xs">
+                  <div>
+                    <div className={cn("font-medium", progress >= 25 ? "text-blue-600" : "text-muted-foreground")}>
+                      {t('tools.testingLatency', 'قياس زمن الاستجابة')}
                     </div>
-                    <Badge 
-                      variant={
-                        result.status === 'success' ? 'success' :
-                        result.status === 'warning' ? 'warning' :
-                        result.status === 'error' ? 'destructive' : 'outline'
-                      }
-                      className="ml-2"
-                    >
-                      {result.status === 'success' && (
-                        <CheckCircle2 className="h-3 w-3 mr-1" />
-                      )}
-                      {result.status === 'error' && (
-                        <XCircle className="h-3 w-3 mr-1" />
-                      )}
-                      <ArabicTextEnhancer>
-                        {result.status === 'success' ? t('common.success', 'نجاح') :
-                         result.status === 'warning' ? t('common.warning', 'تحذير') :
-                         result.status === 'error' ? t('common.error', 'خطأ') :
-                         t('common.info', 'معلومات')}
-                      </ArabicTextEnhancer>
+                    {progress >= 25 && <Zap className="h-4 w-4 mx-auto mt-1 text-blue-500" />}
+                  </div>
+                  <div>
+                    <div className={cn("font-medium", progress >= 50 ? "text-green-600" : "text-muted-foreground")}>
+                      {t('tools.testingDownload', 'سرعة التنزيل')}
+                    </div>
+                    {progress >= 50 && <Download className="h-4 w-4 mx-auto mt-1 text-green-500" />}
+                  </div>
+                  <div>
+                    <div className={cn("font-medium", progress >= 75 ? "text-purple-600" : "text-muted-foreground")}>
+                      {t('tools.testingUpload', 'سرعة الرفع')}
+                    </div>
+                    {progress >= 75 && <UploadCloud className="h-4 w-4 mx-auto mt-1 text-purple-500" />}
+                  </div>
+                  <div>
+                    <div className={cn("font-medium", progress >= 100 ? "text-amber-600" : "text-muted-foreground")}>
+                      {t('tools.testingStability', 'الاستقرار')}
+                    </div>
+                    {progress >= 100 && <Shield className="h-4 w-4 mx-auto mt-1 text-amber-500" />}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <Wifi className="h-12 w-12 mx-auto mb-4 text-blue-500 opacity-80" />
+                <h3 className="text-lg font-medium mb-2">
+                  {t('tools.readyToAnalyze', 'جاهز للتحليل')}
+                </h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  {t('tools.analyzePurpose', 'سيتم تقييم سرعة واستقرار اتصالك الحالي')}
+                </p>
+                <Button onClick={startAnalysis} className="mx-auto">
+                  {t('tools.startAnalysis', 'بدء التحليل')}
+                </Button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="space-y-6">
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="grid grid-cols-3 mb-4">
+                <TabsTrigger value="overview">{t('tools.overview', 'نظرة عامة')}</TabsTrigger>
+                <TabsTrigger value="details">{t('tools.details', 'التفاصيل')}</TabsTrigger>
+                <TabsTrigger value="charts">{t('tools.charts', 'الرسوم البيانية')}</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="overview">
+                <div className="grid grid-cols-2 gap-4">
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-sm font-medium text-muted-foreground">
+                          {t('tools.downloadSpeed', 'سرعة التنزيل')}
+                        </div>
+                        <Download className="h-4 w-4 text-green-500" />
+                      </div>
+                      <div className="text-2xl font-bold mb-1">
+                        {connectionDetails.downloadSpeed} <span className="text-sm font-normal">Mbps</span>
+                      </div>
+                      <div className={`text-xs ${getSpeedQuality(connectionDetails.downloadSpeed).color}`}>
+                        {getSpeedQuality(connectionDetails.downloadSpeed).text}
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-sm font-medium text-muted-foreground">
+                          {t('tools.uploadSpeed', 'سرعة الرفع')}
+                        </div>
+                        <UploadCloud className="h-4 w-4 text-purple-500" />
+                      </div>
+                      <div className="text-2xl font-bold mb-1">
+                        {connectionDetails.uploadSpeed} <span className="text-sm font-normal">Mbps</span>
+                      </div>
+                      <div className={`text-xs ${getSpeedQuality(connectionDetails.uploadSpeed).color}`}>
+                        {getSpeedQuality(connectionDetails.uploadSpeed).text}
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-sm font-medium text-muted-foreground">
+                          {t('tools.latency', 'زمن الاستجابة')}
+                        </div>
+                        <Clock className="h-4 w-4 text-blue-500" />
+                      </div>
+                      <div className="text-2xl font-bold mb-1">
+                        {connectionDetails.latency} <span className="text-sm font-normal">ms</span>
+                      </div>
+                      <div className={`text-xs ${getLatencyQuality(connectionDetails.latency).color}`}>
+                        {getLatencyQuality(connectionDetails.latency).text}
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-sm font-medium text-muted-foreground">
+                          {t('tools.packetLoss', 'فقدان الحزم')}
+                        </div>
+                        <Share2 className="h-4 w-4 text-amber-500" />
+                      </div>
+                      <div className="text-2xl font-bold mb-1">
+                        {connectionDetails.packetLoss}%
+                      </div>
+                      <div className="text-xs text-green-600">
+                        {connectionDetails.packetLoss < 1 ? t('tools.excellent', 'ممتاز') : t('tools.poor', 'ضعيف')}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+                
+                <div className="mt-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="font-medium">{t('tools.overallQuality', 'الجودة الإجمالية')}</div>
+                    <Badge variant="default" className="bg-blue-500">
+                      {t('tools.good', 'جيد')}
                     </Badge>
                   </div>
-                  <div className="text-sm mt-1">
-                    <ArabicTextEnhancer>{result.message}</ArabicTextEnhancer>
-                  </div>
-                  {result.details && (
-                    <div className="text-xs text-muted-foreground mt-1">
-                      <ArabicTextEnhancer>{result.details}</ArabicTextEnhancer>
-                    </div>
-                  )}
+                  <Progress value={78} className="h-2" />
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-      
-      {results.length > 0 && (
-        <div className="flex justify-end">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={handleConnectionTest} 
-            disabled={isAnalyzing}
-            className="text-xs"
-          >
-            <RefreshCw className="h-3 w-3 mr-1" />
-            <ArabicTextEnhancer>{t('common.runAgain', 'تشغيل مرة أخرى')}</ArabicTextEnhancer>
+              </TabsContent>
+              
+              <TabsContent value="details">
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                    <div>
+                      <div className="text-sm text-muted-foreground">
+                        {t('tools.connectionType', 'نوع الاتصال')}
+                      </div>
+                      <div className="font-medium">{connectionDetails.type}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-muted-foreground">
+                        {t('tools.linkSpeed', 'سرعة الارتباط')}
+                      </div>
+                      <div className="font-medium">{connectionDetails.speed}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-muted-foreground">
+                        {t('tools.ipAddress', 'عنوان IP')}
+                      </div>
+                      <div className="font-medium">{connectionDetails.ipAddress}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-muted-foreground">
+                        {t('tools.gateway', 'البوابة')}
+                      </div>
+                      <div className="font-medium">{connectionDetails.gateway}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-muted-foreground">
+                        {t('tools.primaryDNS', 'خادم DNS الأساسي')}
+                      </div>
+                      <div className="font-medium">{connectionDetails.dns1}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-muted-foreground">
+                        {t('tools.secondaryDNS', 'خادم DNS الثانوي')}
+                      </div>
+                      <div className="font-medium">{connectionDetails.dns2}</div>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4 border-t">
+                    <h4 className="text-sm font-medium mb-3 flex items-center">
+                      <Server className="h-4 w-4 mr-2 text-blue-500" />
+                      {t('tools.connectionIssues', 'مشاكل الاتصال المحتملة')}
+                    </h4>
+                    <div className="space-y-2">
+                      <div className="flex items-start">
+                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                          {t('tools.noIssues', 'لا توجد مشاكل')}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="charts">
+                <div className="space-y-6">
+                  <LatencyChart data={sampleData} />
+                  <SpeedChart data={sampleData} />
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+        )}
+      </CardContent>
+      <CardFooter className={cn("flex gap-2", analysisComplete ? "justify-between" : "justify-end")}>
+        {analysisComplete && (
+          <Button variant="outline" onClick={() => setAnalysisComplete(false)}>
+            {t('tools.newAnalysis', 'تحليل جديد')}
           </Button>
-        </div>
-      )}
-    </div>
+        )}
+        {analysisComplete && (
+          <Button variant="outline" className="bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100">
+            <Download className="h-4 w-4 mr-2" />
+            {t('tools.exportResults', 'تصدير النتائج')}
+          </Button>
+        )}
+      </CardFooter>
+    </Card>
   );
 }

@@ -8,6 +8,16 @@
 let missingKeys: Record<string, string[]> = {};
 let isInitialized = false;
 
+// Handle i18next potentially not available immediately
+const getI18next = () => {
+  // Check if we're in a browser environment
+  if (typeof window !== 'undefined') {
+    // Return i18next from window if it exists
+    return (window as any).i18next;
+  }
+  return null;
+};
+
 /**
  * فئة تمثل كاشف الترجمات المفقودة
  */
@@ -19,8 +29,9 @@ export class MissingTranslationDetector {
     if (isInitialized) return;
     
     // تسجيل المفاتيح المفقودة في وحدة i18n
-    if (window.i18next) {
-      window.i18next.on('missingKey', (lng: string, namespace: string, key: string) => {
+    const i18next = getI18next();
+    if (i18next) {
+      i18next.on('missingKey', (lng: string, namespace: string, key: string) => {
         if (!missingKeys[lng]) {
           missingKeys[lng] = [];
         }

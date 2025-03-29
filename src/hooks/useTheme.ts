@@ -1,86 +1,68 @@
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useAppState } from './state/use-app-state';
 
 type Theme = 'light' | 'dark' | 'system';
 
+/**
+ * خطاف لإدارة سمة التطبيق (الوضع الفاتح والداكن)
+ */
 export function useTheme() {
-  const { preferences, setPreference } = useAppState(state => ({
-    preferences: state.preferences,
-    setPreference: state.setPreference
-  }));
+  const theme = useAppState(state => state.preferences.theme);
+  const setPreference = useAppState(state => state.setPreference);
   
-  const [theme, setTheme] = useState<Theme>(preferences.theme);
-  const [systemTheme, setSystemTheme] = useState<'light' | 'dark'>('light');
-  
-  // مراقبة تغييرات نظام التشغيل للسمة
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+  /**
+   * تطبيق السمة المناسبة على الصفحة بناءً على قيمة السمة المختارة
+   */
+  const applyTheme = useCallback((theme: Theme) => {
+    const root = window.document.documentElement;
     
-    // تحديث السمة الحالية للنظام
-    const updateSystemTheme = (e: MediaQueryListEvent | MediaQueryList) => {
-      setSystemTheme(e.matches ? 'dark' : 'light');
-    };
-    
-    // تعيين القيمة الأولية
-    updateSystemTheme(mediaQuery);
-    
-    // مراقبة التغييرات
-    if (typeof mediaQuery.addEventListener === 'function') {
-      mediaQuery.addEventListener('change', updateSystemTheme);
-      return () => mediaQuery.removeEventListener('change', updateSystemTheme);
-    } else if (typeof mediaQuery.addListener === 'function') {
-      // لدعم المتصفحات القديمة
-      mediaQuery.addListener(updateSystemTheme);
-      return () => mediaQuery.removeListener(updateSystemTheme);
+    if (theme === 'system') {
+      // استخدام تفضيلات النظام
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
+      
+      root.classList.remove('light', 'dark');
+      root.classList.add(systemTheme);
+    } else {
+      // استخدام السمة المحددة يدوياً
+      root.classList.remove('light', 'dark');
+      root.classList.add(theme);
     }
   }, []);
   
-  // تحديث السمة عند تغير التفضيلات
-  useEffect(() => {
-    setTheme(preferences.theme);
-  }, [preferences.theme]);
-  
-  // تطبيق السمة على المستند
-  useEffect(() => {
-    const root = window.document.documentElement;
-    
-    // استخدام السمة المحددة، أو السمة النظامية إذا كانت مضبوطة على "system"
-    const activeTheme = theme === 'system' ? systemTheme : theme;
-    
-    // إزالة الفئات السابقة
-    root.classList.remove('light', 'dark');
-    
-    // إضافة الفئة الجديدة
-    root.classList.add(activeTheme);
-    
-    // تحديث خاصية CSS المخصصة
-    root.style.setProperty('--theme-mode', activeTheme);
-  }, [theme, systemTheme]);
-  
-  // تغيير السمة
-  const setThemePreference = (newTheme: Theme) => {
-    setTheme(newTheme);
+  /**
+   * تعيين سمة التطبيق
+   */
+  const setTheme = useCallback((newTheme: Theme) => {
     setPreference('theme', newTheme);
-    
-    // حفظ السمة في localStorage أيضاً (للتوافق مع أجزاء أخرى من التطبيق)
-    try {
-      localStorage.setItem('theme', newTheme);
-    } catch (error) {
-      console.error('Failed to save theme to localStorage', error);
-    }
-  };
+  }, [setPreference]);
   
-  // الحصول على السمة الفعلية (المطبقة حالياً)
-  const getComputedTheme = (): 'light' | 'dark' => {
-    return theme === 'system' ? systemTheme : theme;
-  };
+  // تطبيق السمة عند تغييرها أو عند تحميل الصفحة
+  useEffect(() => {
+    applyTheme(theme);
+    
+    // إعداد مراقب لتغييرات تفضيلات النظام
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    const handleChange = () => {
+      if (theme === 'system') {
+        applyTheme('system');
+      }
+    };
+    
+    mediaQuery.addEventListener('change', handleChange);
+    
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, [theme, applyTheme]);
   
   return {
-    theme,                // السمة المحددة (قد تكون 'system')
-    systemTheme,          // السمة النظامية
-    computedTheme: getComputedTheme(),  // السمة الفعلية المطبقة
-    setTheme: setThemePreference,  // دالة لتغيير السمة
-    isDark: getComputedTheme() === 'dark'  // اختصار للتحقق مما إذا كانت السمة الحالية مظلمة
+    theme,
+    setTheme,
+    isDark: document.documentElement.classList.contains('dark'),
+    isLight: document.documentElement.classList.contains('light'),
   };
 }

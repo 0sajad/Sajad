@@ -27,7 +27,10 @@ export function useAppPreferences() {
     const { defaultPreferences } = require('./state/preferences-state');
     
     Object.keys(defaultPreferences).forEach((key) => {
-      setPreference(key as keyof AppPreferences, defaultPreferences[key as keyof AppPreferences]);
+      // Use type assertion to ensure the compiler recognizes compatibility
+      const prefKey = key as keyof AppPreferences;
+      // Use type assertion to ensure the correct type is assigned
+      setPreference(prefKey, defaultPreferences[prefKey]);
     });
     
     // تعيين السمة بشكل منفصل نظراً لأنها تحتاج معالجة خاصة

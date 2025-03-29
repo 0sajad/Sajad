@@ -58,6 +58,48 @@ export function useTranslationValidator() {
     };
   }, [isDeveloperMode, updateMissingKeys]);
   
+  // مقارنة المفاتيح بين لغتين
+  const compareLanguageKeys = useCallback((sourceLang: string, targetLang: string): string[] => {
+    // الحصول على موارد الترجمة
+    const resources = i18n.options.resources || {};
+    const sourceKeys = new Set<string>();
+    const targetKeys = new Set<string>();
+    
+    // جمع المفاتيح من اللغة المصدر
+    if (resources[sourceLang]) {
+      Object.keys(resources[sourceLang]).forEach(namespace => {
+        const translations = resources[sourceLang][namespace];
+        if (typeof translations === 'object') {
+          Object.keys(translations).forEach(key => {
+            sourceKeys.add(`${namespace}:${key}`);
+          });
+        }
+      });
+    }
+    
+    // جمع المفاتيح من اللغة الهدف
+    if (resources[targetLang]) {
+      Object.keys(resources[targetLang]).forEach(namespace => {
+        const translations = resources[targetLang][namespace];
+        if (typeof translations === 'object') {
+          Object.keys(translations).forEach(key => {
+            targetKeys.add(`${namespace}:${key}`);
+          });
+        }
+      });
+    }
+    
+    // البحث عن المفاتيح الموجودة في المصدر ولكن مفقودة في الهدف
+    const missingInTarget: string[] = [];
+    sourceKeys.forEach(key => {
+      if (!targetKeys.has(key)) {
+        missingInTarget.push(key);
+      }
+    });
+    
+    return missingInTarget;
+  }, [i18n]);
+  
   // مسح المفاتيح المفقودة
   const clearMissingKeys = () => {
     MissingTranslationDetector.clearMissingKeys();
@@ -89,6 +131,7 @@ export function useTranslationValidator() {
     missingKeys,
     clearMissingKeys,
     scanPageForMissingTranslations,
-    exportMissingKeys
+    exportMissingKeys,
+    compareLanguageKeys
   };
 }

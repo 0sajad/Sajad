@@ -20,6 +20,12 @@ export interface AppPreferences {
   dyslexicFont: boolean;    // خط لعسر القراءة
   colorBlindMode: 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia'; // وضع عمى الألوان
   soundFeedback: boolean;   // تعليقات صوتية
+  // إضافة الخصائص الناقصة التي تستخدمها الملفات الأخرى
+  notifications: boolean;   // إشعارات
+  telemetry: boolean;       // قياس عن بعد
+  animations: boolean;      // رسوم متحركة
+  fullWidthLayout: boolean; // تخطيط بعرض كامل
+  syncSystemPreferences: boolean; // مزامنة تفضيلات النظام
 }
 
 /**
@@ -42,5 +48,38 @@ export const defaultPreferences: AppPreferences = {
   readingGuide: false,
   dyslexicFont: false,
   colorBlindMode: 'none',
-  soundFeedback: false
+  soundFeedback: false,
+  // القيم الافتراضية للخصائص الجديدة
+  notifications: true,
+  telemetry: true,
+  animations: true,
+  fullWidthLayout: false,
+  syncSystemPreferences: true
+};
+
+// Export this function to support app-state-utils.ts
+export const createPreferencesSlice = (set: any) => ({
+  preferences: { ...defaultPreferences },
+  setPreference: (key: keyof AppPreferences, value: any) =>
+    set((state: any) => ({
+      preferences: {
+        ...state.preferences,
+        [key]: value,
+      },
+    })),
+  resetPreferences: () =>
+    set((state: any) => ({
+      preferences: { ...defaultPreferences },
+    })),
+});
+
+// Add the usePreferences export for index.ts
+export const usePreferences = () => {
+  // This is just a stub for compatibility
+  // The actual implementation will be in other files
+  return {
+    preferences: defaultPreferences,
+    setPreference: (_key: keyof AppPreferences, _value: any) => {},
+    resetPreferences: () => {}
+  };
 };
