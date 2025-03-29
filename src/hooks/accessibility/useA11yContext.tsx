@@ -1,50 +1,28 @@
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useA11y } from '../useA11y';
 import { useAppState } from '../state/use-app-state';
-import { ColorBlindMode } from './useA11yColor';
 
-interface A11yContextProps {
-  // حالة ميزات إمكانية الوصول
+interface A11yContextType {
+  announce: (message: string, politeness?: 'polite' | 'assertive') => void;
+  playSound: (sound: 'success' | 'error' | 'warning' | 'info' | 'notification') => void;
   highContrast: boolean;
   largeText: boolean;
   reducedMotion: boolean;
-  focusMode: boolean;
-  colorBlindMode: ColorBlindMode;
   dyslexicFont: boolean;
-  readingGuide: boolean;
-  soundFeedback: boolean;
-  keyboardNavigationVisible: boolean;
-  
-  // وظائف التحكم
+  colorBlindMode: string;
   setHighContrast: (value: boolean) => void;
   setLargeText: (value: boolean) => void;
   setReducedMotion: (value: boolean) => void;
-  setFocusMode: (value: boolean) => void;
-  setColorBlindMode: (value: ColorBlindMode) => void;
   setDyslexicFont: (value: boolean) => void;
-  setReadingGuide: (value: boolean) => void;
-  setSoundFeedback: (value: boolean) => void;
-  setKeyboardNavigationVisible: (value: boolean) => void;
-  
-  // وظائف المساعدة
-  announce: (message: string, politeness?: 'polite' | 'assertive') => void;
-  playNotificationSound: (type: 'success' | 'error' | 'warning' | 'info' | 'notification') => void;
-  
-  // وظائف التبديل
-  toggleHighContrast: () => void;
-  toggleLargeText: () => void;
-  toggleReducedMotion: () => void;
-  toggleFocusMode: () => void;
-  toggleDyslexicFont: () => void;
-  toggleReadingGuide: () => void;
-  toggleSoundFeedback: () => void;
+  setColorBlindMode: (value: string) => void;
 }
 
-// إنشاء السياق
-const A11yContext = createContext<A11yContextProps | undefined>(undefined);
+const A11yContext = createContext<A11yContextType | null>(null);
 
-// خطاف لاستخدام السياق
+/**
+ * استخدام سياق إمكانية الوصول في المكونات
+ */
 export const useA11yContext = () => {
   const context = useContext(A11yContext);
   if (!context) {
@@ -57,55 +35,101 @@ interface A11yProviderProps {
   children: ReactNode;
 }
 
-// مزود السياق
+/**
+ * مزود سياق إمكانية الوصول - يوفر وظائف وحالة إمكانية الوصول لكافة المكونات
+ */
 export const A11yProvider: React.FC<A11yProviderProps> = ({ children }) => {
   const a11y = useA11y();
-  const setPreference = useAppState(state => state.setPreference);
+  const {
+    highContrast,
+    largeText,
+    reducedMotion,
+    dyslexicFont,
+    colorBlindMode,
+    setHighContrast,
+    setLargeText,
+    setReducedMotion,
+    setDyslexicFont,
+    setColorBlindMode
+  } = useAppState(state => ({
+    highContrast: state.highContrast,
+    largeText: state.largeText,
+    reducedMotion: state.reducedMotion,
+    dyslexicFont: state.dyslexicFont,
+    colorBlindMode: state.colorBlindMode,
+    setHighContrast: state.setHighContrast,
+    setLargeText: state.setLargeText,
+    setReducedMotion: state.setReducedMotion,
+    setDyslexicFont: state.setDyslexicFont,
+    setColorBlindMode: state.setColorBlindMode
+  }));
   
-  // حفظ التغييرات في تخزين الحالة
+  // إعلانات متاحة عالميًا للقارئات الشاشية
+  const announce = (message: string, politeness: 'polite' | 'assertive' = 'polite') => {
+    if (a11y?.announce) {
+      a11y.announce(message, politeness);
+    } else if (typeof window !== 'undefined' && typeof window.announce === 'function') {
+      window.announce(message, politeness);
+    } else {
+      console.log(`${politeness.toUpperCase()} ANNOUNCEMENT: ${message}`);
+    }
+  };
+  
+  // تشغيل أصوات الإخطارات
+  const playSound = (sound: 'success' | 'error' | 'warning' | 'info' | 'notification') => {
+    if (a11y?.playNotificationSound) {
+      a11y.playNotificationSound(sound);
+    }
+  };
+  
+  // تطبيق تأثيرات إمكانية الوصول على المستند
   useEffect(() => {
-    setPreference('highContrast', a11y.highContrast);
-    setPreference('largeText', a11y.largeText);
-    setPreference('reducedMotion', a11y.reducedMotion);
-    setPreference('focusMode', a11y.focusMode);
-    // لا نحفظ colorBlindMode هنا لأنه ليس boolean
-    setPreference('dyslexicFont', a11y.dyslexicFont);
-    setPreference('readingGuide', a11y.readingGuide);
-    setPreference('soundFeedback', a11y.soundFeedback);
-  }, [
-    a11y.highContrast,
-    a11y.largeText,
-    a11y.reducedMotion,
-    a11y.focusMode,
-    a11y.dyslexicFont,
-    a11y.readingGuide,
-    a11y.soundFeedback,
-    setPreference
-  ]);
+    document.documentElement.classList.toggle('high-contrast', highContrast);
+    document.documentElement.classList.toggle('large-text', largeText);
+    document.documentElement.classList.toggle('reduced-motion', reducedMotion);
+    document.documentElement.classList.toggle('dyslexic-font', dyslexicFont);
+    
+    // إزالة جميع أنماط المرشح الحالية
+    document.documentElement.classList.remove(
+      'protanopia',
+      'deuteranopia',
+      'tritanopia',
+      'achromatopsia'
+    );
+    
+    // تطبيق فلتر عمى الألوان المحدد
+    if (colorBlindMode !== 'none') {
+      document.documentElement.classList.add(colorBlindMode);
+    }
+    
+    return () => {
+      // تنظيف الفئات عند تفكيك المكون
+      document.documentElement.classList.remove(
+        'high-contrast',
+        'large-text',
+        'reduced-motion',
+        'dyslexic-font',
+        'protanopia',
+        'deuteranopia',
+        'tritanopia',
+        'achromatopsia'
+      );
+    };
+  }, [highContrast, largeText, reducedMotion, dyslexicFont, colorBlindMode]);
   
-  // حفظ colorBlindMode عند تغييره
-  useEffect(() => {
-    setPreference('colorBlindMode', a11y.colorBlindMode);
-  }, [a11y.colorBlindMode, setPreference]);
-  
-  // إضافة وظائف التبديل
-  const toggleHighContrast = () => a11y.setHighContrast(!a11y.highContrast);
-  const toggleLargeText = () => a11y.setLargeText(!a11y.largeText);
-  const toggleReducedMotion = () => a11y.setReducedMotion(!a11y.reducedMotion);
-  const toggleFocusMode = () => a11y.setFocusMode(!a11y.focusMode);
-  const toggleDyslexicFont = () => a11y.setDyslexicFont(!a11y.dyslexicFont);
-  const toggleReadingGuide = () => a11y.setReadingGuide(!a11y.readingGuide);
-  const toggleSoundFeedback = () => a11y.setSoundFeedback(!a11y.soundFeedback);
-  
-  const value: A11yContextProps = {
-    ...a11y,
-    toggleHighContrast,
-    toggleLargeText,
-    toggleReducedMotion,
-    toggleFocusMode,
-    toggleDyslexicFont,
-    toggleReadingGuide,
-    toggleSoundFeedback
+  const value = {
+    announce,
+    playSound,
+    highContrast,
+    largeText,
+    reducedMotion,
+    dyslexicFont,
+    colorBlindMode,
+    setHighContrast,
+    setLargeText,
+    setReducedMotion,
+    setDyslexicFont,
+    setColorBlindMode
   };
   
   return (

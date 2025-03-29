@@ -1,76 +1,71 @@
 
-import React from 'react';
-import { cn } from "@/lib/utils";
+import React, { ReactNode, useMemo } from 'react';
+import { useArabicSupport } from '@/hooks/useArabicSupport';
 import { useArabicText } from './ArabicTextProvider';
 
 interface ArabicTextEnhancerProps {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
-  kashida?: boolean;
-  enableDigitFormatting?: boolean;
+  numerals?: boolean;
+  enhanceFormat?: boolean;
+  autoDirection?: boolean;
 }
 
 /**
- * مكون لتحسين عرض النص العربي وتطبيق ميزات متقدمة مثل الكشيدة
- * تم تحسينه لاستخدام ArabicTextProvider
+ * مكون لتحسين عرض النص العربي
+ * يقوم بتطبيق تنسيق أفضل وتحسين عرض الأرقام والاتجاه
  */
 export function ArabicTextEnhancer({
   children,
-  className,
-  kashida,
-  enableDigitFormatting = false,
+  className = '',
+  numerals = true,
+  enhanceFormat = true,
+  autoDirection = true
 }: ArabicTextEnhancerProps) {
-  const { isArabic, formatNumber, kashidaEnabled: globalKashidaEnabled } = useArabicText();
-
-  // إذا لم تكن اللغة عربية، نُرجع المحتوى كما هو
-  if (!isArabic) {
-    return <span className={className}>{children}</span>;
-  }
-
-  // استخدام قيمة kashida المحلية إذا تم تمريرها، وإلا استخدام القيمة العالمية
-  const useKashida = kashida !== undefined ? kashida : globalKashidaEnabled;
-
-  // تحويل الأرقام في النص إذا كان مطلوباً
-  const processContent = (content: React.ReactNode): React.ReactNode => {
-    if (typeof content !== 'string' || !enableDigitFormatting) {
-      return content;
+  const { isArabic, formatNumber, formatArabicText, getDirectionByContent } = useArabicSupport();
+  const { fontFamily } = useArabicText?.() || { fontFamily: 'default' };
+  
+  // تحويل النص العربي بالأرقام والتنسيق المحسن
+  const enhancedText = useMemo(() => {
+    if (!isArabic || typeof children !== 'string') {
+      return children;
     }
-
-    // نمط للبحث عن الأرقام في النص
-    const numberPattern = /(\d+(\.\d+)?)/g;
     
-    // تقسيم النص حول الأرقام والحفاظ عليها
-    const parts = content.split(numberPattern);
+    let result = children;
     
-    return parts.map((part, index) => {
-      if (numberPattern.test(part)) {
-        // تحويل الرقم إلى تنسيق أرقام عربية/هندية
-        return formatNumber(parseFloat(part), true);
-      }
-      return part;
-    });
-  };
-
-  // تطبيق الكشيدة وتنسيق النص العربي
+    // تطبيق تنسيق الأرقام العربية
+    if (numerals) {
+      result = result.replace(/\d+/g, match => formatNumber(parseInt(match, 10)));
+    }
+    
+    // تطبيق تحسينات تنسيق النص العربي
+    if (enhanceFormat) {
+      result = formatArabicText(result);
+    }
+    
+    return result;
+  }, [children, isArabic, numerals, enhanceFormat, formatNumber, formatArabicText]);
+  
+  // اكتشاف الاتجاه تلقائيًا
+  const textDir = useMemo(() => {
+    if (!autoDirection || typeof children !== 'string') {
+      return undefined;
+    }
+    
+    return getDirectionByContent(children);
+  }, [children, autoDirection, getDirectionByContent]);
+  
+  // تطبيق الفئات CSS المناسبة
+  const arabicClasses = useMemo(() => {
+    if (!isArabic) return className;
+    
+    const fontClass = fontFamily === 'default' ? '' : `font-${fontFamily}`;
+    return `${className} ${fontClass} arabic-text`.trim();
+  }, [className, isArabic, fontFamily]);
+  
   return (
-    <span 
-      className={cn(
-        "arabic-text",
-        useKashida && "kashida",
-        className
-      )}
-      style={{
-        // استخدام "inter-word" بدلاً من "kashida" للتوافق مع خصائص CSS القياسية
-        textJustify: useKashida ? "inter-word" : undefined,
-        fontFeatureSettings: `"rlig", "calt", "ss01", "ss02"${useKashida ? ', "kshd"' : ''}`
-      }}
-    >
-      {React.Children.map(children, child => {
-        if (typeof child === 'string') {
-          return processContent(child);
-        }
-        return child;
-      })}
+    <span className={arabicClasses} dir={textDir}>
+      {enhancedText}
     </span>
   );
 }
