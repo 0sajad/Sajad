@@ -1,4 +1,4 @@
 
 interface Window {
-  announce: (message: string, priority?: 'assertive' | 'polite') => void;
+  announce: (message: string, politeness?: 'polite' | 'assertive') => void;
 }

@@ -1,11 +1,10 @@
 
 import React, { useState } from "react";
-import { NetworkStatusIndicator } from "./ui/NetworkStatusIndicator";
 import { useTranslation } from "react-i18next";
 import { useOfflineMode } from "@/hooks/useOfflineMode";
 import { usePerformanceOptimization } from "@/hooks/usePerformanceOptimization";
 import { cn } from "@/lib/utils";
-import { Battery, BatteryWarning, Cpu, Loader2, Wifi, WifiOff } from "lucide-react";
+import { Battery, BatteryWarning, Cpu, Wifi, WifiOff } from "lucide-react";
 import { AccessibilityToggleButton } from "./ui/accessibility/accessibility-toggle-button";
 import { AccessibilityMenu } from "./ui/accessibility/accessibility-menu";
 import { useA11y } from "@/hooks/useA11y";

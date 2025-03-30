@@ -2,13 +2,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
-// نضيف تعريف لواجهة Window لتضمين خاصية announce
-declare global {
-  interface Window {
-    announce: (message: string, politeness?: 'polite' | 'assertive') => void;
-  }
-}
-
 export function LiveAnnouncer() {
   const politeAnnouncerRef = useRef<HTMLDivElement>(null);
   const assertiveAnnouncerRef = useRef<HTMLDivElement>(null);

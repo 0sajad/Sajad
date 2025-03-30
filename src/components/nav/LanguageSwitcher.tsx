@@ -20,6 +20,7 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
   const { reducedMotion } = useA11y?.() || { reducedMotion: false };
   const { isRTL } = useRTLSupport();
   
+  // Defined language options
   const languages = [
     { code: "ar", name: "العربية", nativeName: "العربية", flag: "🇸🇦" },
     { code: "ar-iq", name: "Iraqi Arabic", nativeName: "العراقية", flag: "🇮🇶" },
@@ -28,6 +29,11 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
     { code: "ja", name: "Japanese", nativeName: "日本語", flag: "🇯🇵" },
     { code: "zh", name: "Chinese", nativeName: "中文", flag: "🇨🇳" }
   ];
+  
+  // Handle language change
+  const handleLanguageChange = (langCode: string) => {
+    changeLanguage(langCode);
+  };
 
   // Make sure to apply correct direction to page on load
   useEffect(() => {
@@ -94,7 +100,7 @@ export function LanguageSwitcher({ className = "" }: LanguageSwitcherProps) {
           <LanguageDropdownContent 
             languages={languages}
             currentLanguage={currentLanguage}
-            onChangeLanguage={changeLanguage}
+            onChangeLanguage={handleLanguageChange}
           />
         </DropdownMenu>
       </Tooltip>

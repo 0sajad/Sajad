@@ -1,23 +1,17 @@
 
-import React from "react";
-import { Check } from "lucide-react";
-import { motion } from "framer-motion";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { Check } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface LanguageOptionProps {
   langCode: string;
-  languageName: string; 
+  languageName: string;
   flag: string;
   isActive: boolean;
-  isIraqiArabic: boolean;
+  isIraqiArabic?: boolean;
   onClick: (langCode: string) => void;
-  reducedMotion: boolean;
-  // For compatibility with LanguageDropdownContent
-  code?: string;
-  name?: string;
-  nativeName?: string;
-  isSpecial?: boolean;
+  reducedMotion?: boolean;
 }
 
 export function LanguageOption({
@@ -27,56 +21,32 @@ export function LanguageOption({
   isActive,
   isIraqiArabic,
   onClick,
-  reducedMotion,
-  // Handle alternative prop formats
-  code,
-  name,
-  nativeName,
-  isSpecial
+  reducedMotion
 }: LanguageOptionProps) {
-  // Use the props from either format
-  const actualLangCode = code || langCode;
-  const actualLanguageName = nativeName || languageName;
-  const actualFlag = flag;
-  const actualIsSpecial = isSpecial || isIraqiArabic;
-
   return (
     <DropdownMenuItem
-      className={cn(
-        "flex items-center justify-between px-4 py-3 cursor-pointer transition-all",
-        isActive 
-          ? "bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 font-medium" 
-          : "hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:translate-y-[-1px]",
-        actualIsSpecial ? "border-l-2 border-green-500 dark:border-green-400" : ""
-      )}
-      onClick={() => onClick(actualLangCode)}
-      data-testid={`language-option-${actualLangCode}`}
+      className="cursor-pointer flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700/60"
+      onClick={() => onClick(langCode)}
     >
-      <div className="flex items-center">
-        <span className="text-lg mr-3 rtl:ml-3 rtl:mr-0" aria-hidden="true">
-          {actualFlag}
-        </span>
-        <span>{actualLanguageName}</span>
-        
-        {actualIsSpecial && (
-          <span className="ml-2 text-[10px] bg-green-100 text-green-800 px-1.5 py-0.5 rounded dark:bg-green-900/30 dark:text-green-300">
-            محسّن
+      <div className="flex items-center gap-3">
+        <span className="text-lg">{flag}</span>
+        <div>
+          <span className={`text-sm ${isActive ? 'font-medium' : ''}`}>
+            {languageName}
           </span>
-        )}
+          {isIraqiArabic && (
+            <span className="text-xs text-muted-foreground block">العراقية</span>
+          )}
+        </div>
       </div>
       
       {isActive && (
-        <motion.div 
-          initial={{ scale: 0 }}
+        <motion.div
+          initial={reducedMotion ? { scale: 1 } : { scale: 0 }}
           animate={{ scale: 1 }}
-          transition={{ 
-            type: "spring", 
-            stiffness: 300, 
-            damping: reducedMotion ? 30 : 15 
-          }}
-          className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full w-5 h-5 shadow-md"
+          transition={{ type: "spring", duration: reducedMotion ? 0 : 0.3 }}
         >
-          <Check className="h-3 w-3" aria-hidden="true" />
+          <Check className="h-4 w-4 text-primary" />
         </motion.div>
       )}
     </DropdownMenuItem>

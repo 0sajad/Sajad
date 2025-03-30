@@ -7,7 +7,7 @@ import { useA11y } from "@/hooks/useA11y";
 import { Accessibility } from "lucide-react";
 import { motion } from "framer-motion";
 
-interface AccessibilityToggleButtonProps extends ButtonProps {
+export interface AccessibilityToggleButtonProps extends ButtonProps {
   onClick: () => void;
 }
 
@@ -30,7 +30,7 @@ export function AccessibilityToggleButton({ onClick, className, ...props }: Acce
     largeText, 
     reducedMotion, 
     focusMode,
-    soundFeedback && soundFeedback,
+    soundFeedback,
     dyslexicFont,
     readingGuide,
     colorBlindMode !== 'none'
