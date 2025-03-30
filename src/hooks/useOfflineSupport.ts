@@ -12,7 +12,19 @@ interface OfflineSupportOptions {
   autoSync?: boolean;
 }
 
-export const useOfflineSupport = (options: OfflineSupportOptions = {}) => {
+export interface UseOfflineModeReturn {
+  isOnline: boolean;
+  pendingActions: any[];
+  isSyncing: boolean;
+  queueAction: (action: any) => void;
+  syncQueuedActions: () => Promise<void>;
+  performOperation: (operation: () => Promise<any>, offlineAction?: any, requiresInternet?: boolean) => Promise<any>;
+  canPerformOperation: (requiresInternet?: boolean) => boolean;
+  checkConnection: () => Promise<boolean>;
+  isChecking: boolean;
+}
+
+export const useOfflineSupport = (options: OfflineSupportOptions = {}): UseOfflineModeReturn => {
   const {
     enableOfflineMode = true,
     showNotifications = true,
@@ -22,6 +34,7 @@ export const useOfflineSupport = (options: OfflineSupportOptions = {}) => {
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
   const [pendingActions, setPendingActions] = useState<any[]>([]);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
+  const [isChecking, setIsChecking] = useState<boolean>(false);
   const { showNotification } = useNotifications();
   
   // Update online status
@@ -49,6 +62,27 @@ export const useOfflineSupport = (options: OfflineSupportOptions = {}) => {
   // Queue an action to be performed when back online
   const queueAction = useCallback((action: any) => {
     setPendingActions(prev => [...prev, action]);
+  }, []);
+  
+  // Check connection status
+  const checkConnection = useCallback(async (): Promise<boolean> => {
+    setIsChecking(true);
+    try {
+      // Try to fetch a small resource
+      const response = await fetch('/api/ping', { 
+        method: 'HEAD',
+        cache: 'no-cache',
+        headers: { 'Cache-Control': 'no-cache' }
+      });
+      const online = response.ok;
+      setIsOnline(online);
+      return online;
+    } catch (error) {
+      setIsOnline(false);
+      return false;
+    } finally {
+      setIsChecking(false);
+    }
   }, []);
   
   // Sync queued actions when back online
@@ -133,6 +167,8 @@ export const useOfflineSupport = (options: OfflineSupportOptions = {}) => {
     syncQueuedActions,
     performOperation,
     canPerformOperation,
-    isSyncing
+    isSyncing,
+    checkConnection,
+    isChecking
   };
 };

@@ -254,12 +254,12 @@ export function TranslationManager() {
                       </TableCell>
                       <TableCell>
                         {hasTranslation ? (
-                          <Badge variant="success" className="bg-green-100 text-green-800 flex items-center gap-1">
+                          <Badge variant="default" className="bg-green-100 text-green-800 flex items-center gap-1">
                             <CheckIcon className="h-3 w-3" />
                             {t('dev.translations.translated', 'Translated')}
                           </Badge>
                         ) : (
-                          <Badge variant="warning" className="bg-amber-100 text-amber-800 flex items-center gap-1">
+                          <Badge variant="outline" className="bg-amber-100 text-amber-800 flex items-center gap-1">
                             <InfoIcon className="h-3 w-3" />
                             {t('dev.translations.needsReview', 'Needs Review')}
                           </Badge>

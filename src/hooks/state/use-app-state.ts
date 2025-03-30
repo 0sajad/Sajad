@@ -20,15 +20,17 @@ export const useAppState = create<AppState>((set) => ({
   },
   network: {
     isOnline: true,
+    isConnected: true,
+    lastCheck: new Date(),
     checkConnection: async () => true,
     setOnlineStatus: () => {}
   },
   
   // Network status
   networkStatus: {
-    isInitialized: true,
     isConnected: true,
-    isOnline: true
+    isOnline: true,
+    lastCheck: new Date()
   },
   
   // UI state

@@ -14,7 +14,7 @@ export function ColorTab() {
     colorBlindMode, setColorBlindMode,
     soundFeedback, setSoundFeedback,
     announce,
-    playNotificationSound
+    playSound
   } = useA11y();
   
   return (
@@ -35,7 +35,7 @@ export function ColorTab() {
             const modeTranslationKey = value === 'none' ? 'normalVision' : value;
             announce(t(`accessibility.${modeTranslationKey}`), "polite");
             if (soundFeedback) {
-              playNotificationSound("info");
+              playSound("info");
             }
           }}
         />
@@ -60,7 +60,7 @@ export function ColorTab() {
             
             announce(`${featureName} ${stateText}`, "polite");
             if (checked) {
-              playNotificationSound("success");
+              playSound("success");
             }
           }}
           aria-label={t('accessibility.soundFeedback')}

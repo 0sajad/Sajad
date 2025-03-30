@@ -2,13 +2,13 @@
 import React, { useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, useTexture, Text3D, Center } from "@react-three/drei";
-import { Mesh, Color, Vector3 } from "three";
+import { Mesh, Color, Vector3, Group } from "three";
 import { useMode } from "@/context/ModeContext";
 import { useTranslation } from "react-i18next";
 
 const FloatingLogo = () => {
   const meshRef = useRef<Mesh>(null);
-  const textRef = useRef<Mesh>(null);
+  const textRef = useRef<Group>(null);
   const { theme } = useMode();
   const darkMode = theme === "dark";
   

@@ -1,5 +1,5 @@
 
-import { useContext } from 'react';
+import { useState } from 'react';
 import { useAppState } from './state';
 
 /**
@@ -29,6 +29,9 @@ export function useA11y() {
     setKeyboardNavigationVisible
   } = useAppState();
   
+  // State for A11y menu
+  const [showA11yMenu, setShowA11yMenu] = useState(false);
+  
   // Announce function for screen readers
   const announce = (message: string, politeness: 'polite' | 'assertive' = 'polite') => {
     if (window.announce) {
@@ -45,7 +48,9 @@ export function useA11y() {
       click: '/sounds/click.mp3',
       success: '/sounds/success.mp3',
       error: '/sounds/error.mp3',
-      notification: '/sounds/notification.mp3'
+      notification: '/sounds/notification.mp3',
+      info: '/sounds/info.mp3',
+      warning: '/sounds/warning.mp3'
     };
     
     const soundUrl = sounds[soundType];
@@ -60,6 +65,12 @@ export function useA11y() {
     }
   };
   
+  // Toggle A11y menu
+  const toggleA11yMenu = () => {
+    setShowA11yMenu(prev => !prev);
+    playSound('click');
+  };
+  
   return {
     // State
     highContrast,
@@ -71,6 +82,7 @@ export function useA11y() {
     soundFeedback,
     colorBlindMode,
     keyboardNavigationVisible,
+    showA11yMenu,
     
     // Setters
     setHighContrast,
@@ -82,6 +94,7 @@ export function useA11y() {
     setSoundFeedback,
     setColorBlindMode,
     setKeyboardNavigationVisible,
+    toggleA11yMenu,
     
     // Helper functions
     announce,

@@ -6,14 +6,17 @@ import { useAppState } from './use-app-state';
  */
 export function useNetworkStatus() {
   const isOnline = useAppState(state => state.network?.isOnline || false);
+  const isConnected = useAppState(state => state.network?.isConnected || false);
+  const lastCheck = useAppState(state => state.network?.lastCheck || new Date());
   const setOnlineStatus = useAppState(state => state.network?.setOnlineStatus || (() => {}));
+  const checkConnection = useAppState(state => state.network?.checkConnection || (async () => true));
   
   // استخدام قيم افتراضية آمنة لتجنب أخطاء الوصول المباشر إلى الخصائص
   const networkState = {
     isOnline,
-    isConnected: true,
-    lastCheck: new Date(),
-    checkConnection: async () => true,
+    isConnected,
+    lastCheck,
+    checkConnection,
     setOnlineStatus
   };
   
@@ -106,34 +109,6 @@ export function useAccessibilityState() {
     setReadingGuide,
     setColorBlindMode,
     setDyslexicFont,
-    setSoundFeedback,
-    
-    // وظائف مساعدة
-    toggleHighContrast: () => setHighContrast(!highContrast),
-    toggleLargeText: () => setLargeText(!largeText),
-    toggleReducedMotion: () => setReducedMotion(!reducedMotion),
-    toggleFocusMode: () => setFocusMode(!focusMode),
-    toggleReadingGuide: () => setReadingGuide(!readingGuide),
-    toggleDyslexicFont: () => setDyslexicFont(!dyslexicFont),
-    toggleSoundFeedback: () => setSoundFeedback(!soundFeedback),
-  };
-}
-
-/**
- * خطاف مساعد للتعامل مع أداء التطبيق
- */
-export function usePerformanceState() {
-  const deviceTier = useAppState(state => state.performance?.deviceTier || 'medium');
-  const isLowEndDevice = useAppState(state => state.performance?.isLowEndDevice || false);
-  const setDeviceTier = useAppState(state => state.performance?.setDeviceTier || (() => {}));
-  const optimizeForLowEndDevice = useAppState(state => state.performance?.optimizeForLowEndDevice || (() => {}));
-  const restoreDefaultPerformance = useAppState(state => state.performance?.restoreDefaultPerformance || (() => {}));
-  
-  return {
-    deviceTier,
-    isLowEndDevice,
-    setDeviceTier,
-    optimizeForLowEndDevice,
-    restoreDefaultPerformance,
+    setSoundFeedback
   };
 }

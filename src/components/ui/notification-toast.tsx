@@ -25,7 +25,7 @@ type NotificationToastProps = {
 export function useNotificationToast() {
   const { toast } = useToast();
   const { t } = useTranslation();
-  const { soundFeedback, playNotificationSound, announce } = useA11y();
+  const { soundFeedback, playSound, announce } = useA11y();
   
   const showToast = ({
     title,
@@ -43,7 +43,7 @@ export function useNotificationToast() {
       const soundType: SoundType = type === 'default' ? 'info' : 
                                   (type === 'success' || type === 'error' || type === 'warning' || type === 'info') 
                                   ? type : 'info';
-      playNotificationSound(soundType);
+      playSound(soundType);
     }
     
     // عرض الإشعار المرئي
