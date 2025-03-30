@@ -116,7 +116,7 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
   const currentLanguage = DEFAULT_LANGUAGES.find(lang => lang.code === currentLang) || DEFAULT_LANGUAGES.find(lang => lang.code === 'en') || DEFAULT_LANGUAGES[0];
 
   // قائمة اللغات المتاحة
-  const languages = DEFAULT_LANGUAGES;
+  const groupedLanguages = DEFAULT_LANGUAGES.map(lang => lang.code);
 
   return (
     <TooltipProvider>
@@ -155,14 +155,17 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
           </DropdownMenuLabel>
           <DropdownMenuSeparator className="bg-gradient-to-r from-blue-200 to-purple-200 dark:from-blue-800/30 dark:to-purple-800/30" />
           
-          {languages.map((lang) => {
-            const isActive = i18n.language === lang.code;
-            const isIraqiArabic = lang.code === 'ar-iq';
+          {groupedLanguages.map((langCode) => {
+            const lang = DEFAULT_LANGUAGES.find(l => l.code === langCode);
+            if (!lang) return null;
+            
+            const isActive = i18n.language === langCode;
+            const isIraqiArabic = langCode === 'ar-iq';
             
             return (
               <LanguageOption 
-                key={lang.code}
-                langCode={lang.code}
+                key={langCode}
+                langCode={langCode}
                 languageName={lang.nativeName}
                 flag={lang.flag}
                 isActive={isActive}
@@ -177,3 +180,6 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
     </TooltipProvider>
   );
 }
+
+// Add default export for compatibility with React.lazy()
+export default LanguageSwitcher;

@@ -1,120 +1,82 @@
 
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAppState } from './state';
 
-interface RTLSupportOptions {
+interface RTLOptions {
   enforceRTL?: boolean;
   enforceSpecificLanguages?: string[];
-  defaultDirection?: 'rtl' | 'ltr';
 }
 
 /**
- * خطاف مخصص لدعم اللغات ذات الاتجاه من اليمين إلى اليسار (RTL)
- * يوفر وظائف لتحديد اتجاه اللغة ودعم RTL بشكل متقدم
+ * خطاف لدعم اللغات التي تكتب من اليمين إلى اليسار مثل العربية
  */
-export const useRTLSupport = (options: RTLSupportOptions = {}) => {
+export function useRTLSupport(options: RTLOptions = {}) {
+  const { enforceRTL = false, enforceSpecificLanguages = ['ar', 'ar-iq', 'he', 'ur', 'fa'] } = options;
   const { i18n } = useTranslation();
-  const { 
-    enforceRTL = false, 
-    enforceSpecificLanguages = ['ar', 'ar-iq', 'he', 'ur', 'fa'], 
-    defaultDirection = 'ltr' 
-  } = options;
+  const [isRTL, setIsRTL] = useState(false);
   
-  const preferences = useAppState(state => state.preferences || {});
-  const [direction, setDirection] = useState<string>(defaultDirection);
-  const [isRTL, setIsRTL] = useState<boolean>(false);
-  
-  /**
-   * اكتشاف ما إذا كانت اللغة الحالية تستخدم اتجاه RTL
-   */
-  const detectRTL = useCallback(() => {
-    // قائمة اللغات التي تستخدم RTL
-    const rtlLanguages = enforceSpecificLanguages;
-    
-    // الحصول على اللغة الحالية
+  // تحديث اتجاه المستند عند تغيير اللغة
+  useEffect(() => {
+    // التأكد من أن اللغة الحالية موجودة قبل استخدامها
     const currentLang = i18n.language || 'en';
     
-    // التحقق مما إذا كانت اللغة الحالية في قائمة لغات RTL
-    const isRTLLanguage = rtlLanguages.some(lang => 
-      currentLang === lang || currentLang.startsWith(`${lang}-`)
+    // تحديد ما إذا كانت اللغة الحالية هي RTL
+    const rtlLanguages = enforceSpecificLanguages;
+    const shouldBeRTL = enforceRTL || rtlLanguages.some(lang => 
+      currentLang === lang || (currentLang && currentLang.startsWith(`${lang}-`))
     );
     
-    // تحديد الاتجاه بناءً على: تفضيل المستخدم أو الإجبار أو اللغة
-    const shouldUseRTL = preferences.forceRTL || enforceRTL || isRTLLanguage;
-    
-    setIsRTL(shouldUseRTL);
-    setDirection(shouldUseRTL ? 'rtl' : 'ltr');
-    
-    return shouldUseRTL;
-  }, [i18n.language, preferences.forceRTL, enforceRTL, enforceSpecificLanguages]);
-  
-  /**
-   * تحديد اتجاه محتوى نصي بناءً على أول حرف ذي معنى
-   */
-  const getDirectionByContent = useCallback((text: string): 'rtl' | 'ltr' => {
-    if (!text) return direction as 'rtl' | 'ltr';
-    
-    // نمط التعبير المنتظم للأحرف العربية والعبرية
-    const rtlPattern = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
-    
-    // نمط التعبير المنتظم للأحرف اللاتينية
-    const ltrPattern = /[A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF]/;
-    
-    // فحص النص لتحديد الاتجاه
-    if (rtlPattern.test(text.charAt(0))) {
-      return 'rtl';
-    } else if (ltrPattern.test(text.charAt(0))) {
-      return 'ltr';
+    // تطبيق الاتجاه على المستند
+    if (shouldBeRTL) {
+      document.documentElement.setAttribute('dir', 'rtl');
+      document.body.classList.add('rtl-active');
+    } else {
+      document.documentElement.setAttribute('dir', 'ltr');
+      document.body.classList.remove('rtl-active');
     }
     
-    // الرجوع إلى الاتجاه الافتراضي
-    return isRTL ? 'rtl' : 'ltr';
-  }, [direction, isRTL]);
+    // تحديث الحالة
+    setIsRTL(shouldBeRTL);
+    
+    // إضافة معلومات RTL إلى النافذة العالمية للاستخدام في المكونات الأخرى
+    if (typeof window !== 'undefined') {
+      (window as any).RTLSupport = (window as any).RTLSupport || {};
+      (window as any).RTLSupport.isRTL = shouldBeRTL;
+    }
+  }, [i18n.language, enforceRTL, enforceSpecificLanguages]);
   
   /**
-   * تحويل اتجاه التخطيط بناءً على العرض وخيارات المستجيب
+   * إضافة خاصية التدفق النصي المعكوس إلى عناصر المفاتيح-القيم
+   * مثل: { name: 'اسم', value: 'قيمة' } => { name: 'اسم', value: 'قيمة', textFlow: 'rtl' }
    */
-  const getResponsiveDirection = useCallback(
-    (screenWidth: number, breakpoint = 768): 'rtl' | 'ltr' => {
-      // في بعض الحالات، قد نرغب في تجاوز اتجاه RTL على الشاشات الصغيرة
-      // يمكن استخدامها في حالات خاصة حيث يكون التصميم مشكلة على الشاشات الصغيرة
-      const shouldOverrideRTL = preferences.overrideRTLOnMobile && screenWidth < breakpoint;
+  const addRTLTextFlow = <T extends Record<string, any>>(
+    items: T[],
+    textProperties: (keyof T)[] = ['label', 'title', 'text', 'name', 'description']
+  ): (T & { textFlow?: 'rtl' | 'ltr' })[] => {
+    if (!isRTL) return items as (T & { textFlow?: 'rtl' | 'ltr' })[];
+    
+    return items.map(item => {
+      // التحقق مما إذا كانت أي من خصائص النص تحتوي على نص باللغة العربية
+      const hasArabicText = textProperties.some(prop => {
+        const value = item[prop];
+        return typeof value === 'string' && /[\u0600-\u06FF]/.test(value);
+      });
       
-      if (shouldOverrideRTL) {
-        return 'ltr';
-      }
-      
-      return isRTL ? 'rtl' : 'ltr';
-    },
-    [isRTL, preferences.overrideRTLOnMobile]
-  );
+      // إضافة خاصية textFlow إذا كان النص عربيًا
+      return hasArabicText ? { ...item, textFlow: 'rtl' as const } : { ...item, textFlow: 'ltr' as const };
+    });
+  };
   
-  // إعادة اكتشاف RTL عند تغير اللغة
-  useEffect(() => {
-    detectRTL();
-  }, [i18n.language, detectRTL, preferences.forceRTL]);
-
-  // تطبيق الاتجاه على مستوى المستند
-  useEffect(() => {
-    if (typeof document !== 'undefined') {
-      document.documentElement.setAttribute('dir', isRTL ? 'rtl' : 'ltr');
-      
-      if (isRTL) {
-        document.body.classList.add('rtl-active');
-      } else {
-        document.body.classList.remove('rtl-active');
-      }
-    }
-  }, [isRTL]);
+  /**
+   * عكس ترتيب المصفوفة إذا كان الاتجاه من اليمين إلى اليسار
+   */
+  const applyRTLOrder = <T>(items: T[]): T[] => {
+    return isRTL ? [...items].reverse() : items;
+  };
   
   return {
     isRTL,
-    direction,
-    detectRTL,
-    getDirectionByContent,
-    getResponsiveDirection,
+    addRTLTextFlow,
+    applyRTLOrder,
   };
-};
-
-export default useRTLSupport;
+}
