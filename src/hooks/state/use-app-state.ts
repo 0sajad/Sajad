@@ -61,7 +61,8 @@ export const useAppState = create<AppState>()(
       setNetworkStatus: (status) => set({
         isConnected: status.isConnected,
         isOnline: status.isOnline,
-        lastCheck: status.lastCheck || new Date() // Fixed: Provide default value
+        // Fix 1: Don't try to access lastCheck if it's not in the status object
+        lastCheck: new Date() // Simply set to current date
       }),
 
       handleOfflineStatus: () => {
@@ -139,15 +140,15 @@ export const useAppState = create<AppState>()(
         }
       },
       
-      // Combine all state slices - fixed by properly passing the parameters
-      ...createUISlice(set, get, ...rest),
-      ...createPreferencesSlice(set, get, ...rest),
-      ...createUserSlice(set, get, ...rest),
-      ...createAppStatusSlice(set, get, ...rest),
-      ...createAccessibilitySlice(set, get, ...rest),
-      ...createNetworkSlice(set, get, ...rest),
-      ...createPerformanceSlice(set, get, ...rest),
-      ...createCacheSlice(set, get, ...rest),
+      // Combine all state slices - Fix 2: Fixed parameter spread
+      ...createUISlice(set, get),
+      ...createPreferencesSlice(set, get),
+      ...createUserSlice(set, get),
+      ...createAppStatusSlice(set, get),
+      ...createAccessibilitySlice(set, get),
+      ...createNetworkSlice(set, get),
+      ...createPerformanceSlice(set, get),
+      ...createCacheSlice(set, get),
     }),
     {
       name: 'app-state',
