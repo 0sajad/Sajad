@@ -8,7 +8,7 @@ import { ErrorBoundary } from "./components/ui/error/ErrorBoundary";
 import { useTranslation } from "react-i18next";
 import { ModeProvider } from "./context/ModeContext";
 import { RTLWrapper } from "./components/layout/RTLWrapper";
-import { LiveAnnouncer } from "./components/ui/accessibility/live-announcer";
+import { LiveAnnouncer } from "./components/ui/accessibility/live-announcer-enhanced";
 import IndexPage from "./pages/Index";
 import { A11yProvider } from "./hooks/accessibility/useA11yContext";
 

@@ -5,9 +5,6 @@ interface LiveAnnouncerProps {
   politeness?: "polite" | "assertive";
 }
 
-// Remove the Window interface declaration since it's already defined in window.d.ts
-// This will resolve the conflict
-
 export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
   const announcerRef = useRef<HTMLDivElement>(null);
   const prevAnnounceRef = useRef<((message: string, level?: "polite" | "assertive") => void) | undefined>(undefined);
