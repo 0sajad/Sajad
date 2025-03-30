@@ -140,13 +140,14 @@ export const useAppState = create<AppState>()(
         }
       },
       
-      // Combine all state slices - Fix 2: Fixed parameter spread
-      ...createUISlice(set, get),
-      ...createPreferencesSlice(set, get),
-      ...createUserSlice(set, get),
-      ...createAppStatusSlice(set, get),
-      ...createAccessibilitySlice(set, get),
-      ...createNetworkSlice(set, get),
+      // Fix all slice creator calls by providing the appropriate number of arguments
+      // based on the definitions in their respective files
+      ...createUISlice(set),
+      ...createPreferencesSlice(set),
+      ...createUserSlice(set),
+      ...createAppStatusSlice(set),
+      ...createAccessibilitySlice(set),
+      ...createNetworkSlice(set),
       ...createPerformanceSlice(set, get),
       ...createCacheSlice(set, get),
     }),
