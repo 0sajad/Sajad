@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useCallback, ReactNode } fr
 import { useAppState } from '@/hooks/state';
 import { toast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
+import { ColorBlindMode } from '../types/accessibility';
 
 // Define the A11yContextType to include all required properties
 export interface A11yContextType {
@@ -13,7 +14,7 @@ export interface A11yContextType {
   dyslexicFont: boolean;
   readingGuide: boolean;
   soundFeedback: boolean;
-  colorBlindMode: string;
+  colorBlindMode: ColorBlindMode;
   keyboardNavigationVisible: boolean;
   setHighContrast: (value: boolean) => void;
   setLargeText: (value: boolean) => void;
@@ -22,7 +23,7 @@ export interface A11yContextType {
   setDyslexicFont: (value: boolean) => void;
   setReadingGuide: (value: boolean) => void;
   setSoundFeedback: (value: boolean) => void;
-  setColorBlindMode: (mode: string) => void;
+  setColorBlindMode: (mode: ColorBlindMode) => void;
   setKeyboardNavigationVisible: (value: boolean) => void;
   announce: (message: string, politeness?: 'polite' | 'assertive') => void;
   playSound: (soundType: string) => void;
@@ -116,7 +117,7 @@ export function A11yProvider({ children }: { children: ReactNode }) {
     dyslexicFont,
     readingGuide,
     soundFeedback,
-    colorBlindMode,
+    colorBlindMode: colorBlindMode as ColorBlindMode,
     keyboardNavigationVisible,
     setHighContrast,
     setLargeText,
@@ -125,7 +126,7 @@ export function A11yProvider({ children }: { children: ReactNode }) {
     setDyslexicFont,
     setReadingGuide,
     setSoundFeedback,
-    setColorBlindMode,
+    setColorBlindMode: (mode: ColorBlindMode) => setColorBlindMode(mode),
     setKeyboardNavigationVisible,
     announce,
     playSound,

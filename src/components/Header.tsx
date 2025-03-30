@@ -9,7 +9,7 @@ import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button } from "./ui/button";
 import { Logo } from "./header/Logo";
-import { Header3D } from "./header/Header3D";
+import { AnimatedHeader3D } from "./header/AnimatedHeader3D";
 
 interface HeaderProps {
   onLanguageChange?: (language: string) => void;
@@ -61,7 +61,7 @@ export function Header({ onLanguageChange }: HeaderProps) {
       >
         {/* 3D Header Background */}
         <div className="absolute inset-0 overflow-hidden">
-          <Header3D />
+          <AnimatedHeader3D />
         </div>
         
         {/* Content Layer */}
