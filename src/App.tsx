@@ -8,7 +8,8 @@ import { ErrorBoundary } from "./components/ui/error/ErrorBoundary";
 import { useTranslation } from "react-i18next";
 import { ModeProvider } from "./context/ModeContext";
 import { RTLWrapper } from "./components/layout/RTLWrapper";
-import { LiveAnnouncer } from "./components/ui/accessibility/LiveAnnouncer";
+import { LiveAnnouncer } from "./components/ui/accessibility/live-announcer";
+import IndexPage from "./pages/Index";
 
 // Lazy load components for better performance
 const NetworkScanner = lazy(() => import("./pages/NetworkScanner"));
@@ -29,7 +30,8 @@ const App: React.FC = () => {
   // Memoize the routes to prevent unnecessary re-renders
   const appRoutes = useMemo(() => (
     <Routes>
-      <Route path="/" element={<Dashboard />} />
+      <Route path="/" element={<IndexPage />} />
+      <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/fiber-optic" element={<NetworkScanner />} />
       <Route path="/ai" element={<AIAssistant />} />
       <Route path="/simulation" element={<Simulation />} />
