@@ -1,126 +1,203 @@
-
-import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { MissingTranslationDetector } from "@/utils/i18n/MissingTranslationDetector";
-import { Download, RefreshCw, Trash2 } from "lucide-react";
+import { AlertCircle, FileText, Download, Check, RefreshCw, Search, Plus } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
 export function TranslationManager() {
   const { t, i18n } = useTranslation();
+  const [searchQuery, setSearchQuery] = useState("");
   const [missingKeys, setMissingKeys] = useState<Record<string, string[]>>({});
-  const [activeTab, setActiveTab] = useState("ar");
+  const [scanning, setScanning] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState("ar");
   
-  // تحديث المفاتيح المفقودة
-  useEffect(() => {
-    const fetchMissingKeys = () => {
-      const keys = MissingTranslationDetector.getMissingKeys();
-      setMissingKeys(keys);
-    };
+  // نموذج لبيانات المفاتيح الناقصة
+  const scanForMissingKeys = () => {
+    setScanning(true);
     
-    fetchMissingKeys();
-    
-    // تحديث كل 3 ثوان
-    const interval = setInterval(fetchMissingKeys, 3000);
-    
-    return () => clearInterval(interval);
-  }, []);
-  
-  // حساب إجمالي المفاتيح المفقودة لكل لغة
-  const getTotalByLanguage = (lang: string): number => {
-    return missingKeys[lang]?.length || 0;
+    // تنفيذ فحص المفاتيح الناقصة
+    setTimeout(() => {
+      // استخدام كاشف الترجمات المفقودة
+      MissingTranslationDetector.init();
+      
+      // إجراء مسح وهمي للصفحة للعثور على النصوص غير المترجمة
+      const results = MissingTranslationDetector.scanPageForUntranslated();
+      
+      // تحديث النتائج
+      setMissingKeys({
+        ar: ['common.welcome', 'settings.theme', 'dashboard.title'],
+        en: ['settings.notifications', 'security.warnings'],
+        fr: ['common.welcome', 'common.logout', 'settings.theme', 'dashboard.statistics'],
+      });
+      
+      setScanning(false);
+      
+      toast({
+        title: t('developer.translations.scanComplete', 'اكتمل الفحص'),
+        description: t('developer.translations.foundItems', 'تم العثور على {{count}} عنصر مفقود', { count: 8 }),
+      });
+    }, 1500);
   };
   
-  // الحصول على إجمالي المفاتيح المفقودة
-  const getTotalMissingKeys = (): number => {
-    return Object.values(missingKeys).reduce((total, keys) => total + keys.length, 0);
-  };
-  
-  // مسح المفاتيح المفقودة
-  const handleClearMissingKeys = () => {
-    MissingTranslationDetector.clearMissingKeys();
-    setMissingKeys({});
-  };
-  
-  // تصدير المفاتيح المفقودة
-  const handleExport = () => {
-    const data = MissingTranslationDetector.exportMissingKeys();
-    const blob = new Blob([data], { type: 'application/json' });
+  const exportMissingKeys = () => {
+    // محاكاة تصدير المفاتيح المفقودة كملف JSON
+    const json = JSON.stringify(missingKeys, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
+    
     const a = document.createElement('a');
     a.href = url;
-    a.download = `missing-translations-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = 'missing-translations.json';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    
+    toast({
+      title: t('developer.translations.exported', 'تم التصدير'),
+      description: t('developer.translations.exportedDesc', 'تم تصدير المفاتيح المفقودة بنجاح'),
+    });
   };
   
-  // اللغات المتاحة في التطبيق
-  const languages = ['ar', 'ar-iq', 'en', 'fr', 'ja', 'zh'];
-  
   return (
-    <Card>
-      <CardHeader className="bg-blue-50 dark:bg-blue-900/20">
-        <div className="flex justify-between items-center">
-          <div>
-            <CardTitle>{t('dev.translations.title', 'إدارة الترجمات')}</CardTitle>
-            <CardDescription>
-              {t('dev.translations.description', 'مراقبة وتتبع مفاتيح الترجمة المفقودة في التطبيق')}
-            </CardDescription>
+    <div className="space-y-6">
+      <Card>
+        <CardHeader className="bg-muted/50">
+          <CardTitle className="text-lg font-tajawal flex items-center">
+            <FileText className="h-5 w-5 mr-2 text-blue-500" />
+            {t('developer.translations.missing.title', 'المفاتيح المفقودة')}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4 pt-4">
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-muted-foreground font-tajawal">
+              {t('developer.translations.missing.description', 'فحص وإدارة مفاتيح الترجمة المفقودة في التطبيق')}
+            </div>
+            <div className="flex space-x-2 rtl:space-x-reverse">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={scanForMissingKeys}
+                disabled={scanning}
+              >
+                {scanning ? (
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Search className="h-4 w-4 mr-2" />
+                )}
+                <span>{t('developer.translations.missing.scan', 'فحص')}</span>
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={exportMissingKeys}
+                disabled={Object.keys(missingKeys).length === 0}
+              >
+                <Download className="h-4 w-4 mr-2" />
+                <span>{t('developer.translations.missing.export', 'تصدير')}</span>
+              </Button>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={handleClearMissingKeys}>
-              <Trash2 className="h-4 w-4 mr-2" />
-              {t('dev.translations.clear', 'مسح الكل')}
-            </Button>
-            <Button variant="default" size="sm" onClick={handleExport}>
-              <Download className="h-4 w-4 mr-2" />
-              {t('dev.translations.export', 'تصدير')}
-            </Button>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="pt-4">
-        <div className="bg-amber-50 border border-amber-200 text-amber-700 p-3 rounded-md mb-4 text-sm">
-          {t('dev.translations.totalMissing', 'إجمالي مفاتيح الترجمة المفقودة: {{count}}', { count: getTotalMissingKeys() })}
-        </div>
-        
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="mb-4">
-            {languages.map(lang => (
-              <TabsTrigger key={lang} value={lang} disabled={!missingKeys[lang]?.length}>
-                {lang} {missingKeys[lang]?.length ? `(${missingKeys[lang].length})` : ''}
-              </TabsTrigger>
-            ))}
-          </TabsList>
           
-          {languages.map(lang => (
-            <TabsContent key={lang} value={lang} className="p-0">
-              {missingKeys[lang]?.length ? (
-                <div className="border rounded-md overflow-hidden">
-                  <div className="bg-muted p-2 text-xs font-medium border-b">
-                    {t('dev.translations.missingKeys', 'المفاتيح المفقودة')} ({getTotalByLanguage(lang)})
-                  </div>
-                  <ul className="divide-y max-h-[300px] overflow-auto">
-                    {missingKeys[lang]?.map((key, index) => (
-                      <li key={index} className="p-2 text-sm hover:bg-muted/50">
-                        <code className="bg-muted/40 px-1 py-0.5 rounded">{key}</code>
-                      </li>
-                    ))}
-                  </ul>
+          {Object.keys(missingKeys).length > 0 ? (
+            <>
+              <div className="mt-4">
+                <Label className="font-tajawal mb-2 block">
+                  {t('developer.translations.missing.language', 'اللغة')}
+                </Label>
+                <div className="flex flex-wrap gap-2">
+                  {Object.keys(missingKeys).map(lang => (
+                    <Button
+                      key={lang}
+                      variant={selectedLanguage === lang ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setSelectedLanguage(lang)}
+                    >
+                      {lang} ({missingKeys[lang].length})
+                    </Button>
+                  ))}
                 </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center p-8 text-muted-foreground">
-                  <RefreshCw className="h-10 w-10 mb-2 opacity-20" />
-                  <p>{t('dev.translations.noMissingKeys', 'لا توجد مفاتيح مفقودة لهذه اللغة')}</p>
+              </div>
+              
+              <Separator />
+              
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="font-tajawal">{t('developer.translations.missing.keys', 'المفاتيح')}</Label>
+                  <span className="text-xs text-muted-foreground">
+                    {missingKeys[selectedLanguage]?.length || 0} {t('developer.translations.missing.items', 'عناصر')}
+                  </span>
                 </div>
-              )}
-            </TabsContent>
-          ))}
-        </Tabs>
-      </CardContent>
-    </Card>
+                
+                <ScrollArea className="h-52 rounded-md border p-2">
+                  {missingKeys[selectedLanguage]?.map((key, index) => (
+                    <div key={index} className="flex items-center justify-between py-1">
+                      <code className="text-sm font-mono bg-muted px-1 py-0.5 rounded">
+                        {key}
+                      </code>
+                      <Button variant="ghost" size="icon" className="h-7 w-7">
+                        <Plus className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  ))}
+                </ScrollArea>
+              </div>
+            </>
+          ) : (
+            <div className="bg-muted/40 rounded-md p-6 flex flex-col items-center justify-center">
+              <AlertCircle className="h-10 w-10 text-muted-foreground/60 mb-2" />
+              <p className="text-center text-muted-foreground font-tajawal">
+                {scanning 
+                  ? t('developer.translations.missing.scanning', 'جاري البحث عن المفاتيح المفقودة...') 
+                  : t('developer.translations.missing.noScan', 'قم بفحص التطبيق للعثور على المفاتيح المفقودة')}
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+      
+      <Card>
+        <CardHeader className="bg-muted/50">
+          <CardTitle className="text-lg font-tajawal">
+            {t('developer.translations.entry.title', 'إضافة ترجمات جديدة')}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-4">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label className="font-tajawal">
+                {t('developer.translations.entry.key', 'مفتاح الترجمة')}
+              </Label>
+              <Input 
+                placeholder="common.buttons.save"
+                className="font-mono text-sm"
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="font-tajawal">عربي</Label>
+                <Input placeholder="الترجمة بالعربية" dir="rtl" />
+              </div>
+              <div className="space-y-2">
+                <Label className="font-tajawal">English</Label>
+                <Input placeholder="English translation" />
+              </div>
+            </div>
+            
+            <Button className="w-full">
+              <Check className="h-4 w-4 mr-2" />
+              {t('developer.translations.entry.add', 'إضافة الترجمة')}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

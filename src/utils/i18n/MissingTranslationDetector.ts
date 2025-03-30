@@ -1,66 +1,115 @@
 
 /**
- * كاشف الترجمات المفقودة
- * يقوم بتسجيل وتتبع مفاتيح الترجمة المفقودة في التطبيق
+ * Utility class to detect and manage missing translations
  */
-
-interface MissingKeys {
-  [language: string]: string[];
-}
-
-class MissingTranslationDetectorClass {
-  private missingKeys: MissingKeys = {};
-  private isInitialized = false;
+export class MissingTranslationDetector {
+  private static missingKeys: Record<string, string[]> = {};
+  private static isInitialized = false;
 
   /**
-   * تهيئة كاشف الترجمات المفقودة
+   * Initialize the missing translation detector
    */
-  init(): void {
+  public static init(): void {
     if (this.isInitialized) return;
-    this.missingKeys = {};
+    
     this.isInitialized = true;
-    console.debug('[i18n] Missing translation detector initialized');
+    this.missingKeys = {};
+    
+    // Subscribe to i18next initialization event if needed
+    if (typeof window !== 'undefined') {
+      window.addEventListener('i18nextInitialized', () => {
+        console.debug('[MissingTranslationDetector] Initialized with i18next');
+      });
+    }
   }
 
   /**
-   * إضافة مفتاح ترجمة مفقود
-   * @param language كود اللغة
-   * @param key مفتاح الترجمة المفقود
+   * Add a missing key to the collection
    */
-  addMissingKey(language: string, key: string): void {
-    if (!this.isInitialized) this.init();
-    
+  public static addMissingKey(language: string, key: string): void {
     if (!this.missingKeys[language]) {
       this.missingKeys[language] = [];
     }
     
-    // تجنب تكرار المفاتيح المفقودة
     if (!this.missingKeys[language].includes(key)) {
       this.missingKeys[language].push(key);
+      console.debug(`[i18n] Missing translation for ${language}:${key}`);
     }
   }
 
   /**
-   * الحصول على جميع المفاتيح المفقودة
+   * Get all missing keys
    */
-  getMissingKeys(): MissingKeys {
+  public static getMissingKeys(): Record<string, string[]> {
     return this.missingKeys;
   }
 
   /**
-   * تصدير المفاتيح المفقودة كسلسلة JSON
+   * Export missing keys as JSON string
    */
-  exportMissingKeys(): string {
+  public static exportMissingKeys(): string {
     return JSON.stringify(this.missingKeys, null, 2);
   }
-  
+
   /**
-   * مسح جميع المفاتيح المفقودة
+   * Scan the page for untranslated texts
    */
-  clearMissingKeys(): void {
+  public static scanPageForUntranslated(): Record<string, string[]> {
+    const textNodes: { element: HTMLElement; text: string }[] = [];
+    
+    if (typeof document === 'undefined') return this.missingKeys;
+    
+    const walkDOM = (node: Node, callback: (node: Node) => void) => {
+      callback(node);
+      let child = node.firstChild;
+      while (child) {
+        walkDOM(child, callback);
+        child = child.nextSibling;
+      }
+    };
+    
+    walkDOM(document.body, (node) => {
+      if (
+        node.nodeType === 3 && // Text node
+        node.nodeValue && 
+        node.nodeValue.trim() !== '' &&
+        node.parentElement && 
+        !['SCRIPT', 'STYLE'].includes(node.parentElement.tagName)
+      ) {
+        const text = node.nodeValue.trim();
+        // Skip very short texts, numbers, and some common patterns
+        if (
+          text.length > 3 && 
+          !/^\d+$/.test(text) && 
+          !text.startsWith('{{') && 
+          !text.startsWith('t(')
+        ) {
+          textNodes.push({
+            element: node.parentElement as HTMLElement,
+            text
+          });
+        }
+      }
+    });
+    
+    // For now, we just gather the texts but don't add them to missingKeys
+    // In a real implementation, we would need to determine which texts are untranslated
+    console.debug(`[i18n] Found ${textNodes.length} text nodes that might need translation`);
+    
+    return this.missingKeys;
+  }
+
+  /**
+   * Reset the missing keys collection
+   */
+  public static reset(): void {
     this.missingKeys = {};
   }
-}
 
-// تصدير كائن وحيد للاستخدام في جميع أنحاء التطبيق
-export const MissingTranslationDetector = new MissingTranslationDetectorClass();
+  /**
+   * Clear all missing keys (alias for reset)
+   */
+  public static clearMissingKeys(): void {
+    this.reset();
+  }
+}
