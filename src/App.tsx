@@ -10,6 +10,7 @@ import { ModeProvider } from "./context/ModeContext";
 import { RTLWrapper } from "./components/layout/RTLWrapper";
 import { LiveAnnouncer } from "./components/ui/accessibility/live-announcer";
 import IndexPage from "./pages/Index";
+import { A11yProvider } from "./hooks/accessibility/useA11yContext";
 
 // Lazy load components for better performance
 const NetworkScanner = lazy(() => import("./pages/NetworkScanner"));
@@ -52,18 +53,20 @@ const App: React.FC = () => {
   
   return (
     <ModeProvider>
-      <Router>
-        <RTLWrapper>
-          <Layout>
-            <LiveAnnouncer />
-            <ErrorBoundary>
-              <Suspense fallback={<SuspenseLoader />}>
-                {appRoutes}
-              </Suspense>
-            </ErrorBoundary>
-          </Layout>
-        </RTLWrapper>
-      </Router>
+      <A11yProvider>
+        <Router>
+          <RTLWrapper>
+            <Layout>
+              <LiveAnnouncer />
+              <ErrorBoundary>
+                <Suspense fallback={<SuspenseLoader />}>
+                  {appRoutes}
+                </Suspense>
+              </ErrorBoundary>
+            </Layout>
+          </RTLWrapper>
+        </Router>
+      </A11yProvider>
     </ModeProvider>
   );
 };
