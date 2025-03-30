@@ -8,6 +8,7 @@ import { ErrorBoundary } from "./components/ui/error/ErrorBoundary";
 import { useTranslation } from "react-i18next";
 import { ModeProvider } from "./context/ModeContext";
 import { RTLWrapper } from "./components/layout/RTLWrapper";
+import { LiveAnnouncer } from "./components/ui/accessibility/LiveAnnouncer";
 
 // Lazy load components for better performance
 const NetworkScanner = lazy(() => import("./pages/NetworkScanner"));
@@ -52,9 +53,12 @@ const App: React.FC = () => {
       <Router>
         <RTLWrapper>
           <Layout>
-            <Suspense fallback={<SuspenseLoader />}>
-              {appRoutes}
-            </Suspense>
+            <LiveAnnouncer />
+            <ErrorBoundary>
+              <Suspense fallback={<SuspenseLoader />}>
+                {appRoutes}
+              </Suspense>
+            </ErrorBoundary>
           </Layout>
         </RTLWrapper>
       </Router>

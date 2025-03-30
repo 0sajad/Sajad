@@ -70,16 +70,10 @@ export function LiveAnnouncer() {
       };
     }
     
-    // Cleanup
     return () => {
-      // Restore previous announce function if it existed
-      if (typeof window !== 'undefined') {
-        if (previousAnnounceRef.current) {
-          window.announce = previousAnnounceRef.current;
-        } else {
-          // Or provide a no-op function
-          window.announce = () => {};
-        }
+      // Cleanup: only restore previous announce function if it existed
+      if (typeof window !== 'undefined' && previousAnnounceRef.current) {
+        window.announce = previousAnnounceRef.current;
       }
     };
   }, [i18n.language]); // Only re-create when language changes

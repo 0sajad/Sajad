@@ -5,12 +5,25 @@ interface LiveAnnouncerProps {
   politeness?: "polite" | "assertive";
 }
 
+// Define global announce function type
+declare global {
+  interface Window {
+    announce?: (message: string, level?: "polite" | "assertive") => void;
+  }
+}
+
 export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
   const announcerRef = useRef<HTMLDivElement>(null);
+  const prevAnnounceRef = useRef<((message: string, level?: "polite" | "assertive") => void) | undefined>(undefined);
   
   useEffect(() => {
+    // Save previous announce function if it exists
+    if (typeof window !== 'undefined' && window.announce) {
+      prevAnnounceRef.current = window.announce;
+    }
+    
     // Define global announcement function
-    if (typeof window !== 'undefined' && !window.announce) {
+    if (typeof window !== 'undefined') {
       window.announce = (message: string, level: "polite" | "assertive" = "polite") => {
         if (announcerRef.current) {
           try {
@@ -33,18 +46,15 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
       };
     }
     
-    // Cleanup: clear announcer element when component is removed
+    // Cleanup: restore previous announce function if it existed
     return () => {
-      if (announcerRef.current) {
-        announcerRef.current.textContent = "";
-      }
-      
-      // Avoid memory leaks by not restoring previous announce function
-      // Just provide an empty no-op function for safety
       if (typeof window !== 'undefined') {
-        window.announce = (message: string) => {
-          console.log("LiveAnnouncer unmounted, but announce was called with:", message);
-        };
+        if (prevAnnounceRef.current) {
+          window.announce = prevAnnounceRef.current;
+        } else {
+          // If no previous function, just remove the property
+          delete window.announce;
+        }
       }
     };
   }, []);

@@ -1,8 +1,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAppState } from './state';
-import { toast } from './use-toast';
+import { toast } from '@/components/ui/use-toast';
 import { ToastAction } from '@/components/ui/toast';
 
 export function useOfflineSupport() {
@@ -14,7 +13,6 @@ export function useOfflineSupport() {
   const [isSyncingData, setSyncingData] = useState(false);
   const previousIsOnline = useRef(isOnline);
   
-  // Memoize callback functions to prevent unnecessary re-renders
   // Function to update network status
   const updateNetworkStatus = useCallback(() => {
     setIsOnline(navigator.onLine);
@@ -93,7 +91,7 @@ export function useOfflineSupport() {
     }
   }, [isOnline, t]);
 
-  // Function to save changes locally - memoize to prevent re-renders
+  // Function to save changes locally
   const saveLocally = useCallback(async (data: any) => {
     try {
       // Simulate storage operation
@@ -102,8 +100,6 @@ export function useOfflineSupport() {
       // Update local state
       setHasPendingChanges(true);
       setUnsavedChangesCount(prev => prev + 1);
-      
-      // Here we would typically save to IndexedDB or localStorage
       
       return true;
     } catch (error) {
@@ -116,38 +112,31 @@ export function useOfflineSupport() {
     }
   }, [t]);
 
-  // Auto-sync when coming back online - Use useEffect with specific dependencies
+  // Auto-sync when coming back online
   useEffect(() => {
-    // Only run this effect when transitioning from offline to online
-    if (!previousIsOnline.current && isOnline && hasPendingChanges) {
-      // Ask user if they want to sync
-      const shouldSync = window.confirm(t('offline.syncPrompt'));
-      
-      if (shouldSync) {
-        // Use void to explicitly discard the Promise result
-        void syncOfflineData();
-      } else {
-        // Show reminder
-        toast({
-          title: t('offline.syncReminder'),
-          description: t('offline.syncReminderDesc', { count: unsavedChangesCount }),
-          action: (
-            <ToastAction 
-              altText={t('offline.syncNow')}
-              onClick={() => void syncOfflineData()}
-            >
-              {t('offline.syncNow')}
-            </ToastAction>
-          ),
-        });
-      }
+    const current = isOnline;
+    const prev = previousIsOnline.current;
+    
+    if (!prev && current && hasPendingChanges) {
+      toast({
+        title: t('offline.syncReminder'),
+        description: t('offline.syncReminderDesc', { count: unsavedChangesCount }),
+        action: (
+          <ToastAction 
+            altText={t('offline.syncNow')}
+            onClick={() => syncOfflineData()}
+          >
+            {t('offline.syncNow')}
+          </ToastAction>
+        ),
+      });
     }
     
-    // Update the ref at the end of the effect
-    previousIsOnline.current = isOnline;
+    // Update ref for next comparison
+    previousIsOnline.current = current;
   }, [isOnline, hasPendingChanges, unsavedChangesCount, syncOfflineData, t]);
 
-  // Listen for beforeunload event to warn about unsaved changes
+  // Warn about unsaved changes before unload
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (hasPendingChanges) {
@@ -159,11 +148,10 @@ export function useOfflineSupport() {
     
     if (hasPendingChanges) {
       window.addEventListener('beforeunload', handleBeforeUnload);
+      return () => {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+      };
     }
-    
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
   }, [hasPendingChanges, t]);
 
   return {
