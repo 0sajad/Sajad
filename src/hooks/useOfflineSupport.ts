@@ -1,167 +1,138 @@
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
-import { toast } from '@/components/ui/use-toast';
-import { ToastAction } from '@/components/ui/toast';
+/**
+ * Hook to provide offline support functionality
+ */
+import { useState, useEffect, useCallback } from 'react';
+import { useAppState } from './state';
+import { useNotifications } from './useNotifications';
 
-export function useOfflineSupport() {
-  const { t } = useTranslation();
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const [networkStatus, setNetworkStatus] = useState<string | null>(null);
-  const [hasPendingChanges, setHasPendingChanges] = useState(false);
-  const [unsavedChangesCount, setUnsavedChangesCount] = useState(0);
-  const [isSyncingData, setSyncingData] = useState(false);
-  const previousIsOnline = useRef(isOnline);
+interface OfflineSupportOptions {
+  enableOfflineMode?: boolean;
+  showNotifications?: boolean;
+  autoSync?: boolean;
+}
+
+export const useOfflineSupport = (options: OfflineSupportOptions = {}) => {
+  const {
+    enableOfflineMode = true,
+    showNotifications = true,
+    autoSync = true
+  } = options;
   
-  // Function to update network status
-  const updateNetworkStatus = useCallback(() => {
-    setIsOnline(navigator.onLine);
-    setNetworkStatus(navigator.onLine ? 'online' : 'offline');
-  }, []);
-
-  // Listen for online/offline events
-  useEffect(() => {
-    const handleOnline = () => {
-      updateNetworkStatus();
-      toast({
-        title: t('offline.backOnline'),
-        description: t('offline.backOnlineDesc'),
-      });
-    };
-
-    const handleOffline = () => {
-      updateNetworkStatus();
-      toast({
-        title: t('offline.offline'),
-        description: t('offline.offlineDesc'),
-        variant: 'destructive',
-      });
-    };
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    // Initial status update
-    updateNetworkStatus();
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, [t, updateNetworkStatus]);
+  const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
+  const [pendingActions, setPendingActions] = useState<any[]>([]);
+  const [isSyncing, setIsSyncing] = useState<boolean>(false);
+  const { notify } = useNotifications();
   
-  // Function to sync offline data - memoize to prevent re-renders
-  const syncOfflineData = useCallback(async () => {
-    if (!isOnline) {
-      toast({
-        title: t('offline.syncFailed'),
-        description: t('offline.syncFailedOffline'),
-        variant: 'destructive',
-      });
-      return false;
-    }
-
-    try {
-      setSyncingData(true);
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Clear pending changes
-      setHasPendingChanges(false);
-      
-      // Reset unsaved changes counter
-      setUnsavedChangesCount(0);
-      
-      // Show success toast
-      toast({
-        title: t('offline.syncComplete'),
-        description: t('offline.syncCompleteDesc'),
-      });
-      
-      return true;
-    } catch (error) {
-      toast({
-        title: t('offline.syncFailed'),
-        description: String(error),
-        variant: 'destructive',
-      });
-      return false;
-    } finally {
-      setSyncingData(false);
-    }
-  }, [isOnline, t]);
-
-  // Function to save changes locally
-  const saveLocally = useCallback(async (data: any) => {
-    try {
-      // Simulate storage operation
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Update local state
-      setHasPendingChanges(true);
-      setUnsavedChangesCount(prev => prev + 1);
-      
-      return true;
-    } catch (error) {
-      toast({
-        title: t('offline.saveFailed'),
-        description: String(error),
-        variant: 'destructive',
-      });
-      return false;
-    }
-  }, [t]);
-
-  // Auto-sync when coming back online
-  useEffect(() => {
-    const current = isOnline;
-    const prev = previousIsOnline.current;
+  // Update online status
+  const updateOnlineStatus = useCallback(() => {
+    const online = navigator.onLine;
+    setIsOnline(online);
     
-    if (!prev && current && hasPendingChanges) {
-      toast({
-        title: t('offline.syncReminder'),
-        description: t('offline.syncReminderDesc', { count: unsavedChangesCount }),
-        action: (
-          <ToastAction 
-            altText={t('offline.syncNow')}
-            onClick={() => syncOfflineData()}
-          >
-            {t('offline.syncNow')}
-          </ToastAction>
-        ),
-      });
-    }
-    
-    // Update ref for next comparison
-    previousIsOnline.current = current;
-  }, [isOnline, hasPendingChanges, unsavedChangesCount, syncOfflineData, t]);
-
-  // Warn about unsaved changes before unload
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (hasPendingChanges) {
-        const message = t('offline.unsavedChanges');
-        e.returnValue = message;
-        return message;
+    if (showNotifications) {
+      if (online) {
+        notify({
+          title: 'متصل بالإنترنت',
+          message: 'تمت استعادة الاتصال بالإنترنت',
+          type: 'success'
+        });
+      } else {
+        notify({
+          title: 'غير متصل بالإنترنت',
+          message: 'أنت الآن في وضع عدم الاتصال، سيتم حفظ التغييرات محليًا',
+          type: 'warning'
+        });
       }
-    };
-    
-    if (hasPendingChanges) {
-      window.addEventListener('beforeunload', handleBeforeUnload);
-      return () => {
-        window.removeEventListener('beforeunload', handleBeforeUnload);
-      };
     }
-  }, [hasPendingChanges, t]);
-
+  }, [showNotifications, notify]);
+  
+  // Queue an action to be performed when back online
+  const queueAction = useCallback((action: any) => {
+    setPendingActions(prev => [...prev, action]);
+  }, []);
+  
+  // Sync queued actions when back online
+  const syncQueuedActions = useCallback(async () => {
+    if (!isOnline || pendingActions.length === 0) return;
+    
+    setIsSyncing(true);
+    
+    try {
+      // Process each action in the queue
+      for (const action of pendingActions) {
+        // This would be replaced with actual API calls
+        await new Promise(resolve => setTimeout(resolve, 300));
+      }
+      
+      // Clear the queue after successful sync
+      setPendingActions([]);
+      
+      if (showNotifications) {
+        notify({
+          title: 'تمت المزامنة',
+          message: 'تمت مزامنة جميع الإجراءات المعلقة بنجاح',
+          type: 'success'
+        });
+      }
+    } catch (error) {
+      if (showNotifications) {
+        notify({
+          title: 'فشل المزامنة',
+          message: 'حدث خطأ أثناء محاولة مزامنة البيانات',
+          type: 'error'
+        });
+      }
+    } finally {
+      setIsSyncing(false);
+    }
+  }, [isOnline, pendingActions, showNotifications, notify]);
+  
+  // Check if we can perform an operation based on current connectivity
+  const canPerformOperation = useCallback((requiresInternet: boolean = true) => {
+    return !requiresInternet || isOnline;
+  }, [isOnline]);
+  
+  // Perform an operation with offline support
+  const performOperation = useCallback(async (
+    operation: () => Promise<any>,
+    offlineAction?: any,
+    requiresInternet: boolean = true
+  ) => {
+    if (canPerformOperation(requiresInternet)) {
+      return await operation();
+    } else if (offlineAction && enableOfflineMode) {
+      queueAction(offlineAction);
+      return { offline: true, queued: true };
+    } else {
+      throw new Error('تعذر إكمال العملية في وضع عدم الاتصال');
+    }
+  }, [canPerformOperation, enableOfflineMode, queueAction]);
+  
+  // Event listeners for online/offline status
+  useEffect(() => {
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    
+    return () => {
+      window.removeEventListener('online', updateOnlineStatus);
+      window.removeEventListener('offline', updateOnlineStatus);
+    };
+  }, [updateOnlineStatus]);
+  
+  // Auto sync when coming back online
+  useEffect(() => {
+    if (isOnline && autoSync && pendingActions.length > 0) {
+      syncQueuedActions();
+    }
+  }, [isOnline, autoSync, pendingActions.length, syncQueuedActions]);
+  
   return {
     isOnline,
-    isOffline: !isOnline,
-    networkStatus,
-    hasPendingChanges,
-    unsavedChangesCount,
-    isSyncingData,
-    saveLocally,
-    syncOfflineData
+    pendingActions,
+    queueAction,
+    syncQueuedActions,
+    performOperation,
+    canPerformOperation,
+    isSyncing
   };
-}
+};

@@ -1,6 +1,6 @@
 
 import React from "react";
-import { User, Menu, X, Bell } from "lucide-react";
+import { User, Menu, X, Bell, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/ModeToggle";
 import { LanguageSwitcher } from "@/components/nav/LanguageSwitcher";
@@ -12,6 +12,7 @@ import {
   PopoverTrigger 
 } from "@/components/ui/popover";
 import { NotificationsList } from "@/components/notifications/NotificationsList";
+import { useMode } from "@/context/ModeContext";
 
 interface HeaderActionsProps {
   isMobileMenuOpen: boolean;
@@ -23,6 +24,11 @@ export function HeaderActions({
   setIsMobileMenuOpen 
 }: HeaderActionsProps) {
   const { t } = useTranslation();
+  const { theme, setTheme } = useMode();
+  
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
   
   return (
     <div className="flex items-center space-x-4 sm:space-x-6 md:space-x-8 rtl:space-x-reverse">
@@ -40,6 +46,21 @@ export function HeaderActions({
           </div>
         </Button>
       </div>
+
+      {/* Theme Toggle */}
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        className="rounded-full"
+        onClick={toggleTheme}
+        aria-label={theme === 'dark' ? t('accessibility.lightMode', 'الوضع النهاري') : t('accessibility.darkMode', 'الوضع الليلي')}
+      >
+        {theme === 'dark' ? (
+          <Sun size={18} className="text-yellow-400" />
+        ) : (
+          <Moon size={18} className="text-blue-600" />
+        )}
+      </Button>
 
       {/* Notifications */}
       <Popover>
@@ -62,11 +83,6 @@ export function HeaderActions({
       
       {/* Language Switcher */}
       <LanguageSwitcher className="transform hover:scale-110 transition-transform rounded-full" />
-      
-      {/* Theme Toggle */}
-      <div className="transform hover:scale-105 transition-transform">
-        <ModeToggle />
-      </div>
       
       {/* Mobile Menu Toggle */}
       <motion.button
