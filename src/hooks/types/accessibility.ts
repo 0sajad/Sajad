@@ -32,3 +32,20 @@ export interface AccessibilityState {
   profiles: AccessibilityProfile[];
   activeProfileId: string | null;
 }
+
+export interface A11ySettings {
+  highContrast?: boolean;
+  largeText?: boolean;
+  reducedMotion?: boolean;
+  focusMode?: boolean;
+  colorBlindMode?: ColorBlindMode;
+  dyslexicFont?: boolean;
+  readingGuide?: boolean;
+  soundFeedback?: boolean;
+  fontFamily?: string;
+  lineHeight?: number;
+  letterSpacing?: number;
+  kashidaEnabled?: boolean;
+  updatedAt?: string;
+  version?: number;
+}

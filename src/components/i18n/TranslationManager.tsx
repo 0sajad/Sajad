@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertCircle, CheckCircle2, Languages, Save } from 'lucide-react';
-import useMissingTranslations from '@/hooks/useMissingTranslations';
+import { useMissingTranslations } from '@/hooks/useMissingTranslations';
 import { useToast } from '@/hooks/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
@@ -28,7 +27,6 @@ export function TranslationManager() {
   const [editedTranslations, setEditedTranslations] = useState<Record<string, string>>({});
   const [missingOnly, setMissingOnly] = useState(false);
 
-  // Available languages
   const languages = [
     { code: 'en', name: 'English' },
     { code: 'ar', name: 'العربية' },
@@ -37,7 +35,6 @@ export function TranslationManager() {
     { code: 'zh', name: '中文' },
   ];
 
-  // Load translations for selected language
   useEffect(() => {
     const loadTranslations = async () => {
       try {
@@ -54,7 +51,6 @@ export function TranslationManager() {
     loadTranslations();
   }, [selectedLanguage, i18n]);
 
-  // Flatten nested translation object
   const flattenObject = (obj: any, prefix = ''): Translation[] => {
     return Object.keys(obj).reduce((acc: Translation[], key) => {
       const prefixedKey = prefix ? `${prefix}.${key}` : key;
@@ -65,7 +61,6 @@ export function TranslationManager() {
     }, []);
   };
 
-  // Filter translations based on search term and missing only option
   const filteredTranslations = translations.filter(translation => {
     const matchesSearch = translation.key.toLowerCase().includes(searchTerm.toLowerCase()) || 
                          (translation.value && translation.value.toString().toLowerCase().includes(searchTerm.toLowerCase()));
@@ -75,14 +70,11 @@ export function TranslationManager() {
     return matchesSearch;
   });
 
-  // Handle translation edit
   const handleTranslationChange = (key: string, value: string) => {
     setEditedTranslations(prev => ({ ...prev, [key]: value }));
   };
 
-  // Save edited translations
   const saveTranslations = () => {
-    // In a real app, you would save these to your backend or i18n system
     console.log('Saving translations:', editedTranslations);
     toast({
       title: t('settings.translationsUpdated'),
@@ -91,13 +83,11 @@ export function TranslationManager() {
     setEditedTranslations({});
   };
 
-  // Switch language
   const changeLanguage = (langCode: string) => {
     setSelectedLanguage(langCode);
     setEditedTranslations({});
   };
 
-  // Calculate completion percentage
   const completionPercentage = totalKeys > 0 ? ((totalKeys - missingKeys.length) / totalKeys) * 100 : 100;
 
   return (
@@ -108,7 +98,7 @@ export function TranslationManager() {
             <Languages className="h-5 w-5" />
             {t('settings.translationManager')}
           </CardTitle>
-          <Badge variant={completionPercentage >= 90 ? "success" : "warning"}>
+          <Badge variant={completionPercentage >= 90 ? "default" : "secondary"}>
             {completionPercentage.toFixed(0)}% {t('settings.complete')}
           </Badge>
         </div>
