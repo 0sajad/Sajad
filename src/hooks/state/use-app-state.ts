@@ -57,6 +57,14 @@ export const useAppState = create<AppState>((set) => ({
     set((state) => ({ developerMode: !state.developerMode }));
   },
   
+  setCompactMode: (enabled) => {
+    set({ compactMode: enabled });
+  },
+  
+  setAnimations: (enabled) => {
+    set({ animations: enabled });
+  },
+  
   toggleCompactMode: () => {
     set((state) => ({ compactMode: !state.compactMode }));
   },
@@ -106,7 +114,16 @@ export const useAppState = create<AppState>((set) => ({
   
   setKeyboardNavigationVisible: (value) => {
     set({ keyboardNavigationVisible: value });
-  }
+  },
+
+  // Cache-related properties and functions with stub implementations
+  cachedData: {},
+  lastCacheUpdate: null,
+  setCachedData: () => {},
+  getCachedData: () => null,
+  clearCache: () => {},
+  clearCacheItem: () => {},
+  isCacheExpired: () => false
 }));
 
 // Separate hook for preferences to avoid unnecessary re-renders

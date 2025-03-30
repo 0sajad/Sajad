@@ -5,10 +5,10 @@ interface LiveAnnouncerProps {
   politeness?: "polite" | "assertive";
 }
 
-// Define global announce function type but without redeclaring it
+// Define global announce function type without redeclaring it
 declare global {
   interface Window {
-    announce?: (message: string, level?: "polite" | "assertive") => void;
+    announce: (message: string, level?: "polite" | "assertive") => void;
   }
 }
 

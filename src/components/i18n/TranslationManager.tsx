@@ -202,10 +202,11 @@ export function TranslationManager({ namespacesFilter }: TranslationManagerProps
         
         <div className="flex justify-between mt-4">
           <span className="text-sm text-muted-foreground">
-            {String(t('i18n.showing', 'Showing {{count}} of {{total}} keys', {
+            {t('i18n.showing', {
               count: filteredKeys.length,
-              total: Object.keys(translations).length
-            }))}
+              total: Object.keys(translations).length,
+              defaultValue: `Showing ${filteredKeys.length} of ${Object.keys(translations).length} keys`
+            })}
           </span>
           
           <Button size="sm">

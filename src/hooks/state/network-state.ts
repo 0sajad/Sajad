@@ -15,6 +15,8 @@ export const createNetworkSlice: StateCreator<
   network: {
     // حالة الاتصال بالشبكة
     isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
+    isConnected: typeof navigator !== 'undefined' ? navigator.onLine : true,
+    lastCheck: new Date(),
     
     // تعيين حالة الاتصال
     setOnlineStatus: (status) => 
