@@ -140,16 +140,15 @@ export const useAppState = create<AppState>()(
         }
       },
       
-      // Fix all slice creator calls by providing the appropriate number of arguments
-      // based on the definitions in their respective files
-      ...createUISlice(set),
-      ...createPreferencesSlice(set),
-      ...createUserSlice(set),
-      ...createAppStatusSlice(set),
-      ...createAccessibilitySlice(set),
-      ...createNetworkSlice(set),
-      ...createPerformanceSlice(set, get),
-      ...createCacheSlice(set, get),
+      // Fix all slice creator calls by providing all three expected arguments
+      ...createUISlice(set, get, rest),
+      ...createPreferencesSlice(set, get, rest),
+      ...createUserSlice(set, get, rest),
+      ...createAppStatusSlice(set, get, rest),
+      ...createAccessibilitySlice(set, get, rest),
+      ...createNetworkSlice(set, get, rest),
+      ...createPerformanceSlice(set, get, rest),
+      ...createCacheSlice(set, get, rest),
     }),
     {
       name: 'app-state',
