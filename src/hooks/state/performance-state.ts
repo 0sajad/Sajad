@@ -17,18 +17,17 @@ export const createPerformanceSlice: StateCreator<
   isLowEndDevice: false,
   
   // وظائف تعديل الحالة
-  setDeviceTier: (tier) => set(() => ({ 
+  setDeviceTier: (tier) => set({ 
     deviceTier: tier,
     isLowEndDevice: tier === 'low'
-  })),
+  }),
   
   // تحسين التطبيق للأجهزة ذات الأداء المنخفض
   optimizeForLowEndDevice: () => {
-    set(() => ({ 
+    set({ 
       deviceTier: 'low',
-      isLowEndDevice: true,
-      reducedMotion: true, // Existing property in AppState
-    }));
+      isLowEndDevice: true
+    });
     
     // تطبيق التفضيلات المحسنة للأداء المنخفض
     const { setPreference } = get();
@@ -39,10 +38,9 @@ export const createPerformanceSlice: StateCreator<
   
   // استعادة إعدادات الأداء الافتراضية
   restoreDefaultPerformance: () => {
-    set(() => ({ 
+    set({ 
       deviceTier: 'medium',
-      isLowEndDevice: false,
-      reducedMotion: false, // Existing property in AppState
-    }));
+      isLowEndDevice: false
+    });
   }
 });

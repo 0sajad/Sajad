@@ -10,18 +10,9 @@ import { useTranslation } from 'react-i18next';
  */
 export function useNetworkManager() {
   const { t } = useTranslation();
-  // استخدم قيم افتراضية آمنة لتجنب الأخطاء
-  const networkState = useAppState(state => state.network || { isOnline: true });
-  const setOnlineStatus = useCallback((status: boolean) => {
-    useAppState.getState().network.setOnlineStatus(status);
-  }, []);
-  
-  const checkConnection = useCallback(async () => {
-    if (useAppState.getState().network.checkConnection) {
-      return await useAppState.getState().network.checkConnection();
-    }
-    return true;
-  }, []);
+  const setNetworkStatus = useAppState(state => state.setNetworkStatus);
+  const checkConnection = useAppState(state => state.checkConnection);
+  const networkStatus = useAppState(state => state.networkStatus);
   
   const [isCheckingConnection, setIsCheckingConnection] = useState(false);
   
@@ -34,7 +25,10 @@ export function useNetworkManager() {
     };
     
     const handleOffline = () => {
-      setOnlineStatus(false);
+      setNetworkStatus({
+        isConnected: false,
+        isOnline: false
+      });
       
       // إظهار رسالة للمستخدم
       toast.warning(
@@ -52,7 +46,7 @@ export function useNetworkManager() {
     
     // جدولة فحص دوري للاتصال
     const checkInterval = setInterval(() => {
-      if (!networkState?.isOnline) {
+      if (!networkStatus?.isOnline) {
         checkNetworkStatus();
       }
     }, 30000); // التحقق كل 30 ثانية
@@ -62,20 +56,23 @@ export function useNetworkManager() {
       window.removeEventListener('offline', handleOffline);
       clearInterval(checkInterval);
     };
-  }, [checkConnection, setOnlineStatus, t, networkState]);
+  }, [checkConnection, setNetworkStatus, t, networkStatus]);
   
   // وظيفة محسّنة للتحقق من الاتصال
   const checkNetworkStatus = useCallback(async () => {
-    if (isCheckingConnection) return networkState?.isOnline || false;
+    if (isCheckingConnection) return networkStatus?.isOnline || false;
     
     setIsCheckingConnection(true);
     
     try {
       const isConnected = await checkConnection();
       
-      setOnlineStatus(isConnected);
+      setNetworkStatus({
+        isConnected,
+        isOnline: isConnected
+      });
       
-      if (isConnected && !networkState?.isOnline) {
+      if (isConnected && !networkStatus?.isOnline) {
         // إظهار رسالة للمستخدم عند استعادة الاتصال
         toast.success(
           t('network.connectionRestored', 'تم استعادة الاتصال'),
@@ -90,7 +87,7 @@ export function useNetworkManager() {
       setIsCheckingConnection(false);
       return false;
     }
-  }, [checkConnection, setOnlineStatus, t, isCheckingConnection, networkState]);
+  }, [checkConnection, setNetworkStatus, t, isCheckingConnection, networkStatus]);
   
   // وظيفة لإعادة محاولة الاتصال بشكل صريح
   const retryConnection = useCallback(async () => {
@@ -116,10 +113,10 @@ export function useNetworkManager() {
   }, [checkNetworkStatus, t]);
   
   return {
-    isOnline: networkState?.isOnline || false,
-    isConnected: true,
+    isOnline: networkStatus?.isOnline || false,
+    isConnected: networkStatus?.isConnected || false,
     isCheckingConnection,
-    lastCheck: null,
+    lastCheck: networkStatus?.lastCheck || null,
     checkNetworkStatus,
     retryConnection
   };

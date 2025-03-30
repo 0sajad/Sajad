@@ -1,139 +1,175 @@
 
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { AppState } from './types';
+import { createUISlice } from './ui-state';
+import { createPreferencesSlice } from './preferences-state';
+import { createUserSlice } from './user-state';
+import { createAppStatusSlice } from './app-status-state';
+import { createAccessibilitySlice } from './accessibility-state';
+import { createNetworkSlice } from './network-state';
+import { createPerformanceSlice } from './performance-state';
+import { createCacheSlice } from './cache-state';
 
-// Create a single store with initial state
-export const useAppState = create<AppState>((set) => ({
-  // Base application state
-  theme: 'system',
-  language: 'en',
-  developerMode: false,
-  compactMode: false,
-  animations: true,
-  preferences: {},
-  performance: {
-    deviceTier: 'medium',
-    isLowEndDevice: false,
-    optimizeForLowEndDevice: () => {},
-    restoreDefaultPerformance: () => {},
-    setDeviceTier: () => {}
-  },
-  network: {
-    isOnline: true,
-    isConnected: true,
-    lastCheck: new Date(),
-    checkConnection: async () => true,
-    setOnlineStatus: () => {}
-  },
-  
-  // Network status
-  networkStatus: {
-    isConnected: true,
-    isOnline: true,
-    lastCheck: new Date()
-  },
-  
-  // UI state
-  highContrast: false,
-  largeText: false,
-  reducedMotion: false,
-  focusMode: false,
-  dyslexicFont: false,
-  readingGuide: false,
-  soundFeedback: true,
-  colorBlindMode: 'none',
-  keyboardNavigationVisible: false,
-  
-  // Setters
-  setTheme: (theme) => {
-    set({ theme });
-  },
-  
-  setLanguage: (language) => {
-    set({ language });
-  },
-  
-  toggleDeveloperMode: () => {
-    set((state) => ({ developerMode: !state.developerMode }));
-  },
-  
-  setCompactMode: (enabled) => {
-    set({ compactMode: enabled });
-  },
-  
-  setAnimations: (enabled) => {
-    set({ animations: enabled });
-  },
-  
-  toggleCompactMode: () => {
-    set((state) => ({ compactMode: !state.compactMode }));
-  },
-  
-  toggleAnimations: () => {
-    set((state) => ({ animations: !state.animations }));
-  },
-  
-  setPreference: (key, value) => {
-    set((state) => ({
-      preferences: { ...state.preferences, [key]: value }
-    }));
-  },
-  
-  // Accessibility setters
-  setHighContrast: (value) => {
-    set({ highContrast: value });
-  },
-  
-  setLargeText: (value) => {
-    set({ largeText: value });
-  },
-  
-  setReducedMotion: (value) => {
-    set({ reducedMotion: value });
-  },
-  
-  setFocusMode: (value) => {
-    set({ focusMode: value });
-  },
-  
-  setDyslexicFont: (value) => {
-    set({ dyslexicFont: value });
-  },
-  
-  setReadingGuide: (value) => {
-    set({ readingGuide: value });
-  },
-  
-  setSoundFeedback: (value) => {
-    set({ soundFeedback: value });
-  },
-  
-  setColorBlindMode: (mode) => {
-    set({ colorBlindMode: mode });
-  },
-  
-  setKeyboardNavigationVisible: (value) => {
-    set({ keyboardNavigationVisible: value });
-  },
+/**
+ * متجر إدارة الحالة المركزية للتطبيق
+ * استخدام Zustand للحالة مع الحفظ التلقائي في localStorage
+ */
+export const useAppState = create<AppState>()(
+  persist(
+    (set, get, api) => ({
+      // Initialize required properties explicitly
+      isLoading: {},
+      errors: {},
+      isInitialized: false,
+      setIsLoading: (key, loading) => set((state) => ({
+        isLoading: { ...state.isLoading, [key]: loading }
+      })),
+      setError: (key, error) => set((state) => ({
+        errors: { ...state.errors, [key]: error }
+      })),
+      setInitialized: (initialized) => set({ isInitialized: initialized }),
 
-  // Cache-related properties and functions with stub implementations
-  cachedData: {},
-  lastCacheUpdate: null,
-  setCachedData: () => {},
-  getCachedData: () => null,
-  clearCache: () => {},
-  clearCacheItem: () => {},
-  isCacheExpired: () => false
-}));
+      // Network status methods
+      checkNetworkStatus: async () => {
+        try {
+          const response = await fetch('https://www.google.com/generate_204', {
+            method: 'HEAD',
+            mode: 'no-cors',
+            cache: 'no-store',
+          });
+          
+          const isOnline = response.type === 'opaque' || response.ok;
+          set({ 
+            isConnected: true,
+            isOnline,
+            lastCheck: new Date()
+          });
+          
+          return isOnline;
+        } catch (error) {
+          set({ 
+            isConnected: false,
+            isOnline: false,
+            lastCheck: new Date()
+          });
+          
+          return false;
+        }
+      },
+      
+      setNetworkStatus: (status) => set({
+        isConnected: status.isConnected,
+        isOnline: status.isOnline,
+        lastCheck: status.lastCheck || new Date() // تصحيح: توفير قيمة افتراضية
+      }),
 
-// Separate hook for preferences to avoid unnecessary re-renders
-export const usePreferences = <T,>(key: string, defaultValue: T): [T, (value: T) => void] => {
-  const value = useAppState((state) => (state.preferences[key] as T) ?? defaultValue);
-  const setPreference = useAppState((state) => state.setPreference);
-  
-  const setValue = (newValue: T) => {
-    setPreference(key, newValue);
-  };
-  
-  return [value, setValue];
-};
+      handleOfflineStatus: () => {
+        set({
+          isOnline: false,
+          lastCheck: new Date()
+        });
+      },
+
+      handleOnlineStatus: () => {
+        set({
+          isOnline: true,
+          lastCheck: new Date()
+        });
+      },
+
+      // Initialize network status
+      networkStatus: {
+        isConnected: true,
+        isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
+        lastCheck: null
+      },
+      
+      // Initialize data loading
+      dataLoading: {
+        isLoading: false,
+        lastUpdated: null,
+        error: null
+      },
+      
+      // Additional required properties
+      isSidebarOpen: false,
+      isConnected: true,
+      isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
+      lastCheck: null,
+      
+      // UI state properties required by AppState
+      isDrawerOpen: false,
+      activePage: 'home',
+      lastVisitedPage: null,
+      modals: {},
+      
+      // Required preferences properties from AppState
+      theme: 'system',
+      language: 'ar',
+      notificationsEnabled: true,
+      animations: true,
+      compactMode: false,
+      
+      // Add the required checkConnection function
+      checkConnection: async () => {
+        try {
+          const response = await fetch('https://www.google.com/generate_204', {
+            method: 'HEAD',
+            mode: 'no-cors',
+            cache: 'no-store',
+          });
+          
+          const isOnline = response.type === 'opaque' || response.ok;
+          set({ 
+            isConnected: true,
+            isOnline,
+            lastCheck: new Date()
+          });
+          
+          return isOnline;
+        } catch (error) {
+          set({ 
+            isConnected: false,
+            isOnline: false,
+            lastCheck: new Date()
+          });
+          
+          return false;
+        }
+      },
+      
+      // Combine all state slices - تصحيح: تمرير المعاملات الصحيحة
+      ...createUISlice(set, get, api),
+      ...createPreferencesSlice(set, get, api),
+      ...createUserSlice(set, get, api),
+      ...createAppStatusSlice(set, get, api),
+      ...createAccessibilitySlice(set, get, api),
+      ...createNetworkSlice(set, get, api),
+      ...createPerformanceSlice(set, get, api),
+      ...createCacheSlice(set, get, api),
+    }),
+    {
+      name: 'app-state',
+      partialize: (state) => ({
+        // نحفظ فقط البيانات التي نريد بقاءها عند تحديث الصفحة
+        preferences: state.preferences,
+        lastVisitedPage: state.lastVisitedPage,
+        isAuthenticated: state.isAuthenticated,
+        userId: state.userId,
+        userRole: state.userRole,
+        userSettings: state.userSettings,
+        highContrast: state.highContrast,
+        largeText: state.largeText,
+        reducedMotion: state.reducedMotion,
+        focusMode: state.focusMode,
+        readingGuide: state.readingGuide,
+        colorBlindMode: state.colorBlindMode,
+        dyslexicFont: state.dyslexicFont,
+        soundFeedback: state.soundFeedback,
+        deviceTier: state.deviceTier,
+        cachedData: state.cachedData,
+      }),
+    }
+  )
+);

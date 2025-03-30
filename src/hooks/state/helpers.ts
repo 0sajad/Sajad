@@ -5,29 +5,24 @@ import { useAppState } from './use-app-state';
  * خطاف مساعد للتعامل مع حالة الشبكة
  */
 export function useNetworkStatus() {
-  const isOnline = useAppState(state => state.network?.isOnline || false);
-  const isConnected = useAppState(state => state.network?.isConnected || false);
-  const lastCheck = useAppState(state => state.network?.lastCheck || new Date());
-  const setOnlineStatus = useAppState(state => state.network?.setOnlineStatus || (() => {}));
-  const checkConnection = useAppState(state => state.network?.checkConnection || (async () => true));
+  const isOnline = useAppState(state => state.isOnline);
+  const isConnected = useAppState(state => state.isConnected);
+  const lastCheck = useAppState(state => state.lastCheck);
+  const checkConnection = useAppState(state => state.checkConnection);
   
-  // استخدام قيم افتراضية آمنة لتجنب أخطاء الوصول المباشر إلى الخصائص
-  const networkState = {
+  return { 
     isOnline,
     isConnected,
     lastCheck,
-    checkConnection,
-    setOnlineStatus
+    checkConnection
   };
-  
-  return networkState;
 }
 
 /**
  * خطاف مساعد للتعامل مع تفضيلات التطبيق
  */
 export function useAppPreferences() {
-  const preferences = useAppState(state => state.preferences || {});
+  const preferences = useAppState(state => state.preferences);
   const setPreference = useAppState(state => state.setPreference);
   
   return { 
@@ -52,19 +47,18 @@ export function useAppPreferences() {
  * خطاف مساعد للتعامل مع تحميل البيانات والأخطاء
  */
 export function useDataLoading(key: string) {
-  // تجنب الوصول المباشر إلى الخصائص غير المؤكدة
-  const isLoading = false;
-  const error = null;
-  const setIsLoading = () => {};
-  const setError = () => {};
+  const isLoading = useAppState(state => state.isLoading[key] || false);
+  const error = useAppState(state => state.errors[key] || null);
+  const setIsLoading = useAppState(state => state.setIsLoading);
+  const setError = useAppState(state => state.setError);
   
   return {
     isLoading,
     error,
-    startLoading: () => setIsLoading(),
-    stopLoading: () => setIsLoading(),
-    setError: (errorMessage: string | null) => setError(),
-    clearError: () => setError(),
+    startLoading: () => setIsLoading(key, true),
+    stopLoading: () => setIsLoading(key, false),
+    setError: (errorMessage: string | null) => setError(key, errorMessage),
+    clearError: () => setError(key, null),
   };
 }
 
@@ -109,6 +103,34 @@ export function useAccessibilityState() {
     setReadingGuide,
     setColorBlindMode,
     setDyslexicFont,
-    setSoundFeedback
+    setSoundFeedback,
+    
+    // وظائف مساعدة
+    toggleHighContrast: () => setHighContrast(!highContrast),
+    toggleLargeText: () => setLargeText(!largeText),
+    toggleReducedMotion: () => setReducedMotion(!reducedMotion),
+    toggleFocusMode: () => setFocusMode(!focusMode),
+    toggleReadingGuide: () => setReadingGuide(!readingGuide),
+    toggleDyslexicFont: () => setDyslexicFont(!dyslexicFont),
+    toggleSoundFeedback: () => setSoundFeedback(!soundFeedback),
+  };
+}
+
+/**
+ * خطاف مساعد للتعامل مع أداء التطبيق
+ */
+export function usePerformanceState() {
+  const deviceTier = useAppState(state => state.deviceTier);
+  const isLowEndDevice = useAppState(state => state.isLowEndDevice);
+  const setDeviceTier = useAppState(state => state.setDeviceTier);
+  const optimizeForLowEndDevice = useAppState(state => state.optimizeForLowEndDevice);
+  const restoreDefaultPerformance = useAppState(state => state.restoreDefaultPerformance);
+  
+  return {
+    deviceTier,
+    isLowEndDevice,
+    setDeviceTier,
+    optimizeForLowEndDevice,
+    restoreDefaultPerformance,
   };
 }

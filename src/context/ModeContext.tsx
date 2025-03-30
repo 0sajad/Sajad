@@ -1,185 +1,228 @@
 
-import React, { createContext, useContext, useState, useCallback, useEffect, useMemo } from 'react';
-import { useAppState } from '@/hooks/state';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
-// Define types for the context
-type Theme = 'light' | 'dark' | 'system';
-type Mode = 'rtl' | 'ltr';
+type ModeType = "client" | "developer";
 
-// Extended type to include developer mode features
 interface ModeContextType {
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
-  mode: Mode;
-  setMode: (mode: Mode) => void;
-  isRTL: boolean;
-  // Developer mode properties
+  mode: ModeType;
+  setMode: (mode: ModeType) => void;
   isDeveloperMode: boolean;
-  features: Record<string, boolean>;
+  features: {
+    [key: string]: boolean;
+  };
   toggleFeature: (featureId: string) => void;
-  updateFeature: (featureId: string, value: boolean) => void;
+  updateFeature: (featureId: string, enabled: boolean) => void;
   applyConfiguration: () => void;
   isSyncing: boolean;
 }
 
-// Create context with a default value
+// الميزات الافتراضية
+const defaultFeatures = {
+  // الميزات الأساسية
+  networkMonitoring: true,
+  advancedSecurity: true,
+  aiAssistant: true,
+  
+  // الميزات المتقدمة
+  zeroPower: false,
+  holographicUI: false,
+  networkIsolation: false,
+  dnsOptimization: true,
+  latencyHeatmap: false,
+  trafficShaping: false,
+  invisibleMode: false,
+  networkCloning: false,
+  multiNetwork: false,
+  autoHealing: true,
+  signalBooster: false,
+  darkWebProtection: false,
+  deviceHeat: false,
+  
+  // ميزات أدوات تحليل البيانات
+  dataAnalysis: true,
+  elasticsearchIntegration: true,
+  prometheusMonitoring: true,
+  influxDBIntegration: true,
+  aiAnalytics: false,
+  kafkaStreaming: true,
+  sparkProcessing: false,
+  securityAnalysis: false,
+  networkPacketAnalysis: true,
+  cloudIntegration: false,
+  customScripting: false,
+  dataVisualization: true
+};
+
 const ModeContext = createContext<ModeContextType | undefined>(undefined);
 
-// Provider component
-interface ModeProviderProps {
-  children: React.ReactNode;
-}
-
-export const ModeProvider: React.FC<ModeProviderProps> = ({ children }) => {
-  // Get initial theme from localStorage or default to system
-  const getInitialTheme = (): Theme => {
-    if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system')) {
-        return savedTheme as Theme;
-      }
-    }
-    return 'system';
-  };
+export const ModeProvider = ({ children }: { children: React.ReactNode }) => {
+  const { toast } = useToast();
+  const [mode, setModeState] = useState<ModeType>(() => {
+    const savedMode = localStorage.getItem("octa-app-mode");
+    return (savedMode as ModeType) || "client";
+  });
   
-  // Get initial mode from document direction
-  const getInitialMode = (): Mode => {
-    if (typeof document !== 'undefined') {
-      return document.documentElement.dir === 'rtl' ? 'rtl' : 'ltr';
-    }
-    return 'ltr';
-  };
+  const [features, setFeatures] = useState(() => {
+    const savedFeatures = localStorage.getItem("octa-dev-features");
+    return savedFeatures ? JSON.parse(savedFeatures) : defaultFeatures;
+  });
   
-  // Use local state to manage theme/mode within this component
-  const [theme, setThemeState] = useState<Theme>(getInitialTheme);
-  const [mode, setModeState] = useState<Mode>(getInitialMode);
-  const [features, setFeatures] = useState<Record<string, boolean>>({});
   const [isSyncing, setIsSyncing] = useState(false);
   
-  // Get developer mode status from app state - but use a selector to avoid unnecessary renders
-  const isDeveloperMode = useAppState(state => 
-    state.preferences?.developerMode || false
-  );
-  
-  // Memoize the isRTL value to prevent unnecessary re-renders
-  const isRTL = useMemo(() => mode === 'rtl', [mode]);
-  
-  // Handle theme changes with a useCallback to prevent recreation on each render
-  const setTheme = useCallback((newTheme: Theme) => {
-    setThemeState(newTheme);
+  useEffect(() => {
+    localStorage.setItem("octa-app-mode", mode);
     
-    if (typeof window !== 'undefined') {
-      // Store in localStorage
-      localStorage.setItem('theme', newTheme);
-      
-      // Apply theme to document
-      if (newTheme === 'system') {
-        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        document.documentElement.classList.toggle('dark', systemTheme === 'dark');
-      } else {
-        document.documentElement.classList.toggle('dark', newTheme === 'dark');
-      }
-    }
-  }, []);
+    // إرسال حدث خاص عند تغيير الوضع لإعلام المكونات الأخرى
+    document.dispatchEvent(new CustomEvent('modeChanged', { 
+      detail: { mode, features }
+    }));
+  }, [mode, features]);
   
-  // Handle mode changes with a useCallback
-  const setMode = useCallback((newMode: Mode) => {
+  // حفظ تكوين الميزات في التخزين المحلي
+  useEffect(() => {
+    localStorage.setItem("octa-dev-features", JSON.stringify(features));
+  }, [features]);
+  
+  const setMode = (newMode: ModeType) => {
     setModeState(newMode);
     
-    if (typeof document !== 'undefined') {
-      document.documentElement.dir = newMode;
-      document.documentElement.lang = newMode === 'rtl' ? 'ar' : 'en';
-      document.documentElement.classList.toggle('rtl', newMode === 'rtl');
-      document.documentElement.classList.toggle('ltr', newMode === 'ltr');
-    }
-  }, []);
+    toast({
+      title: newMode === "developer" ? "تم تفعيل وضع المطور" : "تم تفعيل وضع العميل",
+      description: newMode === "developer" 
+        ? "يمكنك الآن الوصول إلى جميع الإعدادات وميزات التطوير"
+        : "تم تطبيق جميع التغييرات على وضع العميل",
+    });
+  };
   
-  // Toggle feature state
-  const toggleFeature = useCallback((featureId: string) => {
+  const toggleFeature = (featureId: string) => {
+    if (mode !== "developer") {
+      toast({
+        title: "تحذير",
+        description: "يمكن تعديل الميزات فقط في وضع المطور",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setFeatures(prev => ({
       ...prev,
       [featureId]: !prev[featureId]
     }));
-  }, []);
-  
-  // Update feature with specific value
-  const updateFeature = useCallback((featureId: string, value: boolean) => {
-    setFeatures(prev => ({
-      ...prev,
-      [featureId]: value
-    }));
-  }, []);
-  
-  // Apply configuration to client mode
-  const applyConfiguration = useCallback(() => {
-    setIsSyncing(true);
-    // Simulate API call or operation that applies changes
-    setTimeout(() => {
-      setIsSyncing(false);
-    }, 1500);
-  }, []);
-  
-  // Listen for system theme changes without triggering re-renders
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
     
-    const handleSystemThemeChange = (e: MediaQueryListEvent) => {
-      if (theme === 'system') {
-        document.documentElement.classList.toggle('dark', e.matches);
-      }
-    };
-    
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    // Apply initial value if in system mode
-    if (theme === 'system') {
-      document.documentElement.classList.toggle('dark', mediaQuery.matches);
+    toast({
+      title: "تم تحديث الميزة",
+      description: `تم ${!features[featureId] ? 'تفعيل' : 'تعطيل'}: ${featureId}`,
+    });
+  };
+  
+  const updateFeature = (featureId: string, enabled: boolean) => {
+    if (mode !== "developer") {
+      return;
     }
     
-    // Modern way to listen for changes
-    mediaQuery.addEventListener('change', handleSystemThemeChange);
-    return () => mediaQuery.removeEventListener('change', handleSystemThemeChange);
-  }, [theme]);
+    setFeatures(prev => ({
+      ...prev,
+      [featureId]: enabled
+    }));
+  };
   
-  // Memoize the context value to prevent unnecessary re-renders of children
-  const contextValue = useMemo(() => ({
-    theme,
-    setTheme,
-    mode,
-    setMode,
-    isRTL,
-    isDeveloperMode,
-    features,
-    toggleFeature,
-    updateFeature,
-    applyConfiguration,
-    isSyncing
-  }), [
-    theme, 
-    setTheme, 
-    mode, 
-    setMode, 
-    isRTL, 
-    isDeveloperMode, 
-    features, 
-    toggleFeature, 
-    updateFeature, 
-    applyConfiguration, 
-    isSyncing
-  ]);
+  // تطبيق التكوين على وضع العميل
+  const applyConfiguration = async () => {
+    if (mode !== "developer") {
+      return;
+    }
+    
+    setIsSyncing(true);
+    
+    // محاكاة عملية المزامنة
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    // محاكاة التحقق من صحة الإعدادات
+    const isValid = validateConfiguration(features);
+    
+    if (!isValid.valid) {
+      toast({
+        title: "فشل تطبيق الإعدادات",
+        description: isValid.message,
+        variant: "destructive",
+      });
+      setIsSyncing(false);
+      return;
+    }
+    
+    // حفظ التكوين للعميل
+    localStorage.setItem("octa-client-features", JSON.stringify(features));
+    
+    toast({
+      title: "تم تطبيق الإعدادات",
+      description: "تم تطبيق جميع التغييرات بنجاح على وضع العميل",
+    });
+    
+    setIsSyncing(false);
+    
+    // إرسال حدث خاص لإعلام المكونات الأخرى بتطبيق التكوين الجديد
+    document.dispatchEvent(new CustomEvent('configurationApplied', { 
+      detail: { features }
+    }));
+  };
+  
+  // التحقق من صحة التكوين
+  const validateConfiguration = (config: {[key: string]: boolean}) => {
+    // مثال: التأكد من عدم تفعيل ميزات متعارضة
+    if (config.invisibleMode && config.networkCloning) {
+      return { 
+        valid: false, 
+        message: "لا يمكن تفعيل وضع التخفي واستنساخ الشبكة معًا"
+      };
+    }
+    
+    // مثال: التأكد من تفعيل الميزات المطلوبة للميزات المتقدمة
+    if (config.holographicUI && !config.latencyHeatmap) {
+      return { 
+        valid: false, 
+        message: "الواجهة ثلاثية الأبعاد تتطلب تفعيل خريطة التأخير"
+      };
+    }
+    
+    // التحقق من تكاملات أدوات تحليل البيانات
+    if (config.aiAnalytics && !config.elasticsearchIntegration) {
+      return {
+        valid: false,
+        message: "تحليل الذكاء الاصطناعي يتطلب تكامل Elasticsearch"
+      };
+    }
+    
+    if (config.cloudIntegration && !config.dataAnalysis) {
+      return {
+        valid: false,
+        message: "تكامل السحابة يتطلب تحليل البيانات"
+      };
+    }
+    
+    return { valid: true, message: "" };
+  };
   
   return (
-    <ModeContext.Provider value={contextValue}>
+    <ModeContext.Provider value={{
+      mode,
+      setMode,
+      isDeveloperMode: mode === "developer",
+      features,
+      toggleFeature,
+      updateFeature,
+      applyConfiguration,
+      isSyncing
+    }}>
       {children}
     </ModeContext.Provider>
   );
 };
 
-// Custom hook to use the context
-export const useMode = (): ModeContextType => {
+export const useMode = () => {
   const context = useContext(ModeContext);
   if (context === undefined) {
-    throw new Error('useMode must be used within a ModeProvider');
+    throw new Error("useMode must be used within a ModeProvider");
   }
   return context;
 };

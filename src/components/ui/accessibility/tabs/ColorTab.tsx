@@ -1,56 +1,71 @@
 
-import { useA11y } from "@/hooks/accessibility/useA11yContext";
+import React from "react";
+import { motion } from "framer-motion";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { useTranslation } from "react-i18next";
-import { type ColorBlindMode } from "@/hooks/types/accessibility";
+import { useA11y } from "@/hooks/useA11y";
+import { ColorBlindFilter } from "../color-blind-filter";
 
 export function ColorTab() {
   const { t } = useTranslation();
-  const a11y = useA11y();
-
-  const colorBlindModes: {value: ColorBlindMode, label: string}[] = [
-    { value: "none", label: t('accessibility.colorBlindNone') },
-    { value: "protanopia", label: t('accessibility.protanopia') },
-    { value: "deuteranopia", label: t('accessibility.deuteranopia') },
-    { value: "tritanopia", label: t('accessibility.tritanopia') },
-    { value: "achromatopsia", label: t('accessibility.achromatopsia') },
-  ];
-
+  const { 
+    reducedMotion,
+    colorBlindMode, setColorBlindMode,
+    soundFeedback, setSoundFeedback,
+    announce,
+    playNotificationSound
+  } = useA11y();
+  
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <Label htmlFor="high-contrast">{t('accessibility.highContrast')}</Label>
-          <p className="text-sm text-muted-foreground">{t('accessibility.highContrastDesc')}</p>
-        </div>
-        <Switch 
-          id="high-contrast" 
-          checked={a11y.highContrast} 
-          onCheckedChange={a11y.setHighContrast} 
+    <motion.div 
+      initial={{ opacity: 0, y: 5 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: reducedMotion ? 0.1 : 0.3 }}
+      className="space-y-4"
+    >
+      <div className="space-y-2">
+        <Label className="font-medium">
+          {t('accessibility.colorBlindMode')}
+        </Label>
+        <ColorBlindFilter
+          value={colorBlindMode}
+          onChange={(value) => {
+            setColorBlindMode(value);
+            const modeTranslationKey = value === 'none' ? 'normalVision' : value;
+            announce(t(`accessibility.${modeTranslationKey}`), "polite");
+            if (soundFeedback) {
+              playNotificationSound("info");
+            }
+          }}
         />
       </div>
-
-      <div>
-        <Label htmlFor="color-blind-mode">{t('accessibility.colorBlindMode')}</Label>
-        <p className="text-sm text-muted-foreground mb-2">{t('accessibility.colorBlindModeDesc')}</p>
-        <Select 
-          value={a11y.colorBlindMode as ColorBlindMode} 
-          onValueChange={(value) => a11y.setColorBlindMode(value as ColorBlindMode)}
-        >
-          <SelectTrigger id="color-blind-mode">
-            <SelectValue placeholder={t('accessibility.selectColorMode')} />
-          </SelectTrigger>
-          <SelectContent>
-            {colorBlindModes.map(mode => (
-              <SelectItem key={mode.value} value={mode.value}>
-                {mode.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="sound-feedback" className="font-medium">
+            {t('accessibility.soundFeedback')}
+          </Label>
+          <span className="text-xs text-muted-foreground">
+            {t('accessibility.soundFeedbackDescription')}
+          </span>
+        </div>
+        <Switch
+          id="sound-feedback"
+          checked={soundFeedback}
+          onCheckedChange={(checked) => {
+            setSoundFeedback(checked);
+            const featureName = t('accessibility.soundFeedback');
+            const stateText = checked ? t('accessibility.enabled') : t('accessibility.disabled');
+            
+            announce(`${featureName} ${stateText}`, "polite");
+            if (checked) {
+              playNotificationSound("success");
+            }
+          }}
+          aria-label={t('accessibility.soundFeedback')}
+        />
       </div>
-    </div>
+    </motion.div>
   );
 }

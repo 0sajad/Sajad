@@ -1,67 +1,82 @@
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
+interface RTLOptions {
+  enforceRTL?: boolean;
+  enforceSpecificLanguages?: string[];
+}
+
 /**
- * Hook for RTL support and helpers
+ * خطاف لدعم اللغات التي تكتب من اليمين إلى اليسار مثل العربية
  */
-export function useRTLSupport() {
+export function useRTLSupport(options: RTLOptions = {}) {
+  const { enforceRTL = false, enforceSpecificLanguages = ['ar', 'ar-iq', 'he', 'ur', 'fa'] } = options;
   const { i18n } = useTranslation();
-  const [didMount, setDidMount] = useState(false);
+  const [isRTL, setIsRTL] = useState(false);
   
-  // Check if current language is RTL
-  const isRTL = useMemo(() => {
-    return i18n.language?.startsWith('ar') || i18n.language?.startsWith('he') || false;
-  }, [i18n.language]);
-  
-  // Apply RTL/LTR direction to text
-  const formatTextDirection = useCallback((text: string, forceRTL = false, forceLTR = false) => {
-    if (!text) return '';
+  // تحديث اتجاه المستند عند تغيير اللغة
+  useEffect(() => {
+    // التأكد من أن اللغة الحالية موجودة قبل استخدامها
+    const currentLang = i18n.language || 'en';
     
-    if (forceRTL) {
-      return `\u202B${text}\u202C`; // RLE + text + PDF
-    } else if (forceLTR) {
-      return `\u202A${text}\u202C`; // LRE + text + PDF
-    } else if (isRTL) {
-      // If in RTL mode and text starts with LTR characters, wrap in LRE
-      const startsWithLTR = /^[A-Za-z0-9]/.test(text);
-      if (startsWithLTR) {
-        return `\u202A${text}\u202C`;
-      }
+    // تحديد ما إذا كانت اللغة الحالية هي RTL
+    const rtlLanguages = enforceSpecificLanguages;
+    const shouldBeRTL = enforceRTL || rtlLanguages.some(lang => 
+      currentLang === lang || (currentLang && currentLang.startsWith(`${lang}-`))
+    );
+    
+    // تطبيق الاتجاه على المستند
+    if (shouldBeRTL) {
+      document.documentElement.setAttribute('dir', 'rtl');
+      document.body.classList.add('rtl-active');
+    } else {
+      document.documentElement.setAttribute('dir', 'ltr');
+      document.body.classList.remove('rtl-active');
     }
     
-    return text;
-  }, [isRTL]);
+    // تحديث الحالة
+    setIsRTL(shouldBeRTL);
+    
+    // إضافة معلومات RTL إلى النافذة العالمية للاستخدام في المكونات الأخرى
+    if (typeof window !== 'undefined') {
+      (window as any).RTLSupport = (window as any).RTLSupport || {};
+      (window as any).RTLSupport.isRTL = shouldBeRTL;
+    }
+  }, [i18n.language, enforceRTL, enforceSpecificLanguages]);
   
-  // Reverse array items if in RTL mode
-  const reverseIfRTL = useCallback(<T,>(array: T[]): T[] => {
-    if (!isRTL) return [...array];
-    return [...array].reverse();
-  }, [isRTL]);
+  /**
+   * إضافة خاصية التدفق النصي المعكوس إلى عناصر المفاتيح-القيم
+   * مثل: { name: 'اسم', value: 'قيمة' } => { name: 'اسم', value: 'قيمة', textFlow: 'rtl' }
+   */
+  const addRTLTextFlow = <T extends Record<string, any>>(
+    items: T[],
+    textProperties: (keyof T)[] = ['label', 'title', 'text', 'name', 'description']
+  ): (T & { textFlow?: 'rtl' | 'ltr' })[] => {
+    if (!isRTL) return items as (T & { textFlow?: 'rtl' | 'ltr' })[];
+    
+    return items.map(item => {
+      // التحقق مما إذا كانت أي من خصائص النص تحتوي على نص باللغة العربية
+      const hasArabicText = textProperties.some(prop => {
+        const value = item[prop];
+        return typeof value === 'string' && /[\u0600-\u06FF]/.test(value);
+      });
+      
+      // إضافة خاصية textFlow إذا كان النص عربيًا
+      return hasArabicText ? { ...item, textFlow: 'rtl' as const } : { ...item, textFlow: 'ltr' as const };
+    });
+  };
   
-  // Apply either RTL or LTR value based on current direction
-  const applyDirectionalValue = useCallback(<T,>(rtlValue: T, ltrValue: T): T => {
-    return isRTL ? rtlValue : ltrValue;
-  }, [isRTL]);
-  
-  // Apply RTL order to array of objects (useful for tab lists, menu items, etc.)
-  const applyRTLOrder = useCallback(<T,>(array: T[]): T[] => {
-    if (!isRTL) return array;
-    return [...array].reverse();
-  }, [isRTL]);
-  
-  // Set page direction on mount
-  useEffect(() => {
-    document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
-    setDidMount(true);
-  }, [isRTL]);
+  /**
+   * عكس ترتيب المصفوفة إذا كان الاتجاه من اليمين إلى اليسار
+   */
+  const applyRTLOrder = <T>(items: T[]): T[] => {
+    return isRTL ? [...items].reverse() : items;
+  };
   
   return {
     isRTL,
-    didMount,
-    formatTextDirection,
-    reverseIfRTL,
-    applyDirectionalValue,
-    applyRTLOrder
+    addRTLTextFlow,
+    applyRTLOrder,
   };
 }

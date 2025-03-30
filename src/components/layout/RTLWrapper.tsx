@@ -1,48 +1,60 @@
 
-import React, { useEffect, useState, memo } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { ReactNode, useEffect } from 'react';
+import { useRTLSupport } from '@/hooks/useRTLSupport';
+import { ArabicTextProvider } from '../text/ArabicTextProvider';
+
+// استيراد أنماط RTL المحسنة
+import '@/styles/rtl.css';
+import '@/styles/rtl-support.css';
+import '@/styles/rtl-enhanced.css';
 
 interface RTLWrapperProps {
-  children: React.ReactNode;
+  children: ReactNode;
+  forceRTL?: boolean;
+  enforceRTLLanguages?: string[];
 }
 
 /**
- * RTL Wrapper Component
- * Automatically sets the correct text direction based on the current language
+ * غلاف لدعم اللغات ذات الاتجاه من اليمين إلى اليسار (RTL)
+ * يقوم بتطبيق الأنماط والإعدادات اللازمة لدعم RTL بشكل شامل
  */
-export const RTLWrapper = memo(({ children }: RTLWrapperProps) => {
-  const { i18n } = useTranslation();
-  const [direction, setDirection] = useState<'rtl' | 'ltr'>(
-    document.documentElement.dir === 'rtl' ? 'rtl' : 'ltr'
-  );
-  
+export function RTLWrapper({
+  children,
+  forceRTL = false,
+  enforceRTLLanguages = ['ar', 'ar-iq', 'he', 'ur', 'fa']
+}: RTLWrapperProps) {
+  const { isRTL } = useRTLSupport({
+    enforceRTL: forceRTL,
+    enforceSpecificLanguages: enforceRTLLanguages
+  });
+
+  // تطبيق خصائص RTL على body و html عند تغير isRTL
   useEffect(() => {
-    // Determine direction based on language code
-    const isRTL = i18n.language?.startsWith('ar') || i18n.language?.startsWith('he');
-    const newDirection = isRTL ? 'rtl' : 'ltr';
-    
-    // Only update if direction has changed
-    if (newDirection !== direction) {
-      setDirection(newDirection);
-      
-      // Update document direction
-      document.documentElement.dir = newDirection;
-      document.documentElement.classList.toggle('rtl', isRTL);
-      document.documentElement.classList.toggle('ltr', !isRTL);
+    if (isRTL) {
+      document.documentElement.setAttribute('dir', 'rtl');
+      document.body.classList.add('rtl-active');
+
+      // إضافة فئة خاصة للنماذج والجداول عند استخدام RTL
+      document.body.classList.add('rtl-forms');
+      document.body.classList.add('rtl-tables');
+    } else {
+      document.documentElement.setAttribute('dir', 'ltr');
+      document.body.classList.remove('rtl-active');
+      document.body.classList.remove('rtl-forms');
+      document.body.classList.remove('rtl-tables');
     }
-  }, [i18n.language, direction]);
-  
+
+    // مساعدة مكتبات JavaScript التي تعتمد على معرفة الاتجاه
+    if (typeof window !== 'undefined') {
+      (window as any).isRTL = isRTL;
+    }
+  }, [isRTL]);
+
   return (
-    <div className={`rtl-wrapper ${direction}`} dir={direction}>
-      {children}
-    </div>
+    <ArabicTextProvider>
+      <div className={isRTL ? 'rtl-layout' : 'ltr-layout'}>
+        {children}
+      </div>
+    </ArabicTextProvider>
   );
-});
-
-// Set display name for debugging
-RTLWrapper.displayName = 'RTLWrapper';
-
-// Don't pass any arguments to useTranslation
-export const getLayoutDirection = (): 'rtl' | 'ltr' => {
-  return document.documentElement.dir === 'rtl' ? 'rtl' : 'ltr';
-};
+}

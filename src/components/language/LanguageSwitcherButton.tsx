@@ -1,87 +1,68 @@
 
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
-import { ArabicTextEnhancer } from '@/components/text/ArabicTextEnhancer';
+import React from "react";
+import { Globe } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface LanguageSwitcherButtonProps {
-  /** علم اللغة الحالية */
-  currentLanguageFlag?: string;
-  /** اسم اللغة الحالية بلغتها الأصلية */
-  currentLanguageNativeName?: string;
-  /** ما إذا كان يتم الانتقال حاليًا بين اللغات */
+  currentLanguageFlag: string;
   isTransitioning: boolean;
-  /** ما إذا كان يجب تقليل الحركة */
-  reducedMotion?: boolean;
-  /** ما إذا كان الاتجاه من اليمين إلى اليسار */
-  isRTL?: boolean;
-  /** الدالة التي يتم استدعاؤها عند النقر على الزر */
+  isRTL: boolean;
+  reducedMotion: boolean;
   onClick: () => void;
-  /** نص تلميح الأداة */
-  tooltipText?: string;
-  /** فئات CSS إضافية */
+  tooltipText: string;
   className?: string;
-  /** نوع العرض: أيقونة فقط أو عرض كامل مع نص */
   variant?: "icon" | "full";
+  currentLanguageNativeName?: string;
 }
 
 export function LanguageSwitcherButton({
-  currentLanguageFlag = "🌐",
-  currentLanguageNativeName,
+  currentLanguageFlag,
   isTransitioning,
-  reducedMotion = false,
-  isRTL = false,
+  isRTL,
+  reducedMotion,
   onClick,
   tooltipText,
-  className,
-  variant = "icon"
+  className = "",
+  variant = "icon",
+  currentLanguageNativeName
 }: LanguageSwitcherButtonProps) {
-  // تأثير دوران العلم أثناء التحميل
-  const flagAnimation = isTransitioning && !reducedMotion
-    ? {
-        animate: {
-          rotateY: [0, 180, 360],
-          transition: { duration: 1.2, ease: "easeInOut" }
-        }
-      }
-    : {};
-
   return (
     <Button
       variant="outline"
-      size={variant === "full" ? "default" : "icon"}
+      size={variant === "icon" ? "icon" : "default"}
       className={cn(
-        "relative overflow-hidden transition-colors",
-        isRTL && "direction-rtl",
-        variant === "full" && "min-w-[100px]",
+        "relative transition-all duration-300 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-700 border border-blue-200 dark:border-gray-600",
+        isTransitioning ? "opacity-50" : "opacity-100",
         className
       )}
-      onClick={onClick}
       aria-label={tooltipText}
+      onClick={onClick}
     >
-      <div className="flex items-center justify-center gap-2">
-        <motion.span
-          className="text-base"
-          {...flagAnimation}
-        >
-          {currentLanguageFlag}
-        </motion.span>
-        
-        {variant === "full" && currentLanguageNativeName && (
-          <span className="hidden md:inline">
-            <ArabicTextEnhancer fontType="tajawal">
-              {currentLanguageNativeName}
-            </ArabicTextEnhancer>
-          </span>
-        )}
-        
-        {isTransitioning && (
-          <span className="absolute inset-0 flex items-center justify-center">
-            <div className="w-3 h-3 rounded-full border-2 border-t-transparent animate-spin" />
-          </span>
-        )}
-      </div>
+      {variant === "icon" ? (
+        <div className="relative">
+          <Globe className="h-4 w-4" />
+          <motion.div 
+            className="absolute -top-2 -right-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full w-5 h-5 flex items-center justify-center border border-white dark:border-gray-700 shadow-md"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ 
+              type: "spring", 
+              stiffness: 300, 
+              damping: reducedMotion ? 30 : 15 
+            }}
+          >
+            <span className="text-[10px]">{currentLanguageFlag}</span>
+          </motion.div>
+        </div>
+      ) : (
+        <div className="flex items-center gap-2">
+          <span className="mr-1">{currentLanguageFlag}</span>
+          <span>{currentLanguageNativeName}</span>
+          <Globe className="h-4 w-4 ml-2" />
+        </div>
+      )}
     </Button>
   );
 }

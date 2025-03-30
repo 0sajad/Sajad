@@ -1,154 +1,140 @@
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { useAppState } from '@/hooks/state';
-import { toast } from '@/hooks/use-toast';
-import { useTranslation } from 'react-i18next';
-import { ColorBlindMode } from '../types/accessibility';
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { useA11y } from '../useA11y';
+import { useAppState } from '../state/use-app-state';
 
-// Define the A11yContextType to include all required properties
-export interface A11yContextType {
+interface A11yContextType {
+  announce: (message: string, politeness?: 'polite' | 'assertive') => void;
+  playSound: (sound: 'success' | 'error' | 'warning' | 'info' | 'notification') => void;
   highContrast: boolean;
   largeText: boolean;
   reducedMotion: boolean;
-  focusMode: boolean;
   dyslexicFont: boolean;
-  readingGuide: boolean;
-  soundFeedback: boolean;
-  colorBlindMode: ColorBlindMode;
-  keyboardNavigationVisible: boolean;
+  colorBlindMode: string;
   setHighContrast: (value: boolean) => void;
   setLargeText: (value: boolean) => void;
   setReducedMotion: (value: boolean) => void;
-  setFocusMode: (value: boolean) => void;
   setDyslexicFont: (value: boolean) => void;
-  setReadingGuide: (value: boolean) => void;
-  setSoundFeedback: (value: boolean) => void;
-  setColorBlindMode: (mode: ColorBlindMode) => void;
-  setKeyboardNavigationVisible: (value: boolean) => void;
-  announce: (message: string, politeness?: 'polite' | 'assertive') => void;
-  playSound: (soundType: string) => void;
-  showA11yMenu: boolean;
-  toggleA11yMenu: () => void;
+  setColorBlindMode: (value: string) => void;
 }
 
-// Create the context
-const A11yContext = createContext<A11yContextType | undefined>(undefined);
+const A11yContext = createContext<A11yContextType | null>(null);
 
-// Provider component
-export function A11yProvider({ children }: { children: ReactNode }) {
-  const { t } = useTranslation();
-  const [showA11yMenu, setShowA11yMenu] = useState(false);
-  
-  // Get accessibility settings from app state
+/**
+ * استخدام سياق إمكانية الوصول في المكونات
+ */
+export const useA11yContext = () => {
+  const context = useContext(A11yContext);
+  if (!context) {
+    throw new Error('useA11yContext must be used within an A11yProvider');
+  }
+  return context;
+};
+
+interface A11yProviderProps {
+  children: ReactNode;
+}
+
+/**
+ * مزود سياق إمكانية الوصول - يوفر وظائف وحالة إمكانية الوصول لكافة المكونات
+ */
+export const A11yProvider: React.FC<A11yProviderProps> = ({ children }) => {
+  const a11y = useA11y();
   const {
     highContrast,
     largeText,
     reducedMotion,
-    focusMode,
     dyslexicFont,
-    readingGuide,
-    soundFeedback,
     colorBlindMode,
-    keyboardNavigationVisible,
     setHighContrast,
     setLargeText,
     setReducedMotion,
-    setFocusMode,
     setDyslexicFont,
-    setReadingGuide,
-    setSoundFeedback,
-    setColorBlindMode,
-    setKeyboardNavigationVisible
-  } = useAppState();
+    setColorBlindMode
+  } = useAppState(state => ({
+    highContrast: state.highContrast,
+    largeText: state.largeText,
+    reducedMotion: state.reducedMotion,
+    dyslexicFont: state.dyslexicFont,
+    colorBlindMode: state.colorBlindMode,
+    setHighContrast: state.setHighContrast,
+    setLargeText: state.setLargeText,
+    setReducedMotion: state.setReducedMotion,
+    setDyslexicFont: state.setDyslexicFont,
+    setColorBlindMode: state.setColorBlindMode
+  }));
   
-  // Announce function for screen readers
-  const announce = useCallback((message: string, politeness: 'polite' | 'assertive' = 'polite') => {
-    if (window.announce) {
+  // إعلانات متاحة عالميًا للقارئات الشاشية
+  const announce = (message: string, politeness: 'polite' | 'assertive' = 'polite') => {
+    if (a11y?.announce) {
+      a11y.announce(message, politeness);
+    } else if (typeof window !== 'undefined' && typeof window.announce === 'function') {
       window.announce(message, politeness);
+    } else {
+      console.log(`${politeness.toUpperCase()} ANNOUNCEMENT: ${message}`);
     }
-  }, []);
+  };
   
-  // Play sound feedback
-  const playSound = useCallback((soundType: string) => {
-    if (!soundFeedback) return;
+  // تشغيل أصوات الإخطارات
+  const playSound = (sound: 'success' | 'error' | 'warning' | 'info' | 'notification') => {
+    if (a11y?.playNotificationSound) {
+      a11y.playNotificationSound(sound);
+    }
+  };
+  
+  // تطبيق تأثيرات إمكانية الوصول على المستند
+  useEffect(() => {
+    document.documentElement.classList.toggle('high-contrast', highContrast);
+    document.documentElement.classList.toggle('large-text', largeText);
+    document.documentElement.classList.toggle('reduced-motion', reducedMotion);
+    document.documentElement.classList.toggle('dyslexic-font', dyslexicFont);
     
-    // Map of sound types to audio files
-    const sounds: Record<string, string> = {
-      click: '/sounds/click.mp3',
-      success: '/sounds/success.mp3',
-      error: '/sounds/error.mp3',
-      notification: '/sounds/notification.mp3',
-      info: '/sounds/info.mp3',
-      warning: '/sounds/warning.mp3'
+    // إزالة جميع أنماط المرشح الحالية
+    document.documentElement.classList.remove(
+      'protanopia',
+      'deuteranopia',
+      'tritanopia',
+      'achromatopsia'
+    );
+    
+    // تطبيق فلتر عمى الألوان المحدد
+    if (colorBlindMode !== 'none') {
+      document.documentElement.classList.add(colorBlindMode);
+    }
+    
+    return () => {
+      // تنظيف الفئات عند تفكيك المكون
+      document.documentElement.classList.remove(
+        'high-contrast',
+        'large-text',
+        'reduced-motion',
+        'dyslexic-font',
+        'protanopia',
+        'deuteranopia',
+        'tritanopia',
+        'achromatopsia'
+      );
     };
-    
-    const soundUrl = sounds[soundType];
-    if (!soundUrl) return;
-    
-    try {
-      const audio = new Audio(soundUrl);
-      audio.volume = 0.5;
-      audio.play().catch(err => console.error('Failed to play sound:', err));
-    } catch (error) {
-      console.error('Error playing sound:', error);
-    }
-  }, [soundFeedback]);
+  }, [highContrast, largeText, reducedMotion, dyslexicFont, colorBlindMode]);
   
-  // Toggle A11y menu
-  const toggleA11yMenu = useCallback(() => {
-    setShowA11yMenu(prev => !prev);
-    playSound('click');
-    
-    // Show toast notification when enabled
-    if (!showA11yMenu) {
-      toast({
-        title: t('accessibility.menuOpened'),
-        description: t('accessibility.menuOpenedDesc'),
-        variant: 'default',
-      });
-    }
-  }, [playSound, showA11yMenu, t]);
-  
-  const contextValue: A11yContextType = {
+  const value = {
+    announce,
+    playSound,
     highContrast,
     largeText,
     reducedMotion,
-    focusMode,
     dyslexicFont,
-    readingGuide,
-    soundFeedback,
-    colorBlindMode: colorBlindMode as ColorBlindMode,
-    keyboardNavigationVisible,
+    colorBlindMode,
     setHighContrast,
     setLargeText,
     setReducedMotion,
-    setFocusMode,
     setDyslexicFont,
-    setReadingGuide,
-    setSoundFeedback,
-    setColorBlindMode: (mode: ColorBlindMode) => setColorBlindMode(mode),
-    setKeyboardNavigationVisible,
-    announce,
-    playSound,
-    showA11yMenu,
-    toggleA11yMenu
+    setColorBlindMode
   };
   
   return (
-    <A11yContext.Provider value={contextValue}>
+    <A11yContext.Provider value={value}>
       {children}
     </A11yContext.Provider>
   );
-}
-
-// Hook for using the A11y context
-export function useA11y() {
-  const context = useContext(A11yContext);
-  if (context === undefined) {
-    throw new Error('useA11y must be used within an A11yProvider');
-  }
-  return context;
-}
-
-// Export the compatibility hook name
-export const useA11yContext = useA11y;
+};

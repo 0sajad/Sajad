@@ -1,28 +1,21 @@
 
 import React, { useState, useEffect } from "react";
 import { MobileMenu } from "./nav/MobileMenu";
+import { DesktopNav } from "./nav/DesktopNav";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { motion, AnimatePresence } from "framer-motion";
-import { HeaderActions } from "./header/HeaderActions";
-import { useLocation } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { Button } from "./ui/button";
 import { Logo } from "./header/Logo";
-import { AnimatedHeader3D } from "./header/AnimatedHeader3D";
-import { NavItemsContainer } from "./nav/NavItemsContainer";
-import { StatusBar } from "./StatusBar";
+import { HeaderActions } from "./header/HeaderActions";
 
 interface HeaderProps {
   onLanguageChange?: (language: string) => void;
 }
 
 export function Header({ onLanguageChange }: HeaderProps) {
-  const { t } = useTranslation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isMobile = useIsMobile();
-  const location = useLocation();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -46,42 +39,25 @@ export function Header({ onLanguageChange }: HeaderProps) {
   
   return (
     <TooltipProvider>
-      <div className="sticky top-0 z-50 w-full">
-        {/* Status bar for network info and accessibility */}
-        <StatusBar />
+      <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md transition-all duration-300 ${
+        isScrolled ? "py-2 bg-white/90 shadow-sm dark:bg-gray-900/90" : "py-3 bg-transparent"
+      }`}>
+        <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between">
+          <div className="flex items-center gap-8"> {/* زيادة المساحة هنا من عدم وجود gap إلى gap-8 */}
+            <Logo />
+            <DesktopNav />
+          </div>
+          
+          <HeaderActions 
+            isMobileMenuOpen={isMobileMenuOpen}
+            setIsMobileMenuOpen={setIsMobileMenuOpen}
+          />
+        </div>
         
-        <header 
-          className={`py-3 bg-white shadow-sm dark:bg-gray-900 relative ${
-            isScrolled ? "shadow-md" : ""
-          }`}
-        >
-          {/* 3D Header Background */}
-          <div className="absolute inset-0 overflow-hidden">
-            <AnimatedHeader3D />
-          </div>
-          
-          {/* Content Layer */}
-          <div className="container mx-auto px-4 flex items-center justify-between relative z-10">
-            {/* Logo */}
-            <div className="flex items-center">
-              <Logo />
-            </div>
-            
-            {/* Navigation Items */}
-            <NavItemsContainer />
-            
-            {/* Header Actions (user, notifications, language) */}
-            <HeaderActions 
-              isMobileMenuOpen={isMobileMenuOpen}
-              setIsMobileMenuOpen={setIsMobileMenuOpen}
-            />
-          </div>
-          
-          <AnimatePresence>
-            {isMobileMenuOpen && <MobileMenu isOpen={isMobileMenuOpen} />}
-          </AnimatePresence>
-        </header>
-      </div>
+        <AnimatePresence>
+          {isMobileMenuOpen && <MobileMenu isOpen={isMobileMenuOpen} />}
+        </AnimatePresence>
+      </header>
     </TooltipProvider>
   );
 }

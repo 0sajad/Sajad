@@ -1,29 +1,23 @@
 
 import React from "react";
+import { Check } from "lucide-react";
+import { motion } from "framer-motion";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
-import { Check } from "lucide-react";
-import { ArabicTextEnhancer } from "../text/ArabicTextEnhancer";
-import { useA11y } from "@/hooks/useA11y";
 
 interface LanguageOptionProps {
-  /** رمز اللغة */
   langCode: string;
-  /** اسم اللغة */
-  languageName: string;
-  /** علم اللغة */
+  languageName: string; 
   flag: string;
-  /** ما إذا كانت هذه اللغة هي اللغة النشطة حاليًا */
   isActive: boolean;
-  /** ما إذا كانت هذه هي اللهجة العراقية */
-  isIraqiArabic?: boolean;
-  /** ما إذا كان يجب تقليل الحركة */
-  reducedMotion?: boolean;
-  /** دالة النقر */
+  isIraqiArabic: boolean;
   onClick: (langCode: string) => void;
-  /** الفئات الإضافية */
-  className?: string;
+  reducedMotion: boolean;
+  // For compatibility with LanguageDropdownContent
+  code?: string;
+  name?: string;
+  nativeName?: string;
+  isSpecial?: boolean;
 }
 
 export function LanguageOption({
@@ -31,75 +25,58 @@ export function LanguageOption({
   languageName,
   flag,
   isActive,
-  isIraqiArabic = false,
-  reducedMotion = false,
+  isIraqiArabic,
   onClick,
-  className
+  reducedMotion,
+  // Handle alternative prop formats
+  code,
+  name,
+  nativeName,
+  isSpecial
 }: LanguageOptionProps) {
-  const { announce } = useA11y();
-  
-  const isArabic = langCode.startsWith('ar');
-  
-  // عند النقر على خيار اللغة
-  const handleClick = () => {
-    if (!isActive) {
-      onClick(langCode);
-      
-      // إعلان للقارئات الشاشية
-      if (announce) {
-        announce(`تم اختيار اللغة ${languageName}`, 'polite');
-      }
-    }
-  };
+  // Use the props from either format
+  const actualLangCode = code || langCode;
+  const actualLanguageName = nativeName || languageName;
+  const actualFlag = flag;
+  const actualIsSpecial = isSpecial || isIraqiArabic;
 
   return (
-    <DropdownMenuItem 
-      key={langCode}
-      disabled={isActive}
+    <DropdownMenuItem
       className={cn(
-        "flex items-center justify-between rounded-md text-sm cursor-pointer py-2",
-        isActive && "bg-primary/10 text-primary font-medium",
-        isArabic && "font-tajawal",
-        className
+        "flex items-center justify-between px-4 py-3 cursor-pointer transition-all",
+        isActive 
+          ? "bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 font-medium" 
+          : "hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:translate-y-[-1px]",
+        actualIsSpecial ? "border-l-2 border-green-500 dark:border-green-400" : ""
       )}
-      onClick={handleClick}
-      dir={isArabic ? "rtl" : "ltr"}
+      onClick={() => onClick(actualLangCode)}
+      data-testid={`language-option-${actualLangCode}`}
     >
-      <div className="flex items-center gap-2">
-        <span className="text-base select-none">{flag}</span>
-        <ArabicTextEnhancer
-          className={cn(
-            "transition-colors duration-200", 
-            isActive && "font-medium",
-            isArabic && "tracking-normal font-tajawal",
-            isIraqiArabic && "font-feature-settings: 'ss01'"
-          )}
-          forceEnhance={isArabic}
-          fontType={isIraqiArabic ? "cairo" : "tajawal"}
-        >
-          {languageName}
-        </ArabicTextEnhancer>
+      <div className="flex items-center">
+        <span className="text-lg mr-3 rtl:ml-3 rtl:mr-0" aria-hidden="true">
+          {actualFlag}
+        </span>
+        <span>{actualLanguageName}</span>
         
-        {isIraqiArabic && (
-          <span 
-            className={cn(
-              "relative bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 px-1.5 py-0.5 rounded-md font-medium text-[0.6rem]",
-              isActive && "bg-amber-200 text-amber-900"
-            )}
-          >
-            <ArabicTextEnhancer forceEnhance={true}>لهجة</ArabicTextEnhancer>
+        {actualIsSpecial && (
+          <span className="ml-2 text-[10px] bg-green-100 text-green-800 px-1.5 py-0.5 rounded dark:bg-green-900/30 dark:text-green-300">
+            محسّن
           </span>
         )}
       </div>
       
       {isActive && (
         <motion.div 
-          initial={reducedMotion ? { scale: 1 } : { scale: 0.8 }} 
-          animate={reducedMotion ? { scale: 1 } : { scale: 1 }} 
-          transition={{ duration: 0.2 }}
-          aria-hidden="true"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ 
+            type: "spring", 
+            stiffness: 300, 
+            damping: reducedMotion ? 30 : 15 
+          }}
+          className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full w-5 h-5 shadow-md"
         >
-          <Check className="h-4 w-4" />
+          <Check className="h-3 w-3" aria-hidden="true" />
         </motion.div>
       )}
     </DropdownMenuItem>

@@ -1,44 +1,38 @@
 
-// Define accessibility-related types
-
-export type ColorBlindMode = "none" | "protanopia" | "deuteranopia" | "tritanopia" | "achromatopsia";
-
 export interface AccessibilityProfile {
-  id: string;
   name: string;
-  settings: {
-    highContrast: boolean;
-    largeText: boolean;
-    reducedMotion: boolean;
-    dyslexicFont: boolean;
-    soundFeedback: boolean;
-    colorBlindMode: ColorBlindMode;
-    focusMode: boolean;
-    readingGuide: boolean;
-    keyboardNavigationVisible: boolean;
-  };
-}
-
-export interface AccessibilityState {
   highContrast: boolean;
   largeText: boolean;
   reducedMotion: boolean;
-  dyslexicFont: boolean;
   focusMode: boolean;
-  readingGuide: boolean;
-  soundFeedback: boolean;
-  colorBlindMode: ColorBlindMode;
-  keyboardNavigationVisible: boolean;
-  profiles: AccessibilityProfile[];
-  activeProfileId: string | null;
+  dyslexiaFont: boolean;
+  textSpacing: boolean;
+  underlineLinks: boolean;
+  customCursor: boolean;
+  invertColors: boolean;
+  monochrome: boolean;
 }
 
+export interface A11yPreferencesState {
+  highContrast: boolean;
+  largeText: boolean;
+  reducedMotion: boolean;
+  focusMode: boolean;
+  dyslexiaFont: boolean;
+  textSpacing: boolean;
+  underlineLinks: boolean;
+  customCursor: boolean;
+  invertColors: boolean;
+  monochrome: boolean;
+}
+
+// Add the A11ySettings interface needed by profile-related hooks
 export interface A11ySettings {
   highContrast?: boolean;
   largeText?: boolean;
   reducedMotion?: boolean;
   focusMode?: boolean;
-  colorBlindMode?: ColorBlindMode;
+  colorBlindMode?: string | null;
   dyslexicFont?: boolean;
   readingGuide?: boolean;
   soundFeedback?: boolean;
@@ -46,6 +40,10 @@ export interface A11ySettings {
   lineHeight?: number;
   letterSpacing?: number;
   kashidaEnabled?: boolean;
-  updatedAt?: string;
-  version?: number;
+  dyslexiaFont?: boolean;
+  textSpacing?: boolean;
+  underlineLinks?: boolean;
+  customCursor?: boolean;
+  invertColors?: boolean;
+  monochrome?: boolean;
 }

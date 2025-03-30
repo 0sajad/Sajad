@@ -2,6 +2,7 @@
 import React from "react";
 import { User, Menu, X, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ModeToggle } from "@/components/ModeToggle";
 import { LanguageSwitcher } from "@/components/nav/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
@@ -24,30 +25,23 @@ export function HeaderActions({
   const { t } = useTranslation();
   
   return (
-    <div className="flex items-center space-x-3 sm:space-x-5 rtl:space-x-reverse">
-      {/* User Login Button */}
-      <Button 
-        size="sm" 
-        className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6"
-      >
-        <div className="flex items-center gap-2 rtl:flex-row-reverse">
-          <div className="bg-white/20 p-1 rounded-full">
-            <User size={16} className="text-white" />
-          </div>
-          <span className="font-medium text-xs sm:text-sm">{t('header.login', 'تسجيل الدخول')}</span>
-        </div>
-      </Button>
-
-      {/* Notifications */}
+    <div className="flex items-center space-x-4 sm:space-x-6 md:space-x-8 rtl:space-x-reverse">
+      <LanguageSwitcher className="transform hover:scale-110 transition-transform shadow-xl rounded-full mr-6 sm:mr-8" />
+      
+      <div className="transform hover:scale-105 transition-transform">
+        <ModeToggle />
+      </div>
+      
+      {/* مكون الإشعارات الجديد */}
       <Popover>
         <PopoverTrigger asChild>
           <Button 
-            variant="outline" 
+            variant="ghost" 
             size="icon" 
-            className="relative rounded-full border-0 bg-gray-100/50 dark:bg-gray-800/50"
+            className="relative bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-full"
           >
-            <Bell size={20} />
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+            <Bell size={18} />
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
               3
             </span>
           </Button>
@@ -57,12 +51,23 @@ export function HeaderActions({
         </PopoverContent>
       </Popover>
       
-      {/* Language Switcher */}
-      <LanguageSwitcher className="transform hover:scale-110 transition-transform" />
+      <div className="hidden md:block">
+        <Button 
+          size="lg" 
+          variant="gradient"
+          className="px-6 md:px-8 py-2.5 shadow-xl hover:shadow-2xl transform hover:translate-y-[-3px] transition-all rounded-full"
+        >
+          <div className="flex items-center gap-2.5 rtl:flex-row-reverse">
+            <div className="bg-white/30 p-1.5 rounded-full">
+              <User size={16} className="text-white" />
+            </div>
+            <span className="font-medium">{t('header.login')}</span>
+          </div>
+        </Button>
+      </div>
       
-      {/* Mobile Menu Toggle */}
       <motion.button
-        className="p-2 lg:hidden transform hover:scale-110 transition-transform"
+        className="p-2 md:hidden transform hover:scale-110 transition-transform"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         whileTap={{ scale: 0.9 }}
         aria-label={isMobileMenuOpen ? "إغلاق القائمة" : "فتح القائمة"}

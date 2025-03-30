@@ -1,290 +1,126 @@
 
-import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Input } from "@/components/ui/input";
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CheckIcon, XIcon, SearchIcon, InfoIcon } from 'lucide-react';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { useTranslation } from "react-i18next";
+import { MissingTranslationDetector } from "@/utils/i18n/MissingTranslationDetector";
+import { Download, RefreshCw, Trash2 } from "lucide-react";
 
 export function TranslationManager() {
   const { t, i18n } = useTranslation();
-  const [activeTab, setActiveTab] = useState<string>("missing");
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [selectedLanguage, setSelectedLanguage] = useState<string>(i18n.language);
-  const [metrics, setMetrics] = useState<any>({
-    totalLookups: 0,
-    keysByLanguage: {},
-    uniqueKeysCount: 0,
-    missingKeys: [],
-    missingKeysCount: 0,
-    lastUsedKey: null,
-    topUsedKeys: []
-  });
+  const [missingKeys, setMissingKeys] = useState<Record<string, string[]>>({});
+  const [activeTab, setActiveTab] = useState("ar");
   
-  // Mock translation metrics
+  // تحديث المفاتيح المفقودة
   useEffect(() => {
-    // In a real app, this would come from a translation metrics service
-    const mockMissingKeys = [
-      'dashboard.devices.title',
-      'dashboard.network.trafficTitle',
-      'settings.connectivity.cloud',
-      'errors.connection.timeout',
-      'common.status.pending'
-    ];
+    const fetchMissingKeys = () => {
+      const keys = MissingTranslationDetector.getMissingKeys();
+      setMissingKeys(keys);
+    };
     
-    const mockTopKeys = [
-      { key: 'common.cancel', count: 24 },
-      { key: 'common.save', count: 18 },
-      { key: 'common.edit', count: 15 },
-      { key: 'common.delete', count: 12 },
-      { key: 'common.add', count: 10 }
-    ];
+    fetchMissingKeys();
     
-    setMetrics({
-      totalLookups: 387,
-      keysByLanguage: {
-        en: new Set(['common.save', 'common.cancel']),
-        ar: new Set(['common.yes', 'common.no'])
-      },
-      uniqueKeysCount: 124,
-      missingKeys: mockMissingKeys,
-      missingKeysCount: mockMissingKeys.length,
-      lastUsedKey: 'settings.theme.dark',
-      topUsedKeys: mockTopKeys
-    });
+    // تحديث كل 3 ثوان
+    const interval = setInterval(fetchMissingKeys, 3000);
+    
+    return () => clearInterval(interval);
   }, []);
   
-  // Filter missing keys based on search query
-  const filteredMissingKeys = Array.isArray(metrics.missingKeys) 
-    ? metrics.missingKeys.filter((key: string) => 
-        key.toLowerCase().includes(searchQuery.toLowerCase()))
-    : [];
-  
-  // Handle language change
-  const handleLanguageChange = (value: string) => {
-    setSelectedLanguage(value);
+  // حساب إجمالي المفاتيح المفقودة لكل لغة
+  const getTotalByLanguage = (lang: string): number => {
+    return missingKeys[lang]?.length || 0;
   };
   
-  // Get badge variant based on usage count
-  const getBadgeVariantByCount = (count: number) => {
-    if (count > 20) return "default";
-    if (count > 10) return "secondary";
-    return "outline";
+  // الحصول على إجمالي المفاتيح المفقودة
+  const getTotalMissingKeys = (): number => {
+    return Object.values(missingKeys).reduce((total, keys) => total + keys.length, 0);
   };
+  
+  // مسح المفاتيح المفقودة
+  const handleClearMissingKeys = () => {
+    MissingTranslationDetector.clearMissingKeys();
+    setMissingKeys({});
+  };
+  
+  // تصدير المفاتيح المفقودة
+  const handleExport = () => {
+    const data = MissingTranslationDetector.exportMissingKeys();
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `missing-translations-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+  
+  // اللغات المتاحة في التطبيق
+  const languages = ['ar', 'ar-iq', 'en', 'fr', 'ja', 'zh'];
   
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h3 className="text-lg font-semibold">
-            {t('dev.translations.title', 'Translation Metrics')}
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            {t('dev.translations.description', 'Analyze and manage translation keys')}
-          </p>
-        </div>
-        
-        <Select value={selectedLanguage} onValueChange={handleLanguageChange}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select language" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="en">English</SelectItem>
-            <SelectItem value="ar">العربية</SelectItem>
-            <SelectItem value="fr">Français</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('dev.translations.totalLookups', 'Total Lookups')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{metrics.totalLookups}</div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('dev.translations.uniqueKeys', 'Unique Keys')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{metrics.uniqueKeysCount}</div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('dev.translations.missingKeys', 'Missing Keys')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-amber-500">{metrics.missingKeysCount}</div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t('dev.translations.lastUsed', 'Last Used')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-sm font-medium truncate">{metrics.lastUsedKey}</div>
-          </CardContent>
-        </Card>
-      </div>
-      
-      {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="mb-4">
-          <TabsTrigger value="missing">
-            {t('dev.translations.missingTab', 'Missing Keys')}
-          </TabsTrigger>
-          <TabsTrigger value="popular">
-            {t('dev.translations.popularTab', 'Most Used')}
-          </TabsTrigger>
-          <TabsTrigger value="all">
-            {t('dev.translations.allTab', 'All Keys')}
-          </TabsTrigger>
-        </TabsList>
-        
-        {/* Missing Keys Tab */}
-        <TabsContent value="missing">
-          <div className="mb-4 flex gap-2">
-            <div className="relative flex-grow">
-              <SearchIcon className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder={t('dev.translations.searchKeys', 'Search missing keys...')}
-                className="pl-10"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <Button variant="outline" size="sm">
-              {t('dev.translations.addAll', 'Add All')}
+    <Card>
+      <CardHeader className="bg-blue-50 dark:bg-blue-900/20">
+        <div className="flex justify-between items-center">
+          <div>
+            <CardTitle>{t('dev.translations.title', 'إدارة الترجمات')}</CardTitle>
+            <CardDescription>
+              {t('dev.translations.description', 'مراقبة وتتبع مفاتيح الترجمة المفقودة في التطبيق')}
+            </CardDescription>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={handleClearMissingKeys}>
+              <Trash2 className="h-4 w-4 mr-2" />
+              {t('dev.translations.clear', 'مسح الكل')}
+            </Button>
+            <Button variant="default" size="sm" onClick={handleExport}>
+              <Download className="h-4 w-4 mr-2" />
+              {t('dev.translations.export', 'تصدير')}
             </Button>
           </div>
+        </div>
+      </CardHeader>
+      <CardContent className="pt-4">
+        <div className="bg-amber-50 border border-amber-200 text-amber-700 p-3 rounded-md mb-4 text-sm">
+          {t('dev.translations.totalMissing', 'إجمالي مفاتيح الترجمة المفقودة: {{count}}', { count: getTotalMissingKeys() })}
+        </div>
+        
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="mb-4">
+            {languages.map(lang => (
+              <TabsTrigger key={lang} value={lang} disabled={!missingKeys[lang]?.length}>
+                {lang} {missingKeys[lang]?.length ? `(${missingKeys[lang].length})` : ''}
+              </TabsTrigger>
+            ))}
+          </TabsList>
           
-          <div className="border rounded-md">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t('dev.translations.key', 'Key')}</TableHead>
-                  <TableHead>{t('dev.translations.namespace', 'Namespace')}</TableHead>
-                  <TableHead>{t('dev.translations.status', 'Status')}</TableHead>
-                  <TableHead className="text-right">{t('dev.translations.actions', 'Actions')}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredMissingKeys.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={4} className="text-center py-4">
-                      {searchQuery ? t('dev.translations.noResults', 'No results found') : t('dev.translations.noMissingKeys', 'No missing keys')}
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredMissingKeys.map((key: string) => {
-                    // Split key by dot to get namespace
-                    const parts = key.split('.');
-                    const namespace = parts[0];
-                    
-                    return (
-                      <TableRow key={key}>
-                        <TableCell className="font-mono text-xs">{key}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{namespace}</Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="destructive" className="flex items-center gap-1">
-                            <XIcon className="h-3 w-3" />
-                            {t('dev.translations.missing', 'Missing')}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Button variant="ghost" size="sm">
-                            {t('dev.translations.add', 'Add')}
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </TabsContent>
-        
-        {/* Most Used Tab */}
-        <TabsContent value="popular">
-          <div className="border rounded-md">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t('dev.translations.key', 'Key')}</TableHead>
-                  <TableHead>{t('dev.translations.usageCount', 'Usage Count')}</TableHead>
-                  <TableHead>{t('dev.translations.hasTranslation', 'Has Translation')}</TableHead>
-                  <TableHead className="text-right">{t('dev.translations.actions', 'Actions')}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {metrics.topUsedKeys.map((item: { key: string; count: number }) => {
-                  // Check if key has translation in current language
-                  const hasTranslation = Math.random() > 0.3; // Mock check
-                  
-                  return (
-                    <TableRow key={item.key}>
-                      <TableCell className="font-mono text-xs">{item.key}</TableCell>
-                      <TableCell>
-                        <Badge variant={getBadgeVariantByCount(item.count as number)}>
-                          {item.count}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {hasTranslation ? (
-                          <Badge variant="default" className="bg-green-100 text-green-800 flex items-center gap-1">
-                            <CheckIcon className="h-3 w-3" />
-                            {t('dev.translations.translated', 'Translated')}
-                          </Badge>
-                        ) : (
-                          <Badge variant="outline" className="bg-amber-100 text-amber-800 flex items-center gap-1">
-                            <InfoIcon className="h-3 w-3" />
-                            {t('dev.translations.needsReview', 'Needs Review')}
-                          </Badge>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="sm">
-                          {t('dev.translations.edit', 'Edit')}
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
-        </TabsContent>
-        
-        {/* All Keys Tab */}
-        <TabsContent value="all">
-          <div className="p-4 text-center text-muted-foreground">
-            <p>{t('dev.translations.allKeysDescription', 'This section will show all translation keys when implemented.')}</p>
-          </div>
-        </TabsContent>
-      </Tabs>
-    </div>
+          {languages.map(lang => (
+            <TabsContent key={lang} value={lang} className="p-0">
+              {missingKeys[lang]?.length ? (
+                <div className="border rounded-md overflow-hidden">
+                  <div className="bg-muted p-2 text-xs font-medium border-b">
+                    {t('dev.translations.missingKeys', 'المفاتيح المفقودة')} ({getTotalByLanguage(lang)})
+                  </div>
+                  <ul className="divide-y max-h-[300px] overflow-auto">
+                    {missingKeys[lang]?.map((key, index) => (
+                      <li key={index} className="p-2 text-sm hover:bg-muted/50">
+                        <code className="bg-muted/40 px-1 py-0.5 rounded">{key}</code>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center p-8 text-muted-foreground">
+                  <RefreshCw className="h-10 w-10 mb-2 opacity-20" />
+                  <p>{t('dev.translations.noMissingKeys', 'لا توجد مفاتيح مفقودة لهذه اللغة')}</p>
+                </div>
+              )}
+            </TabsContent>
+          ))}
+        </Tabs>
+      </CardContent>
+    </Card>
   );
 }

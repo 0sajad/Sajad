@@ -15,7 +15,7 @@ export function DisplayTab() {
     reducedMotion,
     soundFeedback,
     announce,
-    playSound
+    playNotificationSound
   } = useA11y();
   
   // المساعدة في الإعلان عن تغييرات إمكانية الوصول
@@ -26,7 +26,7 @@ export function DisplayTab() {
     announce(`${featureName} ${stateText}`, "polite");
     
     if (soundFeedback) {
-      playSound(state ? "success" : "info");
+      playNotificationSound(state ? "success" : "info");
     }
   };
   

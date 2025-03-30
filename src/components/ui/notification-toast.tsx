@@ -5,9 +5,6 @@ import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import { useA11y } from '@/hooks/useA11y';
 
-type NotificationType = 'default' | 'success' | 'warning' | 'error' | 'info';
-type SoundType = 'success' | 'error' | 'warning' | 'info';
-
 type NotificationToastProps = {
   title: string;
   description?: string;
@@ -15,7 +12,7 @@ type NotificationToastProps = {
     label: string;
     onClick: () => void;
   };
-  type?: NotificationType;
+  type?: 'default' | 'success' | 'warning' | 'error' | 'info';
   duration?: number;
 };
 
@@ -25,7 +22,7 @@ type NotificationToastProps = {
 export function useNotificationToast() {
   const { toast } = useToast();
   const { t } = useTranslation();
-  const { soundFeedback, playSound, announce } = useA11y();
+  const { soundFeedback, playNotificationSound, announce } = useA11y();
   
   const showToast = ({
     title,
@@ -40,10 +37,8 @@ export function useNotificationToast() {
     // تشغيل صوت إشعار إذا كان مفعلاً
     if (soundFeedback) {
       // Map the type to match the expected sound types
-      const soundType: SoundType = type === 'default' ? 'info' : 
-                                  (type === 'success' || type === 'error' || type === 'warning' || type === 'info') 
-                                  ? type : 'info';
-      playSound(soundType);
+      const soundType = type === 'default' ? 'notification' : type;
+      playNotificationSound(soundType as 'success' | 'error' | 'warning' | 'info' | 'notification');
     }
     
     // عرض الإشعار المرئي

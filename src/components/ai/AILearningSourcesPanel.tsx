@@ -22,7 +22,7 @@ export function AILearningSourcesPanel({
   maxItems = 4
 }: AILearningSourcesPanelProps) {
   const { t } = useTranslation();
-  const deviceTier = useAppState(state => state.performance?.deviceTier || 'medium');
+  const { deviceTier } = useAppState();
   const [sources, setSources] = useState<string[]>(recentSources);
   const [isRefreshing, setIsRefreshing] = useState(false);
   

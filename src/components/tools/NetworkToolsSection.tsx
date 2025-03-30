@@ -22,7 +22,7 @@ export function NetworkToolsSection() {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("scan");
   const { deviceTier } = usePerformanceOptimization();
-  const { isRTL, reverseIfRTL } = useRTLSupport();
+  const { isRTL, applyRTLOrder } = useRTLSupport();
   
   // إعداد علامات التبويب مع الترجمة
   const tabs = [
@@ -37,7 +37,7 @@ export function NetworkToolsSection() {
   ];
   
   // تطبيق نظام RTL إذا كان مطلوبًا
-  const tabsOrdered = isRTL ? reverseIfRTL(tabs) : tabs;
+  const tabsOrdered = isRTL ? applyRTLOrder(tabs) : tabs;
   
   // تقليل عدد الأدوات المتزامنة على الأجهزة منخفضة الأداء
   const shouldLimitTools = deviceTier === 'low';

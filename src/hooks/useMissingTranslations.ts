@@ -57,10 +57,6 @@ export function useMissingTranslations() {
     missingKeys,
     addMissingKey,
     clearMissingKeys,
-    scanPageForMissingTranslations,
-    totalKeys: 100, // Add missing properties used in TranslationManager
-    loadingStatus: 'ready'
+    scanPageForMissingTranslations
   };
 }
-
-export default useMissingTranslations; // Add default export for backward compatibility
