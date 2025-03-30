@@ -20,7 +20,7 @@ export const DesktopNav = () => {
   return (
     <nav className="hidden md:flex items-center">
       <motion.div 
-        className="flex items-center space-x-6 rtl:space-x-reverse" // زيادة المساحة هنا من space-x-1 إلى space-x-6
+        className="flex items-center space-x-3 rtl:space-x-reverse"
         initial="hidden"
         animate="visible"
         variants={{
@@ -39,15 +39,17 @@ export const DesktopNav = () => {
             onMouseEnter={() => handleItemHover('dashboard')}
             onMouseLeave={handleItemLeave}
             isHovered={hoveredItem === 'dashboard'}
+            compact={true}
           />
           
           <ToolsNavItems
             onMouseEnter={() => handleItemHover('tools')}
             onMouseLeave={handleItemLeave}
             isHovered={hoveredItem === 'tools'}
+            compact={true}
           />
           
-          <UtilityNavItems />
+          <UtilityNavItems compact={true} />
         </NavItemsContainer>
       </motion.div>
     </nav>

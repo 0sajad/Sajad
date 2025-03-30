@@ -9,13 +9,15 @@ interface DashboardNavItemProps {
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
   isHovered?: boolean;
+  compact?: boolean;
 }
 
 export const DashboardNavItem = ({
   onMouseEnter,
   onMouseLeave,
-  isHovered
-}: DashboardNavItemProps = {}) => {
+  isHovered,
+  compact = false
+}: DashboardNavItemProps) => {
   const { t } = useTranslation();
   
   return (
@@ -39,8 +41,9 @@ export const DashboardNavItem = ({
     >
       <NavItem 
         to="/dashboard" 
-        icon={<LayoutDashboard size={17} />} 
+        icon={<LayoutDashboard size={compact ? 14 : 17} />} 
         label={t('header.dashboard')} 
+        compact={compact}
       />
     </motion.div>
   );

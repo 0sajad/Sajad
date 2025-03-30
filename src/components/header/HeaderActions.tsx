@@ -25,23 +25,23 @@ export function HeaderActions({
   const { t } = useTranslation();
   
   return (
-    <div className="flex items-center space-x-4 sm:space-x-6 md:space-x-8 rtl:space-x-reverse">
-      <LanguageSwitcher className="transform hover:scale-110 transition-transform shadow-xl rounded-full mr-6 sm:mr-8" />
+    <div className="flex items-center space-x-3 sm:space-x-4 md:space-x-5 rtl:space-x-reverse">
+      <LanguageSwitcher className="transform hover:scale-110 transition-transform shadow-xl rounded-full mr-2 sm:mr-4" />
       
       <div className="transform hover:scale-105 transition-transform">
         <ModeToggle />
       </div>
       
-      {/* مكون الإشعارات الجديد */}
+      {/* مكون الإشعارات */}
       <Popover>
         <PopoverTrigger asChild>
           <Button 
             variant="ghost" 
             size="icon" 
-            className="relative bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-full"
+            className="relative bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-full h-8 w-8"
           >
-            <Bell size={18} />
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
+            <Bell size={16} />
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-3.5 h-3.5 flex items-center justify-center rounded-full">
               3
             </span>
           </Button>
@@ -53,21 +53,21 @@ export function HeaderActions({
       
       <div className="hidden md:block">
         <Button 
-          size="lg" 
+          size="sm" 
           variant="gradient"
-          className="px-6 md:px-8 py-2.5 shadow-xl hover:shadow-2xl transform hover:translate-y-[-3px] transition-all rounded-full"
+          className="px-4 md:px-6 py-2 shadow-xl hover:shadow-2xl transform hover:translate-y-[-2px] transition-all rounded-full"
         >
-          <div className="flex items-center gap-2.5 rtl:flex-row-reverse">
-            <div className="bg-white/30 p-1.5 rounded-full">
-              <User size={16} className="text-white" />
+          <div className="flex items-center gap-2 rtl:flex-row-reverse">
+            <div className="bg-white/30 p-1 rounded-full">
+              <User size={14} className="text-white" />
             </div>
-            <span className="font-medium">{t('header.login')}</span>
+            <span className="text-sm font-medium">{t('header.login')}</span>
           </div>
         </Button>
       </div>
       
       <motion.button
-        className="p-2 md:hidden transform hover:scale-110 transition-transform"
+        className="p-1.5 md:hidden transform hover:scale-110 transition-transform"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         whileTap={{ scale: 0.9 }}
         aria-label={isMobileMenuOpen ? "إغلاق القائمة" : "فتح القائمة"}
@@ -80,10 +80,10 @@ export function HeaderActions({
             exit={{ opacity: 0, rotate: isMobileMenuOpen ? 90 : -90 }}
             transition={{ duration: 0.3 }}
           >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </motion.div>
         </AnimatePresence>
       </motion.button>
     </div>
   );
-}
+};

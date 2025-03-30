@@ -13,9 +13,10 @@ interface NavDropdownProps {
     label: string;
     icon?: React.ReactNode;
   }[];
+  compact?: boolean;
 }
 
-export function NavDropdown({ label, icon, items }: NavDropdownProps) {
+export function NavDropdown({ label, icon, items, compact = false }: NavDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
@@ -41,7 +42,7 @@ export function NavDropdown({ label, icon, items }: NavDropdownProps) {
       <motion.button
         className={`flex items-center transition-colors relative ${
           hasActiveItem ? "text-purple-600 font-medium" : "text-gray-700 hover:text-octaBlue-600"
-        }`}
+        } ${compact ? "text-sm space-x-1" : "space-x-1.5"}`}
         onClick={() => setIsOpen(!isOpen)}
         onMouseEnter={() => !isMobile && setIsOpen(true)}
         onMouseLeave={() => !isMobile && setTimeout(() => setIsOpen(false), 300)}
@@ -49,7 +50,7 @@ export function NavDropdown({ label, icon, items }: NavDropdownProps) {
         whileTap={{ scale: 0.95 }}
         transition={{ type: "spring", stiffness: 400, damping: 10 }}
       >
-        {icon && <span className="mr-1.5 rtl:ml-1.5 rtl:mr-0">{icon}</span>}
+        {icon && <span className="mr-1 rtl:ml-1 rtl:mr-0">{icon}</span>}
         <span className="relative z-10">{label}</span>
         <motion.div
           animate={{ 
@@ -57,15 +58,15 @@ export function NavDropdown({ label, icon, items }: NavDropdownProps) {
             y: isOpen ? 1 : 0
           }}
           transition={{ duration: 0.3 }}
-          className="ml-1 rtl:mr-1 rtl:ml-0"
+          className="ml-0.5 rtl:mr-0.5 rtl:ml-0"
         >
-          <ChevronDown size={16} className={`transition-colors ${hasActiveItem ? "text-purple-600" : ""}`} />
+          <ChevronDown size={compact ? 14 : 16} className={`transition-colors ${hasActiveItem ? "text-purple-600" : ""}`} />
         </motion.div>
         
         {/* إضافة خط أسفل القائمة إذا كان أحد عناصرها نشطاً */}
         {hasActiveItem && (
           <motion.div 
-            className="absolute -bottom-2 left-0 right-0 h-1 rounded-full bg-gradient-to-r from-purple-600 to-blue-600"
+            className={`absolute -bottom-1.5 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 ${compact ? "h-0.5" : "h-1"}`}
             layoutId="activeNavIndicator"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -88,7 +89,7 @@ export function NavDropdown({ label, icon, items }: NavDropdownProps) {
       <AnimatePresence>
         {isOpen && (
           <motion.div 
-            className="absolute z-50 mt-2 w-60 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-lg shadow-xl py-2 border border-gray-200/40 dark:border-gray-700/40"
+            className="absolute z-50 mt-1.5 w-56 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-lg shadow-xl py-1.5 border border-gray-200/40 dark:border-gray-700/40"
             style={{ 
               right: document.dir === 'rtl' ? 'auto' : '0',
               left: document.dir === 'rtl' ? '0' : 'auto'
@@ -119,22 +120,22 @@ export function NavDropdown({ label, icon, items }: NavDropdownProps) {
                     x: document.dir === 'rtl' ? -3 : 3,
                     transition: { type: "spring", stiffness: 300, damping: 20 }
                   }}
-                  className={`${isActive ? 'bg-purple-50 dark:bg-purple-900/20' : ''} my-1 mx-1 rounded-md overflow-hidden`}
+                  className={`${isActive ? 'bg-purple-50 dark:bg-purple-900/20' : ''} my-0.5 mx-1 rounded-md overflow-hidden`}
                 >
                   <Link
                     to={item.to}
-                    className={`flex items-center px-4 py-2.5 text-sm transition-all
+                    className={`flex items-center px-3 py-2 text-sm transition-all
                     ${isActive 
                       ? 'text-purple-600 font-medium' 
                       : 'text-gray-700 dark:text-gray-200'}`}
                     onClick={() => setIsOpen(false)}
                   >
-                    {item.icon && <span className="mr-2.5 rtl:ml-2.5 rtl:mr-0">{item.icon}</span>}
+                    {item.icon && <span className="mr-2 rtl:ml-2 rtl:mr-0">{item.icon}</span>}
                     {item.label}
                     
                     {isActive && (
                       <motion.div 
-                        className="ml-auto w-2 h-2 rounded-full bg-purple-600"
+                        className="ml-auto w-1.5 h-1.5 rounded-full bg-purple-600"
                         layoutId="activeDropdownDot"
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}

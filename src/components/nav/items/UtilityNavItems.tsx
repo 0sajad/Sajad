@@ -9,14 +9,17 @@ interface UtilityNavItemsProps {
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
   isHovered?: boolean;
+  compact?: boolean;
 }
 
 export const UtilityNavItems = ({
   onMouseEnter,
   onMouseLeave,
-  isHovered
-}: UtilityNavItemsProps = {}) => {
+  isHovered,
+  compact = false
+}: UtilityNavItemsProps) => {
   const { t } = useTranslation();
+  const iconSize = compact ? 14 : 17;
   
   const itemVariants = {
     hidden: { opacity: 0, y: -10 },
@@ -33,7 +36,7 @@ export const UtilityNavItems = ({
   
   return (
     <motion.div 
-      className="flex items-center space-x-2"
+      className="flex items-center space-x-1.5"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
@@ -44,8 +47,9 @@ export const UtilityNavItems = ({
       >
         <NavItem 
           to="/ai" 
-          icon={<BrainCircuit size={17} />} 
+          icon={<BrainCircuit size={iconSize} />} 
           label={t('header.aiAssistant')} 
+          compact={compact}
         />
       </motion.div>
       
@@ -56,8 +60,9 @@ export const UtilityNavItems = ({
       >
         <NavItem 
           to="/settings" 
-          icon={<Settings size={17} />} 
+          icon={<Settings size={iconSize} />} 
           label={t('header.settings')} 
+          compact={compact}
         />
       </motion.div>
       
@@ -68,8 +73,9 @@ export const UtilityNavItems = ({
       >
         <NavItem 
           to="/help-center" 
-          icon={<HelpCircle size={17} />} 
+          icon={<HelpCircle size={iconSize} />} 
           label={t('header.helpCenter')} 
+          compact={compact}
         />
       </motion.div>
       
@@ -80,8 +86,9 @@ export const UtilityNavItems = ({
       >
         <NavItem 
           to="/license" 
-          icon={<Shield size={17} />} 
+          icon={<Shield size={iconSize} />} 
           label={t('header.license')} 
+          compact={compact}
         />
       </motion.div>
     </motion.div>
