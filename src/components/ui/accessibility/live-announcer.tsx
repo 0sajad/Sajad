@@ -5,12 +5,8 @@ interface LiveAnnouncerProps {
   politeness?: "polite" | "assertive";
 }
 
-// Define global announce function type only once
-declare global {
-  interface Window {
-    announce?: (message: string, level?: "polite" | "assertive") => void;
-  }
-}
+// Remove the Window interface declaration since it's already defined in window.d.ts
+// This will resolve the conflict
 
 export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
   const announcerRef = useRef<HTMLDivElement>(null);

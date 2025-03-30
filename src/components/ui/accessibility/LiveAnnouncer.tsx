@@ -2,12 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
-// Add type declaration for window.announce
-declare global {
-  interface Window {
-    announce: (message: string, politeness?: 'polite' | 'assertive') => void;
-  }
-}
+// We don't need to declare Window interface here since it's defined in window.d.ts
 
 export function LiveAnnouncer() {
   const politeAnnouncerRef = useRef<HTMLDivElement>(null);
