@@ -1,5 +1,5 @@
 
-import React, { ReactNode } from "react";
+import React, { ReactNode, Suspense } from "react";
 import { ErrorBoundary } from "@/components/ui/error/ErrorBoundary";
 import { Header } from "@/components/Header";
 
@@ -11,7 +11,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <ErrorBoundary>
       <div className="min-h-screen flex flex-col">
-        <Header />
+        <Suspense fallback={<div className="h-16 bg-gray-100 dark:bg-gray-900"></div>}>
+          <Header />
+        </Suspense>
         <main className="flex-grow pt-16">
           {children}
         </main>

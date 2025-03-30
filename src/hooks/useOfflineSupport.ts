@@ -22,7 +22,7 @@ export const useOfflineSupport = (options: OfflineSupportOptions = {}) => {
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
   const [pendingActions, setPendingActions] = useState<any[]>([]);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
-  const { notify } = useNotifications();
+  const { showNotification } = useNotifications();
   
   // Update online status
   const updateOnlineStatus = useCallback(() => {
@@ -31,20 +31,20 @@ export const useOfflineSupport = (options: OfflineSupportOptions = {}) => {
     
     if (showNotifications) {
       if (online) {
-        notify({
-          title: 'متصل بالإنترنت',
-          message: 'تمت استعادة الاتصال بالإنترنت',
-          type: 'success'
-        });
+        showNotification(
+          'متصل بالإنترنت',
+          'تمت استعادة الاتصال بالإنترنت',
+          'success'
+        );
       } else {
-        notify({
-          title: 'غير متصل بالإنترنت',
-          message: 'أنت الآن في وضع عدم الاتصال، سيتم حفظ التغييرات محليًا',
-          type: 'warning'
-        });
+        showNotification(
+          'غير متصل بالإنترنت',
+          'أنت الآن في وضع عدم الاتصال، سيتم حفظ التغييرات محليًا',
+          'warning'
+        );
       }
     }
-  }, [showNotifications, notify]);
+  }, [showNotifications, showNotification]);
   
   // Queue an action to be performed when back online
   const queueAction = useCallback((action: any) => {
@@ -68,24 +68,24 @@ export const useOfflineSupport = (options: OfflineSupportOptions = {}) => {
       setPendingActions([]);
       
       if (showNotifications) {
-        notify({
-          title: 'تمت المزامنة',
-          message: 'تمت مزامنة جميع الإجراءات المعلقة بنجاح',
-          type: 'success'
-        });
+        showNotification(
+          'تمت المزامنة',
+          'تمت مزامنة جميع الإجراءات المعلقة بنجاح',
+          'success'
+        );
       }
     } catch (error) {
       if (showNotifications) {
-        notify({
-          title: 'فشل المزامنة',
-          message: 'حدث خطأ أثناء محاولة مزامنة البيانات',
-          type: 'error'
-        });
+        showNotification(
+          'فشل المزامنة',
+          'حدث خطأ أثناء محاولة مزامنة البيانات',
+          'error'
+        );
       }
     } finally {
       setIsSyncing(false);
     }
-  }, [isOnline, pendingActions, showNotifications, notify]);
+  }, [isOnline, pendingActions, showNotifications, showNotification]);
   
   // Check if we can perform an operation based on current connectivity
   const canPerformOperation = useCallback((requiresInternet: boolean = true) => {

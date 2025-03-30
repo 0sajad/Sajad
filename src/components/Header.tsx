@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from "react";
 import { MobileMenu } from "./nav/MobileMenu";
-import { DesktopNav } from "./nav/DesktopNav";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,6 +8,8 @@ import { HeaderActions } from "./header/HeaderActions";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button } from "./ui/button";
+import { Logo } from "./header/Logo";
+import { Header3D } from "./header/Header3D";
 
 interface HeaderProps {
   onLanguageChange?: (language: string) => void;
@@ -53,17 +54,22 @@ export function Header({ onLanguageChange }: HeaderProps) {
   
   return (
     <TooltipProvider>
-      <header className="py-3 bg-white shadow-sm dark:bg-gray-900">
-        <div className="container mx-auto px-4 flex items-center justify-between">
+      <header 
+        className={`py-3 bg-white shadow-sm dark:bg-gray-900 relative ${
+          isScrolled ? "shadow-md" : ""
+        }`}
+      >
+        {/* 3D Header Background */}
+        <div className="absolute inset-0 overflow-hidden">
+          <Header3D />
+        </div>
+        
+        {/* Content Layer */}
+        <div className="container mx-auto px-4 flex items-center justify-between relative z-10">
           <div className="flex items-center gap-6"> 
-            {/* Logo */}
-            <div className="flex items-center">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-600/80 to-blue-600/80 flex items-center justify-center text-white font-bold">
-                <div className="text-center leading-tight">
-                  <div className="text-lg">OCTA</div>
-                  <div className="text-xs">GRAM</div>
-                </div>
-              </div>
+            {/* Logo - hidden because we're using 3D one */}
+            <div className="opacity-0 pointer-events-none">
+              <Logo />
             </div>
             
             {/* Navigation Items */}
@@ -73,7 +79,7 @@ export function Header({ onLanguageChange }: HeaderProps) {
                   key={item.path}
                   variant={location.pathname === item.path ? "default" : "ghost"} 
                   size="sm"
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 backdrop-blur-sm bg-white/5"
                   onClick={() => window.location.href = item.path}
                 >
                   <span>{item.label}</span>
