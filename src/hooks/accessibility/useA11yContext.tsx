@@ -76,7 +76,9 @@ export function A11yProvider({ children }: { children: ReactNode }) {
       click: '/sounds/click.mp3',
       success: '/sounds/success.mp3',
       error: '/sounds/error.mp3',
-      notification: '/sounds/notification.mp3'
+      notification: '/sounds/notification.mp3',
+      info: '/sounds/info.mp3',
+      warning: '/sounds/warning.mp3'
     };
     
     const soundUrl = sounds[soundType];
@@ -146,3 +148,6 @@ export function useA11y() {
   }
   return context;
 }
+
+// Export the compatibility hook name
+export const useA11yContext = useA11y;

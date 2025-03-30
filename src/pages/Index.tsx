@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useA11y } from '@/hooks/useA11y';
+import { useA11y } from '@/hooks/accessibility/useA11yContext';
 
 const IndexPage = () => {
   return (
