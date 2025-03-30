@@ -36,44 +36,50 @@ export function LiveAnnouncer() {
   
   useEffect(() => {
     // Store previous announce function if it exists
-    previousAnnounceRef.current = window.announce;
+    if (typeof window !== 'undefined' && window.announce) {
+      previousAnnounceRef.current = window.announce;
+    }
     
     // Create new announce function
-    window.announce = (message: string, politeness: 'polite' | 'assertive' = 'polite') => {
-      if (!message) return;
-      
-      const announcer = politeness === 'assertive' 
-        ? assertiveAnnouncerRef.current 
-        : politeAnnouncerRef.current;
+    if (typeof window !== 'undefined') {
+      window.announce = (message: string, politeness: 'polite' | 'assertive' = 'polite') => {
+        if (!message) return;
         
-      if (announcer) {
-        try {
-          // Format the message based on language
-          const formattedMessage = formatAnnouncementForLang(message);
+        const announcer = politeness === 'assertive' 
+          ? assertiveAnnouncerRef.current 
+          : politeAnnouncerRef.current;
           
-          // First clear the content
-          announcer.textContent = '';
-          
-          // Using requestAnimationFrame instead of setTimeout for better performance
-          requestAnimationFrame(() => {
-            if (announcer) {
-              announcer.textContent = formattedMessage;
-            }
-          });
-        } catch (error) {
-          console.error('Error announcing message:', error);
+        if (announcer) {
+          try {
+            // Format the message based on language
+            const formattedMessage = formatAnnouncementForLang(message);
+            
+            // First clear the content
+            announcer.textContent = '';
+            
+            // Using requestAnimationFrame instead of setTimeout for better performance
+            window.requestAnimationFrame(() => {
+              if (announcer) {
+                announcer.textContent = formattedMessage;
+              }
+            });
+          } catch (error) {
+            console.error('Error announcing message:', error);
+          }
         }
-      }
-    };
+      };
+    }
     
     // Cleanup
     return () => {
       // Restore previous announce function if it existed
-      if (previousAnnounceRef.current) {
-        window.announce = previousAnnounceRef.current;
-      } else {
-        // Or provide a no-op function
-        window.announce = () => {};
+      if (typeof window !== 'undefined') {
+        if (previousAnnounceRef.current) {
+          window.announce = previousAnnounceRef.current;
+        } else {
+          // Or provide a no-op function
+          window.announce = () => {};
+        }
       }
     };
   }, [i18n.language]); // Only re-create when language changes

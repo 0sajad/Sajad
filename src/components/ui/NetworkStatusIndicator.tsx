@@ -1,5 +1,5 @@
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { AlertTriangle, Wifi, WifiOff, RotateCw, Cloud, CloudOff, Database, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
@@ -17,11 +17,14 @@ export function NetworkStatusIndicator() {
   const [pendingItemsCount, setPendingItemsCount] = useState(0);
   
   // Update online status on mount and when it changes
-  React.useEffect(() => {
+  useEffect(() => {
     const updateOnlineStatus = () => setIsOnline(navigator.onLine);
     
     window.addEventListener('online', updateOnlineStatus);
     window.addEventListener('offline', updateOnlineStatus);
+    
+    // Initialize state
+    updateOnlineStatus();
     
     return () => {
       window.removeEventListener('online', updateOnlineStatus);
@@ -29,9 +32,16 @@ export function NetworkStatusIndicator() {
     };
   }, []);
 
-  // Simulate syncing
+  // Simulate having pending items if offline - only run on isOnline change
+  useEffect(() => {
+    if (!isOnline && pendingItemsCount === 0) {
+      setPendingItemsCount(Math.floor(Math.random() * 5) + 1);
+    }
+  }, [isOnline, pendingItemsCount]);
+
+  // Simulate syncing - memoize to prevent unnecessary re-renders
   const handleSync = useCallback(() => {
-    if (!isOnline) return;
+    if (!isOnline || isSyncing) return;
     
     setIsSyncing(true);
     setSyncProgress(0);
@@ -51,16 +61,9 @@ export function NetworkStatusIndicator() {
     }, 200);
     
     return () => clearInterval(interval);
-  }, [isOnline]);
+  }, [isOnline, isSyncing]);
   
-  // Simulate having pending items if offline
-  React.useEffect(() => {
-    if (!isOnline && pendingItemsCount === 0) {
-      setPendingItemsCount(Math.floor(Math.random() * 5) + 1);
-    }
-  }, [isOnline, pendingItemsCount]);
-  
-  // Don't show anything if online and no pending sync
+  // Don't render anything if online and no pending sync - prevents unnecessary renders
   if (isOnline && pendingItemsCount === 0 && !isSyncing) {
     return null;
   }

@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import { ModeProvider } from "./context/ModeContext";
 import { RTLWrapper } from "./components/layout/RTLWrapper";
 
-// التحميل الكسول للصفحات لتحسين أداء التطبيق
+// Lazy load components for better performance
 const NetworkScanner = lazy(() => import("./pages/NetworkScanner"));
 const AIAssistant = lazy(() => import("./pages/AIAssistant"));
 const Simulation = lazy(() => import("./pages/Simulation"));
@@ -22,7 +22,7 @@ const Register = lazy(() => import("./pages/auth/Register"));
 const ForgotPassword = lazy(() => import("./pages/auth/ForgotPassword"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
-const App = () => {
+const App: React.FC = () => {
   const { t } = useTranslation();
   
   // Memoize the routes to prevent unnecessary re-renders
@@ -49,17 +49,15 @@ const App = () => {
   
   return (
     <ModeProvider>
-      <ErrorBoundary>
-        <Router>
-          <RTLWrapper>
-            <Layout>
-              <Suspense fallback={<SuspenseLoader />}>
-                {appRoutes}
-              </Suspense>
-            </Layout>
-          </RTLWrapper>
-        </Router>
-      </ErrorBoundary>
+      <Router>
+        <RTLWrapper>
+          <Layout>
+            <Suspense fallback={<SuspenseLoader />}>
+              {appRoutes}
+            </Suspense>
+          </Layout>
+        </RTLWrapper>
+      </Router>
     </ModeProvider>
   );
 };

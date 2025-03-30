@@ -9,23 +9,23 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
   const announcerRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
-    // تعريف وظيفة الإعلان العامة
-    if (typeof window !== 'undefined') {
+    // Define global announcement function
+    if (typeof window !== 'undefined' && !window.announce) {
       window.announce = (message: string, level: "polite" | "assertive" = "polite") => {
         if (announcerRef.current) {
           try {
-            // إعادة تعيين المحتوى أولاً لضمان قراءة الإعلان الجديد
+            // Reset content first to ensure new announcement is read
             announcerRef.current.textContent = "";
             
-            // تعيين مستوى الإلحاح
+            // Set aria-live level
             announcerRef.current.setAttribute("aria-live", level);
             
-            // إضافة محتوى الإعلان بعد فترة قصيرة للتأكد من قراءته
-            setTimeout(() => {
+            // Add announcement content after a short delay to ensure it's read
+            window.requestAnimationFrame(() => {
               if (announcerRef.current) {
                 announcerRef.current.textContent = message;
               }
-            }, 50);
+            });
           } catch (error) {
             console.error("Error while announcing:", error);
           }
@@ -33,13 +33,14 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
       };
     }
     
-    // التنظيف: تفريغ عنصر الإعلان عند إزالة المكون
+    // Cleanup: clear announcer element when component is removed
     return () => {
       if (announcerRef.current) {
         announcerRef.current.textContent = "";
       }
       
-      // إعادة إنشاء دالة announce كدالة فارغة للسلامة
+      // Avoid memory leaks by not restoring previous announce function
+      // Just provide an empty no-op function for safety
       if (typeof window !== 'undefined') {
         window.announce = (message: string) => {
           console.log("LiveAnnouncer unmounted, but announce was called with:", message);
@@ -48,16 +49,7 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
     };
   }, []);
   
-  // تأكد من تشغيل هذا المكون عند تحميل التطبيق
-  useEffect(() => {
-    // التحقق من وجود وظيفة الإعلان
-    if (typeof window !== 'undefined' && window.announce) {
-      // إعلان أولي للتأكد من عمل النظام
-      window.announce("تم تحميل نظام الإعلانات للوصول", "polite");
-    }
-  }, []);
-  
-  // تنسيق CSS للتأكد من إخفاء العنصر بصريًا مع السماح لقارئات الشاشة بقراءته
+  // CSS styles to ensure element is visually hidden but accessible to screen readers
   const announcerStyle: React.CSSProperties = {
     position: 'absolute',
     width: '1px',
@@ -81,5 +73,3 @@ export function LiveAnnouncer({ politeness = "polite" }: LiveAnnouncerProps) {
     />
   );
 }
-
-// Remove duplicate type declaration

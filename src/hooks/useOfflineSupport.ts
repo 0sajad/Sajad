@@ -13,7 +13,8 @@ export function useOfflineSupport() {
   const [unsavedChangesCount, setUnsavedChangesCount] = useState(0);
   const [isSyncingData, setSyncingData] = useState(false);
   const previousIsOnline = useRef(isOnline);
-
+  
+  // Memoize callback functions to prevent unnecessary re-renders
   // Function to update network status
   const updateNetworkStatus = useCallback(() => {
     setIsOnline(navigator.onLine);
@@ -51,7 +52,7 @@ export function useOfflineSupport() {
     };
   }, [t, updateNetworkStatus]);
   
-  // Function to sync offline data
+  // Function to sync offline data - memoize to prevent re-renders
   const syncOfflineData = useCallback(async () => {
     if (!isOnline) {
       toast({
@@ -92,7 +93,7 @@ export function useOfflineSupport() {
     }
   }, [isOnline, t]);
 
-  // Function to save changes locally
+  // Function to save changes locally - memoize to prevent re-renders
   const saveLocally = useCallback(async (data: any) => {
     try {
       // Simulate storage operation
@@ -115,15 +116,16 @@ export function useOfflineSupport() {
     }
   }, [t]);
 
-  // Auto-sync when coming back online
+  // Auto-sync when coming back online - Use useEffect with specific dependencies
   useEffect(() => {
+    // Only run this effect when transitioning from offline to online
     if (!previousIsOnline.current && isOnline && hasPendingChanges) {
       // Ask user if they want to sync
       const shouldSync = window.confirm(t('offline.syncPrompt'));
       
       if (shouldSync) {
         // Use void to explicitly discard the Promise result
-        syncOfflineData().catch(console.error);
+        void syncOfflineData();
       } else {
         // Show reminder
         toast({
@@ -132,7 +134,7 @@ export function useOfflineSupport() {
           action: (
             <ToastAction 
               altText={t('offline.syncNow')}
-              onClick={() => void syncOfflineData().catch(console.error)}
+              onClick={() => void syncOfflineData()}
             >
               {t('offline.syncNow')}
             </ToastAction>
@@ -141,6 +143,7 @@ export function useOfflineSupport() {
       }
     }
     
+    // Update the ref at the end of the effect
     previousIsOnline.current = isOnline;
   }, [isOnline, hasPendingChanges, unsavedChangesCount, syncOfflineData, t]);
 
