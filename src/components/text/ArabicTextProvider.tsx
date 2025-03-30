@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useAppState } from '@/hooks/state/use-app-state';
+import { useAppState } from '@/hooks/state';
 import { useArabicSupport } from '@/hooks/useArabicSupport';
 
 interface ArabicTextContextType {
@@ -33,7 +33,7 @@ interface ArabicTextProviderProps {
 
 export function ArabicTextProvider({ children }: ArabicTextProviderProps) {
   const { isArabic, formatNumber, direction } = useArabicSupport();
-  const preferences = useAppState(state => state.preferences);
+  const preferences = useAppState(state => state.preferences || {});
   
   // إعدادات النص العربي
   const [fontFamily, setFontFamily] = useState<string>(localStorage.getItem('arabic_font_family') || 'default');

@@ -1,10 +1,9 @@
 
 import React from "react";
-import { NavDropdown } from "../NavDropdown";
-import { Wrench, Database, Network, BrainCircuit } from "lucide-react";
+import { NavItem } from "../NavItem";
+import { Network, Wifi, ShieldCheck, ServerCrash } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { useMode } from "@/context/ModeContext";
 
 interface ToolsNavItemsProps {
   onMouseEnter?: () => void;
@@ -20,57 +19,78 @@ export const ToolsNavItems = ({
   compact = false
 }: ToolsNavItemsProps) => {
   const { t } = useTranslation();
-  const { features } = useMode();
   const iconSize = compact ? 14 : 17;
-  const dropdownIconSize = compact ? 13 : 16;
   
-  // قائمة بعناصر القائمة المنسدلة استنادًا إلى الميزات المفعلة
-  const getToolsItems = () => {
-    const items = [
-      { to: '/tools', label: t('tools.title'), icon: <Database size={dropdownIconSize} className="mr-2" /> },
-      { to: '/fiber-optic', label: t('header.networkScanner'), icon: <Network size={dropdownIconSize} className="mr-2" /> }
-    ];
-    
-    if (features?.networkMonitoring) {
-      items.push({ to: '/tools?tab=monitor', label: t('networkTools.title'), icon: <Network size={dropdownIconSize} className="mr-2" /> });
+  const itemVariants = {
+    hidden: { opacity: 0, y: -10 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        type: "spring",
+        stiffness: 300,
+        damping: 20
+      }
     }
-    
-    if (features?.aiAssistant) {
-      items.push({ to: '/tools?tab=ai-tools', label: t('aiAssistant.title'), icon: <BrainCircuit size={dropdownIconSize} className="mr-2" /> });
-    }
-    
-    if (features?.dnsOptimization) {
-      items.push({ to: '/tools?tab=dns', label: 'DNS Tools', icon: <Database size={dropdownIconSize} className="mr-2" /> });
-    }
-    
-    return items;
   };
   
   return (
     <motion.div 
-      variants={{
-        hidden: { opacity: 0, y: -10 },
-        visible: { 
-          opacity: 1, 
-          y: 0,
-          transition: { 
-            type: "spring",
-            stiffness: 300,
-            damping: 20
-          }
-        }
-      }}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      className="flex items-center space-x-1.5 rtl:space-x-reverse"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <NavDropdown 
-        label={t('header.tools')}
-        icon={<Wrench size={iconSize} />}
-        items={getToolsItems()}
-        compact={compact}
-      />
+      <motion.div 
+        variants={itemVariants}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <NavItem 
+          to="/network-dashboard" 
+          icon={<Network size={iconSize} />} 
+          label={t('header.networkDashboard')} 
+          compact={compact}
+        />
+      </motion.div>
+      
+      <motion.div 
+        variants={itemVariants}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <NavItem 
+          to="/wifi-analyzer" 
+          icon={<Wifi size={iconSize} />} 
+          label={t('header.wifiAnalyzer')} 
+          compact={compact}
+        />
+      </motion.div>
+      
+      <motion.div 
+        variants={itemVariants}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <NavItem 
+          to="/security" 
+          icon={<ShieldCheck size={iconSize} />} 
+          label={t('header.security')} 
+          compact={compact}
+        />
+      </motion.div>
+      
+      <motion.div 
+        variants={itemVariants}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <NavItem 
+          to="/simulation" 
+          icon={<ServerCrash size={iconSize} />} 
+          label={t('header.simulation')} 
+          compact={compact}
+        />
+      </motion.div>
     </motion.div>
   );
 };

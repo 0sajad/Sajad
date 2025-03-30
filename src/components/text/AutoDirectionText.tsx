@@ -21,7 +21,7 @@ export function AutoDirectionText({
   preserveNumbers = true,
   lang,
 }: AutoDirectionTextProps) {
-  const { isRTL } = useRTLSupport();
+  const { isRTL, getDirectionByContent } = useRTLSupport();
   const [textDirection, setTextDirection] = useState<'rtl' | 'ltr'>(isRTL ? 'rtl' : 'ltr');
   
   // كشف اتجاه النص تلقائيًا
@@ -40,35 +40,11 @@ export function AutoDirectionText({
     // كشف اتجاه النص بناءً على أول حرف غير رقمي أو علامة ترقيم
     const text = children as string;
     
-    // نمط يطابق الأحرف العربية
-    const rtlPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+    // استخدام الوظيفة المساعدة من خطاف useRTLSupport
+    const detectedDirection = getDirectionByContent(text);
+    setTextDirection(detectedDirection);
     
-    // نمط يطابق الأحرف اللاتينية
-    const ltrPattern = /[a-zA-Z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF]/;
-    
-    // البحث عن أول حرف ليس رقمًا أو علامة ترقيم
-    for (let i = 0; i < text.length; i++) {
-      const char = text[i];
-      
-      // تجاهل الأرقام والمسافات وعلامات الترقيم
-      if (/[\d\s\p{P}]/u.test(char)) {
-        continue;
-      }
-      
-      if (rtlPattern.test(char)) {
-        setTextDirection('rtl');
-        return;
-      }
-      
-      if (ltrPattern.test(char)) {
-        setTextDirection('ltr');
-        return;
-      }
-    }
-    
-    // إذا لم يتم العثور على أحرف معرّفة، استخدم الاتجاه الافتراضي
-    setTextDirection(isRTL ? 'rtl' : 'ltr');
-  }, [children, forceDirection, isRTL]);
+  }, [children, forceDirection, isRTL, getDirectionByContent]);
   
   // معالجة النص لتطبيق اتجاه صحيح للأرقام
   const formatText = (text: string): React.ReactNode => {
