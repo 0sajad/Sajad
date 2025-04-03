@@ -45,38 +45,43 @@ export function useRTLSupport(options: RTLOptions = {}) {
     }
   }, [i18n.language, enforceRTL, enforceSpecificLanguages]);
   
-  /**
-   * إضافة خاصية التدفق النصي المعكوس إلى عناصر المفاتيح-القيم
-   * مثل: { name: 'اسم', value: 'قيمة' } => { name: 'اسم', value: 'قيمة', textFlow: 'rtl' }
-   */
-  const addRTLTextFlow = <T extends Record<string, any>>(
-    items: T[],
-    textProperties: (keyof T)[] = ['label', 'title', 'text', 'name', 'description']
-  ): (T & { textFlow?: 'rtl' | 'ltr' })[] => {
-    if (!isRTL) return items as (T & { textFlow?: 'rtl' | 'ltr' })[];
-    
-    return items.map(item => {
-      // التحقق مما إذا كانت أي من خصائص النص تحتوي على نص باللغة العربية
-      const hasArabicText = textProperties.some(prop => {
-        const value = item[prop];
-        return typeof value === 'string' && /[\u0600-\u06FF]/.test(value);
-      });
-      
-      // إضافة خاصية textFlow إذا كان النص عربيًا
-      return hasArabicText ? { ...item, textFlow: 'rtl' as const } : { ...item, textFlow: 'ltr' as const };
-    });
+  // اكتشاف اتجاه النص
+  const detectRTL = () => {
+    if (typeof window !== 'undefined') {
+      const currentLang = i18n.language || 'en';
+      const rtlLanguages = ['ar', 'ar-iq', 'he', 'ur', 'fa'];
+      return rtlLanguages.some(lang => 
+        currentLang === lang || currentLang.startsWith(`${lang}-`)
+      );
+    }
+    return false;
   };
   
-  /**
-   * عكس ترتيب المصفوفة إذا كان الاتجاه من اليمين إلى اليسار
-   */
+  // الحصول على الاتجاه بناءً على محتوى النص
+  const getDirectionByContent = (text: string): "ltr" | "rtl" => {
+    if (!text) return 'ltr';
+    
+    // البحث عن أول حرف عربي / عبري / فارسي
+    const rtlChars = /[\u0590-\u05FF\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+    return rtlChars.test(text) ? 'rtl' : 'ltr';
+  };
+  
+  // الحصول على الاتجاه المستجيب للشاشة
+  const getResponsiveDirection = (screenWidth: number, breakpoint = 768): "ltr" | "rtl" => {
+    return (screenWidth < breakpoint) ? 'ltr' : (isRTL ? 'rtl' : 'ltr');
+  };
+  
+  // إضافة وظيفة applyRTLOrder لمعالجة الخطأ في NetworkToolsSection
   const applyRTLOrder = <T>(items: T[]): T[] => {
     return isRTL ? [...items].reverse() : items;
   };
   
   return {
     isRTL,
-    addRTLTextFlow,
-    applyRTLOrder,
+    direction: isRTL ? 'rtl' : 'ltr',
+    detectRTL,
+    getDirectionByContent,
+    getResponsiveDirection,
+    applyRTLOrder // إضافة الدالة المفقودة
   };
 }

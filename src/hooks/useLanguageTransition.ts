@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useA11y } from "./useA11y";
 import { changeLanguage as i18nChangeLanguage } from "../i18n";
+import { useAppState } from "./state/use-app-state";
 
 /**
  * Hook to manage language switching with transition effects
@@ -16,6 +17,7 @@ export function useLanguageTransition() {
     playNotificationSound: undefined 
   };
   const pendingLanguageRef = useRef<string | null>(null);
+  const setPreference = useAppState((state) => state.setPreference); // استخدام setPreference بدلاً من setPreferences
 
   /**
    * Change language with transition effect
@@ -48,6 +50,9 @@ export function useLanguageTransition() {
         
         // Store language in local storage
         localStorage.setItem("language", langCode);
+        
+        // حفظ اللغة في التفضيلات أيضا
+        setPreference("language", langCode);
         
         // Language names for different languages
         const languageNames: { [key: string]: string } = {
@@ -124,7 +129,7 @@ export function useLanguageTransition() {
         }, 300);
       }
     },
-    [i18n, isTransitioning, t, announce, playNotificationSound]
+    [i18n, isTransitioning, t, announce, playNotificationSound, setPreference]
   );
 
   return { isTransitioning, changeLanguage, currentLanguage: i18n.language };

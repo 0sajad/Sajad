@@ -17,7 +17,7 @@ import { createCacheSlice } from './cache-state';
  */
 export const useAppState = create<AppState>()(
   persist(
-    (set, get, ...rest) => ({
+    (set, get) => ({
       // Initialize required properties explicitly
       isLoading: {},
       errors: {},
@@ -140,15 +140,15 @@ export const useAppState = create<AppState>()(
         }
       },
       
-      // Fix all slice creator calls by providing all three expected arguments
-      ...createUISlice(set, get, rest),
-      ...createPreferencesSlice(set, get, rest),
-      ...createUserSlice(set, get, rest),
-      ...createAppStatusSlice(set, get, rest),
-      ...createAccessibilitySlice(set, get, rest),
-      ...createNetworkSlice(set, get, rest),
-      ...createPerformanceSlice(set, get, rest),
-      ...createCacheSlice(set, get, rest),
+      // تصحيح استخدام createSlice بتمرير فقط set و get
+      ...createUISlice(set, get),
+      ...createPreferencesSlice(set),
+      ...createUserSlice(set),
+      ...createAppStatusSlice(set),
+      ...createAccessibilitySlice(set),
+      ...createNetworkSlice(set),
+      ...createPerformanceSlice(set),
+      ...createCacheSlice(set),
     }),
     {
       name: 'app-state',

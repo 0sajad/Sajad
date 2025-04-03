@@ -65,7 +65,7 @@ export const defaultPreferences: AppPreferences = {
   fontSize: 'normal'
 };
 
-// Export this function to support app-state-utils.ts
+// تعديل حجج دالة createPreferencesSlice لتطابق التغييرات في use-app-state
 export const createPreferencesSlice = (set: any) => ({
   preferences: { ...defaultPreferences },
   setPreference: (key: keyof AppPreferences, value: any) =>
