@@ -17,7 +17,7 @@ import { createCacheSlice } from './cache-state';
  */
 export const useAppState = create<AppState>()(
   persist(
-    (set, get) => ({
+    (set, get, store) => ({
       // Initialize required properties explicitly
       isLoading: {},
       errors: {},
@@ -139,15 +139,15 @@ export const useAppState = create<AppState>()(
         }
       },
       
-      // Add all the slice creators with the correct three arguments
-      ...createUISlice(set, get, {}),
-      ...createPreferencesSlice(set, get, {}),
-      ...createUserSlice(set, get, {}),
-      ...createAppStatusSlice(set, get, {}),
-      ...createAccessibilitySlice(set, get, {}),
-      ...createNetworkSlice(set, get, {}),
-      ...createPerformanceSlice(set, get, {}),
-      ...createCacheSlice(set, get, {})
+      // Add all the slice creators with the correct store parameter
+      ...createUISlice(set, get, store),
+      ...createPreferencesSlice(set, get, store),
+      ...createUserSlice(set, get, store),
+      ...createAppStatusSlice(set, get, store),
+      ...createAccessibilitySlice(set, get, store),
+      ...createNetworkSlice(set, get, store),
+      ...createPerformanceSlice(set, get, store),
+      ...createCacheSlice(set, get, store)
     }),
     {
       name: 'app-state',
