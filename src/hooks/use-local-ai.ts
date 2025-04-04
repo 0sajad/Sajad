@@ -16,6 +16,8 @@ type AIModel = {
   status: 'loaded' | 'loading' | 'error' | 'not-loaded';
 };
 
+type DeviceType = 'cpu' | 'webgl' | 'webgpu';
+
 const LOCAL_MODELS_KEY = 'octa-network-local-ai-models';
 const LOCAL_KNOWLEDGE_KEY = 'octa-network-local-ai-knowledge';
 
@@ -27,15 +29,15 @@ export function useLocalAI() {
   const [availableModels, setAvailableModels] = useState<AIModel[]>([]);
   const [localKnowledge, setLocalKnowledge] = useState<string[]>([]);
   const [textGenerationPipeline, setTextGenerationPipeline] = useState<any>(null);
-  const [deviceType, setDeviceType] = useState<'cpu' | 'webgl' | 'webgpu'>('cpu');
+  const [deviceType, setDeviceType] = useState<DeviceType>('cpu');
 
   // التحقق من قدرات الجهاز
   useEffect(() => {
     const checkDeviceCapabilities = async () => {
       try {
-        if (navigator.gpu) {
-          // التحقق من دعم WebGPU
-          const adapter = await navigator.gpu.requestAdapter();
+        // التحقق من دعم WebGPU
+        if (typeof navigator !== 'undefined' && 'gpu' in navigator) {
+          const adapter = await (navigator as any).gpu.requestAdapter();
           if (adapter) {
             setDeviceType('webgpu');
             console.log('Using WebGPU for AI models');
@@ -134,25 +136,27 @@ export function useLocalAI() {
       
       // تحديث حالة النموذج
       const updatedModels = availableModels.map(m => 
-        m.id === modelId ? { ...m, status: 'loading' } : m
+        m.id === modelId ? { ...m, status: 'loading' as const } : m
       );
       setAvailableModels(updatedModels);
       localStorage.setItem(LOCAL_MODELS_KEY, JSON.stringify(updatedModels));
       
       toast.info(t('ai.loadingModel', 'جاري تحميل نموذج الذكاء الاصطناعي...'));
       
-      // تحميل النموذج
+      // تحميل النموذج مع التكيف مع نوع الجهاز
+      const transformersDevice = deviceType === 'webgl' ? 'gpu' : deviceType;
+      
       const generator = await pipeline(
         'text-generation',
         modelId,
-        { quantized: true, device: deviceType }
+        { quantized: true, device: transformersDevice }
       );
       
       setTextGenerationPipeline(generator);
       
       // تحديث حالة النموذج بعد التحميل
       const finalModels = availableModels.map(m => 
-        m.id === modelId ? { ...m, status: 'loaded' } : m
+        m.id === modelId ? { ...m, status: 'loaded' as const } : m
       );
       setAvailableModels(finalModels);
       localStorage.setItem(LOCAL_MODELS_KEY, JSON.stringify(finalModels));
@@ -165,7 +169,7 @@ export function useLocalAI() {
       
       // تحديث حالة النموذج في حالة الخطأ
       const errorModels = availableModels.map(m => 
-        m.id === modelId ? { ...m, status: 'error' } : m
+        m.id === modelId ? { ...m, status: 'error' as const } : m
       );
       setAvailableModels(errorModels);
       localStorage.setItem(LOCAL_MODELS_KEY, JSON.stringify(errorModels));
