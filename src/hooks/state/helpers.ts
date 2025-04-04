@@ -46,7 +46,7 @@ export function useAppPreferences() {
 /**
  * خطاف مساعد للتعامل مع تحميل البيانات والأخطاء
  */
-export function useDataLoading(key: string) {
+export function useDataLoading(key: string = 'global') {
   const isLoading = useAppState(state => state.isLoading[key] || false);
   const error = useAppState(state => state.errors[key] || null);
   const setIsLoading = useAppState(state => state.setIsLoading);

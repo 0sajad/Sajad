@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Globe } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface LanguageSwitcherButtonProps {
@@ -30,8 +30,8 @@ export function LanguageSwitcherButton({
   return (
     <Button
       variant="outline"
-      size="sm"
-      className={`relative ${className || ''}`}
+      size={variant === 'full' ? 'sm' : 'icon'}
+      className={`relative transition-all duration-300 ${className || ''}`}
       onClick={onClick}
       disabled={isTransitioning}
       aria-label={tooltipText}
@@ -42,11 +42,20 @@ export function LanguageSwitcherButton({
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
           className={isTransitioning ? "opacity-0" : ""}
         >
-          <span className="text-lg">{currentLanguageFlag}</span>
+          {variant === 'icon' ? (
+            <div className="relative">
+              <Globe className="h-4 w-4 text-blue-500 dark:text-blue-300" />
+              <div className="absolute -top-2 -right-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                <span className="text-[8px]">{currentLanguageFlag}</span>
+              </div>
+            </div>
+          ) : (
+            <span className="text-lg">{currentLanguageFlag}</span>
+          )}
         </motion.div>
         
         {variant === 'full' && currentLanguageNativeName && (
-          <span className="text-sm">{currentLanguageNativeName}</span>
+          <span className="text-sm font-medium">{currentLanguageNativeName}</span>
         )}
         
         {isTransitioning && (
@@ -62,3 +71,5 @@ export function LanguageSwitcherButton({
     </Button>
   );
 }
+
+export default LanguageSwitcherButton;

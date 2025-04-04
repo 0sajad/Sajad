@@ -14,16 +14,14 @@ export {
 } from './state/network-state';
 
 export { 
+  usePreferences,
   useAppPreferences 
 } from './state';
 
-// For backward compatibility
+// خطاف استخدام تحميل البيانات للتوافق الخلفي
 export const useDataLoading = () => {
-  return {
-    isLoading: false,
-    lastUpdated: null,
-    error: null
-  };
+  const { useDataLoading } = require('./state/data-state');
+  return useDataLoading();
 };
 
 // تصدير مستودع useStore للتوافق الخلفي

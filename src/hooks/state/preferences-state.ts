@@ -1,4 +1,7 @@
 
+import { StateCreator } from 'zustand';
+import { AppState } from './types';
+
 /**
  * تعريف واجهة تفضيلات التطبيق
  */
@@ -20,7 +23,6 @@ export interface AppPreferences {
   dyslexicFont: boolean;    // خط لعسر القراءة
   colorBlindMode: 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia'; // وضع عمى الألوان
   soundFeedback: boolean;   // تعليقات صوتية
-  // إضافة الخصائص الناقصة التي تستخدمها الملفات الأخرى
   notifications: boolean;   // إشعارات
   telemetry: boolean;       // قياس عن بعد
   animations: boolean;      // رسوم متحركة
@@ -53,7 +55,6 @@ export const defaultPreferences: AppPreferences = {
   dyslexicFont: false,
   colorBlindMode: 'none',
   soundFeedback: false,
-  // القيم الافتراضية للخصائص الجديدة
   notifications: true,
   telemetry: true,
   animations: true,
@@ -65,29 +66,60 @@ export const defaultPreferences: AppPreferences = {
   fontSize: 'normal'
 };
 
-// Define the function correctly with three parameters to match StateCreator pattern
-export const createPreferencesSlice = (set, get, _store) => ({
+// تعريف شريحة التفضيلات بشكل صحيح
+export const createPreferencesSlice: StateCreator<
+  AppState,
+  [],
+  [],
+  { 
+    preferences: AppPreferences;
+    setPreference: <K extends keyof AppPreferences>(key: K, value: AppPreferences[K]) => void;
+    resetPreferences: () => void;
+  }
+> = (set, get, _store) => ({
   preferences: { ...defaultPreferences },
-  setPreference: (key: keyof AppPreferences, value: any) =>
-    set((state: any) => ({
+  
+  setPreference: (key, value) =>
+    set((state) => ({
       preferences: {
         ...state.preferences,
         [key]: value,
       },
     })),
+    
   resetPreferences: () =>
-    set((_state: any) => ({
+    set(() => ({
       preferences: { ...defaultPreferences },
     })),
 });
 
-// Add the usePreferences export for index.ts
+// تصدير خطاف التفضيلات للتوافق
 export const usePreferences = () => {
-  // This is just a stub for compatibility
-  // The actual implementation will be in other files
+  const preferences = useAppState => useAppState.getState().preferences || defaultPreferences;
+  const setPreference = useAppState => useAppState.getState().setPreference || (() => {});
+  const resetPreferences = useAppState => useAppState.getState().resetPreferences || (() => {});
+  
   return {
-    preferences: defaultPreferences,
-    setPreference: (_key: keyof AppPreferences, _value: any) => {},
-    resetPreferences: () => {}
+    preferences,
+    setPreference,
+    resetPreferences
   };
 };
+
+// وظيفة جلب حالة التطبيق - للتوافق الخلفي
+function useAppState() {
+  try {
+    // محاولة استيراد حالة التطبيق الفعلية
+    const { useAppState } = require('./use-app-state');
+    return useAppState;
+  } catch (err) {
+    // إذا فشل الاستيراد، ارجع كائن بديل
+    return {
+      getState: () => ({
+        preferences: defaultPreferences,
+        setPreference: () => {},
+        resetPreferences: () => {}
+      })
+    };
+  }
+}

@@ -10,6 +10,7 @@ import { createAccessibilitySlice } from './accessibility-state';
 import { createNetworkSlice } from './network-state';
 import { createPerformanceSlice } from './performance-state';
 import { createCacheSlice } from './cache-state';
+import { createDataSlice } from './data-state';
 
 /**
  * متجر إدارة الحالة المركزية للتطبيق
@@ -18,10 +19,12 @@ import { createCacheSlice } from './cache-state';
 export const useAppState = create<AppState>()(
   persist(
     (set, get, store) => ({
-      // Initialize required properties explicitly
+      // خصائص الحالة الأساسية
       isLoading: {},
       errors: {},
       isInitialized: false,
+      
+      // وظائف الحالة الأساسية
       setIsLoading: (key, loading) => set((state) => ({
         isLoading: { ...state.isLoading, [key]: loading }
       })),
@@ -30,7 +33,7 @@ export const useAppState = create<AppState>()(
       })),
       setInitialized: (initialized) => set({ isInitialized: initialized }),
 
-      // Network status methods
+      // وظائف حالة الشبكة
       checkNetworkStatus: async () => {
         try {
           const response = await fetch('https://www.google.com/generate_204', {
@@ -58,12 +61,13 @@ export const useAppState = create<AppState>()(
         }
       },
       
+      // وظائف إضافية للشبكة
       setNetworkStatus: (status) => set({
         isConnected: status.isConnected,
         isOnline: status.isOnline,
         lastCheck: new Date()
       }),
-
+      
       handleOfflineStatus: () => {
         set({
           isOnline: false,
@@ -78,40 +82,40 @@ export const useAppState = create<AppState>()(
         });
       },
 
-      // Initialize network status
+      // حالة الشبكة الأولية
       networkStatus: {
         isConnected: true,
         isOnline: navigator.onLine,
         lastCheck: null
       },
       
-      // Initialize data loading
+      // حالة تحميل البيانات الأولية
       dataLoading: {
         isLoading: false,
         lastUpdated: null,
         error: null
       },
       
-      // Additional required properties
+      // خصائص إضافية مطلوبة
       isSidebarOpen: false,
       isConnected: true,
       isOnline: true,
       lastCheck: null,
       
-      // UI state properties required by AppState
+      // خصائص حالة واجهة المستخدم
       isDrawerOpen: false,
       activePage: 'home',
       lastVisitedPage: null,
       modals: {},
       
-      // Required preferences properties from AppState
+      // خصائص التفضيلات
       theme: 'system',
       language: 'ar',
       notificationsEnabled: true,
       animations: true,
       compactMode: false,
       
-      // Add the required checkConnection function
+      // وظيفة فحص الاتصال
       checkConnection: async () => {
         try {
           const response = await fetch('https://www.google.com/generate_204', {
@@ -139,7 +143,7 @@ export const useAppState = create<AppState>()(
         }
       },
       
-      // Add all the slice creators with the correct store parameter
+      // دمج جميع شرائح الحالة مع تمرير المعاملات الصحيحة
       ...createUISlice(set, get, store),
       ...createPreferencesSlice(set, get, store),
       ...createUserSlice(set, get, store),
@@ -147,7 +151,8 @@ export const useAppState = create<AppState>()(
       ...createAccessibilitySlice(set, get, store),
       ...createNetworkSlice(set, get, store),
       ...createPerformanceSlice(set, get, store),
-      ...createCacheSlice(set, get, store)
+      ...createCacheSlice(set, get, store),
+      ...createDataSlice(set, get, store)
     }),
     {
       name: 'app-state',

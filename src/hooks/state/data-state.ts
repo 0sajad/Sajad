@@ -8,6 +8,7 @@ export interface DataLoadingState {
   error: string | null;
 }
 
+// تعريف شريحة البيانات بشكل صحيح مع المعاملات الثلاثة
 export const createDataSlice: StateCreator<
   AppState,
   [],
@@ -21,7 +22,7 @@ export const createDataSlice: StateCreator<
   },
 });
 
-// Export the useDataLoading hook for compatibility
+// تصدير خطاف useDataLoading للتوافق
 export const useDataLoading = () => {
   return {
     isLoading: false,

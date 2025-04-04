@@ -15,8 +15,8 @@ import { useRTLSupport } from "@/hooks/useRTLSupport";
 import { LanguageSwitcherButton } from "./LanguageSwitcherButton";
 import { LanguageOption } from "./LanguageOption";
 
-// تعريف قائمة اللغات المدعومة مباشرة ضمن المكون
-const DEFAULT_LANGUAGES = [
+// تعريف قائمة اللغات المدعومة
+const SUPPORTED_LANGUAGES = [
   { code: "ar", name: "العربية", nativeName: "العربية", flag: "🇸🇦" },
   { code: "ar-iq", name: "Iraqi Arabic", nativeName: "العراقية", flag: "🇮🇶" },
   { code: "en", name: "English", nativeName: "English", flag: "🇺🇸" },
@@ -65,7 +65,7 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
   const handleLanguageChange = (langCode: string) => {
     if (!langCode) return;
     
-    const language = DEFAULT_LANGUAGES.find(lang => lang.code === langCode);
+    const language = SUPPORTED_LANGUAGES.find(lang => lang.code === langCode);
     const newLanguageName = language?.nativeName || langCode;
     
     // إعلان مخصص حسب اللغة الحالية
@@ -113,10 +113,9 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
 
   // الحصول على معلومات اللغة الحالية
   const currentLang = i18n.language || 'en';
-  const currentLanguage = DEFAULT_LANGUAGES.find(lang => lang.code === currentLang) || DEFAULT_LANGUAGES.find(lang => lang.code === 'en') || DEFAULT_LANGUAGES[0];
-
-  // قائمة اللغات المتاحة
-  const groupedLanguages = DEFAULT_LANGUAGES.map(lang => lang.code);
+  const currentLanguage = SUPPORTED_LANGUAGES.find(lang => lang.code === currentLang) || 
+                         SUPPORTED_LANGUAGES.find(lang => lang.code === 'en') || 
+                         SUPPORTED_LANGUAGES[0];
 
   return (
     <TooltipProvider>
@@ -155,17 +154,14 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
           </DropdownMenuLabel>
           <DropdownMenuSeparator className="bg-gradient-to-r from-blue-200 to-purple-200 dark:from-blue-800/30 dark:to-purple-800/30" />
           
-          {groupedLanguages.map((langCode) => {
-            const lang = DEFAULT_LANGUAGES.find(l => l.code === langCode);
-            if (!lang) return null;
-            
-            const isActive = i18n.language === langCode;
-            const isIraqiArabic = langCode === 'ar-iq';
+          {SUPPORTED_LANGUAGES.map((lang) => {
+            const isActive = i18n.language === lang.code;
+            const isIraqiArabic = lang.code === 'ar-iq';
             
             return (
               <LanguageOption 
-                key={langCode}
-                langCode={langCode}
+                key={lang.code}
+                langCode={lang.code}
                 languageName={lang.nativeName}
                 flag={lang.flag}
                 isActive={isActive}
@@ -181,5 +177,5 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
   );
 }
 
-// Add default export for compatibility with React.lazy()
+// تصدير افتراضي للتوافق مع React.lazy()
 export default LanguageSwitcher;
