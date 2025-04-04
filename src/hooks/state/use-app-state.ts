@@ -61,8 +61,7 @@ export const useAppState = create<AppState>()(
       setNetworkStatus: (status) => set({
         isConnected: status.isConnected,
         isOnline: status.isOnline,
-        // Fix 1: Don't try to access lastCheck if it's not in the status object
-        lastCheck: new Date() // Simply set to current date
+        lastCheck: new Date()
       }),
 
       handleOfflineStatus: () => {
@@ -140,15 +139,15 @@ export const useAppState = create<AppState>()(
         }
       },
       
-      // تصحيح استخدام createSlice بتمرير فقط set و get
-      ...createUISlice(set, get),
-      ...createPreferencesSlice(set),
-      ...createUserSlice(set),
-      ...createAppStatusSlice(set),
-      ...createAccessibilitySlice(set),
-      ...createNetworkSlice(set),
-      ...createPerformanceSlice(set),
-      ...createCacheSlice(set),
+      // تصحيح استخدام createSlice بتمرير set و get و api باعتبارها حجج منفصلة
+      ...createUISlice(set, get, {}),
+      ...createPreferencesSlice(set, get, {}),
+      ...createUserSlice(set, get, {}),
+      ...createAppStatusSlice(set, get, {}),
+      ...createAccessibilitySlice(set, get, {}),
+      ...createNetworkSlice(set, get, {}),
+      ...createPerformanceSlice(set, get, {}),
+      ...createCacheSlice(set, get, {})
     }),
     {
       name: 'app-state',

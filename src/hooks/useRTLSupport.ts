@@ -82,6 +82,6 @@ export function useRTLSupport(options: RTLOptions = {}) {
     detectRTL,
     getDirectionByContent,
     getResponsiveDirection,
-    applyRTLOrder // إضافة الدالة المفقودة
+    applyRTLOrder
   };
 }

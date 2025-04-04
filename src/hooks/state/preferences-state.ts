@@ -66,7 +66,7 @@ export const defaultPreferences: AppPreferences = {
 };
 
 // تعديل حجج دالة createPreferencesSlice لتطابق التغييرات في use-app-state
-export const createPreferencesSlice = (set: any) => ({
+export const createPreferencesSlice = (set: any, get: any, api: any) => ({
   preferences: { ...defaultPreferences },
   setPreference: (key: keyof AppPreferences, value: any) =>
     set((state: any) => ({
