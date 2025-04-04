@@ -146,10 +146,11 @@ export function useLocalAI() {
       // تحميل النموذج مع التكيف مع نوع الجهاز
       const transformersDevice = deviceType === 'webgl' ? 'gpu' : deviceType;
       
+      // حذفنا خيار quantized غير المدعوم واستخدمنا فقط device
       const generator = await pipeline(
         'text-generation',
         modelId,
-        { quantized: true, device: transformersDevice }
+        { device: transformersDevice }
       );
       
       setTextGenerationPipeline(generator);
