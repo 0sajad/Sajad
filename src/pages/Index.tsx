@@ -1,4 +1,3 @@
-
 import React, { useEffect, lazy, Suspense } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -23,8 +22,8 @@ import { MainContent } from "@/components/sections/MainContent";
 import { A11yWrapper } from "@/components/ui/accessibility/A11yWrapper";
 import { NetworkStatusIndicator } from "@/components/ui/NetworkStatusIndicator";
 import { ArabicTextProvider } from "@/components/text/ArabicTextProvider";
+import { ElectronDetector } from "@/components/ElectronDetector";
 
-// تصحيح التحميل الكسول للمكونات مع دعم الصادرات المسماة
 const AIAssistantManager = lazy(() => 
   import("@/components/ai/AIAssistantManager").then(module => ({ default: module.AIAssistantManager }))
 );
@@ -46,11 +45,9 @@ export default function Index() {
   const { sectionsVisible, pageLoaded, setPageLoaded } = useSectionVisibility();
   const { deviceTier, isLowPerformanceDevice } = usePerformanceOptimization();
   
-  // استخدام الخطافات (hooks) اللازمة
   useKeyboardShortcuts();
   usePreferenceSync();
   
-  // الإعلان عن اكتمال تحميل الصفحة
   useEffect(() => {
     if (pageLoaded && announce) {
       const announceTimeout = setTimeout(() => {
@@ -65,7 +62,6 @@ export default function Index() {
     }
   }, [pageLoaded, i18n.language, announce]);
   
-  // التوجه إلى صفحة المساعد الذكي
   const handleMaximizeAI = () => {
     window.location.href = '/ai';
   };
@@ -74,22 +70,18 @@ export default function Index() {
     <A11yWrapper>
       <LazyApp>
         <ErrorBoundary>
+          <ElectronDetector />
           <TooltipProvider>
-            {/* طبقة إمكانية الوصول: تتضمن مكونات الوصول المساعدة */}
             <Suspense fallback={null}>
               <AccessibilityOverlay />
             </Suspense>
             
-            {/* رابط تخطي المحتوى - تم تحديث الاستدعاء ليتوافق مع الواجهة المحدثة */}
             <SkipLink targetId="main-content" />
             
-            {/* مؤشر حالة الشبكة */}
             <NetworkStatusIndicator />
             
-            {/* رأس الصفحة - تحميل أساسي بدون كسل */}
             <Header />
             
-            {/* المحتوى الرئيسي - تحميل كسول مع أولوية */}
             <LazyLoad priority={true} height="100vh">
               <Suspense fallback={
                 <div className="min-h-[80vh] flex items-center justify-center">
@@ -105,21 +97,17 @@ export default function Index() {
               </Suspense>
             </LazyLoad>
             
-            {/* المساعد الذكي - تحميل كسول بأولوية منخفضة */}
             <LazyLoad threshold={500}>
               <Suspense fallback={null}>
                 <AIAssistantManager onMaximize={handleMaximizeAI} />
               </Suspense>
             </LazyLoad>
             
-            {/* تذييل الصفحة - تحميل أساسي بدون كسل */}
             <Footer />
             
-            {/* أزرار إمكانية الوصول السريعة */}
             <QuickAccessibilityButton />
             <MobileA11yDrawer />
             
-            {/* كاشف التركيز للوحة المفاتيح */}
             <KeyboardFocusDetector />
           </TooltipProvider>
         </ErrorBoundary>

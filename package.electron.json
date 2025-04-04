@@ -1,0 +1,12 @@
+
+{
+  "name": "octa-network-haven",
+  "version": "1.0.0",
+  "description": "Octa Network Haven Desktop App",
+  "author": "Octa Network",
+  "license": "MIT",
+  "scripts": {
+    "electron:dev": "cross-env ELECTRON=true concurrently \"npm run dev\" \"npx wait-on http://localhost:8080 && electron electron/main.js\"",
+    "electron:build": "npm run build && electron-builder --config electron/electron-builder.yml"
+  }
+}
