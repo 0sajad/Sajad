@@ -36,6 +36,7 @@
   "loadingModel": "جاري تحميل نموذج الذكاء الاصطناعي...",
   "modelLoaded": "تم تحميل نموذج الذكاء الاصطناعي بنجاح",
   "loadingModelsError": "خطأ في تحميل نماذج الذكاء الاصطناعي",
+  "loadingDataError": "خطأ في تحميل بيانات الذكاء الاصطناعي",
   "modelLoadError": "خطأ في تحميل نموذج الذكاء الاصطناعي",
   "noModelLoaded": "لم يتم تحميل نموذج الذكاء الاصطناعي",
   "textGenerationError": "خطأ في توليد النص",
@@ -54,5 +55,17 @@
   "selfLearning": "التعلم الذاتي",
   "selfLearningDesc": "نماذج الذكاء الاصطناعي المحلية قادرة على التعلم من تفاعلاتك السابقة وتحسين استجاباتها مع مرور الوقت.",
   "localModelsAdvantage": "ميزة النماذج المحلية: تعمل بدون اتصال بالإنترنت وتحافظ على خصوصية بياناتك.",
-  "autoLoadingModel": "جاري تحميل نموذج الذكاء الاصطناعي تلقائياً..."
+  "autoLoadingModel": "جاري تحميل نموذج الذكاء الاصطناعي تلقائياً...",
+  "feedbackThanksPositive": "شكراً على تقييمك الإيجابي! سأتعلم من هذا.",
+  "feedbackThanksNegative": "شكراً على ملاحظاتك. سأحاول التحسن.",
+  "userInteractions": "تفاعلات المستخدم",
+  "learningPatterns": "أنماط التعلم",
+  "enableSelfLearning": "تمكين التعلم الذاتي",
+  "disableSelfLearning": "تعطيل التعلم الذاتي",
+  "selfLearningEnabled": "تم تمكين التعلم الذاتي",
+  "selfLearningDisabled": "تم تعطيل التعلم الذاتي",
+  "learnedResponses": "استجابات متعلمة",
+  "similarResponses": "استجابات مشابهة",
+  "noSimilarResponses": "لا توجد استجابات مشابهة",
+  "adaptiveResponses": "استجابات تكيفية"
 }

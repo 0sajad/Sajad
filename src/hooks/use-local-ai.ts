@@ -18,8 +18,17 @@ type AIModel = {
 
 type DeviceType = 'cpu' | 'webgl' | 'webgpu';
 
+interface UserInteraction {
+  query: string;
+  response: string;
+  timestamp: Date;
+  feedback?: 'positive' | 'negative' | null;
+}
+
 const LOCAL_MODELS_KEY = 'octa-network-local-ai-models';
 const LOCAL_KNOWLEDGE_KEY = 'octa-network-local-ai-knowledge';
+const USER_INTERACTIONS_KEY = 'octa-network-user-interactions';
+const LEARNING_PATTERNS_KEY = 'octa-network-learning-patterns';
 
 export function useLocalAI() {
   const { t } = useTranslation();
@@ -30,6 +39,9 @@ export function useLocalAI() {
   const [localKnowledge, setLocalKnowledge] = useState<string[]>([]);
   const [textGenerationPipeline, setTextGenerationPipeline] = useState<any>(null);
   const [deviceType, setDeviceType] = useState<DeviceType>('cpu');
+  const [userInteractions, setUserInteractions] = useState<UserInteraction[]>([]);
+  const [learningPatterns, setLearningPatterns] = useState<Record<string, string[]>>({});
+  const [isSelfLearningEnabled, setIsSelfLearningEnabled] = useState(true);
 
   // التحقق من قدرات الجهاز
   useEffect(() => {
@@ -66,10 +78,11 @@ export function useLocalAI() {
     checkDeviceCapabilities();
   }, []);
 
-  // تحميل النماذج المحفوظة
+  // تحميل البيانات المحفوظة
   useEffect(() => {
-    const loadSavedModels = () => {
+    const loadSavedData = () => {
       try {
+        // تحميل النماذج
         const savedModels = localStorage.getItem(LOCAL_MODELS_KEY);
         if (savedModels) {
           const parsedModels = JSON.parse(savedModels) as AIModel[];
@@ -102,27 +115,53 @@ export function useLocalAI() {
           setCurrentModel(defaultModels[0]);
           localStorage.setItem(LOCAL_MODELS_KEY, JSON.stringify(defaultModels));
         }
-      } catch (error) {
-        console.error('Error loading saved models:', error);
-        toast.error(t('ai.loadingModelsError', 'خطأ في تحميل نماذج الذكاء الاصطناعي'));
-      }
-    };
-    
-    const loadLocalKnowledge = () => {
-      try {
+        
+        // تحميل المعرفة المحلية
         const savedKnowledge = localStorage.getItem(LOCAL_KNOWLEDGE_KEY);
         if (savedKnowledge) {
           setLocalKnowledge(JSON.parse(savedKnowledge));
         }
+        
+        // تحميل تفاعلات المستخدم
+        const savedInteractions = localStorage.getItem(USER_INTERACTIONS_KEY);
+        if (savedInteractions) {
+          const parsedInteractions = JSON.parse(savedInteractions) as UserInteraction[];
+          // تحويل النصوص إلى كائنات Date
+          const interactions = parsedInteractions.map(interaction => ({
+            ...interaction,
+            timestamp: new Date(interaction.timestamp)
+          }));
+          setUserInteractions(interactions);
+        }
+        
+        // تحميل أنماط التعلم
+        const savedPatterns = localStorage.getItem(LEARNING_PATTERNS_KEY);
+        if (savedPatterns) {
+          setLearningPatterns(JSON.parse(savedPatterns));
+        }
       } catch (error) {
-        console.error('Error loading local knowledge:', error);
+        console.error('Error loading saved data:', error);
+        toast.error(t('ai.loadingDataError', 'خطأ في تحميل بيانات الذكاء الاصطناعي'));
       }
+      
+      setIsInitialized(true);
     };
     
-    loadSavedModels();
-    loadLocalKnowledge();
-    setIsInitialized(true);
+    loadSavedData();
   }, [t]);
+
+  // حفظ تفاعلات المستخدم وأنماط التعلم عند تغييرها
+  useEffect(() => {
+    if (userInteractions.length > 0) {
+      localStorage.setItem(USER_INTERACTIONS_KEY, JSON.stringify(userInteractions));
+    }
+  }, [userInteractions]);
+
+  useEffect(() => {
+    if (Object.keys(learningPatterns).length > 0) {
+      localStorage.setItem(LEARNING_PATTERNS_KEY, JSON.stringify(learningPatterns));
+    }
+  }, [learningPatterns]);
 
   // تحميل نموذج الذكاء الاصطناعي
   const loadModel = async (modelId: string) => {
@@ -194,6 +233,151 @@ export function useLocalAI() {
     localStorage.removeItem(LOCAL_KNOWLEDGE_KEY);
   };
 
+  // إضافة تفاعل مستخدم جديد
+  const addUserInteraction = (query: string, response: string) => {
+    if (!isSelfLearningEnabled) return;
+    
+    const newInteraction: UserInteraction = {
+      query,
+      response,
+      timestamp: new Date(),
+      feedback: null
+    };
+    
+    setUserInteractions(prev => {
+      // الحفاظ على آخر 100 تفاعل فقط لتجنب استهلاك الذاكرة
+      const updated = [newInteraction, ...prev].slice(0, 100);
+      localStorage.setItem(USER_INTERACTIONS_KEY, JSON.stringify(updated));
+      return updated;
+    });
+    
+    // تحليل التفاعل وتحديث أنماط التعلم
+    analyzeAndLearnFromInteraction(query, response);
+  };
+
+  // إضافة ردود فعل المستخدم على الاستجابات
+  const addFeedback = (interactionIndex: number, feedback: 'positive' | 'negative') => {
+    if (!isSelfLearningEnabled) return;
+    
+    setUserInteractions(prev => {
+      if (interactionIndex < 0 || interactionIndex >= prev.length) return prev;
+      
+      const updated = [...prev];
+      updated[interactionIndex] = { ...updated[interactionIndex], feedback };
+      localStorage.setItem(USER_INTERACTIONS_KEY, JSON.stringify(updated));
+      
+      // التعلم من التغذية الراجعة
+      learnFromFeedback(updated[interactionIndex], feedback);
+      
+      return updated;
+    });
+  };
+
+  // تحليل التفاعل والتعلم منه
+  const analyzeAndLearnFromInteraction = (query: string, response: string) => {
+    if (!isSelfLearningEnabled) return;
+    
+    try {
+      // استخراج الكلمات المفتاحية من السؤال (مثال بسيط)
+      const keywords = extractKeywords(query);
+      
+      // تحديث أنماط التعلم باستخدام الكلمات المفتاحية
+      setLearningPatterns(prev => {
+        const updated = { ...prev };
+        
+        keywords.forEach(keyword => {
+          if (!updated[keyword]) {
+            updated[keyword] = [];
+          }
+          
+          // إضافة الإجابة إلى نمط التعلم إذا لم تكن موجودة بالفعل
+          if (!updated[keyword].includes(response)) {
+            updated[keyword] = [...updated[keyword], response].slice(0, 5); // الاحتفاظ بأحدث 5 إجابات
+          }
+        });
+        
+        localStorage.setItem(LEARNING_PATTERNS_KEY, JSON.stringify(updated));
+        return updated;
+      });
+    } catch (error) {
+      console.error('Error while learning from interaction:', error);
+    }
+  };
+
+  // التعلم من التغذية الراجعة
+  const learnFromFeedback = (interaction: UserInteraction, feedback: 'positive' | 'negative') => {
+    if (!isSelfLearningEnabled) return;
+    
+    try {
+      const keywords = extractKeywords(interaction.query);
+      
+      if (feedback === 'positive') {
+        // تعزيز هذه الإجابة لأسئلة مماثلة
+        addLocalKnowledge(`سؤال: ${interaction.query}\nإجابة مفضلة: ${interaction.response}`);
+      } else {
+        // إزالة هذه الإجابة من أنماط التعلم للكلمات المفتاحية المرتبطة
+        setLearningPatterns(prev => {
+          const updated = { ...prev };
+          
+          keywords.forEach(keyword => {
+            if (updated[keyword]) {
+              updated[keyword] = updated[keyword].filter(r => r !== interaction.response);
+            }
+          });
+          
+          localStorage.setItem(LEARNING_PATTERNS_KEY, JSON.stringify(updated));
+          return updated;
+        });
+      }
+    } catch (error) {
+      console.error('Error while learning from feedback:', error);
+    }
+  };
+
+  // استخراج الكلمات المفتاحية من النص
+  const extractKeywords = (text: string): string[] => {
+    // تنظيف النص وتقسيمه إلى كلمات
+    const words = text
+      .toLowerCase()
+      .replace(/[^\p{L}\p{N}\s]/gu, '')
+      .split(/\s+/)
+      .filter(word => word.length > 3); // تجاهل الكلمات القصيرة
+    
+    // إزالة الكلمات المتكررة
+    return [...new Set(words)];
+  };
+
+  // البحث عن استجابات مشابهة من التفاعلات السابقة
+  const findSimilarResponses = (query: string): string[] => {
+    if (!isSelfLearningEnabled || Object.keys(learningPatterns).length === 0) {
+      return [];
+    }
+    
+    try {
+      const keywords = extractKeywords(query);
+      const matchingResponses: string[] = [];
+      
+      // جمع الاستجابات المرتبطة بالكلمات المفتاحية
+      keywords.forEach(keyword => {
+        if (learningPatterns[keyword]) {
+          matchingResponses.push(...learningPatterns[keyword]);
+        }
+      });
+      
+      // إزالة التكرارات والاحتفاظ بأكثر 3 استجابات صلة
+      return [...new Set(matchingResponses)].slice(0, 3);
+    } catch (error) {
+      console.error('Error finding similar responses:', error);
+      return [];
+    }
+  };
+
+  // تمكين أو تعطيل التعلم الذاتي
+  const toggleSelfLearning = (enabled: boolean) => {
+    setIsSelfLearningEnabled(enabled);
+    localStorage.setItem('octa-network-self-learning-enabled', JSON.stringify(enabled));
+  };
+
   // توليد نص باستخدام الذكاء الاصطناعي
   const generateText = async (prompt: string, maxLength: number = 100) => {
     if (!textGenerationPipeline) {
@@ -204,10 +388,18 @@ export function useLocalAI() {
     setIsProcessing(true);
     
     try {
-      // إضافة المعرفة المحلية إلى السياق
+      // البحث عن استجابات مشابهة من التفاعلات السابقة
+      const similarResponses = findSimilarResponses(prompt);
+      
+      // إضافة المعرفة المحلية والاستجابات المشابهة إلى السياق
       let context = '';
+      
       if (localKnowledge.length > 0) {
-        context = localKnowledge.join('\n') + '\n\n';
+        context += localKnowledge.join('\n') + '\n\n';
+      }
+      
+      if (similarResponses.length > 0) {
+        context += 'استجابات مشابهة:\n' + similarResponses.join('\n') + '\n\n';
       }
       
       // توليد النص
@@ -220,7 +412,12 @@ export function useLocalAI() {
         early_stopping: true
       });
       
-      return result[0].generated_text;
+      const generatedText = result[0].generated_text;
+      
+      // حفظ التفاعل للتعلم منه
+      addUserInteraction(prompt, generatedText.replace(context + prompt, '').trim());
+      
+      return generatedText;
     } catch (error) {
       console.error('Error generating text:', error);
       toast.error(t('ai.textGenerationError', 'خطأ في توليد النص'));
@@ -237,9 +434,13 @@ export function useLocalAI() {
     availableModels,
     localKnowledge,
     deviceType,
+    userInteractions,
+    isSelfLearningEnabled,
     loadModel,
     addLocalKnowledge,
     clearLocalKnowledge,
-    generateText
+    generateText,
+    addFeedback,
+    toggleSelfLearning
   };
 }
