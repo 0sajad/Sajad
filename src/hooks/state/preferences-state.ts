@@ -65,7 +65,7 @@ export const defaultPreferences: AppPreferences = {
   fontSize: 'normal'
 };
 
-// تعديل حجج دالة createPreferencesSlice لتستخدم فقط set و get
+// Define the function correctly with three parameters to match StateCreator pattern
 export const createPreferencesSlice = (set, get, _store) => ({
   preferences: { ...defaultPreferences },
   setPreference: (key: keyof AppPreferences, value: any) =>

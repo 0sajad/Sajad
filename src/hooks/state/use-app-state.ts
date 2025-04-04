@@ -139,15 +139,15 @@ export const useAppState = create<AppState>()(
         }
       },
       
-      // تصحيح استخدام createSlice بتمرير set و get فقط، بدون المعلمة الثالثة التي تسبب المشكلة
-      ...createUISlice(set, get),
-      ...createPreferencesSlice(set, get),
-      ...createUserSlice(set, get),
-      ...createAppStatusSlice(set, get),
-      ...createAccessibilitySlice(set, get),
-      ...createNetworkSlice(set, get),
-      ...createPerformanceSlice(set, get),
-      ...createCacheSlice(set, get)
+      // Add all the slice creators with the correct three arguments
+      ...createUISlice(set, get, {}),
+      ...createPreferencesSlice(set, get, {}),
+      ...createUserSlice(set, get, {}),
+      ...createAppStatusSlice(set, get, {}),
+      ...createAccessibilitySlice(set, get, {}),
+      ...createNetworkSlice(set, get, {}),
+      ...createPerformanceSlice(set, get, {}),
+      ...createCacheSlice(set, get, {})
     }),
     {
       name: 'app-state',
