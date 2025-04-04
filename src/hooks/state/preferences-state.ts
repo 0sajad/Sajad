@@ -65,8 +65,8 @@ export const defaultPreferences: AppPreferences = {
   fontSize: 'normal'
 };
 
-// تعديل حجج دالة createPreferencesSlice لتطابق التغييرات في use-app-state
-export const createPreferencesSlice = (set: any, get: any, api: any) => ({
+// تعديل حجج دالة createPreferencesSlice لتستخدم فقط set و get
+export const createPreferencesSlice = (set, get) => ({
   preferences: { ...defaultPreferences },
   setPreference: (key: keyof AppPreferences, value: any) =>
     set((state: any) => ({
