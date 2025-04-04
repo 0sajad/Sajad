@@ -29,6 +29,21 @@ export const createNetworkSlice: StateCreator<
   // إضافة وظيفة فحص اتصال الشبكة
   checkNetworkConnection: async () => {
     try {
+      // استخدام وظيفة Electron إذا كانت متاحة
+      if (typeof window !== 'undefined' && window.electron?.checkNetworkConnection) {
+        const isConnected = await window.electron.checkNetworkConnection();
+        
+        set({
+          networkStatus: {
+            isConnected,
+            isOnline: isConnected,
+            lastCheck: new Date()
+          }
+        });
+        
+        return isConnected;
+      }
+      
       // استخدام وظيفة التحقق من الاتصال الموجودة
       if (typeof get().checkNetworkStatus === 'function') {
         return await get().checkNetworkStatus();

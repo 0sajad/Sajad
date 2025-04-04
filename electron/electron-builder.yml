@@ -1,0 +1,22 @@
+
+appId: "com.octa.network.haven"
+productName: "Octa Network Haven"
+directories:
+  output: "release/"
+  buildResources: "build"
+files:
+  - "dist/**/*"
+  - "electron/**/*"
+  - "!electron/release/**/*"
+  - "!node_modules/**/*"
+mac:
+  category: "public.app-category.utilities"
+  target: ["dmg", "zip"]
+  icon: "public/favicon.ico"
+win:
+  target: ["nsis"]
+  icon: "public/favicon.ico"
+linux:
+  target: ["AppImage", "deb"]
+  category: "Utility"
+  icon: "public/favicon.ico"

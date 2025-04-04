@@ -1,0 +1,12 @@
+
+{
+  "name": "octa-network-haven",
+  "version": "1.0.0",
+  "description": "Octa Network Haven Desktop App",
+  "main": "main.js",
+  "author": "Octa Network",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron ."
+  }
+}
