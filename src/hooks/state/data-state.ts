@@ -5,7 +5,7 @@ import { AppState } from './types';
 export interface DataLoadingState {
   isLoading: boolean;
   lastUpdated: Date | null;
-  error: string | null;
+  error: Error | null;
 }
 
 // تعريف شريحة البيانات بشكل صحيح مع المعاملات الثلاثة
@@ -29,7 +29,7 @@ export const useDataLoading = () => {
     lastUpdated: null,
     error: null,
     setLoading: (_loading: boolean) => {},
-    setError: (_error: string | null) => {},
+    setError: (_error: Error | null) => {},
     setLastUpdated: (_date: Date | null) => {}
   };
 };
