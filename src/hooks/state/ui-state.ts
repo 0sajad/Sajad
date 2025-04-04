@@ -11,7 +11,7 @@ export const createUISlice: StateCreator<
   [],
   [],
   UIState
-> = (set) => ({
+> = (set, get, _store) => ({
   // حالة واجهة المستخدم
   isSidebarOpen: false,
   isDrawerOpen: false,

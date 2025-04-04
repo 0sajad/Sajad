@@ -20,7 +20,7 @@ export const createUserSlice: StateCreator<
   [],
   [],
   UserState
-> = (set) => ({
+> = (set, get, _store) => ({
   // حالة المستخدم
   isAuthenticated: false,
   userId: null,

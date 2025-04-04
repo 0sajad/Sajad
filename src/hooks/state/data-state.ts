@@ -13,7 +13,7 @@ export const createDataSlice: StateCreator<
   [],
   [],
   { dataLoading: DataLoadingState }
-> = (set) => ({
+> = (set, get, _store) => ({
   dataLoading: {
     isLoading: false,
     lastUpdated: null,

@@ -66,7 +66,7 @@ export const defaultPreferences: AppPreferences = {
 };
 
 // تعديل حجج دالة createPreferencesSlice لتستخدم فقط set و get
-export const createPreferencesSlice = (set, get) => ({
+export const createPreferencesSlice = (set, get, _store) => ({
   preferences: { ...defaultPreferences },
   setPreference: (key: keyof AppPreferences, value: any) =>
     set((state: any) => ({

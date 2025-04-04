@@ -11,7 +11,7 @@ export const createAppStatusSlice: StateCreator<
   [],
   [],
   AppStatusState
-> = (set) => ({
+> = (set, get, _store) => ({
   // حالة التطبيق
   appVersion: '1.0.0',
   environment: 'development',

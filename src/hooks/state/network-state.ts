@@ -13,7 +13,7 @@ export const createNetworkSlice: StateCreator<
   [],
   [],
   { networkStatus: NetworkStatusState }
-> = (set) => ({
+> = (set, get, _store) => ({
   networkStatus: {
     isConnected: true,
     isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,

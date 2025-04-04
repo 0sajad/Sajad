@@ -11,7 +11,7 @@ export const createPerformanceSlice: StateCreator<
   [],
   [],
   PerformanceState
-> = (set, get) => ({
+> = (set, get, _store) => ({
   // حالة الأداء
   deviceTier: 'medium',
   isLowEndDevice: false,

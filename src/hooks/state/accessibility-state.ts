@@ -11,7 +11,7 @@ export const createAccessibilitySlice: StateCreator<
   [],
   [],
   AccessibilityState
-> = (set) => ({
+> = (set, get, _store) => ({
   // حالة إمكانية الوصول
   highContrast: false,
   largeText: false,
