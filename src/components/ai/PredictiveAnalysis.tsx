@@ -1,200 +1,223 @@
 
 import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
-import { AlertTriangle, CheckCircle, TrendingUp, Zap, BarChart2, ArrowRight } from "lucide-react";
-
-interface NetworkIssue {
-  id: string;
-  type: 'warning' | 'critical' | 'info';
-  title: string;
-  description: string;
-  solution: string;
-  probability: number; // 0-100
-  timeFrame: string; // متى من المتوقع حدوث المشكلة
-  detected: Date;
-}
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { RefreshCcw, AlertTriangle, CheckCircle2, ArrowRight } from "lucide-react";
+import { toast } from "sonner";
 
 export function PredictiveAnalysis() {
-  const { t } = useTranslation();
-  const [predictedIssues, setPredictedIssues] = useState<NetworkIssue[]>([]);
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || i18n.language === "ar-iq";
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [lastAnalysisTime, setLastAnalysisTime] = useState<Date | null>(null);
+  const [predictedIssues, setPredictedIssues] = useState<any[]>([]);
   
-  // محاكاة تحليل الشبكة واكتشاف المشاكل المحتملة
-  const analyzeNetwork = () => {
+  // محاكاة تحليل الشبكة عند تحميل المكون
+  useEffect(() => {
+    performPredictiveAnalysis();
+  }, []);
+  
+  // محاكاة تحليل تنبؤي للشبكة
+  const performPredictiveAnalysis = () => {
     setIsAnalyzing(true);
     
-    // محاكاة وقت المعالجة
+    // محاكاة وقت التحليل
     setTimeout(() => {
-      const issues: NetworkIssue[] = [
+      // توليد مشاكل متوقعة عشوائية
+      const possibleIssues = [
         {
-          id: 'issue-1',
-          type: 'warning',
-          title: t('predictiveAnalysis.issues.bandwidthSaturation', 'تشبع النطاق الترددي'),
-          description: t('predictiveAnalysis.issues.bandwidthSaturationDesc', 'بناءً على نمط الاستخدام الحالي، من المتوقع أن تصل إلى 90% من سعة النطاق الترددي خلال الأيام القادمة.'),
-          solution: t('predictiveAnalysis.issues.bandwidthSaturationSolution', 'تحديث حدود النطاق الترددي أو توزيع الحمل على أوقات مختلفة.'),
-          probability: 78,
-          timeFrame: t('predictiveAnalysis.timeFrames.days', 'خلال 3-5 أيام'),
-          detected: new Date()
+          id: 1,
+          type: 'bandwidthSaturation',
+          probability: 0.75,
+          timeFrame: 'days',
+          confidence: 'medium',
         },
         {
-          id: 'issue-2',
-          type: 'critical',
-          title: t('predictiveAnalysis.issues.securityVulnerability', 'ثغرة أمنية محتملة'),
-          description: t('predictiveAnalysis.issues.securityVulnerabilityDesc', 'تم اكتشاف نمط حركة مرور غير عادي يشير إلى محاولة استكشاف للثغرات الأمنية.'),
-          solution: t('predictiveAnalysis.issues.securityVulnerabilitySolution', 'تحديث جدار الحماية وتطبيق قواعد أمان إضافية على المنافذ المشبوهة.'),
-          probability: 65,
-          timeFrame: t('predictiveAnalysis.timeFrames.hours', 'خلال 24-48 ساعة'),
-          detected: new Date()
+          id: 2,
+          type: 'securityVulnerability',
+          probability: 0.89,
+          timeFrame: 'hours',
+          confidence: 'high',
         },
         {
-          id: 'issue-3',
-          type: 'info',
-          title: t('predictiveAnalysis.issues.deviceFailure', 'فشل جهاز متوقع'),
-          description: t('predictiveAnalysis.issues.deviceFailureDesc', 'أحد أجهزة الشبكة يظهر علامات تدهور الأداء التي قد تؤدي إلى فشل قريب.'),
-          solution: t('predictiveAnalysis.issues.deviceFailureSolution', 'فحص الجهاز وإجراء صيانة وقائية أو استبداله قبل حدوث الفشل.'),
-          probability: 42,
-          timeFrame: t('predictiveAnalysis.timeFrames.weeks', 'خلال 1-2 أسبوع'),
-          detected: new Date()
+          id: 3,
+          type: 'deviceFailure',
+          probability: 0.65,
+          timeFrame: 'weeks',
+          confidence: 'medium',
+        },
+        {
+          id: 4,
+          type: 'networkCongestion',
+          probability: 0.55,
+          timeFrame: 'days',
+          confidence: 'low',
+        },
+        {
+          id: 5,
+          type: 'dnsFailure',
+          probability: 0.80,
+          timeFrame: 'month',
+          confidence: 'medium',
+        },
+        {
+          id: 6,
+          type: 'wirelessInterference',
+          probability: 0.72,
+          timeFrame: 'days',
+          confidence: 'high',
         }
       ];
       
-      setPredictedIssues(issues);
+      // اختيار مشاكل عشوائية من الممكن حدوثها
+      const shouldShowIssues = Math.random() > 0.3; // 70% احتمالية وجود مشاكل
+      
+      if (shouldShowIssues) {
+        // اختيار عدد عشوائي من المشاكل (1-3)
+        const numberOfIssues = Math.floor(Math.random() * 3) + 1;
+        const shuffledIssues = [...possibleIssues].sort(() => 0.5 - Math.random());
+        const selectedIssues = shuffledIssues.slice(0, numberOfIssues);
+        setPredictedIssues(selectedIssues);
+        
+        // إظهار إشعار بوجود مشاكل متوقعة
+        toast.warning(t('predictiveAnalysis.alerts.newPrediction', 'تم اكتشاف مشكلة محتملة جديدة'));
+      } else {
+        setPredictedIssues([]);
+      }
+      
       setIsAnalyzing(false);
+      setLastAnalysisTime(new Date());
     }, 2000);
   };
   
-  // تحليل أولي عند تحميل المكون
-  useEffect(() => {
-    analyzeNetwork();
-  }, []);
-  
-  // تصنيف المشاكل حسب الأولوية
-  const getIssuesByPriority = () => {
-    return [...predictedIssues].sort((a, b) => {
-      // ترتيب حسب النوع ثم الاحتمالية
-      if (a.type === 'critical' && b.type !== 'critical') return -1;
-      if (a.type !== 'critical' && b.type === 'critical') return 1;
-      if (a.type === 'warning' && b.type === 'info') return -1;
-      if (a.type === 'info' && b.type === 'warning') return 1;
-      return b.probability - a.probability;
-    });
+  // تحديث التحليل يدويًا
+  const handleRefreshAnalysis = () => {
+    toast.info(t('predictiveAnalysis.analyzing', 'جاري التحليل...'));
+    performPredictiveAnalysis();
   };
   
-  const prioritizedIssues = getIssuesByPriority();
+  // محاكاة تطبيق الإصلاح
+  const handleApplyFix = (issueId: number) => {
+    toast.success(t('predictiveAnalysis.alerts.issueResolved', 'تم حل مشكلة متوقعة بنجاح'));
+    setPredictedIssues(prev => prev.filter(issue => issue.id !== issueId));
+  };
   
   return (
-    <Card className="border-octaBlue-200 shadow-md">
-      <CardHeader className="bg-gradient-to-r from-octaBlue-50 to-octaBlue-100 rounded-t-lg">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2 rtl:space-x-reverse">
-            <TrendingUp className="h-5 w-5 text-octaBlue-600" />
-            <CardTitle className="text-octaBlue-800">
-              {t('predictiveAnalysis.title', 'التحليل التنبؤي للشبكة')}
-            </CardTitle>
-          </div>
+    <Card className="w-full h-full shadow-sm">
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-center">
+          <CardTitle className="text-lg">
+            {t('predictiveAnalysis.title', 'التحليل التنبؤي للشبكة')}
+          </CardTitle>
           <Button 
-            variant="outline" 
             size="sm" 
-            onClick={analyzeNetwork}
+            variant="ghost" 
+            onClick={handleRefreshAnalysis}
             disabled={isAnalyzing}
-            className="bg-white"
+            title={t('predictiveAnalysis.refresh', 'تحديث التحليل')}
           >
-            <BarChart2 className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" />
-            {isAnalyzing 
-              ? t('predictiveAnalysis.analyzing', 'جاري التحليل...') 
-              : t('predictiveAnalysis.refresh', 'تحديث التحليل')}
+            <RefreshCcw className={`h-4 w-4 ${isAnalyzing ? 'animate-spin' : ''}`} />
           </Button>
         </div>
+        <p className="text-sm text-muted-foreground">
+          {t('predictiveAnalysis.subtitle', 'توقع المشاكل قبل حدوثها')}
+        </p>
       </CardHeader>
       
-      <CardContent className="pt-4 pb-5 space-y-4">
+      <CardContent className="pt-0">
         {isAnalyzing ? (
-          <div className="flex items-center justify-center py-8 space-x-2 rtl:space-x-reverse">
-            <div className="w-3 h-3 bg-primary rounded-full animate-bounce" />
-            <div className="w-3 h-3 bg-primary rounded-full animate-bounce delay-75" />
-            <div className="w-3 h-3 bg-primary rounded-full animate-bounce delay-150" />
-            <div className="w-3 h-3 bg-primary rounded-full animate-bounce delay-300" />
+          <div className="flex flex-col items-center justify-center p-6">
+            <RefreshCcw className="h-8 w-8 animate-spin text-primary mb-3" />
+            <p>{t('predictiveAnalysis.analyzing', 'جاري التحليل...')}</p>
           </div>
         ) : predictedIssues.length === 0 ? (
-          <div className="text-center py-8">
-            <CheckCircle className="h-12 w-12 mx-auto text-green-500 mb-2" />
-            <h3 className="text-lg font-medium">
-              {t('predictiveAnalysis.noIssues', 'لا توجد مشاكل متوقعة')}
-            </h3>
-            <p className="text-muted-foreground mt-1">
+          <div className="flex flex-col items-center justify-center p-6 text-center">
+            <CheckCircle2 className="h-8 w-8 text-green-500 mb-3" />
+            <h3 className="font-semibold mb-1">{t('predictiveAnalysis.noIssues', 'لا توجد مشاكل متوقعة')}</h3>
+            <p className="text-sm text-muted-foreground">
               {t('predictiveAnalysis.networkHealthy', 'شبكتك تعمل بشكل جيد ولا توجد مشاكل متوقعة في المستقبل القريب.')}
             </p>
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium">
-                {t('predictiveAnalysis.predictedIssues', 'مشاكل متوقعة')}
-              </h3>
-              <Badge variant="outline" className="bg-white">
-                {predictedIssues.length} {t('predictiveAnalysis.issuesDetected', 'مشكلة محتملة')}
-              </Badge>
-            </div>
+            <h3 className="font-semibold flex items-center text-amber-600 dark:text-amber-500">
+              <AlertTriangle className="h-5 w-5 mr-1 rtl:ml-1 rtl:mr-0" />
+              {t('predictiveAnalysis.predictedIssues', 'مشاكل متوقعة')}
+            </h3>
             
-            {prioritizedIssues.map((issue) => (
-              <Alert 
-                key={issue.id} 
-                variant={issue.type === 'critical' ? 'destructive' : issue.type === 'warning' ? 'default' : 'outline'}
-                className="border-l-4 border-l-blue-500"
-              >
-                <div className="flex items-start justify-between">
-                  <div>
-                    <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                      <AlertTriangle className={`h-4 w-4 ${
-                        issue.type === 'critical' ? 'text-red-500' : 
-                        issue.type === 'warning' ? 'text-amber-500' : 'text-blue-500'
-                      }`} />
-                      <AlertTitle className="font-semibold mb-1">{issue.title}</AlertTitle>
-                      <Badge className={`${
-                        issue.type === 'critical' ? 'bg-red-100 text-red-800 border-red-200' : 
-                        issue.type === 'warning' ? 'bg-amber-100 text-amber-800 border-amber-200' : 
-                        'bg-blue-100 text-blue-800 border-blue-200'
-                      } ml-2`}>
-                        {issue.probability}% {t('predictiveAnalysis.probability', 'احتمالية')}
+            <div className="space-y-3">
+              {predictedIssues.map((issue) => (
+                <div key={issue.id} className="border rounded-lg p-3 relative">
+                  <div className="flex justify-between">
+                    <div>
+                      <h4 className="font-medium">
+                        {t(`predictiveAnalysis.issues.${issue.type}`, issue.type)}
+                      </h4>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {t(`predictiveAnalysis.issues.${issue.type}Desc`, 'وصف المشكلة')}
+                      </p>
+                    </div>
+                    <Badge className={
+                      issue.probability > 0.8 ? 'bg-red-500' : 
+                      issue.probability > 0.7 ? 'bg-amber-500' : 
+                      'bg-yellow-500'
+                    }>
+                      {Math.round(issue.probability * 100)}%
+                    </Badge>
+                  </div>
+                  
+                  <div className="mt-3 border-t pt-2 text-sm flex justify-between items-center flex-wrap">
+                    <div className="space-x-2 rtl:space-x-reverse">
+                      <Badge variant="secondary">
+                        {t(`predictiveAnalysis.confidence.${issue.confidence}`, issue.confidence)}
+                      </Badge>
+                      <Badge variant="secondary">
+                        {t(`predictiveAnalysis.timeFrames.${issue.timeFrame}`, issue.timeFrame)}
                       </Badge>
                     </div>
-                    <AlertDescription className="mt-2">
-                      <p className="mb-1">{issue.description}</p>
-                      <div className="mt-3 p-2 bg-muted/50 rounded-md">
-                        <p className="font-medium text-sm">{t('predictiveAnalysis.recommendedSolution', 'الحل المقترح')}:</p>
-                        <p className="text-sm mt-1">{issue.solution}</p>
-                      </div>
-                    </AlertDescription>
+                    
+                    <div className="flex space-x-2 rtl:space-x-reverse mt-2 sm:mt-0">
+                      <Button 
+                        size="sm" 
+                        variant="default" 
+                        className="text-xs h-7"
+                        onClick={() => handleApplyFix(issue.id)}
+                      >
+                        {t('predictiveAnalysis.actions.applyFix', 'تطبيق الإصلاح')}
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="secondary" 
+                        className="text-xs h-7"
+                      >
+                        {t('predictiveAnalysis.actions.moreInfo', 'مزيد من المعلومات')}
+                      </Button>
+                    </div>
                   </div>
-                  <div className="text-xs text-muted-foreground text-right rtl:text-left whitespace-nowrap">
-                    <p>{t('predictiveAnalysis.expectedIn', 'متوقع في')}:</p>
-                    <p className="font-medium">{issue.timeFrame}</p>
+                  
+                  <div className="mt-2 text-sm">
+                    <strong>{t('predictiveAnalysis.recommendedSolution', 'الحل المقترح')}: </strong>
+                    {t(`predictiveAnalysis.issues.${issue.type}Solution`, 'حل المشكلة')}
                   </div>
                 </div>
-              </Alert>
-            ))}
-            
-            <div className="flex justify-end mt-2">
-              <Button variant="link" size="sm" className="text-octaBlue-600">
-                {t('predictiveAnalysis.viewAllPredictions', 'عرض جميع التوقعات')}
-                <ArrowRight className="h-3.5 w-3.5 ml-1 rtl:mr-1 rtl:ml-0 rtl:rotate-180" />
-              </Button>
+              ))}
             </div>
+            
+            {predictedIssues.length > 0 && (
+              <div className="text-xs text-muted-foreground text-center mt-4">
+                {t('predictiveAnalysis.poweredBy', 'يعمل بواسطة محرك التحليلات التنبؤية للذكاء الاصطناعي، يتعلم تلقائيًا من أنماط الشبكة السابقة.')}
+              </div>
+            )}
           </div>
         )}
         
-        <div className="border-t pt-4 mt-6">
-          <div className="flex items-center space-x-2 rtl:space-x-reverse text-sm text-muted-foreground">
-            <Zap className="h-4 w-4 text-amber-500" />
-            <p>
-              {t('predictiveAnalysis.poweredBy', 'يعمل بواسطة محرك التحليلات التنبؤية للذكاء الاصطناعي، يتعلم تلقائيًا من أنماط الشبكة السابقة.')}
-            </p>
+        {lastAnalysisTime && !isAnalyzing && (
+          <div className="text-xs text-muted-foreground mt-4 pt-2 border-t text-center">
+            {t('predictiveAnalysis.lastUpdate', 'آخر تحديث')}: {lastAnalysisTime.toLocaleTimeString()}
           </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   );
