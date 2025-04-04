@@ -4,6 +4,9 @@ import { useA11y } from "@/hooks/useA11y";
 import { usePerformanceOptimization } from "@/hooks/usePerformanceOptimization";
 import { AIPerformanceOptimizer } from './AIPerformanceOptimizer';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useLocalAI } from '@/hooks/use-local-ai';
+import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 // تحسين التحميل البطيء للمساعد الذكي
 const FloatingAIAssistant = lazy(() => import("@/components/FloatingAIAssistant").then(m => ({ default: m.FloatingAIAssistant })));
@@ -19,6 +22,25 @@ export function AIAssistantManager({ onMaximize }: AIAssistantManagerProps) {
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const { reducedMotion } = useA11y();
   const { deviceTier, isLowPerformanceDevice } = usePerformanceOptimization();
+  const { isInitialized, loadModel, availableModels } = useLocalAI();
+  const { t } = useTranslation();
+  
+  // تحميل النموذج الافتراضي تلقائياً
+  useEffect(() => {
+    if (isInitialized && availableModels.length > 0) {
+      const defaultModel = availableModels.find(m => m.id === 'distilgpt2');
+      if (defaultModel && defaultModel.status !== 'loaded') {
+        const shouldLoadModel = window.localStorage.getItem('autoLoadAIModel') !== 'false';
+        
+        if (shouldLoadModel && !isLowPerformanceDevice) {
+          setTimeout(() => {
+            toast.info(t('ai.autoLoadingModel', 'جاري تحميل نموذج الذكاء الاصطناعي تلقائياً...'));
+            loadModel(defaultModel.id);
+          }, 5000);
+        }
+      }
+    }
+  }, [isInitialized, availableModels, loadModel, isLowPerformanceDevice, t]);
   
   // إظهار المساعد الذكي بعد فترة زمنية
   useEffect(() => {

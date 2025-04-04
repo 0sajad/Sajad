@@ -1,23 +1,25 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+
+const { app, BrowserWindow, ipcMain, net } = require('electron');
 const path = require('path');
 const url = require('url');
 
-// Keep a global reference of the window object to prevent garbage collection
+// تخزين الإشارة إلى النافذة النشطة
 let mainWindow;
 
 function createWindow() {
-  // Create the browser window
+  // إنشاء نافذة المتصفح
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, 'preload.js')
     },
+    icon: path.join(__dirname, '../public/favicon.ico')
   });
 
-  // Load the app - in development from the dev server, in production from the built files
+  // تحديد عنوان URL للنافذة
   const startUrl = process.env.ELECTRON_START_URL || url.format({
     pathname: path.join(__dirname, '../dist/index.html'),
     protocol: 'file:',
@@ -26,18 +28,30 @@ function createWindow() {
   
   mainWindow.loadURL(startUrl);
 
-  // Uncomment to open DevTools automatically (during development)
-  // if (process.env.NODE_ENV === 'development') {
-  //   mainWindow.webContents.openDevTools();
-  // }
+  // فتح أدوات المطور في وضع التطوير
+  if (process.env.ELECTRON !== 'true') {
+    mainWindow.webContents.openDevTools();
+  }
 
   mainWindow.on('closed', function () {
     mainWindow = null;
   });
+  
+  // تكوين حدود الذاكرة لـ WebGPU
+  app.commandLine.appendSwitch('enable-features', 'WebGPUDeviceInitialization,WebGPU');
+  app.commandLine.appendSwitch('enable-unsafe-webgpu');
+  app.commandLine.appendSwitch('gpu-memory-buffer-pool-size', '512');
+  app.commandLine.appendSwitch('max-active-webgpu-contexts', '16');
+  
+  // تفعيل WebGL
+  app.commandLine.appendSwitch('enable-webgl');
+  app.commandLine.appendSwitch('ignore-gpu-blacklist');
 }
 
+// تهيئة التطبيق عند الاستعداد
 app.whenReady().then(createWindow);
 
+// الخروج عند إغلاق جميع النوافذ
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit();
 });
@@ -46,17 +60,29 @@ app.on('activate', function () {
   if (mainWindow === null) createWindow();
 });
 
-// Handle IPC messages from renderer process
+// التحقق من اتصال الشبكة
 ipcMain.handle('check-network-connection', async () => {
-  // This is a simple implementation that just checks if electron can reach Google
-  try {
-    const response = await fetch('https://www.google.com/generate_204', {
-      method: 'HEAD',
-      cache: 'no-store',
-    });
-    return response.status === 204;
-  } catch (error) {
-    console.error('Network connection check failed:', error);
-    return false;
-  }
+  return net.isOnline();
+});
+
+// فتح رابط خارجي
+ipcMain.on('open-external-link', (event, url) => {
+  require('electron').shell.openExternal(url);
+});
+
+// إعداد واجهة برمجة التطبيقات المحلية
+ipcMain.handle('get-app-path', () => {
+  return app.getPath('userData');
+});
+
+// الحصول على معلومات النظام
+ipcMain.handle('get-system-info', () => {
+  return {
+    platform: process.platform,
+    arch: process.arch,
+    version: app.getVersion(),
+    electronVersion: process.versions.electron,
+    chromeVersion: process.versions.chrome,
+    nodeVersion: process.versions.node
+  };
 });
