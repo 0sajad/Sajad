@@ -67,5 +67,13 @@
   "learnedResponses": "استجابات متعلمة",
   "similarResponses": "استجابات مشابهة",
   "noSimilarResponses": "لا توجد استجابات مشابهة",
-  "adaptiveResponses": "استجابات تكيفية"
+  "adaptiveResponses": "استجابات تكيفية",
+  "predictiveAnalysis": "التحليل التنبؤي",
+  "predictiveSuggestions": "اقتراحات تنبؤية",
+  "potentialIssues": "مشاكل محتملة",
+  "issueDetection": "اكتشاف المشاكل",
+  "issuesSolved": "تم حل المشاكل",
+  "proactiveMaintenance": "صيانة استباقية",
+  "networkOptimization": "تحسين الشبكة",
+  "problemPrevention": "منع المشاكل قبل حدوثها"
 }
