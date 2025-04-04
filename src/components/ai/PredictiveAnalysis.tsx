@@ -82,7 +82,7 @@ export function PredictiveAnalysis() {
         setPredictedIssues(selectedIssues);
         
         // إظهار إشعار بوجود مشاكل متوقعة
-        toast.warning(t('predictiveAnalysis.alerts.newPrediction', 'تم اكتشاف مشكلة محتملة جديدة'));
+        toast.warning(t('predictiveAnalysis.alerts.newPrediction'));
       } else {
         setPredictedIssues([]);
       }
@@ -94,13 +94,13 @@ export function PredictiveAnalysis() {
   
   // تحديث التحليل يدويًا
   const handleRefreshAnalysis = () => {
-    toast.info(t('predictiveAnalysis.analyzing', 'جاري التحليل...'));
+    toast.info(t('predictiveAnalysis.analyzing'));
     performPredictiveAnalysis();
   };
   
   // محاكاة تطبيق الإصلاح
   const handleApplyFix = (issueId: number) => {
-    toast.success(t('predictiveAnalysis.alerts.issueResolved', 'تم حل مشكلة متوقعة بنجاح'));
+    toast.success(t('predictiveAnalysis.alerts.issueResolved'));
     setPredictedIssues(prev => prev.filter(issue => issue.id !== issueId));
   };
   
@@ -109,20 +109,20 @@ export function PredictiveAnalysis() {
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg">
-            {t('predictiveAnalysis.title', 'التحليل التنبؤي للشبكة')}
+            {t('predictiveAnalysis.title')}
           </CardTitle>
           <Button 
             size="sm" 
             variant="ghost" 
             onClick={handleRefreshAnalysis}
             disabled={isAnalyzing}
-            title={t('predictiveAnalysis.refresh', 'تحديث التحليل')}
+            title={t('predictiveAnalysis.refresh')}
           >
             <RefreshCcw className={`h-4 w-4 ${isAnalyzing ? 'animate-spin' : ''}`} />
           </Button>
         </div>
         <p className="text-sm text-muted-foreground">
-          {t('predictiveAnalysis.subtitle', 'توقع المشاكل قبل حدوثها')}
+          {t('predictiveAnalysis.subtitle')}
         </p>
       </CardHeader>
       
@@ -130,21 +130,21 @@ export function PredictiveAnalysis() {
         {isAnalyzing ? (
           <div className="flex flex-col items-center justify-center p-6">
             <RefreshCcw className="h-8 w-8 animate-spin text-primary mb-3" />
-            <p>{t('predictiveAnalysis.analyzing', 'جاري التحليل...')}</p>
+            <p>{t('predictiveAnalysis.analyzing')}</p>
           </div>
         ) : predictedIssues.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-6 text-center">
             <CheckCircle2 className="h-8 w-8 text-green-500 mb-3" />
-            <h3 className="font-semibold mb-1">{t('predictiveAnalysis.noIssues', 'لا توجد مشاكل متوقعة')}</h3>
+            <h3 className="font-semibold mb-1">{t('predictiveAnalysis.noIssues')}</h3>
             <p className="text-sm text-muted-foreground">
-              {t('predictiveAnalysis.networkHealthy', 'شبكتك تعمل بشكل جيد ولا توجد مشاكل متوقعة في المستقبل القريب.')}
+              {t('predictiveAnalysis.networkHealthy')}
             </p>
           </div>
         ) : (
           <div className="space-y-4">
             <h3 className="font-semibold flex items-center text-amber-600 dark:text-amber-500">
               <AlertTriangle className="h-5 w-5 mr-1 rtl:ml-1 rtl:mr-0" />
-              {t('predictiveAnalysis.predictedIssues', 'مشاكل متوقعة')}
+              {t('predictiveAnalysis.predictedIssues')}
             </h3>
             
             <div className="space-y-3">
@@ -153,10 +153,10 @@ export function PredictiveAnalysis() {
                   <div className="flex justify-between">
                     <div>
                       <h4 className="font-medium">
-                        {t(`predictiveAnalysis.issues.${issue.type}`, issue.type)}
+                        {t(`predictiveAnalysis.issues.${issue.type}`)}
                       </h4>
                       <p className="text-sm text-muted-foreground mt-1">
-                        {t(`predictiveAnalysis.issues.${issue.type}Desc`, 'وصف المشكلة')}
+                        {t(`predictiveAnalysis.issues.${issue.type}Desc`)}
                       </p>
                     </div>
                     <Badge className={
@@ -171,10 +171,10 @@ export function PredictiveAnalysis() {
                   <div className="mt-3 border-t pt-2 text-sm flex justify-between items-center flex-wrap">
                     <div className="space-x-2 rtl:space-x-reverse">
                       <Badge variant="secondary">
-                        {t(`predictiveAnalysis.confidence.${issue.confidence}`, issue.confidence)}
+                        {t(`predictiveAnalysis.confidence.${issue.confidence}`)}
                       </Badge>
                       <Badge variant="secondary">
-                        {t(`predictiveAnalysis.timeFrames.${issue.timeFrame}`, issue.timeFrame)}
+                        {t(`predictiveAnalysis.timeFrames.${issue.timeFrame}`)}
                       </Badge>
                     </div>
                     
@@ -185,21 +185,21 @@ export function PredictiveAnalysis() {
                         className="text-xs h-7"
                         onClick={() => handleApplyFix(issue.id)}
                       >
-                        {t('predictiveAnalysis.actions.applyFix', 'تطبيق الإصلاح')}
+                        {t('predictiveAnalysis.actions.applyFix')}
                       </Button>
                       <Button 
                         size="sm" 
-                        variant="secondary" 
+                        variant="outline" 
                         className="text-xs h-7"
                       >
-                        {t('predictiveAnalysis.actions.moreInfo', 'مزيد من المعلومات')}
+                        {t('predictiveAnalysis.actions.moreInfo')}
                       </Button>
                     </div>
                   </div>
                   
                   <div className="mt-2 text-sm">
-                    <strong>{t('predictiveAnalysis.recommendedSolution', 'الحل المقترح')}: </strong>
-                    {t(`predictiveAnalysis.issues.${issue.type}Solution`, 'حل المشكلة')}
+                    <strong>{t('predictiveAnalysis.recommendedSolution')}: </strong>
+                    {t(`predictiveAnalysis.issues.${issue.type}Solution`)}
                   </div>
                 </div>
               ))}
@@ -207,7 +207,7 @@ export function PredictiveAnalysis() {
             
             {predictedIssues.length > 0 && (
               <div className="text-xs text-muted-foreground text-center mt-4">
-                {t('predictiveAnalysis.poweredBy', 'يعمل بواسطة محرك التحليلات التنبؤية للذكاء الاصطناعي، يتعلم تلقائيًا من أنماط الشبكة السابقة.')}
+                {t('predictiveAnalysis.poweredBy')}
               </div>
             )}
           </div>
@@ -215,7 +215,7 @@ export function PredictiveAnalysis() {
         
         {lastAnalysisTime && !isAnalyzing && (
           <div className="text-xs text-muted-foreground mt-4 pt-2 border-t text-center">
-            {t('predictiveAnalysis.lastUpdate', 'آخر تحديث')}: {lastAnalysisTime.toLocaleTimeString()}
+            {t('predictiveAnalysis.lastUpdate')}: {lastAnalysisTime.toLocaleTimeString()}
           </div>
         )}
       </CardContent>
