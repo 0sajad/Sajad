@@ -1,17 +1,45 @@
 
-import React from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { PredictedIssue } from "./issuesData";
+import { PredictedIssue, getIssueSeverity } from "./issuesData";
+import { Shield, Info } from "lucide-react";
 
 interface PredictedIssueProps {
   issue: PredictedIssue;
   onApplyFix: (issueId: number) => void;
 }
 
+/**
+ * مكون لعرض تفاصيل مشكلة محتملة تم اكتشافها
+ * مع تحسين الأداء باستخدام useMemo لمنع إعادة الحسابات غير الضرورية
+ */
 export function PredictedIssueItem({ issue, onApplyFix }: PredictedIssueProps) {
   const { t } = useTranslation();
+  
+  // استخدام useMemo لتحسين الأداء وتجنب العمليات المتكررة
+  const severityClass = useMemo(() => {
+    const severity = getIssueSeverity(issue);
+    return severity === 'high' ? 'bg-red-500' : 
+           severity === 'medium' ? 'bg-amber-500' : 
+           'bg-yellow-500';
+  }, [issue]);
+  
+  // تنسيق احتمالية المشكلة
+  const formattedProbability = useMemo(() => {
+    return Math.round(issue.probability * 100);
+  }, [issue.probability]);
+  
+  // معالج الأحداث الآمن
+  const handleApplyFix = () => {
+    // التحقق من صحة المعرف قبل تمرير الطلب
+    if (issue.id > 0) {
+      onApplyFix(issue.id);
+    } else {
+      console.error("Invalid issue ID detected");
+    }
+  };
   
   return (
     <div key={issue.id} className="border rounded-lg p-3 relative">
@@ -24,12 +52,8 @@ export function PredictedIssueItem({ issue, onApplyFix }: PredictedIssueProps) {
             {t(`predictiveAnalysis.issues.${issue.type}Desc`)}
           </p>
         </div>
-        <Badge className={
-          issue.probability > 0.8 ? 'bg-red-500' : 
-          issue.probability > 0.7 ? 'bg-amber-500' : 
-          'bg-yellow-500'
-        }>
-          {Math.round(issue.probability * 100)}%
+        <Badge className={severityClass}>
+          {formattedProbability}%
         </Badge>
       </div>
       
@@ -48,8 +72,9 @@ export function PredictedIssueItem({ issue, onApplyFix }: PredictedIssueProps) {
             size="sm" 
             variant="default" 
             className="text-xs h-7"
-            onClick={() => onApplyFix(issue.id)}
+            onClick={handleApplyFix}
           >
+            <Shield className="h-3 w-3 mr-1" />
             {t('predictiveAnalysis.actions.applyFix')}
           </Button>
           <Button 
@@ -57,6 +82,7 @@ export function PredictedIssueItem({ issue, onApplyFix }: PredictedIssueProps) {
             variant="outline" 
             className="text-xs h-7"
           >
+            <Info className="h-3 w-3 mr-1" />
             {t('predictiveAnalysis.actions.moreInfo')}
           </Button>
         </div>
