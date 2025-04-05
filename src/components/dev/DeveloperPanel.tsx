@@ -18,6 +18,7 @@ import { SecuritySettings } from "./SecuritySettings";
 import { LanguageTools } from "./LanguageTools";
 import { AIToolsManagement } from "./AIToolsManagement";
 import { TranslationManager } from "./TranslationManager";
+import { ConfigSync } from "./ConfigSync";
 
 export function DeveloperPanel() {
   const { isDeveloperMode } = useMode();
@@ -55,7 +56,7 @@ export function DeveloperPanel() {
         </div>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-2">
-          <TabsList className="w-full justify-start grid grid-cols-7 mb-6">
+          <TabsList className="w-full justify-start grid grid-cols-8 mb-6">
             <TabsTrigger value="features" className="font-tajawal">
               {t('developer.tabs.features', 'الميزات')}
             </TabsTrigger>
@@ -76,6 +77,9 @@ export function DeveloperPanel() {
             </TabsTrigger>
             <TabsTrigger value="translations" className="font-tajawal">
               الترجمات
+            </TabsTrigger>
+            <TabsTrigger value="sync" className="font-tajawal bg-indigo-100 text-indigo-800">
+              المزامنة
             </TabsTrigger>
           </TabsList>
           
@@ -105,6 +109,10 @@ export function DeveloperPanel() {
 
           <TabsContent value="translations">
             <TranslationManager />
+          </TabsContent>
+          
+          <TabsContent value="sync">
+            <ConfigSync />
           </TabsContent>
         </Tabs>
       </CardContent>
