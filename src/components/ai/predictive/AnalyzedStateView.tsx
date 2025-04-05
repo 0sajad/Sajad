@@ -3,9 +3,10 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { AlertTriangle } from "lucide-react";
 import { PredictedIssueItem } from "./PredictedIssueItem";
+import { PredictedIssue } from "./issuesData";
 
 interface AnalyzedStateViewProps {
-  predictedIssues: any[];
+  predictedIssues: PredictedIssue[];
   onApplyFix: (issueId: number) => void;
 }
 
