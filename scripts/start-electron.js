@@ -1,21 +1,37 @@
 
-const { execSync } = require('child_process');
+const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const { initialize } = require('../electron/electron-init');
 
-// قراءة ملفات package.json
-const mainPackageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-const electronPackageJson = JSON.parse(fs.readFileSync('package.electron.json', 'utf8'));
+// Initialize the environment
+if (!initialize()) {
+  console.error('Failed to initialize Electron environment. Exiting...');
+  process.exit(1);
+}
 
-// استخراج سكريبت "electron:dev" من ملف package.electron.json
-const electronDevScript = electronPackageJson.scripts["electron:dev"];
+// Read the electron package.json
+const electronPackagePath = path.join(__dirname, '../package.electron.json');
+const electronPackage = JSON.parse(fs.readFileSync(electronPackagePath, 'utf8'));
+
+// Get the electron:dev script
+const devScript = electronPackage.scripts["electron:dev"];
 
 console.log('Starting Electron development environment...');
-console.log(`Executing: ${electronDevScript}`);
+console.log(`Executing: ${devScript}`);
 
 try {
-  // تنفيذ الأمر
-  execSync(electronDevScript, { stdio: 'inherit' });
+  // Execute the script
+  const [cmd, ...args] = devScript.split(' ');
+  const proc = spawn(cmd, args, { 
+    stdio: 'inherit', 
+    shell: true,
+    env: { ...process.env, ELECTRON: 'true' } 
+  });
+  
+  proc.on('close', (code) => {
+    process.exit(code);
+  });
 } catch (error) {
   console.error('Error running Electron:', error);
   process.exit(1);
