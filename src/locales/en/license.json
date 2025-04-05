@@ -13,5 +13,60 @@
   "verificationSuccess": "License Verified",
   "verificationFailed": "Verification Failed",
   "accessGranted": "Access has been granted successfully",
-  "invalidKey": "The license key you entered is invalid"
+  "invalidKey": "The license key you entered is invalid",
+  "syncGuide": {
+    "title": "Illustrated Sync Guide",
+    "description": "This guide explains how to synchronize settings between developer device and remote client devices",
+    "developer": {
+      "title": "Developer Steps",
+      "description": "What the developer needs to do to share settings",
+      "step1": {
+        "title": "Switch to Developer Mode",
+        "description": "Click the toggle button at the top to switch to developer mode"
+      },
+      "step2": {
+        "title": "Make Desired Changes",
+        "description": "Make the required changes to settings and features in the developer control panel"
+      },
+      "step3": {
+        "title": "Open Sync Section and Generate Key",
+        "description": "Go to the 'Sync' tab and press the 'Upload Config' button to generate a sync key"
+      },
+      "step4": {
+        "title": "Share Key with Clients",
+        "description": "Share the sync key with clients via email or any other means"
+      }
+    },
+    "client": {
+      "title": "Client Steps",
+      "description": "What the client needs to do to receive settings from the developer",
+      "step1": {
+        "title": "Ensure Client Mode",
+        "description": "Make sure the application is in client mode, not developer mode"
+      },
+      "step2": {
+        "title": "Click Sync Button",
+        "description": "Click the 'Sync' button in the top navigation bar"
+      },
+      "step3": {
+        "title": "Enter Sync Key",
+        "description": "Enter the sync key you received from the developer in the dialog that appears"
+      },
+      "step4": {
+        "title": "Download Configuration",
+        "description": "Click the 'Download Config' button to receive the latest settings"
+      }
+    },
+    "faq": {
+      "title": "Sync FAQs",
+      "q1": "Can the client sync from anywhere in the world?",
+      "a1": "Yes, the client can sync settings from anywhere as long as they have the correct sync key and internet connection.",
+      "q2": "Do all settings transfer to the client?",
+      "a2": "Yes, all settings and features configured by the developer are transferred to the client during synchronization.",
+      "q3": "What if I encounter a problem during synchronization?",
+      "a3": "Make sure you enter the sync key correctly and that you have an internet connection. If the problem persists, contact the developer for a new key.",
+      "q4": "How often should I sync?",
+      "a4": "Sync whenever the developer tells you there are new updates and improved settings. Synchronization is not automatic and requires your intervention."
+    }
+  }
 }
