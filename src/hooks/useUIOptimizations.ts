@@ -28,7 +28,7 @@ export function useUIOptimizations() {
     }
     
     // تعطيل الرسوم المتحركة المتقدمة إذا لزم الأمر
-    if (!shouldUseAdvancedAnimations()) {
+    if (!shouldUseAdvancedAnimations) {
       document.body.classList.add('reduced-motion');
     } else {
       document.body.classList.remove('reduced-motion');

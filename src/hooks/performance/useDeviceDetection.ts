@@ -12,6 +12,17 @@ interface DeviceInfo {
   isMobile: boolean;
 }
 
+// Extend Navigator interface to include connection property
+interface NavigatorWithConnection extends Navigator {
+  connection?: {
+    effectiveType?: string;
+    saveData?: boolean;
+    addEventListener: (type: string, listener: EventListener) => void;
+    removeEventListener: (type: string, listener: EventListener) => void;
+  };
+  deviceMemory?: number;
+}
+
 export function useDeviceDetection(): DeviceInfo {
   const [deviceInfo, setDeviceInfo] = useState<DeviceInfo>({
     deviceTier: 'medium',
@@ -28,25 +39,28 @@ export function useDeviceDetection(): DeviceInfo {
     // تحديد القدرة الحوسبية
     const detectDeviceCapabilities = () => {
       try {
+        // Cast navigator to our extended interface
+        const nav = navigator as NavigatorWithConnection;
+        
         // تحديد عدد النوى
-        const cpuCores = navigator.hardwareConcurrency || 4;
+        const cpuCores = nav.hardwareConcurrency || 4;
         
         // محاولة تحديد ذاكرة الجهاز (متاحة فقط في بعض المتصفحات)
-        const memory = (navigator as any).deviceMemory || null;
+        const memory = nav.deviceMemory || null;
         
         // تحديد ما إذا كانت الشبكة بطيئة
-        const isSlowConnection = !!(navigator.connection && 
-          ((navigator.connection as any).effectiveType === '2g' || 
-           (navigator.connection as any).effectiveType === 'slow-2g' ||
-           (navigator.connection as any).saveData));
+        const isSlowConnection = !!(nav.connection && 
+          (nav.connection.effectiveType === '2g' || 
+           nav.connection.effectiveType === 'slow-2g' ||
+           nav.connection.saveData));
         
         // تحديد ما إذا كان جهاز لمس
         const isTouch = (('ontouchstart' in window) || 
-                        (navigator.maxTouchPoints > 0) || 
-                        ((navigator as any).msMaxTouchPoints > 0));
+                        (nav.maxTouchPoints > 0) || 
+                        ((nav as any).msMaxTouchPoints > 0));
         
         // تحديد ما إذا كان جهاز متنقل
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(nav.userAgent);
         
         // تحديد مستوى الجهاز
         let deviceTier: 'low' | 'medium' | 'high' = 'medium';
@@ -62,9 +76,8 @@ export function useDeviceDetection(): DeviceInfo {
         }
         
         // الاستماع لتغييرات اتصال الشبكة إن أمكن
-        const connection = (navigator as any).connection;
-        if (connection) {
-          connection.addEventListener('change', detectDeviceCapabilities);
+        if (nav.connection) {
+          nav.connection.addEventListener('change', detectDeviceCapabilities);
         }
         
         setDeviceInfo({
@@ -97,9 +110,9 @@ export function useDeviceDetection(): DeviceInfo {
     // تنظيف مستمعي الأحداث عند تفكيك المكون
     return () => {
       try {
-        const connection = (navigator as any).connection;
-        if (connection) {
-          connection.removeEventListener('change', detectDeviceCapabilities);
+        const nav = navigator as NavigatorWithConnection;
+        if (nav.connection) {
+          nav.connection.removeEventListener('change', detectDeviceCapabilities);
         }
       } catch (e) {
         // تجاهل الأخطاء عند التنظيف

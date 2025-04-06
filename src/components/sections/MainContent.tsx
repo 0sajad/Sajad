@@ -66,7 +66,7 @@ export function MainContent({ sectionsVisible, isTransitioning, language, isRTL 
   // تحميل تدريجي للمكونات بناءً على رؤيتها في الشاشة
   const renderLazySection = (sectionId: string, Component: React.ComponentType<any>, priority = false) => {
     // إذا كانت الأجهزة منخفضة الأداء، نقوم دائمًا بتحميل بالتدريج
-    const shouldLazyLoad = isLowPerformanceDevice || shouldUseLazyLoading();
+    const shouldLazyLoad = isLowPerformanceDevice || shouldUseLazyLoading;
     
     // تحمل بالتدريج فقط إذا كان معطى الـ shouldLazyLoad هو true وليس مكون ذو أولوية
     if (shouldLazyLoad && !priority) {

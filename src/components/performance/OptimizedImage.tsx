@@ -30,7 +30,7 @@ export function OptimizedImage({
   const { optimizeImageSrc, isLowPerformanceDevice, shouldUseLazyLoading } = usePerformanceOptimization();
   const [isLoaded, setIsLoaded] = useState(priority);
   const [isError, setIsError] = useState(false);
-  const [imgSrc, setImgSrc] = useState<string | null>(priority ? optimizeImageSrc(src, width) : null);
+  const [imgSrc, setImgSrc] = useState<string | null>(priority ? optimizeImageSrc(src) : null);
   
   // استخدام IntersectionObserver للتحميل الكسول
   useEffect(() => {
@@ -39,7 +39,7 @@ export function OptimizedImage({
     const handleIntersection = (entries: IntersectionObserverEntry[]) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          setImgSrc(optimizeImageSrc(src, width));
+          setImgSrc(optimizeImageSrc(src));
           observer.disconnect();
         }
       });
@@ -57,7 +57,7 @@ export function OptimizedImage({
     return () => {
       observer.disconnect();
     };
-  }, [priority, src, imgSrc, optimizeImageSrc, width]);
+  }, [priority, src, imgSrc, optimizeImageSrc]);
   
   const imgRef = React.useRef<HTMLImageElement>(null);
   
@@ -101,7 +101,7 @@ export function OptimizedImage({
         width={width}
         height={height}
         className={`${className} ${isLoaded ? 'opacity-100' : 'opacity-0 absolute'} transition-opacity duration-300`}
-        loading={priority || !shouldUseLazyLoading() ? 'eager' : 'lazy'}
+        loading={priority || !shouldUseLazyLoading ? 'eager' : 'lazy'}
         onLoad={handleLoad}
         onError={handleError}
       />

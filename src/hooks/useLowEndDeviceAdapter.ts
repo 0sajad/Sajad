@@ -37,8 +37,7 @@ export function useLowEndDeviceAdapter() {
         const imgEl = img as HTMLImageElement;
         if (imgEl.src && !imgEl.src.includes('data:')) {
           // استخدام وظيفة تحسين الصور لتقليل الجودة
-          const width = imgEl.width || 300;
-          imgEl.src = optimizeImageSrc(imgEl.src, width);
+          imgEl.src = optimizeImageSrc(imgEl.src);
         }
       });
       

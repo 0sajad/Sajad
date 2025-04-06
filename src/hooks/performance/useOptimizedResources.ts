@@ -35,7 +35,7 @@ export function useOptimizedResources(
   }, [deviceTier, metrics.fps, metrics.memory]);
   
   // تحسين مصادر الصور بناءً على قدرات الجهاز
-  const optimizeImageSrc = (originalSrc: string, size: 'small' | 'medium' | 'large' = 'medium'): string => {
+  const optimizeImageSrc = (originalSrc: string, width?: number | string, quality?: number): string => {
     // إذا كان المصدر الأصلي رابطًا خارجيًا، نحاول تحسينه باستخدام خدمة CDN
     if (originalSrc.startsWith('http') && !originalSrc.includes('data:')) {
       try {
@@ -68,7 +68,7 @@ export function useOptimizedResources(
           const smallVersionSrc = `${fileNameWithoutExt}-small${fileExtension}`;
           // التحقق من وجود الصورة المصغرة (يمكن تحسينه بالتخزين المؤقت للنتائج)
           return smallVersionSrc;
-        } else if (deviceTier === 'medium' && size === 'large') {
+        } else if (deviceTier === 'medium' && width === 'large') {
           const mediumVersionSrc = `${fileNameWithoutExt}-medium${fileExtension}`;
           return mediumVersionSrc;
         }

@@ -49,7 +49,7 @@ export function OptimizedImage({
   // Determine optimized source based on device capabilities - with safeguards
   let optimizedSrc;
   try {
-    optimizedSrc = optimizeImageSrc ? optimizeImageSrc(src, width, quality) : src;
+    optimizedSrc = optimizeImageSrc ? optimizeImageSrc(src, width) : src;
   } catch (err) {
     console.error('Error optimizing image:', err);
     optimizedSrc = src;
