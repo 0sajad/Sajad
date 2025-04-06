@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,8 +6,8 @@ import {
   Download, 
   Key, 
   ArrowRight, 
-  CheckCircle, 
-  CloudSync,
+  CheckCircle,
+  CloudDownload,
   Code,
   User
 } from "lucide-react";
@@ -186,7 +185,7 @@ export function SyncGuide() {
         <CardHeader className="bg-gradient-to-r from-green-50 to-green-100">
           <div className="flex items-center gap-2">
             <div className="bg-green-600 text-white p-2 rounded-full">
-              <CloudSync size={20} />
+              <CloudDownload size={20} />
             </div>
             <CardTitle className="text-lg">{t('syncGuide.faq.title', 'أسئلة متكررة عن المزامنة')}</CardTitle>
           </div>

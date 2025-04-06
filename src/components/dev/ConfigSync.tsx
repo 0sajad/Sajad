@@ -1,13 +1,15 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useMode } from "@/context/ModeContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, CloudUpload, CloudDownload, RefreshCw, Check } from "lucide-react";
+import { AlertCircle, CloudUpload, CloudDownload, RefreshCw, Check, Globe } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/components/ui/use-toast";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 export function ConfigSync() {
   const { t } = useTranslation();
@@ -18,34 +20,122 @@ export function ConfigSync() {
   const [syncKey, setSyncKey] = useState("");
   const [lastSyncDate, setLastSyncDate] = useState<Date | null>(null);
   const [showSyncKey, setShowSyncKey] = useState(false);
+  const [useOnlineSync, setUseOnlineSync] = useState<boolean>(() => {
+    return localStorage.getItem("octa-use-online-sync") === "true";
+  });
+  const [binId, setBinId] = useState<string>(() => {
+    return localStorage.getItem("octa-sync-bin-id") || "";
+  });
 
-  // محاكاة رفع التكوين إلى الخادم
+  // استعادة آخر وقت مزامنة من التخزين المحلي
+  useEffect(() => {
+    const storedTimeStr = localStorage.getItem("octa-last-sync-time");
+    if (storedTimeStr) {
+      setLastSyncDate(new Date(storedTimeStr));
+    }
+    
+    const storedSyncKey = localStorage.getItem("octa-sync-key");
+    if (storedSyncKey) {
+      setSyncKey(storedSyncKey);
+    }
+  }, []);
+
+  // تبديل حالة المزامنة عبر الإنترنت
+  const toggleOnlineSync = () => {
+    const newValue = !useOnlineSync;
+    setUseOnlineSync(newValue);
+    localStorage.setItem("octa-use-online-sync", newValue.toString());
+    
+    toast({
+      title: newValue ? "تم تفعيل المزامنة عبر الإنترنت" : "تم التبديل إلى المزامنة المحلية",
+      description: newValue 
+        ? "سيتم حفظ التكوين على خادم JSONBin.io المجاني" 
+        : "سيتم حفظ التكوين محليًا فقط",
+    });
+  };
+
+  // محاكاة رفع التكوين إلى الخادم باستخدام JSONBin.io
   const uploadConfig = async () => {
     try {
       setSyncState('uploading');
       
-      // محاكاة التقدم
-      for (let i = 0; i <= 100; i += 10) {
-        await new Promise(r => setTimeout(r, 200));
+      // تحديث حالة التقدم
+      for (let i = 0; i <= 50; i += 10) {
+        await new Promise(r => setTimeout(r, 100));
         setSyncProgress(i);
       }
       
-      // إنشاء مفتاح تزامن عشوائي
-      const randomKey = Math.random().toString(36).substring(2, 10).toUpperCase();
-      setSyncKey(randomKey);
+      // إنشاء مفتاح تزامن عشوائي إذا لم يكن موجودًا
+      let key = syncKey;
+      if (!key) {
+        key = Math.random().toString(36).substring(2, 10).toUpperCase();
+        setSyncKey(key);
+        localStorage.setItem("octa-sync-key", key);
+      }
       
-      // حفظ التكوين في التخزين المحلي (في تطبيق حقيقي سيتم الإرسال إلى خادم)
-      localStorage.setItem("octa-sync-config", JSON.stringify({
+      // إنشاء كائن التكوين
+      const configData = {
         features,
+        syncKey: key,
         timestamp: new Date().toISOString(),
-        syncKey: randomKey
-      }));
+        version: "1.0"
+      };
       
+      // حفظ التكوين في التخزين المحلي
+      localStorage.setItem("octa-sync-config", JSON.stringify(configData));
+      localStorage.setItem("octa-sync-timestamp", new Date().toISOString());
+      
+      // إذا كانت المزامنة عبر الإنترنت مفعلة، قم برفع التكوين إلى JSONBin.io
+      if (useOnlineSync) {
+        setSyncProgress(60);
+        
+        let url = 'https://api.jsonbin.io/v3/b';
+        let method = 'POST';
+        
+        // إذا كان لدينا معرف bin موجود، قم بتحديثه بدلاً من إنشاء جديد
+        if (binId) {
+          url = `https://api.jsonbin.io/v3/b/${binId}`;
+          method = 'PUT';
+        }
+        
+        const response = await fetch(url, {
+          method: method,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Bin-Private': 'false'
+          },
+          body: JSON.stringify(configData)
+        });
+        
+        if (!response.ok) {
+          throw new Error("فشل في رفع التكوين إلى الخادم");
+        }
+        
+        const result = await response.json();
+        
+        // حفظ معرف Bin للاستخدام المستقبلي
+        if (!binId && result.metadata?.id) {
+          setBinId(result.metadata.id);
+          localStorage.setItem("octa-sync-bin-id", result.metadata.id);
+        }
+        
+        setSyncProgress(100);
+      } else {
+        // إذا كانت المزامنة المحلية فقط
+        await new Promise(r => setTimeout(r, 300));
+        setSyncProgress(100);
+      }
+      
+      // تحديث حالة المزامنة
       setSyncState('success');
       setLastSyncDate(new Date());
+      localStorage.setItem("octa-last-sync-time", new Date().toLocaleString());
+      
       toast({
         title: t('developer.sync.uploadSuccess', 'تم رفع التكوين بنجاح'),
-        description: t('developer.sync.syncKeyGenerated', 'تم إنشاء مفتاح المزامنة: ') + randomKey,
+        description: useOnlineSync 
+          ? t('developer.sync.syncKeyGeneratedOnline', 'تم إنشاء مفتاح المزامنة ورفعه عبر الإنترنت: ') + key
+          : t('developer.sync.syncKeyGenerated', 'تم إنشاء مفتاح المزامنة: ') + key,
       });
       
       // إعادة التعيين بعد 3 ثوانٍ
@@ -55,6 +145,7 @@ export function ConfigSync() {
       }, 3000);
       
     } catch (error) {
+      console.error("خطأ في رفع التكوين:", error);
       setSyncState('error');
       toast({
         title: t('developer.sync.uploadFailed', 'فشل رفع التكوين'),
@@ -78,44 +169,70 @@ export function ConfigSync() {
       
       setSyncState('downloading');
       
-      // محاكاة التقدم
-      for (let i = 0; i <= 100; i += 10) {
-        await new Promise(r => setTimeout(r, 200));
+      // تحديث حالة التقدم
+      for (let i = 0; i <= 40; i += 10) {
+        await new Promise(r => setTimeout(r, 100));
         setSyncProgress(i);
       }
       
-      // استرجاع التكوين من التخزين المحلي (في تطبيق حقيقي سيتم الجلب من خادم)
-      const savedConfig = localStorage.getItem("octa-sync-config");
+      let configData;
       
-      if (savedConfig) {
-        const parsedConfig = JSON.parse(savedConfig);
+      // إذا كانت المزامنة عبر الإنترنت مفعلة وهناك معرف bin
+      if (useOnlineSync && binId) {
+        setSyncProgress(50);
         
-        if (parsedConfig.syncKey === syncKey.trim()) {
-          // تطبيق التكوين
-          applyConfiguration();
-          
-          setSyncState('success');
-          setLastSyncDate(new Date(parsedConfig.timestamp));
-          toast({
-            title: t('developer.sync.downloadSuccess', 'تم تنزيل التكوين بنجاح'),
-            description: t('developer.sync.configApplied', 'تم تطبيق التكوين الجديد'),
-          });
-        } else {
-          setSyncState('error');
-          toast({
-            title: t('developer.sync.invalidSyncKey', 'مفتاح المزامنة غير صالح'),
-            description: t('developer.sync.checkSyncKey', 'يرجى التحقق من مفتاح المزامنة وإعادة المحاولة'),
-            variant: "destructive",
-          });
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error("فشل في الوصول إلى بيانات المزامنة");
         }
+        
+        const result = await response.json();
+        configData = result.record;
+        
+        setSyncProgress(80);
+      } else {
+        // استخدام التخزين المحلي
+        const savedConfig = localStorage.getItem("octa-sync-config");
+        if (!savedConfig) {
+          throw new Error("لم يتم العثور على تكوين محلي");
+        }
+        
+        configData = JSON.parse(savedConfig);
+        setSyncProgress(80);
+      }
+      
+      // التحقق من مفتاح المزامنة
+      if (configData && configData.syncKey === syncKey.trim()) {
+        // تطبيق التكوين
+        localStorage.setItem("octa-sync-config", JSON.stringify(configData));
+        localStorage.setItem("octa-sync-timestamp", new Date().toISOString());
+        
+        applyConfiguration();
+        
+        setSyncState('success');
+        setLastSyncDate(new Date());
+        localStorage.setItem("octa-last-sync-time", new Date().toLocaleString());
+        
+        toast({
+          title: t('developer.sync.downloadSuccess', 'تم تنزيل التكوين بنجاح'),
+          description: t('developer.sync.configApplied', 'تم تطبيق التكوين الجديد'),
+        });
       } else {
         setSyncState('error');
         toast({
-          title: t('developer.sync.noConfigFound', 'لم يتم العثور على تكوين'),
-          description: t('developer.sync.uploadFirst', 'يجب رفع التكوين أولاً قبل محاولة التنزيل'),
+          title: t('developer.sync.invalidSyncKey', 'مفتاح المزامنة غير صالح'),
+          description: t('developer.sync.checkSyncKey', 'يرجى التحقق من مفتاح المزامنة وإعادة المحاولة'),
           variant: "destructive",
         });
       }
+      
+      setSyncProgress(100);
       
       // إعادة التعيين بعد 3 ثوانٍ
       setTimeout(() => {
@@ -124,6 +241,7 @@ export function ConfigSync() {
       }, 3000);
       
     } catch (error) {
+      console.error("خطأ في تنزيل التكوين:", error);
       setSyncState('error');
       toast({
         title: t('developer.sync.downloadFailed', 'فشل تنزيل التكوين'),
@@ -154,6 +272,26 @@ export function ConfigSync() {
             {t('developer.sync.howItWorksDesc', 'قم برفع التكوين الحالي للحصول على مفتاح مزامنة. شارك هذا المفتاح مع العملاء البعيدين ليتمكنوا من تنزيل نفس التكوين على أجهزتهم.')}
           </AlertDescription>
         </Alert>
+        
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Globe className="h-4 w-4 text-indigo-600" />
+            <span className="text-sm">مزامنة عبر الإنترنت</span>
+          </div>
+          <Switch
+            checked={useOnlineSync}
+            onCheckedChange={toggleOnlineSync}
+          />
+        </div>
+        
+        {useOnlineSync && (
+          <div className="bg-green-50 border border-green-200 rounded-md p-3">
+            <p className="text-sm text-green-700">
+              المزامنة عبر الإنترنت مفعلة! سيتم حفظ التكوين على خادم JSONBin.io المجاني ويمكن للعملاء 
+              مزامنة التكوين من أي مكان في العالم باستخدام مفتاح المزامنة.
+            </p>
+          </div>
+        )}
         
         {syncState !== 'idle' && (
           <div className="space-y-2 my-4">
@@ -209,7 +347,7 @@ export function ConfigSync() {
               disabled={syncState !== 'idle' && syncState !== 'success' && syncState !== 'error'}
             >
               <CloudUpload className="h-4 w-4 mr-2" />
-              {t('developer.sync.uploadConfig', 'رفع التكوين')}
+              {useOnlineSync ? "رفع التكوين للإنترنت" : t('developer.sync.uploadConfig', 'رفع التكوين')}
             </Button>
             
             <Button

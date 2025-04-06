@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useToast } from "@/components/ui/use-toast";
 
 type ModeType = "client" | "developer";
@@ -15,6 +15,8 @@ interface ModeContextType {
   updateFeature: (featureId: string, enabled: boolean) => void;
   applyConfiguration: () => void;
   isSyncing: boolean;
+  lastSyncTime: Date | null;
+  checkForUpdates: () => Promise<boolean>;
 }
 
 // الميزات الافتراضية
@@ -69,6 +71,7 @@ export const ModeProvider = ({ children }: { children: React.ReactNode }) => {
   });
   
   const [isSyncing, setIsSyncing] = useState(false);
+  const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
   
   useEffect(() => {
     localStorage.setItem("octa-app-mode", mode);
@@ -78,6 +81,30 @@ export const ModeProvider = ({ children }: { children: React.ReactNode }) => {
       detail: { mode, features }
     }));
   }, [mode, features]);
+  
+  // استعادة آخر وقت مزامنة من التخزين المحلي
+  useEffect(() => {
+    const storedTime = localStorage.getItem("octa-last-sync-time");
+    if (storedTime) {
+      setLastSyncTime(new Date(storedTime));
+    }
+  }, []);
+  
+  // الاستماع لأحداث تحديث التكوين
+  useEffect(() => {
+    const handleConfigUpdate = (event: CustomEvent) => {
+      if (event.detail && event.detail.features) {
+        setFeatures(event.detail.features);
+        applyConfiguration();
+      }
+    };
+    
+    document.addEventListener('configurationUpdate', handleConfigUpdate as EventListener);
+    
+    return () => {
+      document.removeEventListener('configurationUpdate', handleConfigUpdate as EventListener);
+    };
+  }, []);
   
   // حفظ تكوين الميزات في التخزين المحلي
   useEffect(() => {
@@ -127,12 +154,67 @@ export const ModeProvider = ({ children }: { children: React.ReactNode }) => {
     }));
   };
   
+  // تحقق من تحديثات التكوين من المزامنة عبر الإنترنت
+  const checkForUpdates = useCallback(async (): Promise<boolean> => {
+    if (isSyncing) return false;
+    
+    setIsSyncing(true);
+    try {
+      // محاولة الوصول إلى المزامنة عبر JSONBin.io العام
+      const binId = localStorage.getItem("octa-sync-bin-id");
+      if (!binId) {
+        console.log("لا يوجد معرف مخزن للمزامنة");
+        setIsSyncing(false);
+        return false;
+      }
+
+      const response = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error("فشل في الوصول إلى بيانات المزامنة");
+      }
+      
+      const data = await response.json();
+      
+      // التحقق من وجود تحديثات
+      const serverTimestamp = data.metadata?.createdAt || '';
+      const localTimestamp = localStorage.getItem("octa-sync-timestamp") || '';
+      
+      if (serverTimestamp > localTimestamp) {
+        // تطبيق التحديثات إذا كانت جديدة
+        if (data.record && data.record.features) {
+          setFeatures(data.record.features);
+          localStorage.setItem("octa-sync-config", JSON.stringify(data.record));
+          localStorage.setItem("octa-sync-timestamp", serverTimestamp);
+          localStorage.setItem("octa-last-sync-time", new Date().toLocaleString());
+          setLastSyncTime(new Date());
+          
+          toast({
+            title: "تم تحديث التكوين",
+            description: "تم تطبيق أحدث الإعدادات من المزامنة",
+          });
+          
+          setIsSyncing(false);
+          return true;
+        }
+      }
+      
+      setIsSyncing(false);
+      return false;
+    } catch (error) {
+      console.error("خطأ في التحقق من التحديثات:", error);
+      setIsSyncing(false);
+      return false;
+    }
+  }, [isSyncing, toast]);
+  
   // تطبيق التكوين على وضع العميل
   const applyConfiguration = async () => {
-    if (mode !== "developer") {
-      return;
-    }
-    
     setIsSyncing(true);
     
     // محاكاة عملية المزامنة
@@ -153,6 +235,8 @@ export const ModeProvider = ({ children }: { children: React.ReactNode }) => {
     
     // حفظ التكوين للعميل
     localStorage.setItem("octa-client-features", JSON.stringify(features));
+    setLastSyncTime(new Date());
+    localStorage.setItem("octa-last-sync-time", new Date().toLocaleString());
     
     toast({
       title: "تم تطبيق الإعدادات",
@@ -212,7 +296,9 @@ export const ModeProvider = ({ children }: { children: React.ReactNode }) => {
       toggleFeature,
       updateFeature,
       applyConfiguration,
-      isSyncing
+      isSyncing,
+      lastSyncTime,
+      checkForUpdates
     }}>
       {children}
     </ModeContext.Provider>
