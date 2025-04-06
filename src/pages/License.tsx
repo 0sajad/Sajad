@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMode } from "@/context/ModeContext";
 import { useToast } from "@/components/ui/use-toast";
 import { Badge } from "@/components/ui/badge";
-import { CloudOff, CloudCheck, RefreshCw } from "lucide-react";
+import { CloudOff, RefreshCw, Cloud } from "lucide-react";
 import { useSyncQueue } from "@/hooks/offline/useSyncQueue";
 import { Button } from "@/components/ui/button";
 
@@ -156,7 +156,7 @@ const License = () => {
           ) : syncStatus === "syncing" ? (
             <RefreshCw className="h-5 w-5 text-blue-500 animate-spin" />
           ) : (
-            <CloudCheck className="h-5 w-5 text-green-500" />
+            <Cloud className="h-5 w-5 text-green-500" />
           )}
           <div className="flex flex-col">
             <span className="text-sm font-medium">
