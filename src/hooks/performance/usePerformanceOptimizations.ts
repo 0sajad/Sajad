@@ -1,78 +1,95 @@
 
-import { useEffect, useCallback } from 'react';
-import { toast } from 'sonner';
-import { useTranslation } from 'react-i18next';
-import { useAppState } from '../state/use-app-state';
-import { DeviceTier } from './useDeviceDetection';
+import { useMemo, useEffect } from 'react';
 
-/**
- * خطاف لتطبيق تحسينات الأداء تلقائيًا بناءً على قدرات الجهاز
- */
-export function usePerformanceOptimizations(deviceTier: DeviceTier, isLowEndDevice: boolean) {
-  const { t } = useTranslation();
-  const { setPreference } = useAppState();
-  
-  // تطبيق الإعدادات المحسنة للأجهزة ذات الأداء المنخفض
-  const optimizeForLowEndDevice = useCallback(() => {
-    // تطبيق التفضيلات المحسنة للأداء المنخفض
-    setPreference('animations', false);
-    setPreference('reducedMotion', true);
-    setPreference('compactMode', true);
-    
-    // إضافة فئة CSS للتحكم في الرسوم المتحركة والتأثيرات
-    document.body.classList.add('optimize-performance');
-    
-    // إضافة أنماط CSS للتحسين
-    const styleElement = document.createElement('style');
-    styleElement.id = 'performance-optimizations';
-    styleElement.textContent = `
-      .optimize-performance .animation-heavy {
-        animation: none !important;
-        transition: none !important;
-      }
-      .optimize-performance .parallax-effect {
-        transform: none !important;
-      }
-      .optimize-performance .blur-effect {
-        backdrop-filter: none !important;
-        -webkit-backdrop-filter: none !important;
-      }
-      .optimize-performance .shadow-effect {
-        box-shadow: none !important;
-      }
-    `;
-    document.head.appendChild(styleElement);
-    
-    // إعلام المستخدم بتطبيق التحسينات
-    toast.info(
-      t('performance.optimized', 'تم تحسين الأداء تلقائيًا'),
-      {
-        description: t('performance.optimizedForDevice', 'تم تطبيق إعدادات منخفضة لتحسين الأداء على جهازك'),
-        duration: 5000,
-      }
-    );
-  }, [setPreference, t]);
-  
-  // تطبيق تحسينات الأداء عند التحميل
+// استخدام خطاف لتطبيق تحسينات الأداء
+export function usePerformanceOptimizations(
+  deviceTier: 'low' | 'medium' | 'high',
+  isLowEndDevice: boolean
+) {
+  // تطبيق تحسينات للأجهزة منخفضة الأداء
   useEffect(() => {
-    if (isLowEndDevice) {
-      optimizeForLowEndDevice();
+    if (isLowEndDevice || deviceTier === 'low') {
+      // إضافة فئة CSS عامة لتحسين الأداء
+      document.body.classList.add('optimize-performance');
+      document.body.classList.add(`device-${deviceTier}`);
+      
+      // تعطيل الرسوم المتحركة غير الضرورية
+      const style = document.createElement('style');
+      style.id = 'performance-optimizations';
+      style.innerHTML = `
+        @media (prefers-reduced-motion: no-preference) {
+          .optimize-performance .animated-bg,
+          .optimize-performance .parallax,
+          .optimize-performance .hover-effect {
+            animation: none !important;
+            transition: none !important;
+            transform: none !important;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+      
+      return () => {
+        document.body.classList.remove('optimize-performance');
+        document.body.classList.remove(`device-${deviceTier}`);
+        const styleElement = document.getElementById('performance-optimizations');
+        if (styleElement) {
+          styleElement.remove();
+        }
+      };
     }
-    
-    // تطبيق متغيرات CSS للتحكم في زمن الرسوم المتحركة
-    document.documentElement.style.setProperty(
-      '--transition-speed',
-      isLowEndDevice ? '0.1s' : '0.3s'
-    );
-    
-    return () => {
-      // تنظيف
-      document.body.classList.remove('optimize-performance');
-      const styleElement = document.getElementById('performance-optimizations');
-      if (styleElement) styleElement.remove();
-      document.documentElement.style.removeProperty('--transition-speed');
+  }, [isLowEndDevice, deviceTier]);
+  
+  // وظائف التحسين المختلفة للاستخدام في المكونات
+  const optimizeForLowEndDevice = useMemo(() => {
+    return {
+      // تقليل عدد العناصر المعروضة في القوائم
+      limitListItems: (items: any[], maxItems: number = 10) => {
+        if (isLowEndDevice || deviceTier === 'low') {
+          return items.slice(0, maxItems);
+        }
+        if (deviceTier === 'medium') {
+          return items.slice(0, maxItems * 2);
+        }
+        return items;
+      },
+      
+      // تقليل عمق التصيير المتداخل
+      shouldRenderComplexComponent: (depth: number = 1) => {
+        if (isLowEndDevice && depth > 2) {
+          return false;
+        }
+        if (deviceTier === 'low' && depth > 3) {
+          return false;
+        }
+        if (deviceTier === 'medium' && depth > 5) {
+          return false;
+        }
+        return true;
+      },
+      
+      // تقليل جودة الصور
+      getImageQuality: () => {
+        if (isLowEndDevice || deviceTier === 'low') {
+          return 'low'; // يمكن استخدامها لتحميل صور منخفضة الجودة
+        }
+        if (deviceTier === 'medium') {
+          return 'medium';
+        }
+        return 'high';
+      },
+      
+      // تحديد ما إذا كان ينبغي استخدام ظلال وتأثيرات متقدمة
+      shouldUseAdvancedEffects: () => {
+        return !isLowEndDevice && deviceTier !== 'low';
+      },
+      
+      // تحديد ما إذا كان ينبغي استخدام تأثيرات الضبابية (Blur)
+      shouldUseBlurEffects: () => {
+        return deviceTier === 'high';
+      }
     };
-  }, [isLowEndDevice, optimizeForLowEndDevice]);
+  }, [isLowEndDevice, deviceTier]);
   
   return {
     optimizeForLowEndDevice

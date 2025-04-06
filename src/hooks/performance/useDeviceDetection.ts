@@ -1,89 +1,111 @@
 
 import { useState, useEffect } from 'react';
 
-export type DeviceTier = 'low' | 'medium' | 'high';
+interface DeviceInfo {
+  deviceTier: 'low' | 'medium' | 'high';
+  isLowEndDevice: boolean;
+  isHighEndDevice: boolean;
+  cpuCores: number;
+  memory: number | null;
+  isSlowConnection: boolean;
+  isTouch: boolean;
+  isMobile: boolean;
+}
 
-/**
- * خطاف للكشف عن قدرات الجهاز وتصنيفه
- */
-export function useDeviceDetection() {
-  const [deviceTier, setDeviceTier] = useState<DeviceTier>('medium');
-  const [isLowEndDevice, setIsLowEndDevice] = useState(false);
-  
-  // التعرف على قدرات الجهاز
+export function useDeviceDetection(): DeviceInfo {
+  const [deviceInfo, setDeviceInfo] = useState<DeviceInfo>({
+    deviceTier: 'medium',
+    isLowEndDevice: false,
+    isHighEndDevice: false,
+    cpuCores: navigator.hardwareConcurrency || 4,
+    memory: null,
+    isSlowConnection: false,
+    isTouch: false,
+    isMobile: false
+  });
+
   useEffect(() => {
-    const detectDeviceCapabilities = async () => {
-      // سلسلة من الاختبارات لتحديد مستوى أداء الجهاز
-      let tier: DeviceTier = 'medium';
-      
-      // 1. فحص إذا كان وضع توفير البطارية مفعلاً (إذا كان متاحًا)
-      const isBatteryOptimized = 'getBattery' in navigator && 
-        await (navigator as any).getBattery?.().then((battery: any) => battery.charging === false && battery.level < 0.15);
-      
-      // 2. فحص عدد النوى المنطقية للمعالج (إذا كان متاحًا)
-      const cpuCores = navigator.hardwareConcurrency || 0;
-      
-      // 3. فحص نوع الجهاز (موبايل، تابلت، سطح مكتب)
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      
-      // 4. فحص حجم الذاكرة (إذا كان متاحًا)
-      const hasLimitedMemory = (navigator as any).deviceMemory && (navigator as any).deviceMemory < 4;
-      
-      // 5. اختبار أساسي للأداء
-      const performanceTestStart = performance.now();
-      let counter = 0;
-      for (let i = 0; i < 1000000; i++) {
-        counter++;
+    // تحديد القدرة الحوسبية
+    const detectDeviceCapabilities = () => {
+      try {
+        // تحديد عدد النوى
+        const cpuCores = navigator.hardwareConcurrency || 4;
+        
+        // محاولة تحديد ذاكرة الجهاز (متاحة فقط في بعض المتصفحات)
+        const memory = (navigator as any).deviceMemory || null;
+        
+        // تحديد ما إذا كانت الشبكة بطيئة
+        const isSlowConnection = !!(navigator.connection && 
+          ((navigator.connection as any).effectiveType === '2g' || 
+           (navigator.connection as any).effectiveType === 'slow-2g' ||
+           (navigator.connection as any).saveData));
+        
+        // تحديد ما إذا كان جهاز لمس
+        const isTouch = (('ontouchstart' in window) || 
+                        (navigator.maxTouchPoints > 0) || 
+                        ((navigator as any).msMaxTouchPoints > 0));
+        
+        // تحديد ما إذا كان جهاز متنقل
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        // تحديد مستوى الجهاز
+        let deviceTier: 'low' | 'medium' | 'high' = 'medium';
+        let isLowEndDevice = false;
+        let isHighEndDevice = false;
+        
+        if (cpuCores <= 2 || memory && memory <= 2 || isSlowConnection) {
+          deviceTier = 'low';
+          isLowEndDevice = true;
+        } else if (cpuCores >= 8 && memory && memory >= 8) {
+          deviceTier = 'high';
+          isHighEndDevice = true;
+        }
+        
+        // الاستماع لتغييرات اتصال الشبكة إن أمكن
+        const connection = (navigator as any).connection;
+        if (connection) {
+          connection.addEventListener('change', detectDeviceCapabilities);
+        }
+        
+        setDeviceInfo({
+          deviceTier,
+          isLowEndDevice,
+          isHighEndDevice,
+          cpuCores,
+          memory,
+          isSlowConnection,
+          isTouch,
+          isMobile
+        });
+      } catch (error) {
+        console.error('فشل اكتشاف قدرات الجهاز:', error);
+        setDeviceInfo({
+          deviceTier: 'medium',
+          isLowEndDevice: false,
+          isHighEndDevice: false,
+          cpuCores: navigator.hardwareConcurrency || 4,
+          memory: null,
+          isSlowConnection: false,
+          isTouch: false,
+          isMobile: false
+        });
       }
-      const performanceTestDuration = performance.now() - performanceTestStart;
-      
-      // تحديد مستوى الجهاز بناءً على المعايير
-      if (
-        (isMobile && (hasLimitedMemory || cpuCores <= 4)) || 
-        isBatteryOptimized || 
-        performanceTestDuration > 50 || 
-        (navigator as any).connection?.saveData
-      ) {
-        tier = 'low';
-      } else if (
-        cpuCores >= 8 && 
-        !isMobile && 
-        performanceTestDuration < 15
-      ) {
-        tier = 'high';
-      }
-      
-      // تعيين مستوى الجهاز في الحالة
-      setDeviceTier(tier);
-      setIsLowEndDevice(tier === 'low');
-      
-      // حفظ نتيجة الاختبار في التخزين المحلي لتجنب تكرار الاختبار
-      localStorage.setItem('device-tier', tier);
-      localStorage.setItem('device-benchmark-date', new Date().toISOString());
-      
-      return tier;
     };
     
-    // التحقق مما إذا كان هناك اختبار سابق وما إذا كان لا يزال صالحًا
-    const storedTier = localStorage.getItem('device-tier') as DeviceTier | null;
-    const benchmarkDate = localStorage.getItem('device-benchmark-date');
-    const benchmarkAge = benchmarkDate 
-      ? (new Date().getTime() - new Date(benchmarkDate).getTime()) / (1000 * 60 * 60 * 24)
-      : 9999;
+    detectDeviceCapabilities();
     
-    // إعادة الاختبار كل 7 أيام أو إذا لم يكن هناك اختبار سابق
-    if (!storedTier || benchmarkAge > 7) {
-      detectDeviceCapabilities();
-    } else {
-      // استخدام القيمة المخزنة
-      setDeviceTier(storedTier);
-      setIsLowEndDevice(storedTier === 'low');
-    }
+    // تنظيف مستمعي الأحداث عند تفكيك المكون
+    return () => {
+      try {
+        const connection = (navigator as any).connection;
+        if (connection) {
+          connection.removeEventListener('change', detectDeviceCapabilities);
+        }
+      } catch (e) {
+        // تجاهل الأخطاء عند التنظيف
+      }
+    };
   }, []);
-  
-  return {
-    deviceTier,
-    isLowEndDevice,
-    isHighEndDevice: deviceTier === 'high'
-  };
+
+  return deviceInfo;
 }

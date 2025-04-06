@@ -10,9 +10,28 @@ try {
   console.error('فشل في تحميل ملف setup-dependencies.js:', e);
 }
 
+// التأكد من وجود مجلد electron
+const electronDir = path.join(__dirname, '..', 'electron');
+if (!fs.existsSync(electronDir)) {
+  console.error('خطأ: مجلد electron غير موجود.');
+  process.exit(1);
+}
+
 // قراءة ملف package.electron.json
 const electronPackagePath = path.join(__dirname, '../package.electron.json');
-const electronPackage = JSON.parse(fs.readFileSync(electronPackagePath, 'utf8'));
+if (!fs.existsSync(electronPackagePath)) {
+  console.error('خطأ: ملف package.electron.json غير موجود.');
+  process.exit(1);
+}
+
+// تحليل محتويات ملف package.electron.json
+let electronPackage;
+try {
+  electronPackage = JSON.parse(fs.readFileSync(electronPackagePath, 'utf8'));
+} catch (error) {
+  console.error('خطأ في قراءة أو تحليل ملف package.electron.json:', error.message);
+  process.exit(1);
+}
 
 // الحصول على الأمر من المعاملات
 const command = process.argv[2]; // مثلاً، 'dev' أو 'build'
@@ -49,15 +68,25 @@ const finalCmd = fs.existsSync(finalCmdPath) ? finalCmdPath : cmd;
 
 console.log(`تنفيذ الأمر: ${finalCmd} ${args.join(' ')}`);
 
-const proc = spawn(finalCmd, args, { 
-  stdio: 'inherit', 
-  shell: true,
-  env: { ...process.env, ELECTRON: 'true' } 
-});
+try {
+  const proc = spawn(finalCmd, args, { 
+    stdio: 'inherit', 
+    shell: true,
+    env: { ...process.env, ELECTRON: 'true' } 
+  });
 
-proc.on('close', (code) => {
-  if (code !== 0) {
-    console.error(`فشل تنفيذ الأمر بكود خطأ: ${code}`);
-  }
-  process.exit(code);
-});
+  proc.on('close', (code) => {
+    if (code !== 0) {
+      console.error(`فشل تنفيذ الأمر بكود خطأ: ${code}`);
+    }
+    process.exit(code || 0);
+  });
+
+  proc.on('error', (error) => {
+    console.error(`خطأ في تنفيذ الأمر: ${error.message}`);
+    process.exit(1);
+  });
+} catch (error) {
+  console.error(`حدث خطأ أثناء محاولة تشغيل الأمر: ${error.message}`);
+  process.exit(1);
+}

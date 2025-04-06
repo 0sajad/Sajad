@@ -1,77 +1,85 @@
 
-import { useCallback } from 'react';
-import { DeviceTier } from './useDeviceDetection';
+import { useMemo } from 'react';
 
-export interface OptimizeImageOptions {
-  width?: number;
-  quality?: number;
-  format?: 'webp' | 'jpeg' | 'png' | 'avif';
+interface PerformanceMetrics {
+  fps: number;
+  memory: {
+    usedHeap: number;
+    totalHeap: number;
+    limit: number;
+  } | null;
+  ttfb: number;
+  pageLoadTime: number;
+  averageInteractionTime: number;
+  longestInteraction: number;
 }
 
-/**
- * خطاف لتحسين الموارد (الصور، الفيديو، إلخ) بناءً على قدرات الجهاز
- */
-export function useOptimizedResources(deviceTier: DeviceTier, metrics: { fpsCapped: boolean }) {
-  // تحسين مصادر الصور
-  const optimizeImageSrc = useCallback((src: string, width?: number, quality?: number) => {
-    if (!src) return src;
-    
-    // تجاهل الصور المضمنة
-    if (src.startsWith('data:')) return src;
-    
-    // إذا كان المصدر URL كاملاً
-    try {
-      const url = new URL(src);
-      
-      // تطبيق معايير مختلفة بناءً على مستوى الجهاز
-      if (deviceTier === 'low') {
-        // استخدام جودة منخفضة للأجهزة منخفضة الأداء
-        url.searchParams.set('q', String(quality || 60));
-        if (width) {
-          url.searchParams.set('w', String(Math.round(width * 0.8)));
+// استخدام خطاف لتحسين الموارد مثل الصور والفيديو
+export function useOptimizedResources(
+  deviceTier: 'low' | 'medium' | 'high',
+  metrics: PerformanceMetrics
+) {
+  const shouldUseAdvancedAnimations = useMemo(() => {
+    // استخدام الرسوم المتحركة المتقدمة فقط في الأجهزة ذات الأداء العالي
+    // أو في الأجهزة المتوسطة مع أداء جيد
+    return deviceTier === 'high' || 
+          (deviceTier === 'medium' && metrics.fps > 45 && (!metrics.memory || metrics.memory.usedHeap < metrics.memory.limit * 0.7));
+  }, [deviceTier, metrics.fps, metrics.memory]);
+  
+  const shouldUseLazyLoading = useMemo(() => {
+    // استخدام التحميل الكسول للصور دائمًا في الأجهزة منخفضة الأداء
+    // وفي الأجهزة الأخرى عندما يكون الأداء منخفضًا
+    return deviceTier === 'low' || 
+          metrics.fps < 30 || 
+          (metrics.memory && metrics.memory.usedHeap > metrics.memory.limit * 0.8);
+  }, [deviceTier, metrics.fps, metrics.memory]);
+  
+  // تحسين مصادر الصور بناءً على قدرات الجهاز
+  const optimizeImageSrc = (originalSrc: string, size: 'small' | 'medium' | 'large' = 'medium'): string => {
+    // إذا كان المصدر الأصلي رابطًا خارجيًا، نحاول تحسينه باستخدام خدمة CDN
+    if (originalSrc.startsWith('http') && !originalSrc.includes('data:')) {
+      try {
+        // إذا كانت الصورة من unsplash أو مصادر أخرى تدعم معلمات التحجيم
+        if (originalSrc.includes('unsplash.com')) {
+          const sizeParam = deviceTier === 'low' ? 'w=400' : 
+                          deviceTier === 'medium' ? 'w=800' : 'w=1200';
+          const qualityParam = deviceTier === 'low' ? 'q=60' : 
+                             deviceTier === 'medium' ? 'q=80' : 'q=90';
+          
+          if (originalSrc.includes('?')) {
+            return `${originalSrc}&${sizeParam}&${qualityParam}`;
+          } else {
+            return `${originalSrc}?${sizeParam}&${qualityParam}`;
+          }
         }
-        // تفضيل تنسيق WEBP للأجهزة منخفضة الأداء
-        url.searchParams.set('fm', 'webp');
-        return url.toString();
-      } else if (deviceTier === 'medium') {
-        // جودة متوسطة
-        url.searchParams.set('q', String(quality || 80));
-        if (width) {
-          url.searchParams.set('w', String(width));
-        }
-        return url.toString();
+      } catch (error) {
+        console.error('خطأ أثناء محاولة تحسين مصدر الصورة:', error);
+        return originalSrc;
       }
-      
-      // للأجهزة عالية الأداء، استخدم الجودة العالية
-      if (quality) {
-        url.searchParams.set('q', String(quality));
-      }
-      if (width) {
-        url.searchParams.set('w', String(width));
-      }
-      
-      return url.toString();
-    } catch (e) {
-      // إذا لم يكن URL صالحًا، أعد المصدر كما هو
-      return src;
     }
-  }, [deviceTier]);
-  
-  // تحديد ما إذا كان يجب استخدام الرسوم المتحركة المتقدمة
-  const shouldUseAdvancedAnimations = useCallback(() => {
-    // استخدام الرسوم المتحركة فقط للأجهزة متوسطة وعالية الأداء
-    // وأيضًا مراعاة تفضيلات المستخدم لتقليل الحركة
-    return (
-      deviceTier !== 'low' && 
-      !metrics.fpsCapped && 
-      !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    );
-  }, [deviceTier, metrics.fpsCapped]);
-  
-  // تحديد ما إذا كان يجب استخدام التحميل الكسول
-  const shouldUseLazyLoading = useCallback(() => {
-    return true; // دائمًا استخدم التحميل الكسول، حتى للأجهزة عالية الأداء
-  }, []);
+    
+    // استخدام إصدارات متعددة من الصور المحلية إذا كانت متاحة
+    if (originalSrc.startsWith('/') && !originalSrc.includes('data:')) {
+      try {
+        const fileExtension = originalSrc.substring(originalSrc.lastIndexOf('.'));
+        const fileNameWithoutExt = originalSrc.substring(0, originalSrc.lastIndexOf('.'));
+        
+        if (deviceTier === 'low') {
+          const smallVersionSrc = `${fileNameWithoutExt}-small${fileExtension}`;
+          // التحقق من وجود الصورة المصغرة (يمكن تحسينه بالتخزين المؤقت للنتائج)
+          return smallVersionSrc;
+        } else if (deviceTier === 'medium' && size === 'large') {
+          const mediumVersionSrc = `${fileNameWithoutExt}-medium${fileExtension}`;
+          return mediumVersionSrc;
+        }
+      } catch (error) {
+        console.error('خطأ أثناء محاولة استخدام إصدار مختلف للصورة:', error);
+        return originalSrc;
+      }
+    }
+    
+    return originalSrc;
+  };
   
   return {
     optimizeImageSrc,

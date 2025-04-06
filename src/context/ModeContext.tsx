@@ -1,60 +1,10 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useToast } from "@/components/ui/use-toast";
-
-type ModeType = "client" | "developer";
-
-interface ModeContextType {
-  mode: ModeType;
-  setMode: (mode: ModeType) => void;
-  isDeveloperMode: boolean;
-  features: {
-    [key: string]: boolean;
-  };
-  toggleFeature: (featureId: string) => void;
-  updateFeature: (featureId: string, enabled: boolean) => void;
-  applyConfiguration: () => void;
-  isSyncing: boolean;
-  lastSyncTime: Date | null;
-  checkForUpdates: () => Promise<boolean>;
-}
-
-// الميزات الافتراضية
-const defaultFeatures = {
-  // الميزات الأساسية
-  networkMonitoring: true,
-  advancedSecurity: true,
-  aiAssistant: true,
-  
-  // الميزات المتقدمة
-  zeroPower: false,
-  holographicUI: false,
-  networkIsolation: false,
-  dnsOptimization: true,
-  latencyHeatmap: false,
-  trafficShaping: false,
-  invisibleMode: false,
-  networkCloning: false,
-  multiNetwork: false,
-  autoHealing: true,
-  signalBooster: false,
-  darkWebProtection: false,
-  deviceHeat: false,
-  
-  // ميزات أدوات تحليل البيانات
-  dataAnalysis: true,
-  elasticsearchIntegration: true,
-  prometheusMonitoring: true,
-  influxDBIntegration: true,
-  aiAnalytics: false,
-  kafkaStreaming: true,
-  sparkProcessing: false,
-  securityAnalysis: false,
-  networkPacketAnalysis: true,
-  cloudIntegration: false,
-  customScripting: false,
-  dataVisualization: true
-};
+import { ModeType, ModeFeatures, ModeContextType } from "./mode/types";
+import { defaultFeatures } from "./mode/defaultFeatures";
+import { validateConfiguration } from "./mode/featureValidator";
+import { checkForSyncUpdates } from "./mode/syncService";
 
 const ModeContext = createContext<ModeContextType | undefined>(undefined);
 
@@ -65,7 +15,7 @@ export const ModeProvider = ({ children }: { children: React.ReactNode }) => {
     return (savedMode as ModeType) || "client";
   });
   
-  const [features, setFeatures] = useState(() => {
+  const [features, setFeatures] = useState<ModeFeatures>(() => {
     const savedFeatures = localStorage.getItem("octa-dev-features");
     return savedFeatures ? JSON.parse(savedFeatures) : defaultFeatures;
   });
@@ -156,61 +106,8 @@ export const ModeProvider = ({ children }: { children: React.ReactNode }) => {
   
   // تحقق من تحديثات التكوين من المزامنة عبر الإنترنت
   const checkForUpdates = useCallback(async (): Promise<boolean> => {
-    if (isSyncing) return false;
-    
-    setIsSyncing(true);
-    try {
-      // محاولة الوصول إلى المزامنة عبر JSONBin.io العام
-      const binId = localStorage.getItem("octa-sync-bin-id");
-      if (!binId) {
-        console.log("لا يوجد معرف مخزن للمزامنة");
-        setIsSyncing(false);
-        return false;
-      }
-
-      const response = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error("فشل في الوصول إلى بيانات المزامنة");
-      }
-      
-      const data = await response.json();
-      
-      // التحقق من وجود تحديثات
-      const serverTimestamp = data.metadata?.createdAt || '';
-      const localTimestamp = localStorage.getItem("octa-sync-timestamp") || '';
-      
-      if (serverTimestamp > localTimestamp) {
-        // تطبيق التحديثات إذا كانت جديدة
-        if (data.record && data.record.features) {
-          setFeatures(data.record.features);
-          localStorage.setItem("octa-sync-config", JSON.stringify(data.record));
-          localStorage.setItem("octa-sync-timestamp", serverTimestamp);
-          localStorage.setItem("octa-last-sync-time", new Date().toLocaleString());
-          setLastSyncTime(new Date());
-          
-          toast({
-            title: "تم تحديث التكوين",
-            description: "تم تطبيق أحدث الإعدادات من المزامنة",
-          });
-          
-          setIsSyncing(false);
-          return true;
-        }
-      }
-      
-      setIsSyncing(false);
-      return false;
-    } catch (error) {
-      console.error("خطأ في التحقق من التحديثات:", error);
-      setIsSyncing(false);
-      return false;
-    }
+    const binId = localStorage.getItem("octa-sync-bin-id");
+    return checkForSyncUpdates(binId, isSyncing, setIsSyncing, toast, setFeatures, setLastSyncTime);
   }, [isSyncing, toast]);
   
   // تطبيق التكوين على وضع العميل
@@ -249,42 +146,6 @@ export const ModeProvider = ({ children }: { children: React.ReactNode }) => {
     document.dispatchEvent(new CustomEvent('configurationApplied', { 
       detail: { features }
     }));
-  };
-  
-  // التحقق من صحة التكوين
-  const validateConfiguration = (config: {[key: string]: boolean}) => {
-    // مثال: التأكد من عدم تفعيل ميزات متعارضة
-    if (config.invisibleMode && config.networkCloning) {
-      return { 
-        valid: false, 
-        message: "لا يمكن تفعيل وضع التخفي واستنساخ الشبكة معًا"
-      };
-    }
-    
-    // مثال: التأكد من تفعيل الميزات المطلوبة للميزات المتقدمة
-    if (config.holographicUI && !config.latencyHeatmap) {
-      return { 
-        valid: false, 
-        message: "الواجهة ثلاثية الأبعاد تتطلب تفعيل خريطة التأخير"
-      };
-    }
-    
-    // التحقق من تكاملات أدوات تحليل البيانات
-    if (config.aiAnalytics && !config.elasticsearchIntegration) {
-      return {
-        valid: false,
-        message: "تحليل الذكاء الاصطناعي يتطلب تكامل Elasticsearch"
-      };
-    }
-    
-    if (config.cloudIntegration && !config.dataAnalysis) {
-      return {
-        valid: false,
-        message: "تكامل السحابة يتطلب تحليل البيانات"
-      };
-    }
-    
-    return { valid: true, message: "" };
   };
   
   return (

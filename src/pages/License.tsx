@@ -4,14 +4,13 @@ import { useTranslation } from "react-i18next";
 import { LicenseSelector } from "@/components/license/LicenseSelector";
 import { ConfigSync } from "@/components/dev/ConfigSync";
 import { SyncGuide } from "@/components/license/SyncGuide";
+import { SyncStatus } from "@/components/license/SyncStatus";
+import { ClientSyncPanel } from "@/components/license/ClientSyncPanel";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMode } from "@/context/ModeContext";
 import { useToast } from "@/components/ui/use-toast";
-import { Badge } from "@/components/ui/badge";
-import { CloudOff, RefreshCw, Cloud } from "lucide-react";
 import { useSyncQueue } from "@/hooks/offline/useSyncQueue";
-import { Button } from "@/components/ui/button";
 
 const License = () => {
   const { t } = useTranslation();
@@ -149,57 +148,13 @@ const License = () => {
       />
       
       {/* قسم حالة المزامنة */}
-      <div className="flex items-center justify-between mt-4 p-3 bg-gray-50 rounded-md border">
-        <div className="flex items-center gap-2">
-          {syncStatus === "offline" ? (
-            <CloudOff className="h-5 w-5 text-gray-500" />
-          ) : syncStatus === "syncing" ? (
-            <RefreshCw className="h-5 w-5 text-blue-500 animate-spin" />
-          ) : (
-            <Cloud className="h-5 w-5 text-green-500" />
-          )}
-          <div className="flex flex-col">
-            <span className="text-sm font-medium">
-              {syncStatus === "offline" ? "غير متزامن" : syncStatus === "syncing" ? "جارٍ المزامنة..." : "متزامن"}
-            </span>
-            {lastSyncTime && syncStatus === "synced" && (
-              <span className="text-xs text-muted-foreground">آخر مزامنة: {lastSyncTime}</span>
-            )}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2">
-            <span className="text-sm">مزامنة تلقائية</span>
-            <div
-              className={`w-11 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${
-                autoSyncEnabled ? "bg-green-500" : "bg-gray-300"
-              }`}
-              onClick={toggleAutoSync}
-            >
-              <div
-                className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
-                  autoSyncEnabled ? "translate-x-5" : "translate-x-0"
-                }`}
-              />
-            </div>
-          </div>
-          <Button 
-            size="sm" 
-            onClick={syncNow} 
-            disabled={syncStatus === "syncing" || isSyncing}
-            className="ml-2 h-8"
-          >
-            {syncStatus === "syncing" ? (
-              <RefreshCw className="h-4 w-4 animate-spin" />
-            ) : (
-              <>
-                <RefreshCw className="h-3 w-3 mr-1" />
-                <span className="text-xs">تزامن الآن</span>
-              </>
-            )}
-          </Button>
-        </div>
-      </div>
+      <SyncStatus 
+        syncStatus={syncStatus}
+        lastSyncTime={lastSyncTime}
+        autoSyncEnabled={autoSyncEnabled}
+        toggleAutoSync={toggleAutoSync}
+        syncNow={syncNow}
+      />
       
       {/* قسم المزامنة عند اختيار وضع المطور */}
       {licenseType === "developer" && (
@@ -231,33 +186,7 @@ const License = () => {
             </TabsList>
             
             <TabsContent value="sync">
-              <Card className="border-indigo-200">
-                <CardHeader className="bg-gradient-to-r from-indigo-50 to-indigo-100">
-                  <CardTitle>مزامنة تكوين العميل</CardTitle>
-                  <CardDescription>
-                    أدخل مفتاح المزامنة للحصول على أحدث الإعدادات من المطور
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="pt-4">
-                  <div className="space-y-4">
-                    <p className="text-sm text-muted-foreground">
-                      للحصول على أحدث التكوينات والإعدادات، اطلب مفتاح المزامنة من المطور واستخدم زر "تزامن" في شريط التنقل العلوي.
-                    </p>
-                    <div className="p-4 border rounded-md bg-blue-50 text-blue-800 text-sm">
-                      يمكنك الآن مزامنة الإعدادات والتكوينات مع جهاز المطور حتى لو كنت في شبكة مختلفة أو دولة أخرى!
-                    </div>
-                    <div className="flex items-center justify-between mt-4">
-                      <span className="text-sm font-medium">مزامنة تلقائية</span>
-                      <Badge className={autoSyncEnabled ? "bg-green-500" : "bg-gray-500"}>
-                        {autoSyncEnabled ? "مفعل" : "معطل"}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      عند تفعيل المزامنة التلقائية، سيقوم التطبيق بالتحقق من وجود تحديثات كل 5 دقائق تلقائيًا.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+              <ClientSyncPanel autoSyncEnabled={autoSyncEnabled} />
             </TabsContent>
             
             <TabsContent value="guide">
