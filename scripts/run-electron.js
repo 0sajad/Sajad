@@ -6,7 +6,10 @@ const path = require('path');
 // تشغيل سكربت التحقق من المكتبات المطلوبة أولاً
 try {
   require('./setup-dependencies');
-  require('./setup-vite');  // استدعاء صريح لإعداد Vite
+  const viteSetupSuccess = require('./setup-vite');  // استدعاء صريح لإعداد Vite
+  if (!viteSetupSuccess) {
+    console.error('❌ فشل إعداد Vite. قد لا يعمل التطبيق بشكل صحيح.');
+  }
 } catch (e) {
   console.error('فشل في تحميل ملف setup-dependencies.js أو setup-vite.js:', e);
 }
@@ -61,24 +64,32 @@ const [cmd, ...args] = script.split(' ');
 
 // البحث عن مسار Vite الصحيح
 function findViteExecutable() {
-  // قائمة بالمسارات المحتملة لـ Vite
+  const isWindows = process.platform === 'win32';
   const possiblePaths = [
-    path.join(__dirname, '..', 'node_modules', '.bin', 'vite' + (process.platform === 'win32' ? '.cmd' : '')),
+    // المسار المباشر للملف التنفيذي
+    path.join(__dirname, '..', 'node_modules', '.bin', 'vite' + (isWindows ? '.cmd' : '')),
     path.join(__dirname, '..', 'node_modules', 'vite', 'bin', 'vite.js'),
-    'npx vite', // استخدام npx كحل بديل
-    'vite'      // الاعتماد على PATH
+    // ملف التشغيل الوسيط الذي أنشأناه
+    path.join(__dirname, 'run-vite.js'),
+    // استخدام node لتشغيل vite.js
+    'node ' + path.join(__dirname, '..', 'node_modules', 'vite', 'bin', 'vite.js'),
+    // استخدام npx
+    'npx vite',
+    // الاعتماد على PATH
+    'vite'
   ];
   
-  // البحث عن أول مسار صالح
   for (const potentialPath of possiblePaths) {
-    if (potentialPath === 'npx vite' || potentialPath === 'vite') {
+    if (potentialPath.startsWith('npx ') || potentialPath.startsWith('node ') || potentialPath === 'vite') {
+      console.log(`استخدام الأمر: ${potentialPath}`);
       return potentialPath;
     } else if (fs.existsSync(potentialPath)) {
+      console.log(`استخدام المسار: ${potentialPath}`);
       return potentialPath;
     }
   }
   
-  // إذا لم يتم العثور على أي مسار صالح، نستخدم npx
+  console.warn('⚠️ لم نجد ملف تنفيذي لـ Vite، سنحاول استخدام npx');
   return 'npx vite';
 }
 
@@ -103,27 +114,27 @@ try {
   // تعديل طريقة تنفيذ الأمر لتحسين التوافق
   let proc;
   
+  // تحسين متغيرات البيئة
+  const enhancedEnv = { 
+    ...process.env, 
+    ELECTRON: 'true',
+    // إضافة مسار node_modules/.bin و مسار vite إلى PATH
+    PATH: `${path.join(__dirname, '..', 'node_modules', '.bin')}${path.delimiter}${path.join(__dirname, '..', 'node_modules', 'vite', 'bin')}${path.delimiter}${process.env.PATH}`
+  };
+  
   if (finalCmd.includes(' ')) {
     // إذا كان الأمر يحتوي على مسافة، فهذا يعني أنه مركب مثل "npx vite"
     const [executable, ...subArgs] = finalCmd.split(' ');
     proc = spawn(executable, [...subArgs, ...args], { 
       stdio: 'inherit', 
       shell: true,
-      env: { 
-        ...process.env, 
-        ELECTRON: 'true',
-        PATH: `${path.join(__dirname, '..', 'node_modules', '.bin')}${path.delimiter}${process.env.PATH}`
-      } 
+      env: enhancedEnv
     });
   } else {
     proc = spawn(finalCmd, args, { 
       stdio: 'inherit', 
       shell: true,
-      env: { 
-        ...process.env, 
-        ELECTRON: 'true',
-        PATH: `${path.join(__dirname, '..', 'node_modules', '.bin')}${path.delimiter}${process.env.PATH}`
-      } 
+      env: enhancedEnv
     });
   }
 

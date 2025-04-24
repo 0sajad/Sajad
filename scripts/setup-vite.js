@@ -20,18 +20,38 @@ function checkViteInstallation() {
   const viteBinPathWindows = path.join(nodeModulesPath, '.bin', 'vite.cmd');
   
   if (fs.existsSync(vitePath) && (fs.existsSync(viteBinPath) || fs.existsSync(viteBinPathWindows))) {
+    console.log('✅ وجدنا تثبيت Vite محلي');
     return true;
   }
-  return false;
+
+  // تحقق من وجود Vite عالمي
+  try {
+    execSync('vite --version', { stdio: 'ignore' });
+    console.log('✅ وجدنا تثبيت Vite عالمي');
+    return true;
+  } catch (e) {
+    console.log('❌ لم نجد تثبيت Vite');
+    return false;
+  }
 }
 
 // تثبيت Vite إذا لم يكن موجودًا
 function installVite() {
   console.log('⏳ جاري تثبيت Vite...');
   try {
-    // استخدام --no-save للتثبيت السريع دون تعديل package.json
+    // محاولة تثبيت Vite محليًا
     execSync('npm install vite@latest --no-save', { stdio: 'inherit' });
     console.log('✅ تم تثبيت Vite بنجاح');
+
+    // التحقق من نجاح التثبيت
+    if (checkViteInstallation()) {
+      return true;
+    }
+
+    // إذا لم يتم العثور على Vite بعد التثبيت، حاول تثبيته بطريقة أخرى
+    console.log('⚠️ لم يتم العثور على Vite بعد التثبيت المحلي، جاري المحاولة بطريقة أخرى...');
+    execSync('npm install -g vite', { stdio: 'inherit' });
+    console.log('✅ تم تثبيت Vite عالميًا');
     return true;
   } catch (error) {
     console.error('❌ فشل تثبيت Vite:', error.message);
@@ -49,7 +69,7 @@ function installVite() {
   }
 }
 
-// إضافة Vite إلى package.json إذا لم يكن موجودًا
+// تحديث package.json إذا لزم الأمر
 function updatePackageJson() {
   const packageJsonPath = path.join(process.cwd(), 'package.json');
   if (fs.existsSync(packageJsonPath)) {
@@ -64,40 +84,76 @@ function updatePackageJson() {
         fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
         console.log('✅ تم تحديث package.json بإضافة Vite');
       }
+
+      // إضافة سكربت لتشغيل Vite مباشرة
+      if (!packageJson.scripts || !packageJson.scripts.vite) {
+        packageJson.scripts = packageJson.scripts || {};
+        packageJson.scripts.vite = "node ./node_modules/vite/bin/vite.js";
+        
+        fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+        console.log('✅ تم تحديث package.json بإضافة سكربت Vite');
+      }
     } catch (error) {
       console.error('❌ خطأ في تحديث package.json:', error.message);
     }
   }
 }
 
-// إنشاء رابط رمزي لـ Vite في سطر الأوامر
-function createSymlink() {
+// إنشاء ربط رمزي للوصول إلى Vite
+function createViteSymlink() {
   const isWindows = process.platform === 'win32';
-  const binPath = path.join(process.cwd(), 'node_modules', '.bin');
+  const localViteBin = path.join(process.cwd(), 'node_modules', '.bin', 'vite' + (isWindows ? '.cmd' : ''));
+  const localVitePath = path.join(process.cwd(), 'node_modules', 'vite', 'bin', 'vite.js');
   
-  try {
-    if (!isWindows) {
-      // لأنظمة Unix/Linux
-      const vitePathInNodeModules = path.join(binPath, 'vite');
-      const globalBinPath = '/usr/local/bin/vite';
-      
-      if (fs.existsSync(vitePathInNodeModules)) {
-        try {
-          execSync(`sudo ln -sf ${vitePathInNodeModules} ${globalBinPath}`, { stdio: 'ignore' });
-          console.log(`✅ تم إنشاء رابط رمزي لـ Vite في ${globalBinPath}`);
-        } catch (e) {
-          // قد تفشل محاولة إنشاء الرابط الرمزي بسبب صلاحيات السوبر يوزر
-          console.log('ملاحظة: لم نتمكن من إنشاء رابط رمزي عالمي لـ Vite');
+  // إنشاء ملف وسيط لتشغيل Vite إذا لم يكن موجودًا
+  if (!fs.existsSync(localViteBin) && fs.existsSync(localVitePath)) {
+    console.log('⏳ إنشاء ملف وسيط لتشغيل Vite...');
+    
+    const viteRunnerPath = path.join(process.cwd(), 'scripts', 'run-vite.js');
+    
+    if (!fs.existsSync(viteRunnerPath)) {
+      try {
+        // كتابة ملف وسيط لتشغيل Vite
+        const viteRunnerContent = `
+#!/usr/bin/env node
+require('${localVitePath.replace(/\\/g, '\\\\')}');
+`;
+        fs.writeFileSync(viteRunnerPath, viteRunnerContent);
+        
+        // جعل الملف قابل للتنفيذ على أنظمة يونكس
+        if (!isWindows) {
+          try {
+            execSync(`chmod +x ${viteRunnerPath}`, { stdio: 'ignore' });
+          } catch (e) {
+            console.log('⚠️ لم نتمكن من جعل ملف run-vite.js قابل للتنفيذ');
+          }
         }
+        
+        console.log(`✅ تم إنشاء ملف ${viteRunnerPath} لتشغيل Vite`);
+      } catch (e) {
+        console.error('❌ فشل إنشاء ملف وسيط لتشغيل Vite:', e.message);
       }
-    } else {
-      // تحديث متغير البيئة PATH لـ Windows
-      console.log(`إضافة ${binPath} إلى PATH للجلسة الحالية`);
-      process.env.PATH = `${binPath}${path.delimiter}${process.env.PATH}`;
     }
-  } catch (error) {
-    console.log('ملاحظة: لم نتمكن من إنشاء ارتباط رمزي، لكن هذا ليس ضرورياً');
   }
+}
+
+// إضافة Vite إلى متغير البيئة PATH
+function addViteToPath() {
+  const binPath = path.join(process.cwd(), 'node_modules', '.bin');
+  const vitePath = path.join(process.cwd(), 'node_modules', 'vite', 'bin');
+  
+  console.log(`⏳ إضافة المسارات التالية إلى PATH:
+- ${binPath}
+- ${vitePath}`);
+
+  // إضافة المسارات إلى PATH للعملية الحالية
+  if (process.platform === 'win32') {
+    process.env.PATH = `${binPath};${vitePath};${process.env.PATH}`;
+  } else {
+    process.env.PATH = `${binPath}:${vitePath}:${process.env.PATH}`;
+  }
+  
+  console.log('✅ تم تحديث متغير PATH للعملية الحالية');
 }
 
 // تنفيذ الخطوات واحدة تلو الأخرى
@@ -113,8 +169,11 @@ function setupVite() {
     installVite();
   }
   
-  // إنشاء رابط رمزي لتسهيل الوصول
-  createSymlink();
+  // إنشاء ربط لتسهيل الوصول
+  createViteSymlink();
+  
+  // إضافة Vite إلى PATH
+  addViteToPath();
   
   // تحقق مرة أخرى
   if (checkViteInstallation()) {
@@ -127,4 +186,9 @@ function setupVite() {
 }
 
 // تنفيذ عملية الإعداد
-setupVite();
+module.exports = setupVite();
+
+// تنفيذ مباشر إذا تم استدعاء الملف مباشرة
+if (require.main === module) {
+  setupVite();
+}

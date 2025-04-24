@@ -14,7 +14,11 @@ echo تم التأكد من وجود جميع الحزم المطلوبة.
 
 :: تثبيت Vite مباشرة
 echo تثبيت Vite...
-call npm install --no-save vite@latest
+call npm install vite@latest --save-dev
+call npm install -g vite
+
+:: إضافة node_modules\.bin إلى PATH للجلسة الحالية
+set PATH=%cd%\node_modules\.bin;%cd%\node_modules\vite\bin;%PATH%
 
 :: تشغيل سكربت إعداد Vite للتأكد من التثبيت الصحيح
 node scripts/setup-vite.js
