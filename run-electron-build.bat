@@ -12,10 +12,13 @@ if not exist "node_modules" (
 call npm install --no-save
 echo تم التأكد من وجود جميع الحزم المطلوبة.
 
+:: تشغيل سكربت إعداد Vite
+node scripts/setup-vite.js
+
 :: تحقق مما إذا كان ملف Vite موجوداً في node_modules
 if not exist "node_modules\.bin\vite.cmd" (
   echo تثبيت Vite...
-  call npm install --no-save vite
+  call npm install --save-dev vite
 )
 
 :: بناء التطبيق
