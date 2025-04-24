@@ -6,8 +6,9 @@ const path = require('path');
 // تشغيل سكربت التحقق من المكتبات المطلوبة أولاً
 try {
   require('./setup-dependencies');
+  require('./setup-vite');  // استدعاء صريح لإعداد Vite
 } catch (e) {
-  console.error('فشل في تحميل ملف setup-dependencies.js:', e);
+  console.error('فشل في تحميل ملف setup-dependencies.js أو setup-vite.js:', e);
 }
 
 // التأكد من وجود مجلد electron
@@ -63,8 +64,16 @@ const cmdPath = path.join(__dirname, '..', 'node_modules', '.bin', cmd);
 const isWindows = process.platform === 'win32';
 const finalCmdPath = isWindows ? `${cmdPath}.cmd` : cmdPath;
 
-// إذا كان الأمر غير موجود في node_modules/.bin، استخدم الأمر مباشرة
-const finalCmd = fs.existsSync(finalCmdPath) ? finalCmdPath : cmd;
+// إذا كان الأمر هو "vite" أو "npm"، نستخدم المسار الكامل
+let finalCmd = cmd;
+if (cmd === 'vite') {
+  finalCmd = fs.existsSync(finalCmdPath) ? finalCmdPath : 'npx vite';
+} else if (cmd === 'npm') {
+  finalCmd = 'npm';
+} else {
+  // بالنسبة للأوامر الأخرى، نتحقق مما إذا كانت موجودة في node_modules/.bin
+  finalCmd = fs.existsSync(finalCmdPath) ? finalCmdPath : cmd;
+}
 
 console.log(`تنفيذ الأمر: ${finalCmd} ${args.join(' ')}`);
 
@@ -72,7 +81,11 @@ try {
   const proc = spawn(finalCmd, args, { 
     stdio: 'inherit', 
     shell: true,
-    env: { ...process.env, ELECTRON: 'true' } 
+    env: { 
+      ...process.env, 
+      ELECTRON: 'true',
+      PATH: `${path.join(__dirname, '..', 'node_modules', '.bin')}${path.delimiter}${process.env.PATH}`
+    } 
   });
 
   proc.on('close', (code) => {
