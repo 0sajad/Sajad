@@ -12,10 +12,10 @@ if not exist "node_modules" (
 call npm install --no-save
 echo تم التأكد من وجود جميع الحزم المطلوبة.
 
-:: تثبيت Vite مباشرة
+:: تثبيت Vite بشكل صريح (مع حفظ مخرجات الأمر للحصول على مزيد من المعلومات)
 echo تثبيت Vite...
-call npm install vite@latest --save-dev
-call npm install -g vite
+call npm install vite@latest --save-dev --verbose
+call npm install -g vite --verbose
 
 :: إضافة node_modules\.bin إلى PATH للجلسة الحالية
 set PATH=%cd%\node_modules\.bin;%cd%\node_modules\vite\bin;%PATH%
@@ -23,9 +23,9 @@ set PATH=%cd%\node_modules\.bin;%cd%\node_modules\vite\bin;%PATH%
 :: تشغيل سكربت إعداد Vite للتأكد من التثبيت الصحيح
 node scripts/setup-vite.js
 
-:: تشغيل التطبيق
-echo تشغيل التطبيق...
-node scripts/run-electron.js dev
+:: استخدام npx لضمان تشغيل Vite
+echo تشغيل التطبيق باستخدام npx vite...
+npx vite --host --port 8080
 
 echo.
 echo إذا واجهت أي مشاكل، يرجى الضغط على أي مفتاح ثم اتباع التعليمات التالية:

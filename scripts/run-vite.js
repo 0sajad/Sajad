@@ -12,23 +12,39 @@ function findVitePath() {
   const possiblePaths = [
     path.join(process.cwd(), 'node_modules', '.bin', 'vite' + (process.platform === 'win32' ? '.cmd' : '')),
     path.join(process.cwd(), 'node_modules', 'vite', 'bin', 'vite.js'),
+    'npx vite', // استخدام npx
     'vite' // الاعتماد على PATH
   ];
 
   for (const potentialPath of possiblePaths) {
-    if (potentialPath === 'vite') {
+    if (potentialPath === 'vite' || potentialPath === 'npx vite') {
       try {
-        execSync('vite --version', { stdio: 'ignore' });
+        console.log(`محاولة تحقق من وجود Vite باستخدام: ${potentialPath}`);
+        if (potentialPath === 'npx vite') {
+          execSync('npx vite --version', { stdio: 'ignore' });
+        } else {
+          execSync('vite --version', { stdio: 'ignore' });
+        }
+        console.log(`✅ تم العثور على Vite باستخدام: ${potentialPath}`);
         return potentialPath;
       } catch (e) {
-        // تجاهل الخطأ
+        console.log(`❌ فشل التحقق باستخدام: ${potentialPath}`);
       }
     } else if (fs.existsSync(potentialPath)) {
+      console.log(`✅ تم العثور على Vite في المسار: ${potentialPath}`);
       return potentialPath;
     }
   }
 
-  return null;
+  console.log('⚠️ لم يتم العثور على Vite بالطرق المباشرة، سنحاول تثبيته وتشغيله...');
+  try {
+    console.log('محاولة تثبيت Vite محلياً...');
+    execSync('npm install vite@latest --save-dev', { stdio: 'inherit' });
+    return 'npx vite'; // استخدام npx بعد التثبيت
+  } catch (e) {
+    console.error('❌ فشل تثبيت Vite:', e);
+    return null;
+  }
 }
 
 // تنفيذ Vite مع الوسائط
@@ -45,7 +61,14 @@ function runVite() {
   let childProcess;
   const args = process.argv.slice(2);
 
-  if (vitePath.endsWith('.js')) {
+  if (vitePath === 'npx vite') {
+    // استخدام npx لتشغيل vite
+    childProcess = spawn('npx', ['vite', ...args], {
+      stdio: 'inherit',
+      shell: true,
+      env: process.env
+    });
+  } else if (vitePath.endsWith('.js')) {
     // إذا كان المسار ينتهي بـ .js، استخدم node لتشغيله
     childProcess = spawn('node', [vitePath, ...args], {
       stdio: 'inherit',
