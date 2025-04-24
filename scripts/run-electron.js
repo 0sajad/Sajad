@@ -59,34 +59,73 @@ console.log(`تشغيل أمر Electron: ${script}`);
 // تنفيذ السكربت
 const [cmd, ...args] = script.split(' ');
 
-// تأكد من أن cmd موجود في node_modules/.bin
-const cmdPath = path.join(__dirname, '..', 'node_modules', '.bin', cmd);
-const isWindows = process.platform === 'win32';
-const finalCmdPath = isWindows ? `${cmdPath}.cmd` : cmdPath;
+// البحث عن مسار Vite الصحيح
+function findViteExecutable() {
+  // قائمة بالمسارات المحتملة لـ Vite
+  const possiblePaths = [
+    path.join(__dirname, '..', 'node_modules', '.bin', 'vite' + (process.platform === 'win32' ? '.cmd' : '')),
+    path.join(__dirname, '..', 'node_modules', 'vite', 'bin', 'vite.js'),
+    'npx vite', // استخدام npx كحل بديل
+    'vite'      // الاعتماد على PATH
+  ];
+  
+  // البحث عن أول مسار صالح
+  for (const potentialPath of possiblePaths) {
+    if (potentialPath === 'npx vite' || potentialPath === 'vite') {
+      return potentialPath;
+    } else if (fs.existsSync(potentialPath)) {
+      return potentialPath;
+    }
+  }
+  
+  // إذا لم يتم العثور على أي مسار صالح، نستخدم npx
+  return 'npx vite';
+}
 
-// إذا كان الأمر هو "vite" أو "npm"، نستخدم المسار الكامل
+// تحديد المسار النهائي للأمر
 let finalCmd = cmd;
 if (cmd === 'vite') {
-  finalCmd = fs.existsSync(finalCmdPath) ? finalCmdPath : 'npx vite';
+  finalCmd = findViteExecutable();
 } else if (cmd === 'npm') {
   finalCmd = 'npm';
 } else {
   // بالنسبة للأوامر الأخرى، نتحقق مما إذا كانت موجودة في node_modules/.bin
+  const cmdPath = path.join(__dirname, '..', 'node_modules', '.bin', cmd);
+  const isWindows = process.platform === 'win32';
+  const finalCmdPath = isWindows ? `${cmdPath}.cmd` : cmdPath;
+  
   finalCmd = fs.existsSync(finalCmdPath) ? finalCmdPath : cmd;
 }
 
 console.log(`تنفيذ الأمر: ${finalCmd} ${args.join(' ')}`);
 
 try {
-  const proc = spawn(finalCmd, args, { 
-    stdio: 'inherit', 
-    shell: true,
-    env: { 
-      ...process.env, 
-      ELECTRON: 'true',
-      PATH: `${path.join(__dirname, '..', 'node_modules', '.bin')}${path.delimiter}${process.env.PATH}`
-    } 
-  });
+  // تعديل طريقة تنفيذ الأمر لتحسين التوافق
+  let proc;
+  
+  if (finalCmd.includes(' ')) {
+    // إذا كان الأمر يحتوي على مسافة، فهذا يعني أنه مركب مثل "npx vite"
+    const [executable, ...subArgs] = finalCmd.split(' ');
+    proc = spawn(executable, [...subArgs, ...args], { 
+      stdio: 'inherit', 
+      shell: true,
+      env: { 
+        ...process.env, 
+        ELECTRON: 'true',
+        PATH: `${path.join(__dirname, '..', 'node_modules', '.bin')}${path.delimiter}${process.env.PATH}`
+      } 
+    });
+  } else {
+    proc = spawn(finalCmd, args, { 
+      stdio: 'inherit', 
+      shell: true,
+      env: { 
+        ...process.env, 
+        ELECTRON: 'true',
+        PATH: `${path.join(__dirname, '..', 'node_modules', '.bin')}${path.delimiter}${process.env.PATH}`
+      } 
+    });
+  }
 
   proc.on('close', (code) => {
     if (code !== 0) {
