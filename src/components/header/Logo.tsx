@@ -8,8 +8,8 @@ export function Logo() {
   
   return (
     <Link to="/" className="relative mr-3 sm:mr-8 group">
-      <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-      <div className="relative flex items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20 dark:border-gray-800/50 shadow-xl">
+      <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-[30px] blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+      <div className="relative flex items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-sm px-8 py-3 rounded-[30px] border border-white/20 dark:border-gray-800/50 shadow-xl">
         <motion.div
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
@@ -121,7 +121,7 @@ export function Logo() {
           </motion.div>
           
           <motion.div 
-            className="absolute -z-10 inset-0 rounded-full opacity-30"
+            className="absolute -z-10 inset-0 rounded-[30px] opacity-30"
             animate={{
               boxShadow: [
                 "0 0 0 rgba(79, 70, 229, 0)",

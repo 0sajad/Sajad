@@ -1,98 +1,23 @@
 
 #!/usr/bin/env node
-
-// هذا الملف هو وسيط لتشغيل Vite من المسار الصحيح
-
+const { spawn } = require('child_process');
 const path = require('path');
-const fs = require('fs');
-const { execSync, spawn } = require('child_process');
 
-// التحقق من وجود Vite
-function findVitePath() {
-  const possiblePaths = [
-    path.join(process.cwd(), 'node_modules', '.bin', 'vite' + (process.platform === 'win32' ? '.cmd' : '')),
-    path.join(process.cwd(), 'node_modules', 'vite', 'bin', 'vite.js'),
-    'npx vite', // استخدام npx
-    'vite' // الاعتماد على PATH
-  ];
-
-  for (const potentialPath of possiblePaths) {
-    if (potentialPath === 'vite' || potentialPath === 'npx vite') {
-      try {
-        console.log(`محاولة تحقق من وجود Vite باستخدام: ${potentialPath}`);
-        if (potentialPath === 'npx vite') {
-          execSync('npx vite --version', { stdio: 'ignore' });
-        } else {
-          execSync('vite --version', { stdio: 'ignore' });
-        }
-        console.log(`✅ تم العثور على Vite باستخدام: ${potentialPath}`);
-        return potentialPath;
-      } catch (e) {
-        console.log(`❌ فشل التحقق باستخدام: ${potentialPath}`);
-      }
-    } else if (fs.existsSync(potentialPath)) {
-      console.log(`✅ تم العثور على Vite في المسار: ${potentialPath}`);
-      return potentialPath;
-    }
+// تشغيل Vite باستخدام npx
+const viteProcess = spawn('npx', ['vite', '--host', '--port', '8080'], {
+  stdio: 'inherit',
+  shell: true,
+  env: {
+    ...process.env,
+    PATH: `${path.join(process.cwd(), 'node_modules', '.bin')}${process.platform === 'win32' ? ';' : ':'}${process.env.PATH}`
   }
+});
 
-  console.log('⚠️ لم يتم العثور على Vite بالطرق المباشرة، سنحاول تثبيته وتشغيله...');
-  try {
-    console.log('محاولة تثبيت Vite محلياً...');
-    execSync('npm install vite@latest --save-dev', { stdio: 'inherit' });
-    return 'npx vite'; // استخدام npx بعد التثبيت
-  } catch (e) {
-    console.error('❌ فشل تثبيت Vite:', e);
-    return null;
-  }
-}
+viteProcess.on('error', (error) => {
+  console.error(`فشل تشغيل Vite: ${error.message}`);
+  process.exit(1);
+});
 
-// تنفيذ Vite مع الوسائط
-function runVite() {
-  const vitePath = findVitePath();
-
-  if (!vitePath) {
-    console.error('❌ لم يتم العثور على Vite. الرجاء تثبيته أولاً باستخدام "npm install vite"');
-    process.exit(1);
-  }
-
-  console.log(`تشغيل Vite من المسار: ${vitePath}`);
-
-  let childProcess;
-  const args = process.argv.slice(2);
-
-  if (vitePath === 'npx vite') {
-    // استخدام npx لتشغيل vite
-    childProcess = spawn('npx', ['vite', ...args], {
-      stdio: 'inherit',
-      shell: true,
-      env: process.env
-    });
-  } else if (vitePath.endsWith('.js')) {
-    // إذا كان المسار ينتهي بـ .js، استخدم node لتشغيله
-    childProcess = spawn('node', [vitePath, ...args], {
-      stdio: 'inherit',
-      shell: true,
-      env: process.env
-    });
-  } else {
-    // وإلا، قم بتنفيذ الملف مباشرة
-    childProcess = spawn(vitePath, args, {
-      stdio: 'inherit',
-      shell: true,
-      env: process.env
-    });
-  }
-
-  childProcess.on('close', (code) => {
-    process.exit(code || 0);
-  });
-
-  childProcess.on('error', (error) => {
-    console.error(`❌ خطأ في تنفيذ Vite: ${error.message}`);
-    process.exit(1);
-  });
-}
-
-// تنفيذ Vite
-runVite();
+viteProcess.on('close', (code) => {
+  process.exit(code || 0);
+});
