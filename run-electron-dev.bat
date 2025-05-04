@@ -2,11 +2,13 @@
 @echo off
 echo جاري تشغيل تطبيق إلكترون في وضع التطوير...
 
-:: تثبيت الحزم المطلوبة
-call npm install --no-save
-echo تم التأكد من وجود جميع الحزم المطلوبة.
+:: التحقق من node_modules
+if not exist "node_modules" (
+  echo تثبيت الحزم المطلوبة...
+  call npm install --no-save
+)
 
-:: تشغيل التطبيق
-node scripts/run-vite.js
+:: تنفيذ سكربت التشغيل الموثوق
+node dev.js
 
 pause
