@@ -2,8 +2,14 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
-console.log('التحقق من وجود Vite وتثبيته إذا لزم الأمر...');
+// تحديد نظام التشغيل
+const isWindows = os.platform() === 'win32';
+const isMac = os.platform() === 'darwin';
+const isLinux = os.platform() === 'linux';
+
+console.log(`التحقق من وجود Vite وتثبيته إذا لزم الأمر... (${isWindows ? 'Windows' : isMac ? 'macOS' : 'Linux'})`);
 
 // التحقق من وجود مجلد node_modules
 const nodeModulesPath = path.join(process.cwd(), 'node_modules');
@@ -26,12 +32,14 @@ function checkViteInstallation() {
 
   // تحقق من وجود Vite عالمي
   try {
-    execSync('vite --version', { stdio: 'ignore' });
+    const viteCommand = isWindows ? 'where vite' : 'which vite';
+    execSync(viteCommand, { stdio: 'ignore' });
     console.log('✅ وجدنا تثبيت Vite عالمي');
     return true;
   } catch (e) {
     try {
-      execSync('npx vite --version', { stdio: 'ignore' });
+      const npxCommand = isWindows ? 'npx.cmd vite --version' : 'npx vite --version';
+      execSync(npxCommand, { stdio: 'ignore' });
       console.log('✅ يمكن الوصول لـ Vite عبر npx');
       return true;
     } catch (npxError) {
@@ -46,7 +54,8 @@ function installVite() {
   console.log('⏳ جاري تثبيت Vite...');
   try {
     // محاولة تثبيت Vite محليًا
-    execSync('npm install vite@latest --save-dev', { stdio: 'inherit' });
+    const installCommand = isWindows ? 'npm install vite@latest --save-dev' : 'npm install vite@latest --save-dev';
+    execSync(installCommand, { stdio: 'inherit' });
     console.log('✅ تم تثبيت Vite بنجاح');
 
     // التحقق من نجاح التثبيت
@@ -56,19 +65,9 @@ function installVite() {
 
     // إذا لم يتم العثور على Vite بعد التثبيت، حاول تثبيته عالمياً
     console.log('⚠️ لم يتم العثور على Vite بعد التثبيت المحلي، جاري تثبيته عالمياً...');
-    execSync('npm install -g vite', { stdio: 'inherit' });
-    console.log('✅ تم تثبيت Vite عالميًا');
-    
-    // إنشاء رابط npx إلى Vite
-    try {
-      const npxViteContent = `#!/usr/bin/env node\nrequire('${path.join(process.cwd(), 'node_modules', 'vite', 'bin', 'vite.js').replace(/\\/g, '\\\\')}');\n`;
-      const npxVitePath = path.join(process.cwd(), 'npx-vite.js');
-      fs.writeFileSync(npxVitePath, npxViteContent);
-      fs.chmodSync(npxVitePath, '755');
-      console.log(`✅ تم إنشاء ملف تنفيذي في ${npxVitePath}`);
-    } catch (e) {
-      console.log('⚠️ لم نتمكن من إنشاء ملف تنفيذي: ', e);
-    }
+    const globalInstallCommand = isWindows ? 'npm install -g vite' : 'sudo npm install -g vite';
+    execSync(globalInstallCommand, { stdio: 'inherit' });
+    console.log('✅ تم تثبيت Vite عالمياً');
     
     return true;
   } catch (error) {
@@ -77,7 +76,8 @@ function installVite() {
     // محاولة استخدام npx
     try {
       console.log('⏳ محاولة تشغيل Vite باستخدام npx...');
-      execSync('npx vite --version', { stdio: 'ignore' });
+      const npxCommand = isWindows ? 'npx.cmd vite --version' : 'npx vite --version';
+      execSync(npxCommand, { stdio: 'ignore' });
       console.log('✅ يمكن تشغيل Vite باستخدام npx');
       return true;
     } catch (npxError) {
@@ -97,7 +97,7 @@ function addViteToPath() {
 - ${vitePath}`);
 
   // إضافة المسارات إلى PATH للعملية الحالية
-  if (process.platform === 'win32') {
+  if (isWindows) {
     process.env.PATH = `${binPath};${vitePath};${process.env.PATH}`;
     
     // محاولة إضافة المسارات إلى PATH للنظام (Windows فقط)
@@ -111,6 +111,37 @@ function addViteToPath() {
   } else {
     process.env.PATH = `${binPath}:${vitePath}:${process.env.PATH}`;
     console.log('✅ تم تحديث متغير PATH للعملية الحالية');
+    
+    // إضافة إلى ملف تكوين الشل للأنظمة القائمة على يونكس
+    const homeDir = os.homedir();
+    let shellConfigFile;
+    
+    // تحديد ملف تكوين الشل المناسب
+    if (isMac) {
+      // macOS يستخدم عادة .bash_profile أو .zshrc
+      if (fs.existsSync(path.join(homeDir, '.zshrc'))) {
+        shellConfigFile = path.join(homeDir, '.zshrc');
+      } else {
+        shellConfigFile = path.join(homeDir, '.bash_profile');
+      }
+    } else {
+      // معظم توزيعات لينكس تستخدم .bashrc
+      shellConfigFile = path.join(homeDir, '.bashrc');
+    }
+    
+    try {
+      if (fs.existsSync(shellConfigFile)) {
+        const pathExportLine = `export PATH="${binPath}:${vitePath}:$PATH"`;
+        const configContent = fs.readFileSync(shellConfigFile, 'utf8');
+        
+        if (!configContent.includes(pathExportLine)) {
+          fs.appendFileSync(shellConfigFile, `\n# Added by Octa Network Haven setup\n${pathExportLine}\n`);
+          console.log(`✅ تمت إضافة المسارات إلى ${shellConfigFile}`);
+        }
+      }
+    } catch (e) {
+      console.log(`⚠️ لم نتمكن من تحديث ملف التكوين ${shellConfigFile}`);
+    }
   }
 }
 
@@ -128,7 +159,7 @@ require('${viteJsPath.replace(/\\/g, '\\\\')}');
       fs.writeFileSync(viteRunnerPath, viteRunnerContent);
       
       // جعل الملف قابل للتنفيذ على أنظمة يونكس
-      if (process.platform !== 'win32') {
+      if (!isWindows) {
         try {
           execSync(`chmod +x ${viteRunnerPath}`, { stdio: 'ignore' });
         } catch (e) {
@@ -143,55 +174,50 @@ require('${viteJsPath.replace(/\\/g, '\\\\')}');
   }
 }
 
-// إنشاء ملف dev.js لتشغيل Vite
-function createViteDevScript() {
-  const devScriptPath = path.join(process.cwd(), 'dev.js');
-  
-  try {
-    const devScriptContent = `#!/usr/bin/env node
-// هذا الملف يشغل Vite في وضع التطوير
-const { spawn } = require('child_process');
-const path = require('path');
+// إنشاء سكربت تشغيل متوافق مع النظام
+function createSystemSpecificScripts() {
+  // إنشاء سكربت لينكس/ماك إذا لم يكن موجوداً
+  if (!isWindows && (!fs.existsSync('./run-electron-dev.sh') || !fs.existsSync('./run-electron-build.sh'))) {
+    try {
+      // سكربت التطوير
+      const devScriptContent = `#!/bin/bash
+echo "جاري تشغيل تطبيق إلكترون في وضع التطوير..."
 
-console.log('جاري تشغيل Vite في وضع التطوير...');
+# التحقق من node_modules
+if [ ! -d "node_modules" ]; then
+  echo "تثبيت الحزم المطلوبة..."
+  npm install --no-save
+fi
 
-// تحديد أمر التشغيل حسب النظام
-const isWin = process.platform === 'win32';
-const npxCommand = isWin ? 'npx.cmd' : 'npx';
-
-// تشغيل Vite باستخدام npx
-const viteProcess = spawn(npxCommand, ['vite', '--host', '--port', '8080'], {
-  stdio: 'inherit',
-  shell: true,
-  env: {
-    ...process.env,
-    PATH: \`\${path.join(process.cwd(), 'node_modules', '.bin')}\${isWin ? ';' : ':'}\${process.env.PATH}\`
-  }
-});
-
-viteProcess.on('error', (error) => {
-  console.error(\`فشل تشغيل Vite: \${error.message}\`);
-  process.exit(1);
-});
-
-viteProcess.on('close', (code) => {
-  process.exit(code || 0);
-});
+# تنفيذ سكربت التشغيل
+node dev.js
 `;
-    fs.writeFileSync(devScriptPath, devScriptContent);
-    
-    // جعل الملف قابل للتنفيذ على أنظمة يونكس
-    if (process.platform !== 'win32') {
-      try {
-        execSync(`chmod +x ${devScriptPath}`, { stdio: 'ignore' });
-      } catch (e) {
-        console.log('⚠️ لم نتمكن من جعل ملف dev.js قابل للتنفيذ');
-      }
+      fs.writeFileSync('./run-electron-dev.sh', devScriptContent);
+      execSync('chmod +x ./run-electron-dev.sh', { stdio: 'ignore' });
+      
+      // سكربت البناء
+      const buildScriptContent = `#!/bin/bash
+echo "جاري بناء تطبيق إلكترون..."
+
+# التحقق من node_modules
+if [ ! -d "node_modules" ]; then
+  echo "تثبيت الحزم المطلوبة..."
+  npm install --no-save
+fi
+
+# تشغيل عملية البناء
+npx vite build
+
+echo ""
+echo "تم الانتهاء! يمكنك العثور على ملف التثبيت في مجلد 'release'."
+`;
+      fs.writeFileSync('./run-electron-build.sh', buildScriptContent);
+      execSync('chmod +x ./run-electron-build.sh', { stdio: 'ignore' });
+      
+      console.log('✅ تم إنشاء ملفات تشغيل متوافقة مع لينكس/ماك');
+    } catch (e) {
+      console.log('⚠️ فشل إنشاء ملفات تشغيل لينكس/ماك:', e.message);
     }
-    
-    console.log(`✅ تم إنشاء ملف ${devScriptPath} لتشغيل Vite في وضع التطوير`);
-  } catch (e) {
-    console.log('⚠️ لم نتمكن من إنشاء ملف dev.js');
   }
 }
 
@@ -210,7 +236,9 @@ function setupVite() {
   
   // إنشاء ملفات تنفيذية
   createViteExecutable();
-  createViteDevScript();
+  
+  // إنشاء سكربتات متوافقة مع النظام
+  createSystemSpecificScripts();
   
   // تحقق مرة أخرى
   const viteOk = checkViteInstallation();

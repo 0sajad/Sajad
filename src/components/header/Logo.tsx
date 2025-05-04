@@ -9,7 +9,8 @@ export function Logo() {
   return (
     <Link to="/" className="relative mr-3 sm:mr-8 group">
       <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-[40px] blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-      <div className="relative flex items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-sm px-10 py-3 rounded-[40px] border border-white/20 dark:border-gray-800/50 shadow-xl">
+      
+      <div className="relative flex items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-sm px-12 py-3 rounded-[40px] border border-white/20 dark:border-gray-800/50 shadow-xl">
         <motion.div
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
@@ -17,13 +18,12 @@ export function Logo() {
           className="text-sm xs:text-base font-bold flex items-center justify-center w-full"
         >
           <div className="flex flex-col items-center">
-            <span className="bg-gradient-to-br from-blue-500 via-purple-500 to-octaBlue-500 bg-clip-text text-transparent">OCTA</span>
+            <span className="bg-gradient-to-br from-blue-500 via-purple-500 to-octaBlue-500 bg-clip-text text-transparent tracking-wider">OCTA</span>
             <div className="relative w-full flex justify-center">
               <span className="absolute -top-0.5 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent"></span>
               <span className="absolute -bottom-0.5 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent"></span>
-              <span className="mx-0.5">-</span>
             </div>
-            <span className="bg-gradient-to-tr from-purple-600 to-octaBlue-500 bg-clip-text text-transparent">GRAM</span>
+            <span className="bg-gradient-to-tr from-purple-600 to-octaBlue-500 bg-clip-text text-transparent">NETWORK</span>
           </div>
           
           <motion.div 

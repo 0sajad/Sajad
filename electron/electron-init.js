@@ -2,36 +2,43 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const os = require('os');
 
-// Check if required packages are installed
+// تحديد نظام التشغيل
+const isWindows = os.platform() === 'win32';
+const isMac = os.platform() === 'darwin';
+const isLinux = os.platform() === 'linux';
+
+// التحقق من تثبيت الحزم المطلوبة
 function checkDependencies() {
   try {
-    // Check if electron is installed
+    // التحقق من تثبيت إلكترون
     const electronPath = require.resolve('electron');
-    console.log('✅ Electron is installed');
+    console.log(`✅ إلكترون مثبت (${electronPath})`);
     
-    // Check if electron-builder is installed (for builds)
+    // التحقق من تثبيت electron-builder
     const builderPath = require.resolve('electron-builder');
-    console.log('✅ Electron-builder is installed');
+    console.log(`✅ إلكترون-بلدر مثبت (${builderPath})`);
     
     return true;
   } catch (err) {
-    console.error('❌ Missing dependencies:', err.message);
-    console.log('Installing required dependencies...');
+    console.error('❌ التبعيات مفقودة:', err.message);
+    console.log('جاري تثبيت التبعيات المطلوبة...');
     
     try {
-      console.log('Installing electron and electron-builder...');
-      execSync('npm install --no-save electron electron-builder', { stdio: 'inherit' });
-      console.log('✅ Dependencies installed successfully');
+      const npmCommand = isWindows ? 'npm install --no-save electron electron-builder' : 'npm install --no-save electron electron-builder';
+      console.log(`تنفيذ: ${npmCommand}`);
+      execSync(npmCommand, { stdio: 'inherit' });
+      console.log('✅ تم تثبيت التبعيات بنجاح');
       return true;
     } catch (installErr) {
-      console.error('❌ Failed to install dependencies:', installErr.message);
+      console.error('❌ فشل تثبيت التبعيات:', installErr.message);
       return false;
     }
   }
 }
 
-// Verify the project structure
+// التحقق من بنية المشروع
 function verifyProjectStructure() {
   const requiredFiles = [
     'electron/main.js',
@@ -44,39 +51,79 @@ function verifyProjectStructure() {
   for (const file of requiredFiles) {
     const filePath = path.resolve(__dirname, '..', file);
     if (!fs.existsSync(filePath)) {
-      console.error(`❌ Missing file: ${file}`);
+      console.error(`❌ ملف مفقود: ${file}`);
       isValid = false;
     }
   }
   
   if (isValid) {
-    console.log('✅ Project structure verification passed');
+    console.log('✅ تم التحقق من بنية المشروع بنجاح');
   }
   
   return isValid;
 }
 
-// Main function
-function initialize() {
-  console.log('🔍 Verifying Octa Network Haven Electron environment...');
-  
-  const dependenciesOk = checkDependencies();
-  const structureOk = verifyProjectStructure();
-  
-  if (dependenciesOk && structureOk) {
-    console.log('✅ Environment verification completed successfully');
+// إنشاء ملفات التشغيل المناسبة لنظام التشغيل
+function createSystemSpecificFiles() {
+  try {
+    // إنشاء ملف تشغيل مناسب للنظام إذا لم يكن موجودًا
+    if (!isWindows) {
+      // لأنظمة Unix (Mac/Linux)
+      const unixStartPath = path.resolve(__dirname, '..', 'run-electron.sh');
+      if (!fs.existsSync(unixStartPath)) {
+        const unixScript = `#!/bin/bash
+echo "جاري تشغيل Octa Network Haven..."
+cd "$(dirname "$0")"
+npm run electron:start
+`;
+        fs.writeFileSync(unixStartPath, unixScript);
+        execSync(`chmod +x ${unixStartPath}`, { stdio: 'ignore' });
+        console.log(`✅ تم إنشاء ملف تشغيل للنظام: ${unixStartPath}`);
+      }
+    } else {
+      // لنظام Windows
+      const winStartPath = path.resolve(__dirname, '..', 'run-electron.bat');
+      if (!fs.existsSync(winStartPath)) {
+        const winScript = `@echo off
+echo جاري تشغيل Octa Network Haven...
+cd /d "%~dp0"
+npm run electron:start
+pause
+`;
+        fs.writeFileSync(winStartPath, winScript);
+        console.log(`✅ تم إنشاء ملف تشغيل للنظام: ${winStartPath}`);
+      }
+    }
+    
     return true;
-  } else {
-    console.error('❌ Environment verification failed');
+  } catch (err) {
+    console.error('❌ فشل إنشاء ملفات خاصة بالنظام:', err.message);
     return false;
   }
 }
 
-// Run initialization if this script is called directly
+// الدالة الرئيسية
+function initialize() {
+  console.log(`🔍 التحقق من بيئة Octa Network Haven على نظام ${isWindows ? 'Windows' : isMac ? 'macOS' : 'Linux'}...`);
+  
+  const dependenciesOk = checkDependencies();
+  const structureOk = verifyProjectStructure();
+  const systemFilesOk = createSystemSpecificFiles();
+  
+  if (dependenciesOk && structureOk && systemFilesOk) {
+    console.log('✅ تم التحقق من البيئة بنجاح');
+    return true;
+  } else {
+    console.error('❌ فشل التحقق من البيئة');
+    return false;
+  }
+}
+
+// تشغيل التهيئة إذا تم استدعاء هذا السكربت مباشرة
 if (require.main === module) {
   const result = initialize();
   process.exit(result ? 0 : 1);
 } else {
-  // Export for use in other scripts
+  // تصدير للاستخدام في سكربتات أخرى
   module.exports = { initialize };
 }
