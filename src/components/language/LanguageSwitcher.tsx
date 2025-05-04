@@ -181,5 +181,4 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
   );
 }
 
-// تصدير افتراضي للتوافق مع React.lazy()
 export default LanguageSwitcher;

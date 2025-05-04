@@ -14,6 +14,18 @@ if not exist "node_modules\vite" (
   call npm install vite@latest --save-dev
 )
 
+:: التحقق من وجود الملفات المطلوبة
+if not exist "scripts" (
+  mkdir scripts
+)
+
+:: التحقق من وجود أداة setup-dependencies
+if not exist "scripts\setup-dependencies.js" (
+  echo "إنشاء ملفات الإعداد..."
+  copy nul "scripts\setup-dependencies.js"
+  node scripts\setup-dependencies.js
+)
+
 :: تنفيذ سكربت التشغيل
 echo تشغيل التطبيق...
 node dev.js

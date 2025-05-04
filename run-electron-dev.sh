@@ -14,6 +14,18 @@ if ! command -v ./node_modules/.bin/vite &> /dev/null; then
   npm install vite@latest --save-dev
 fi
 
+# التحقق من وجود الملفات المطلوبة
+if [ ! -d "scripts" ]; then
+  mkdir -p scripts
+fi
+
+# التحقق من وجود أداة setup-dependencies
+if [ ! -f "scripts/setup-dependencies.js" ]; then
+  echo "إنشاء ملفات الإعداد..."
+  touch "scripts/setup-dependencies.js"
+  node scripts/setup-dependencies.js
+fi
+
 # تنفيذ سكربت التشغيل
 echo "تشغيل التطبيق..."
 node dev.js

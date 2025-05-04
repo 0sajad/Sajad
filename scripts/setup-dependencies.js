@@ -5,11 +5,10 @@ const path = require('path');
 
 console.log('التحقق من المكتبات المطلوبة وتثبيتها إذا لزم الأمر...');
 
-// قائمة بالمكتبات الضرورية مع التركيز على Vite
+// قائمة بالمكتبات الضرورية
 const requiredPackages = [
   'vite',
   '@vitejs/plugin-react-swc',
-  'vite-cli',
   'electron',
   'electron-builder',
   'react',
@@ -43,24 +42,16 @@ function checkAndInstallPackages() {
       // تثبيت Vite عالمياً إذا كان مفقوداً
       if (missingPackages.includes('vite')) {
         try {
-          console.log('محاولة تثبيت Vite عالمياً للتأكيد...');
+          console.log('تثبيت Vite عالمياً للتأكيد...');
           execSync('npm install -g vite', { stdio: 'inherit' });
           console.log('✅ تم تثبيت Vite عالمياً');
         } catch (e) {
-          console.log('⚠️ لم نتمكن من تثبيت Vite عالمياً، لكن التثبيت المحلي قد يكون كافياً');
+          console.log('⚠️ لم نتمكن من تثبيت Vite عالمياً، لكن التثبيت المحلي كافٍ');
         }
       }
     } catch (error) {
       console.error('❌ حدث خطأ أثناء تثبيت المكتبات:', error.message);
-      
-      // محاولة التثبيت عالميًا إذا فشل التثبيت محليًا
-      try {
-        execSync(`npm install -g ${missingPackages.join(' ')}`, { stdio: 'inherit' });
-        console.log('✅ تم تثبيت المكتبات عالميًا');
-      } catch (globalError) {
-        console.error('❌ فشل تثبيت المكتبات عالميًا:', globalError.message);
-        process.exit(1);
-      }
+      process.exit(1);
     }
   } else {
     console.log('✅ جميع المكتبات مثبتة بالفعل');
@@ -72,51 +63,26 @@ function addViteToPath() {
   const nodeModulesBinPath = path.join(process.cwd(), 'node_modules', '.bin');
   const viteModulePath = path.join(process.cwd(), 'node_modules', 'vite', 'bin');
   
-  if (process.platform === 'win32') {
-    // إضافة المسار للويندوز
-    try {
-      console.log(`إضافة ${nodeModulesBinPath} و ${viteModulePath} إلى PATH للجلسة الحالية`);
-      process.env.PATH = `${nodeModulesBinPath};${viteModulePath};${process.env.PATH}`;
-      
-      try {
-        execSync(`setx PATH "%PATH%;${nodeModulesBinPath};${viteModulePath}"`, { stdio: 'ignore' });
-        console.log('✅ تم إضافة مسارات Vite للبيئة على Windows');
-      } catch (e) {
-        console.log('⚠️ لم نتمكن من تحديث PATH للنظام، لكن تم تحديثه للعملية الحالية');
-      }
-    } catch (error) {
-      console.log('⚠️ تم تحديث PATH للعملية الحالية فقط');
-      process.env.PATH = `${nodeModulesBinPath};${viteModulePath};${process.env.PATH}`;
-    }
-  } else {
-    // لأنظمة Unix/Linux
-    process.env.PATH = `${nodeModulesBinPath}:${viteModulePath}:${process.env.PATH}`;
-    console.log(`✅ تم إضافة ${nodeModulesBinPath} و ${viteModulePath} إلى PATH للعملية الحالية`);
-    
-    const shellConfigPath = process.env.HOME + (process.platform === 'darwin' ? '/.bash_profile' : '/.bashrc');
-    const pathExportLine = `export PATH=$PATH:${nodeModulesBinPath}:${viteModulePath}`;
-    
-    try {
-      const shellConfig = fs.existsSync(shellConfigPath) ? fs.readFileSync(shellConfigPath, 'utf8') : '';
-      if (!shellConfig.includes(pathExportLine)) {
-        fs.appendFileSync(shellConfigPath, `\n${pathExportLine}\n`);
-        console.log('✅ تم إضافة مسار Vite للبيئة بشكل دائم');
-      }
-    } catch (error) {
-      console.log('⚠️ لم نتمكن من تحديث ملف التكوين للشل، لكن تم تحديث PATH للعملية الحالية');
-    }
-  }
+  process.env.PATH = process.platform === 'win32' 
+    ? `${nodeModulesBinPath};${viteModulePath};${process.env.PATH}`
+    : `${nodeModulesBinPath}:${viteModulePath}:${process.env.PATH}`;
+  
+  console.log(`✅ تم إضافة مسارات Vite للعملية الحالية`);
 }
 
 // إنشاء ملف وسيط لتشغيل Vite
 function createViteRunner() {
+  const scriptsDir = path.join(process.cwd(), 'scripts');
+  if (!fs.existsSync(scriptsDir)) {
+    fs.mkdirSync(scriptsDir, { recursive: true });
+  }
+  
   const viteJsPath = path.join(process.cwd(), 'node_modules', 'vite', 'bin', 'vite.js');
-  const viteRunnerPath = path.join(process.cwd(), 'scripts', 'run-vite.js');
+  const viteRunnerPath = path.join(scriptsDir, 'run-vite.js');
   
   if (fs.existsSync(viteJsPath) && !fs.existsSync(viteRunnerPath)) {
     try {
-      const viteRunnerContent = `
-#!/usr/bin/env node
+      const viteRunnerContent = `#!/usr/bin/env node
 require('${viteJsPath.replace(/\\/g, '\\\\')}');
 `;
       fs.writeFileSync(viteRunnerPath, viteRunnerContent);

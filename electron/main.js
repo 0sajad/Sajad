@@ -29,7 +29,7 @@ function createWindow() {
   mainWindow.loadURL(startUrl);
 
   // فتح أدوات المطور في وضع التطوير
-  if (process.env.ELECTRON !== 'true') {
+  if (process.env.NODE_ENV === 'development') {
     mainWindow.webContents.openDevTools();
   }
 

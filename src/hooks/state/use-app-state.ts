@@ -65,20 +65,36 @@ export const useAppState = create<AppState>()(
       setNetworkStatus: (status) => set({
         isConnected: status.isConnected,
         isOnline: status.isOnline,
-        lastCheck: new Date()
+        lastCheck: new Date(),
+        networkStatus: {
+          ...get().networkStatus,
+          isConnected: status.isConnected,
+          isOnline: status.isOnline,
+          lastCheck: new Date()
+        }
       }),
       
       handleOfflineStatus: () => {
         set({
           isOnline: false,
-          lastCheck: new Date()
+          lastCheck: new Date(),
+          networkStatus: {
+            ...get().networkStatus,
+            isOnline: false,
+            lastCheck: new Date()
+          }
         });
       },
 
       handleOnlineStatus: () => {
         set({
           isOnline: true,
-          lastCheck: new Date()
+          lastCheck: new Date(),
+          networkStatus: {
+            ...get().networkStatus,
+            isOnline: true,
+            lastCheck: new Date()
+          }
         });
       },
 
@@ -128,7 +144,13 @@ export const useAppState = create<AppState>()(
           set({ 
             isConnected: true,
             isOnline,
-            lastCheck: new Date()
+            lastCheck: new Date(),
+            networkStatus: {
+              ...get().networkStatus,
+              isConnected: true,
+              isOnline,
+              lastCheck: new Date()
+            }
           });
           
           return isOnline;
@@ -136,7 +158,13 @@ export const useAppState = create<AppState>()(
           set({ 
             isConnected: false,
             isOnline: false,
-            lastCheck: new Date()
+            lastCheck: new Date(),
+            networkStatus: {
+              ...get().networkStatus,
+              isConnected: false,
+              isOnline: false,
+              lastCheck: new Date()
+            }
           });
           
           return false;

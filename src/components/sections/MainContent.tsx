@@ -6,9 +6,6 @@ import { usePerformanceOptimization } from "@/hooks/usePerformanceOptimization";
 import { ErrorBoundary } from "@/components/ui/error/ErrorBoundary";
 import { ErrorMessage } from "@/components/ui/error/ErrorMessage";
 
-// تعريف النوع للمكونات الكسولة
-type LazyComponentType = React.ComponentType<any>;
-
 // تصحيح التحميل الكسول للمكونات مع دعم الصادرات المسماة - مع تحسين آلية التحميل
 const importComponent = (path: string, exportName?: string) => {
   return lazy(() => 
@@ -18,7 +15,7 @@ const importComponent = (path: string, exportName?: string) => {
   );
 };
 
-// تحميل المكونات بشكل كسول باستخدام آلية موحدة
+// تحميل المكونات بشكل كسول
 const AnimatedCards = importComponent('@/components/AnimatedCards', 'AnimatedCards');
 const AIFeaturesSection = importComponent('@/components/sections/AIFeaturesSection', 'AIFeaturesSection');
 const NetworkDashboard = importComponent('@/components/NetworkDashboard');

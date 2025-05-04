@@ -42,10 +42,21 @@ function checkDependencies() {
 function verifyProjectStructure() {
   const requiredFiles = [
     'electron/main.js',
-    'electron/preload.js',
-    'electron/electron-builder.yml'
+    'electron/preload.js'
   ];
   
+  // إنشاء مجلد electron إذا لم يكن موجوداً
+  const electronDir = path.resolve(__dirname, '..');
+  if (!fs.existsSync(electronDir)) {
+    try {
+      fs.mkdirSync(electronDir, { recursive: true });
+      console.log('✅ تم إنشاء مجلد electron');
+    } catch (e) {
+      console.error('❌ فشل إنشاء مجلد electron:', e.message);
+    }
+  }
+  
+  // التحقق من وجود الملفات المطلوبة
   let isValid = true;
   
   for (const file of requiredFiles) {
@@ -93,6 +104,25 @@ pause
         fs.writeFileSync(winStartPath, winScript);
         console.log(`✅ تم إنشاء ملف تشغيل للنظام: ${winStartPath}`);
       }
+    }
+    
+    // إنشاء ملف تهيئة إلكترون إذا لم يكن موجوداً
+    const electronPackageJsonPath = path.join(__dirname, 'package.json');
+    if (!fs.existsSync(electronPackageJsonPath)) {
+      const packageJson = {
+        name: "octa-network-haven",
+        version: "1.0.0",
+        description: "Octa Network Haven Desktop App",
+        main: "main.js",
+        author: "Octa Network",
+        license: "MIT",
+        scripts: {
+          start: "electron ."
+        }
+      };
+      
+      fs.writeFileSync(electronPackageJsonPath, JSON.stringify(packageJson, null, 2));
+      console.log(`✅ تم إنشاء ملف package.json لإلكترون`);
     }
     
     return true;

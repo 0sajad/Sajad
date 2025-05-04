@@ -76,21 +76,21 @@ try {
     viteProcess = spawn(isWindows ? 'npx.cmd' : 'npx', ['vite', '--host', '--port', '8080'], {
       stdio: 'inherit',
       shell: true,
-      env: { ...process.env }
+      env: { ...process.env, NODE_ENV: 'development' }
     });
   } else if (viteCommand.endsWith('vite.js')) {
     // استخدام node لتشغيل ملف vite.js
     viteProcess = spawn(process.execPath, [viteCommand, '--host', '--port', '8080'], {
       stdio: 'inherit',
       shell: true,
-      env: { ...process.env }
+      env: { ...process.env, NODE_ENV: 'development' }
     });
   } else {
     // تشغيل الملف التنفيذي مباشرة
     viteProcess = spawn(viteCommand, ['--host', '--port', '8080'], {
       stdio: 'inherit',
       shell: true,
-      env: { ...process.env }
+      env: { ...process.env, NODE_ENV: 'development' }
     });
   }
   
@@ -103,7 +103,8 @@ try {
     const fallbackCommand = isWindows ? 'npx.cmd' : 'npx';
     const altProcess = spawn(fallbackCommand, ['vite', '--host', '--port', '8080'], {
       stdio: 'inherit',
-      shell: true
+      shell: true,
+      env: { ...process.env, NODE_ENV: 'development' }
     });
     
     altProcess.on('error', (err) => {
