@@ -8,6 +8,12 @@ if [ ! -d "node_modules" ]; then
   npm install --no-save
 fi
 
-# تنفيذ سكربت التشغيل
-node dev.js
+# التحقق من وجود Vite وتثبيته إذا لم يكن موجوداً
+if ! command -v ./node_modules/.bin/vite &> /dev/null; then
+  echo "تثبيت Vite..."
+  npm install vite@latest --save-dev
+fi
 
+# تنفيذ سكربت التشغيل
+echo "تشغيل التطبيق..."
+node dev.js

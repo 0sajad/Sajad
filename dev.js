@@ -18,10 +18,13 @@ console.log(`نظام التشغيل: ${isWindows ? 'Windows' : isMac ? 'macOS' 
 if (!isWindows) {
   try {
     if (fs.existsSync('./run-electron-dev.sh')) {
-      execSync('chmod +x ./run-electron-dev.sh', { stdio: 'ignore' });
+      execSync('chmod +x ./run-electron-dev.sh', { stdio: 'inherit' });
     }
     if (fs.existsSync('./run-electron-build.sh')) {
-      execSync('chmod +x ./run-electron-build.sh', { stdio: 'ignore' });
+      execSync('chmod +x ./run-electron-build.sh', { stdio: 'inherit' });
+    }
+    if (fs.existsSync('./scripts/run-vite.js')) {
+      execSync('chmod +x ./scripts/run-vite.js', { stdio: 'inherit' });
     }
   } catch (error) {
     console.log('تحذير: لم يتم ضبط صلاحيات التنفيذ للملفات. قد تحتاج إلى تنفيذ الأمر يدويًا.');
@@ -48,36 +51,48 @@ try {
     console.log('تم تثبيت Vite بنجاح.');
   }
   
-  // تحديد أمر تشغيل Vite المناسب لنظام التشغيل
-  const viteLocalPath = path.join(process.cwd(), 'node_modules', '.bin', 'vite' + (isWindows ? '.cmd' : ''));
-  const viteLocalPathJS = path.join(process.cwd(), 'node_modules', 'vite', 'bin', 'vite.js');
-  
-  let viteCommand, viteArgs;
-  
-  if (fs.existsSync(viteLocalPath)) {
-    console.log(`استخدام Vite المحلي من: ${viteLocalPath}`);
-    viteCommand = viteLocalPath;
-    viteArgs = ['--host', '--port', '8080'];
-  } else if (fs.existsSync(viteLocalPathJS)) {
-    console.log(`استخدام Node لتشغيل Vite من: ${viteLocalPathJS}`);
-    viteCommand = process.execPath; // node executable
-    viteArgs = [viteLocalPathJS, '--host', '--port', '8080'];
-  } else {
-    console.log('استخدام Vite عبر npx');
-    viteCommand = isWindows ? 'npx.cmd' : 'npx';
-    viteArgs = ['vite', '--host', '--port', '8080'];
+  // تعزيز البحث عن Vite المناسب للنظام
+  const possibleVitePaths = [
+    path.join(process.cwd(), 'node_modules', '.bin', 'vite' + (isWindows ? '.cmd' : '')),
+    path.join(process.cwd(), 'node_modules', 'vite', 'bin', 'vite.js'),
+    'npx vite'
+  ];
+
+  let viteCommand = possibleVitePaths[2]; // الخيار الأخير كافتراضي
+  for (const vPath of possibleVitePaths) {
+    if (fs.existsSync(vPath)) {
+      viteCommand = vPath;
+      console.log(`استخدام Vite من: ${vPath}`);
+      break;
+    }
   }
   
-  console.log(`تنفيذ: ${viteCommand} ${viteArgs.join(' ')}`);
+  // تشغيل Vite مع المعاملات المناسبة
+  console.log('تشغيل Vite...');
+  let viteProcess;
   
-  const viteProcess = spawn(viteCommand, viteArgs, {
-    stdio: 'inherit',
-    shell: true,
-    env: {
-      ...process.env,
-      PATH: `${path.join(process.cwd(), 'node_modules', '.bin')}${isWindows ? ';' : ':'}${process.env.PATH}`
-    }
-  });
+  if (viteCommand === 'npx vite') {
+    // استخدام npx إذا لم يتم العثور على الملف مباشرة
+    viteProcess = spawn(isWindows ? 'npx.cmd' : 'npx', ['vite', '--host', '--port', '8080'], {
+      stdio: 'inherit',
+      shell: true,
+      env: { ...process.env }
+    });
+  } else if (viteCommand.endsWith('vite.js')) {
+    // استخدام node لتشغيل ملف vite.js
+    viteProcess = spawn(process.execPath, [viteCommand, '--host', '--port', '8080'], {
+      stdio: 'inherit',
+      shell: true,
+      env: { ...process.env }
+    });
+  } else {
+    // تشغيل الملف التنفيذي مباشرة
+    viteProcess = spawn(viteCommand, ['--host', '--port', '8080'], {
+      stdio: 'inherit',
+      shell: true,
+      env: { ...process.env }
+    });
+  }
   
   viteProcess.on('error', (error) => {
     console.error(`فشل تشغيل Vite: ${error.message}`);

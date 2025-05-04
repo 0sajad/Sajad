@@ -8,7 +8,14 @@ if not exist "node_modules" (
   call npm install --no-save
 )
 
-:: تنفيذ سكربت التشغيل الموثوق
+:: التحقق من وجود Vite
+if not exist "node_modules\vite" (
+  echo تثبيت Vite...
+  call npm install vite@latest --save-dev
+)
+
+:: تنفيذ سكربت التشغيل
+echo تشغيل التطبيق...
 node dev.js
 
 pause

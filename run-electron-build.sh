@@ -14,9 +14,14 @@ if ! command -v ./node_modules/.bin/vite &> /dev/null; then
   npm install vite@latest --save-dev
 fi
 
+# إنشاء مجلد release إذا لم يكن موجوداً
+if [ ! -d "release" ]; then
+  mkdir -p release
+fi
+
 # تشغيل عملية البناء
+echo "جاري بناء التطبيق..."
 npx vite build
 
 echo ""
 echo "تم الانتهاء! يمكنك العثور على ملف التثبيت في مجلد 'release'."
-

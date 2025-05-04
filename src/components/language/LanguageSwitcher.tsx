@@ -39,15 +39,15 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
   const { t, i18n } = useTranslation();
   const { isTransitioning, changeLanguage } = useLanguageTransition();
   const [mounted, setMounted] = useState(false);
-  const { reducedMotion, announce } = useA11y?.() || { reducedMotion: false, announce: undefined };
-  const { isRTL } = useRTLSupport();
+  const { reducedMotion, announce } = useA11y?.() || { reducedMotion: false, announce: () => {} };
+  const { isRTL } = useRTLSupport?.() || { isRTL: false };
   
   // تأكد من أن مكون اللغة يعمل فقط على جانب العميل
   useEffect(() => {
     setMounted(true);
     
     // تطبيق الاتجاه المناسب بناءً على اللغة الحالية
-    const currentLang = i18n.language || 'en';
+    const currentLang = i18n?.language || 'en';
     const isRightToLeft = currentLang === 'ar' || currentLang === 'ar-iq';
     
     if (isRightToLeft) {
@@ -57,7 +57,7 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
       document.documentElement.dir = 'ltr';
       document.body.classList.remove('rtl-active');
     }
-  }, [i18n.language]);
+  }, [i18n?.language]);
 
   /**
    * معالج تغيير اللغة - يعلن قارئ الشاشة بالتغيير
@@ -69,7 +69,7 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
     const newLanguageName = language?.nativeName || langCode;
     
     // إعلان مخصص حسب اللغة الحالية
-    const currentLang = i18n.language || 'en';
+    const currentLang = i18n?.language || 'en';
     let message = '';
     
     if (currentLang === 'ar-iq') {
@@ -92,14 +92,18 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
     }
     
     // تغيير اللغة
-    changeLanguage(langCode);
+    if (changeLanguage) {
+      changeLanguage(langCode);
+    } else {
+      i18n?.changeLanguage?.(langCode);
+    }
   };
 
   /**
    * الحصول على نص تلميح الأداة المناسب للغة الحالية
    */
   const getTooltipText = () => {
-    const currentLang = i18n.language || 'en';
+    const currentLang = i18n?.language || 'en';
     if (currentLang === 'ar-iq') {
       return 'غير اللغة';
     }
@@ -112,7 +116,7 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
   }
 
   // الحصول على معلومات اللغة الحالية
-  const currentLang = i18n.language || 'en';
+  const currentLang = i18n?.language || 'en';
   const currentLanguage = SUPPORTED_LANGUAGES.find(lang => lang.code === currentLang) || 
                          SUPPORTED_LANGUAGES.find(lang => lang.code === 'en') || 
                          SUPPORTED_LANGUAGES[0];
@@ -126,9 +130,9 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
               <div> {/* استخدام div كحاوية لتجنب مشاكل التركيز */}
                 <LanguageSwitcherButton 
                   currentLanguageFlag={currentLanguage?.flag || "🌐"}
-                  isTransitioning={isTransitioning}
+                  isTransitioning={isTransitioning || false}
                   isRTL={isRTL}
-                  reducedMotion={reducedMotion}
+                  reducedMotion={reducedMotion || false}
                   onClick={() => {}}
                   tooltipText={getTooltipText()}
                   className={className}
@@ -155,7 +159,7 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
           <DropdownMenuSeparator className="bg-gradient-to-r from-blue-200 to-purple-200 dark:from-blue-800/30 dark:to-purple-800/30" />
           
           {SUPPORTED_LANGUAGES.map((lang) => {
-            const isActive = i18n.language === lang.code;
+            const isActive = i18n?.language === lang.code;
             const isIraqiArabic = lang.code === 'ar-iq';
             
             return (
@@ -167,7 +171,7 @@ export function LanguageSwitcher({ variant = "icon", className = "" }: LanguageS
                 isActive={isActive}
                 isIraqiArabic={isIraqiArabic}
                 onClick={handleLanguageChange}
-                reducedMotion={reducedMotion}
+                reducedMotion={reducedMotion || false}
               />
             );
           })}

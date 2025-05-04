@@ -10,7 +10,7 @@ export function Logo() {
     <Link to="/" className="relative mr-3 sm:mr-8 group">
       <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-[40px] blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
       
-      <div className="relative flex items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-sm px-12 py-3 rounded-[40px] border border-white/20 dark:border-gray-800/50 shadow-xl">
+      <div className="relative flex items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-sm px-14 py-3 rounded-[40px] border border-white/20 dark:border-gray-800/50 shadow-xl">
         <motion.div
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
