@@ -25,8 +25,21 @@ function checkViteExists() {
     }
     
     // تثبيت Vite
-    execSync('npm install vite@latest @vitejs/plugin-react-swc --save-dev', { stdio: 'inherit' });
-    console.log('✅ تم تثبيت Vite بنجاح');
+    try {
+      execSync('npm install vite@latest @vitejs/plugin-react-swc --save-dev', { stdio: 'inherit' });
+      console.log('✅ تم تثبيت Vite بنجاح');
+    } catch (mainError) {
+      console.log(`⚠️ واجهنا خطأ في التثبيت العادي: ${mainError.message}`);
+      console.log('محاولة تثبيت Vite بخيار --force...');
+      
+      try {
+        execSync('npm install vite@latest @vitejs/plugin-react-swc --save-dev --force', { stdio: 'inherit' });
+        console.log('✅ تم تثبيت Vite بنجاح باستخدام --force');
+      } catch (forceError) {
+        console.error('❌ فشل تثبيت Vite حتى مع استخدام --force:', forceError.message);
+        return false;
+      }
+    }
     
     return true;
   } catch (error) {
@@ -45,7 +58,7 @@ function createViteRunner() {
   const runVitePath = path.join(scriptsDir, 'run-vite.js');
   const viteJsPath = path.join(process.cwd(), 'node_modules', 'vite', 'bin', 'vite.js');
   
-  if (!fs.existsSync(runVitePath) && fs.existsSync(viteJsPath)) {
+  if (fs.existsSync(viteJsPath) && !fs.existsSync(runVitePath)) {
     try {
       const script = `#!/usr/bin/env node
 const { spawn } = require('child_process');
@@ -105,7 +118,7 @@ viteProcess.on('close', (code) => {
           execSync(`chmod +x ${runVitePath}`, { stdio: 'ignore' });
           console.log(`✅ تم ضبط صلاحيات التنفيذ لملف run-vite.js`);
         } catch (e) {
-          console.log(`⚠️ لم نتمكن من ضبط صلاحيات التنفيذ لملف run-vite.js`);
+          console.log(`⚠️ لم نتمكن من ضبط صلاحيات التنفيذ لملف run-vite.js: ${e.message}`);
         }
       }
       
@@ -165,9 +178,87 @@ export default defineConfig(({ mode }) => ({
   return true;
 }
 
+// إنشاء ملف package.json مؤقت إذا لم يكن موجودًا
+function ensurePackageJson() {
+  const packageJsonPath = path.join(process.cwd(), 'package.json');
+  
+  if (!fs.existsSync(packageJsonPath)) {
+    console.log('⚠️ ملف package.json غير موجود، سيتم إنشاء ملف مؤقت...');
+    
+    const basicPackage = {
+      "name": "octa-network-haven",
+      "version": "1.0.0",
+      "type": "module",
+      "scripts": {
+        "dev": "vite --host --port 8080",
+        "build": "vite build",
+        "preview": "vite preview"
+      },
+      "dependencies": {},
+      "devDependencies": {}
+    };
+    
+    try {
+      fs.writeFileSync(packageJsonPath, JSON.stringify(basicPackage, null, 2));
+      console.log('✅ تم إنشاء ملف package.json مؤقت');
+      
+      // تثبيت الحزم الضرورية
+      console.log('تثبيت الحزم الضرورية...');
+      execSync('npm install vite@latest @vitejs/plugin-react-swc --save-dev', { stdio: 'inherit' });
+      
+      return true;
+    } catch (e) {
+      console.error('❌ فشل إنشاء ملف package.json:', e.message);
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+// إنشاء ملف vite مؤقت للاستخدام الطارئ
+function createTemporaryViteLauncher() {
+  const tempDir = path.join(process.cwd(), 'temp');
+  if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir, { recursive: true });
+  }
+  
+  const launcherPath = path.join(tempDir, 'launch-vite' + (process.platform === 'win32' ? '.cmd' : '.sh'));
+  const isWindows = process.platform === 'win32';
+  
+  try {
+    if (isWindows) {
+      const content = `@echo off
+echo جاري تشغيل Vite...
+npx vite --host --port 8080
+if %ERRORLEVEL% NEQ 0 (
+  echo محاولة بديلة...
+  node "%~dp0\\..\\node_modules\\vite\\bin\\vite.js" --host --port 8080
+)`;
+      fs.writeFileSync(launcherPath, content);
+    } else {
+      const content = `#!/bin/bash
+echo "جاري تشغيل Vite..."
+npx vite --host --port 8080 || node "./node_modules/vite/bin/vite.js" --host --port 8080`;
+      fs.writeFileSync(launcherPath, content);
+      execSync(`chmod +x "${launcherPath}"`, { stdio: 'ignore' });
+    }
+    
+    console.log(`✅ تم إنشاء ملف مؤقت لتشغيل Vite: ${launcherPath}`);
+    return launcherPath;
+  } catch (e) {
+    console.error(`❌ فشل إنشاء ملف مؤقت لتشغيل Vite: ${e.message}`);
+    return null;
+  }
+}
+
 // تنفيذ العمليات
 const viteExists = checkViteExists();
 const runnerCreated = createViteRunner();
 const configEnsured = ensureViteConfig();
+const packageJsonEnsured = ensurePackageJson();
 
-module.exports = viteExists && runnerCreated && configEnsured;
+// إنشاء مشغل طارئ
+const tempLauncher = createTemporaryViteLauncher();
+
+module.exports = viteExists && runnerCreated && configEnsured && packageJsonEnsured;

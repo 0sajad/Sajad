@@ -6,7 +6,9 @@
   "author": "Octa Network",
   "license": "MIT",
   "scripts": {
+    "dev": "vite --host --port 8080",
     "electron:dev": "cross-env ELECTRON=true concurrently \"npm run dev\" \"npx wait-on http://localhost:8080 && electron electron/main.js\"",
-    "electron:build": "npm run build && electron-builder --config electron/electron-builder.yml"
+    "electron:build": "npm run build && electron-builder --config electron/electron-builder.yml",
+    "build": "vite build"
   }
 }

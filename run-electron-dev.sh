@@ -9,9 +9,9 @@ if [ ! -d "node_modules" ]; then
 fi
 
 # التحقق من وجود Vite وتثبيته إذا لم يكن موجوداً
-if ! command -v ./node_modules/.bin/vite &> /dev/null; then
+if [ ! -d "node_modules/vite" ]; then
   echo "تثبيت Vite..."
-  npm install vite@latest --save-dev
+  npm install vite@latest @vitejs/plugin-react-swc --save-dev --force
 fi
 
 # التحقق من وجود الملفات المطلوبة
@@ -19,13 +19,21 @@ if [ ! -d "scripts" ]; then
   mkdir -p scripts
 fi
 
-# التحقق من وجود أداة setup-dependencies
-if [ ! -f "scripts/setup-dependencies.js" ]; then
-  echo "إنشاء ملفات الإعداد..."
-  touch "scripts/setup-dependencies.js"
-  node scripts/setup-dependencies.js
-fi
-
 # تنفيذ سكربت التشغيل
 echo "تشغيل التطبيق..."
 node dev.js
+
+# إذا فشل التنفيذ، نجرب الطرق البديلة
+if [ $? -ne 0 ]; then
+  echo "محاولة تنفيذ بديلة..."
+  
+  # محاولة تنفيذ npx vite مباشرة
+  echo "تنفيذ Vite عبر npx..."
+  npx vite --host --port 8080
+  
+  # إذا فشل، نجرب استخدام ملف vite.js مباشرة
+  if [ $? -ne 0 ]; then
+    echo "محاولة استدعاء vite.js مباشرة..."
+    node "./node_modules/vite/bin/vite.js" --host --port 8080
+  fi
+fi
