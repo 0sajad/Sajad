@@ -21,19 +21,7 @@ function checkPackageExists(packageName) {
       return true;
     }
     
-    // التحقق من التثبيت العالمي
-    try {
-      const checkCmd = isWindows ? 
-        `where ${packageName} 2>nul` : 
-        `command -v ${packageName} 2>/dev/null`;
-      
-      execSync(checkCmd, { stdio: 'ignore' });
-      console.log(`✅ ${packageName} موجود عالمياً`);
-      return true;
-    } catch (e) {
-      console.log(`❌ ${packageName} غير موجود عالمياً`);
-      return false;
-    }
+    return false;
   } catch (e) {
     return false;
   }
@@ -43,7 +31,7 @@ function checkPackageExists(packageName) {
 function installRequiredPackages() {
   console.log('تثبيت الحزم المطلوبة...');
   try {
-    execSync('npm install vite@latest @vitejs/plugin-react-swc --save-dev --force', { 
+    execSync('npm install vite@latest @vitejs/plugin-react-swc lovable-tagger --save-dev --force', { 
       stdio: 'inherit',
       shell: true
     });
@@ -63,31 +51,11 @@ function runVite() {
     PATH: `${path.join(process.cwd(), 'node_modules', '.bin')}${path.delimiter}${process.env.PATH}`
   };
 
-  // تحديد مسار Vite المحلي
-  const viteLocalBin = path.join(process.cwd(), 'node_modules', '.bin', isWindows ? 'vite.cmd' : 'vite');
-  const viteJsPath = path.join(process.cwd(), 'node_modules', 'vite', 'bin', 'vite.js');
-  
   console.log('محاولة تشغيل Vite...');
   
-  let command, args;
-  
-  // اختيار طريقة التشغيل المناسبة
-  if (fs.existsSync(viteLocalBin)) {
-    // استخدام Vite المحلي المثبت
-    console.log(`تشغيل Vite من المسار المحلي: ${viteLocalBin}`);
-    command = viteLocalBin;
-    args = ['--host', '--port', '8080'];
-  } else if (fs.existsSync(viteJsPath)) {
-    // استخدام ملف vite.js مباشرة
-    console.log(`تشغيل vite.js مباشرة من: ${viteJsPath}`);
-    command = 'node';
-    args = [viteJsPath, '--host', '--port', '8080'];
-  } else {
-    // استخدام npx كخيار أخير
-    console.log('محاولة تشغيل Vite باستخدام npx...');
-    command = isWindows ? 'npx.cmd' : 'npx';
-    args = ['vite', '--host', '--port', '8080'];
-  }
+  // استخدام npx دائمًا لتفادي مشكلة عدم العثور على Vite
+  const command = isWindows ? 'npx.cmd' : 'npx';
+  const args = ['vite', '--host', '--port', '8080'];
   
   // تنفيذ الأمر
   console.log(`تنفيذ الأمر: ${command} ${args.join(' ')}`);

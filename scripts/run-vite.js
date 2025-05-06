@@ -10,12 +10,11 @@ const isWindows = process.platform === 'win32';
 // التحقق من وجود Vite وتثبيته إذا لزم الأمر
 function ensureViteInstalled() {
   const vitePath = path.join(process.cwd(), 'node_modules', 'vite');
-  const viteBinPath = path.join(process.cwd(), 'node_modules', '.bin', isWindows ? 'vite.cmd' : 'vite');
   
-  if (!fs.existsSync(vitePath) || !fs.existsSync(viteBinPath)) {
+  if (!fs.existsSync(vitePath)) {
     console.log('Vite غير موجود، جاري التثبيت...');
     try {
-      execSync('npm install vite@latest @vitejs/plugin-react-swc --save-dev --force', {
+      execSync('npm install vite@latest @vitejs/plugin-react-swc lovable-tagger --save-dev --force', {
         stdio: 'inherit',
         shell: true
       });
@@ -36,25 +35,13 @@ function runVite() {
   // تعيين متغيرات البيئة
   const env = { 
     ...process.env, 
+    NODE_ENV: 'development',
     PATH: `${path.join(process.cwd(), 'node_modules', '.bin')}${path.delimiter}${process.env.PATH}`
   };
   
-  // اختيار الأمر المناسب
-  const viteBin = path.join(process.cwd(), 'node_modules', '.bin', isWindows ? 'vite.cmd' : 'vite');
-  const viteJs = path.join(process.cwd(), 'node_modules', 'vite', 'bin', 'vite.js');
-  
-  let command, args;
-  
-  if (fs.existsSync(viteBin)) {
-    command = viteBin;
-    args = ['--host', '--port', '8080'];
-  } else if (fs.existsSync(viteJs)) {
-    command = 'node';
-    args = [viteJs, '--host', '--port', '8080'];
-  } else {
-    command = isWindows ? 'npx.cmd' : 'npx';
-    args = ['vite', '--host', '--port', '8080'];
-  }
+  // استخدام npx لتشغيل vite بطريقة موثوقة
+  const command = isWindows ? 'npx.cmd' : 'npx';
+  const args = ['vite', '--host', '--port', '8080'];
   
   console.log(`تنفيذ الأمر: ${command} ${args.join(' ')}`);
   const proc = spawn(command, args, {
