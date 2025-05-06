@@ -33,8 +33,10 @@ function checkAndInstallPackages() {
   if (missingPackages.length > 0) {
     console.log(`جاري تثبيت المكتبات المفقودة: ${missingPackages.join(', ')}`);
     try {
+      // تعديل أمر التثبيت ليستخدم --save-dev للحزم المتعلقة بالتطوير
       execSync(`npm install --save-dev ${missingPackages.join(' ')}`, { stdio: 'inherit' });
       console.log('✅ تم تثبيت جميع المكتبات بنجاح');
+      return true;
     } catch (error) {
       console.error('❌ حدث خطأ أثناء تثبيت المكتبات:', error.message);
       return false;
@@ -46,32 +48,38 @@ function checkAndInstallPackages() {
   return true;
 }
 
-// تصدير دالة للتحقق من تثبيت vite
-module.exports = {
-  checkViteInstallation: function() {
-    try {
-      const vitePath = path.join(process.cwd(), 'node_modules', 'vite');
-      const viteGloballyAvailable = (() => {
-        try {
-          execSync('npx vite --version', { stdio: 'ignore' });
-          return true;
-        } catch (e) {
-          return false;
-        }
-      })();
-      
-      if (!fs.existsSync(vitePath) && !viteGloballyAvailable) {
-        checkAndInstallPackages();
+// دالة للتحقق من تثبيت vite
+function checkViteInstallation() {
+  try {
+    const vitePath = path.join(process.cwd(), 'node_modules', 'vite');
+    const viteBinPath = path.join(process.cwd(), 'node_modules', '.bin', process.platform === 'win32' ? 'vite.cmd' : 'vite');
+    
+    if (!fs.existsSync(vitePath) || !fs.existsSync(viteBinPath)) {
+      console.log('Vite غير مثبت محلياً. جاري التثبيت...');
+      try {
+        execSync('npm install vite@latest @vitejs/plugin-react-swc --save-dev', { stdio: 'inherit' });
+        console.log('✅ تم تثبيت Vite بنجاح');
+        return true;
+      } catch (e) {
+        console.error('❌ فشل تثبيت Vite:', e.message);
+        return false;
       }
-      
-      return fs.existsSync(vitePath) || viteGloballyAvailable;
-    } catch (e) {
-      return false;
     }
+    
+    return true;
+  } catch (e) {
+    return false;
   }
+}
+
+// تصدير الدالتين
+module.exports = {
+  checkViteInstallation,
+  checkAndInstallPackages
 };
 
 // تنفيذ الفحص إذا تم استدعاء هذا الملف مباشرة
 if (require.main === module) {
   checkAndInstallPackages();
+  checkViteInstallation();
 }

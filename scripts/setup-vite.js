@@ -16,24 +16,23 @@ function checkViteExists() {
       return true;
     }
     
-    // التحقق من وجود Vite عالمياً
-    try {
-      execSync('npx vite --version', { stdio: 'ignore' });
-      console.log('⚠️ Vite غير موجود محلياً لكنه متاح عالمياً. سيتم تثبيته محلياً...');
-    } catch (e) {
-      console.log('❌ Vite غير موجود. جاري التثبيت...');
-    }
-    
     // تثبيت Vite
+    console.log('❌ Vite غير موجود. جاري التثبيت...');
     try {
       execSync('npm install vite@latest @vitejs/plugin-react-swc --save-dev --force', { stdio: 'inherit' });
-      console.log('✅ تم تثبيت Vite بنجاح');
+      
+      // التحقق مرة أخرى بعد التثبيت
+      if (fs.existsSync(path.join(process.cwd(), 'node_modules', 'vite'))) {
+        console.log('✅ تم تثبيت Vite بنجاح');
+        return true;
+      } else {
+        console.error('❌ فشل تثبيت Vite رغم عدم وجود أخطاء');
+        return false;
+      }
     } catch (error) {
       console.error('❌ فشل تثبيت Vite:', error.message);
       return false;
     }
-    
-    return true;
   } catch (error) {
     console.error('❌ فشل التحقق من Vite أو تثبيته:', error.message);
     return false;
@@ -88,5 +87,12 @@ export default defineConfig(({ mode }) => ({
 // تنفيذ الوظائف
 const viteExists = checkViteExists();
 const configEnsured = ensureViteConfig();
+
+// إظهار نتيجة التنفيذ
+if (viteExists && configEnsured) {
+  console.log('✅ تم إعداد Vite بنجاح');
+} else {
+  console.error('❌ فشل إعداد Vite');
+}
 
 module.exports = viteExists && configEnsured;
