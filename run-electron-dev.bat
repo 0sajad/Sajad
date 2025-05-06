@@ -12,9 +12,10 @@ if not exist "node_modules" (
 echo تشغيل التطبيق...
 node dev.js
 
-:: في حالة الفشل، جرّب تنفيذ vite مباشرة
+:: في حالة الفشل، جرّب التثبيت المباشر لـ Vite
 if %ERRORLEVEL% NEQ 0 (
-  echo محاولة تنفيذ Vite مباشرة...
+  echo محاولة تثبيت وتشغيل Vite مباشرة...
+  call npm install vite@latest @vitejs/plugin-react-swc --save-dev --force
   call npx vite --host --port 8080
 )
 

@@ -12,8 +12,9 @@ fi
 echo "تشغيل التطبيق..."
 node dev.js
 
-# في حالة الفشل، جرّب تنفيذ vite مباشرة
+# في حالة الفشل، جرّب التثبيت المباشر لـ Vite
 if [ $? -ne 0 ]; then
-  echo "محاولة تنفيذ Vite مباشرة..."
+  echo "محاولة تثبيت وتشغيل Vite مباشرة..."
+  npm install vite@latest @vitejs/plugin-react-swc --save-dev --force
   npx vite --host --port 8080
 fi

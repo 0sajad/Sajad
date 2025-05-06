@@ -14,9 +14,9 @@ if [ ! -d "node_modules/vite" ]; then
   npm install vite@latest @vitejs/plugin-react-swc --save-dev --force
 fi
 
-# تشغيل عملية البناء
+# تنفيذ عملية البناء
 echo "جاري بناء التطبيق..."
-npx vite build
+node_modules/.bin/vite build || npx vite build
 
 echo ""
-echo "تم الانتهاء! يمكنك العثور على ملف التثبيت في مجلد 'dist'."
+echo "تم الانتهاء! يمكنك العثور على الملفات في مجلد 'dist'."

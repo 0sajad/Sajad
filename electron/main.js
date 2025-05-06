@@ -36,16 +36,6 @@ function createWindow() {
   mainWindow.on('closed', function () {
     mainWindow = null;
   });
-  
-  // تكوين حدود الذاكرة لـ WebGPU
-  app.commandLine.appendSwitch('enable-features', 'WebGPUDeviceInitialization,WebGPU');
-  app.commandLine.appendSwitch('enable-unsafe-webgpu');
-  app.commandLine.appendSwitch('gpu-memory-buffer-pool-size', '512');
-  app.commandLine.appendSwitch('max-active-webgpu-contexts', '16');
-  
-  // تفعيل WebGL
-  app.commandLine.appendSwitch('enable-webgl');
-  app.commandLine.appendSwitch('ignore-gpu-blacklist');
 }
 
 // تهيئة التطبيق عند الاستعداد

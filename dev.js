@@ -10,35 +10,45 @@ console.log('جاري تشغيل التطبيق في وضع التطوير...');
 // تحديد نوع نظام التشغيل
 const isWindows = os.platform() === 'win32';
 
-// التأكد من وجود Vite وتثبيته إذا لم يكن موجوداً
-function ensureViteInstalled() {
+// دالة للتحقق من وجود حزمة
+function checkPackageExists(packageName) {
   try {
-    // محاولة تنفيذ أمر vite --version للتحقق مما إذا كان مثبتاً
-    execSync('npx vite --version', { stdio: 'ignore' });
-    console.log('✅ Vite موجود');
-    return true;
-  } catch (e) {
-    console.log('⚠️ Vite غير موجود، جاري التثبيت...');
+    const nodeModulesPath = path.join(process.cwd(), 'node_modules', packageName);
+    const globalCheck = isWindows ? 
+      `where ${packageName} 2>nul` : 
+      `command -v ${packageName} 2>/dev/null`;
     
-    try {
-      execSync('npm install vite@latest @vitejs/plugin-react-swc --save-dev --force', { stdio: 'inherit' });
-      console.log('✅ تم تثبيت Vite بنجاح');
+    // التحقق من التثبيت المحلي
+    if (fs.existsSync(nodeModulesPath)) {
       return true;
-    } catch (err) {
-      console.error('❌ فشل تثبيت Vite:', err.message);
+    }
+    
+    // التحقق من التثبيت العالمي
+    try {
+      execSync(globalCheck, { stdio: 'ignore' });
+      return true;
+    } catch (e) {
       return false;
     }
+  } catch (e) {
+    return false;
+  }
+}
+
+// تثبيت الحزم المطلوبة
+function installRequiredPackages() {
+  console.log('تثبيت الحزم المطلوبة...');
+  try {
+    execSync('npm install vite@latest @vitejs/plugin-react-swc --save-dev --force', { stdio: 'inherit' });
+    return true;
+  } catch (error) {
+    console.error('خطأ في تثبيت الحزم:', error.message);
+    return false;
   }
 }
 
 // دالة لتشغيل Vite
 function runVite() {
-  // إنشاء المجلدات اللازمة إذا لم تكن موجودة
-  const scriptsDir = path.join(process.cwd(), 'scripts');
-  if (!fs.existsSync(scriptsDir)) {
-    fs.mkdirSync(scriptsDir, { recursive: true });
-  }
-
   // تجهيز متغيرات البيئة
   const env = { 
     ...process.env, 
@@ -46,11 +56,21 @@ function runVite() {
     PATH: `${path.join(process.cwd(), 'node_modules', '.bin')}${path.delimiter}${process.env.PATH}`
   };
 
-  // محاولة تشغيل Vite باستخدام npx
-  console.log('تشغيل Vite باستخدام npx...');
+  // محاولة تشغيل Vite
+  console.log('تشغيل Vite...');
   
-  const command = isWindows ? 'npx.cmd' : 'npx';
-  const args = ['vite', '--host', '--port', '8080'];
+  let command, args;
+  const viteLocalBin = path.join(process.cwd(), 'node_modules', '.bin', isWindows ? 'vite.cmd' : 'vite');
+  
+  if (fs.existsSync(viteLocalBin)) {
+    // استخدام Vite المحلي إذا كان موجوداً
+    command = viteLocalBin;
+    args = ['--host', '--port', '8080'];
+  } else {
+    // استخدام npx كخيار بديل
+    command = isWindows ? 'npx.cmd' : 'npx';
+    args = ['vite', '--host', '--port', '8080'];
+  }
   
   const proc = spawn(command, args, {
     stdio: 'inherit',
@@ -59,46 +79,48 @@ function runVite() {
   });
 
   proc.on('error', (error) => {
-    console.error(`❌ فشل تشغيل Vite: ${error.message}`);
+    console.error(`فشل تشغيل Vite: ${error.message}`);
     
     // محاولة تشغيل vite.js مباشرة
-    console.log('محاولة تشغيل vite.js مباشرة...');
-    
     const viteJsPath = path.join(process.cwd(), 'node_modules', 'vite', 'bin', 'vite.js');
     
     if (fs.existsSync(viteJsPath)) {
+      console.log('محاولة تشغيل vite.js مباشرة...');
+      
       const nodeProc = spawn('node', [viteJsPath, '--host', '--port', '8080'], {
         stdio: 'inherit',
         shell: true,
         env: env
       });
       
-      nodeProc.on('error', (nodeErr) => {
-        console.error(`❌ فشل تشغيل vite.js: ${nodeErr.message}`);
-        process.exit(1);
-      });
-      
       nodeProc.on('close', (code) => {
         process.exit(code || 0);
       });
     } else {
-      console.error('❌ لم يتم العثور على ملف vite.js');
-      process.exit(1);
+      console.error('لم يتم العثور على ملف vite.js. جاري محاولة تثبيت Vite...');
+      if (installRequiredPackages()) {
+        console.log('تم تثبيت Vite بنجاح، جاري إعادة تشغيل التطبيق...');
+        runVite();
+      } else {
+        process.exit(1);
+      }
     }
   });
 
   proc.on('close', (code) => {
-    if (code !== 0) {
-      console.error(`Vite خرج بكود الخطأ ${code}`);
-    }
     process.exit(code || 0);
   });
 }
 
 // تنفيذ الخطوات الأساسية
-if (ensureViteInstalled()) {
+if (checkPackageExists('vite')) {
   runVite();
 } else {
-  console.error('❌ لم نتمكن من تشغيل Vite. يرجى التثبيت يدوياً باستخدام: npm install vite@latest --save-dev');
-  process.exit(1);
+  console.log('Vite غير موجود، جاري التثبيت...');
+  if (installRequiredPackages()) {
+    runVite();
+  } else {
+    console.error('فشل تثبيت Vite. يرجى التثبيت يدوياً باستخدام: npm install vite@latest --save-dev');
+    process.exit(1);
+  }
 }

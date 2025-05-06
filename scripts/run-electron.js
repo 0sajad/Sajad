@@ -6,32 +6,8 @@ const path = require('path');
 // تشغيل سكربت التحقق من المكتبات المطلوبة أولاً
 try {
   require('./setup-dependencies');
-  require('./setup-vite');  // استدعاء صريح لإعداد Vite
 } catch (e) {
-  console.error('فشل في تحميل ملف setup-dependencies.js أو setup-vite.js:', e);
-}
-
-// التأكد من وجود مجلد electron
-const electronDir = path.join(__dirname, '..', 'electron');
-if (!fs.existsSync(electronDir)) {
-  console.error('خطأ: مجلد electron غير موجود.');
-  process.exit(1);
-}
-
-// قراءة ملف package.electron.json
-const electronPackagePath = path.join(__dirname, '../package.electron.json');
-if (!fs.existsSync(electronPackagePath)) {
-  console.error('خطأ: ملف package.electron.json غير موجود.');
-  process.exit(1);
-}
-
-// تحليل محتويات ملف package.electron.json
-let electronPackage;
-try {
-  electronPackage = JSON.parse(fs.readFileSync(electronPackagePath, 'utf8'));
-} catch (error) {
-  console.error('خطأ في قراءة أو تحليل ملف package.electron.json:', error.message);
-  process.exit(1);
+  console.error('فشل في تحميل ملف setup-dependencies.js:', e);
 }
 
 // الحصول على الأمر من المعاملات
@@ -41,27 +17,23 @@ if (!command) {
   process.exit(1);
 }
 
-// الحصول على السكربت من package.electron.json
-const scriptKey = `electron:${command}`;
-const script = electronPackage.scripts[scriptKey];
+console.log(`تنفيذ أمر Electron: ${command}`);
 
-if (!script) {
-  console.error(`الأمر "${scriptKey}" غير موجود في package.electron.json`);
+// تحديد الأمر المناسب حسب نوع الأمر
+let cmd, args;
+const isWindows = process.platform === 'win32';
+
+if (command === 'dev') {
+  cmd = 'node';
+  args = ['dev.js'];
+} else if (command === 'build') {
+  const buildScript = isWindows ? 'run-electron-build.bat' : './run-electron-build.sh';
+  cmd = isWindows ? buildScript : '/bin/bash';
+  args = isWindows ? [] : [buildScript];
+} else {
+  console.error('الأمر غير معروف:', command);
   process.exit(1);
 }
-
-console.log(`تشغيل أمر Electron: ${script}`);
-
-// تنفيذ السكربت
-const [cmd, ...args] = script.split(' ');
-
-// تحديد المسار النهائي للأمر
-const isWindows = process.platform === 'win32';
-const finalCmd = (cmd === 'vite' || cmd === 'npm') 
-  ? (isWindows ? `${cmd}.cmd` : cmd)
-  : cmd;
-
-console.log(`تنفيذ الأمر: ${finalCmd} ${args.join(' ')}`);
 
 // تحسين متغيرات البيئة
 const enhancedEnv = { 
@@ -71,7 +43,8 @@ const enhancedEnv = {
 };
 
 // تنفيذ الأمر
-const proc = spawn(finalCmd, args, { 
+console.log(`تنفيذ الأمر: ${cmd} ${args.join(' ')}`);
+const proc = spawn(cmd, args, { 
   stdio: 'inherit', 
   shell: true,
   env: enhancedEnv

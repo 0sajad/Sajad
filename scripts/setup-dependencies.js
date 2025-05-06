@@ -14,10 +14,7 @@ function checkAndInstallPackages() {
     'electron',
     'electron-builder',
     'react',
-    'react-dom',
-    'wait-on',
-    'cross-env',
-    'concurrently'
+    'react-dom'
   ];
   
   let missingPackages = [];
@@ -36,7 +33,7 @@ function checkAndInstallPackages() {
   if (missingPackages.length > 0) {
     console.log(`جاري تثبيت المكتبات المفقودة: ${missingPackages.join(', ')}`);
     try {
-      execSync(`npm install --save-dev ${missingPackages.join(' ')} --force`, { stdio: 'inherit' });
+      execSync(`npm install --save-dev ${missingPackages.join(' ')}`, { stdio: 'inherit' });
       console.log('✅ تم تثبيت جميع المكتبات بنجاح');
     } catch (error) {
       console.error('❌ حدث خطأ أثناء تثبيت المكتبات:', error.message);

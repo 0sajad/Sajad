@@ -16,8 +16,8 @@ if not exist "node_modules\vite" (
 
 :: تشغيل عملية البناء
 echo جاري بناء التطبيق...
-call npx vite build
+call node_modules\.bin\vite build || call npx vite build
 
 echo.
-echo تم الانتهاء! يمكنك العثور على ملف التثبيت في مجلد 'dist'.
+echo تم الانتهاء! يمكنك العثور على الملفات في مجلد 'dist'.
 pause
