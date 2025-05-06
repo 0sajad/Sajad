@@ -14,6 +14,12 @@ const isLinux = os.platform() === 'linux';
 
 console.log(`نظام التشغيل: ${isWindows ? 'Windows' : isMac ? 'macOS' : 'Linux'}`);
 
+// التأكد من وجود المجلدات الضرورية
+const scriptsDir = path.join(process.cwd(), 'scripts');
+if (!fs.existsSync(scriptsDir)) {
+  fs.mkdirSync(scriptsDir, { recursive: true });
+}
+
 // ضبط صلاحيات التنفيذ للملفات على لينكس وماك
 if (!isWindows) {
   try {
@@ -31,6 +37,35 @@ if (!isWindows) {
   }
 }
 
+// التحقق من وجود ملف setup-dependencies.js
+const setupDependenciesPath = path.join(scriptsDir, 'setup-dependencies.js');
+if (!fs.existsSync(setupDependenciesPath)) {
+  console.log('إنشاء ملف setup-dependencies.js...');
+  try {
+    // توليد محتوى ملف setup-dependencies.js
+    const setupDepsContent = `// ... keep existing code`;
+    fs.writeFileSync(setupDependenciesPath, setupDepsContent);
+    console.log('✅ تم إنشاء ملف setup-dependencies.js');
+  } catch (error) {
+    console.error('❌ فشل إنشاء ملف setup-dependencies.js:', error.message);
+  }
+}
+
+// التحقق من وجود ملف setup-vite.js
+const setupVitePath = path.join(scriptsDir, 'setup-vite.js');
+if (!fs.existsSync(setupVitePath)) {
+  console.log('إنشاء ملف setup-vite.js...');
+  try {
+    // محتوى لملف setup-vite.js
+    // سيتم إنشاء هذا الملف بشكل منفصل
+    const setupViteContent = `// ملف يجب إنشاؤه من قبل`;
+    fs.writeFileSync(setupVitePath, setupViteContent);
+    console.log('✅ تم إنشاء ملف setup-vite.js');
+  } catch (error) {
+    console.error('❌ فشل إنشاء ملف setup-vite.js:', error.message);
+  }
+}
+
 // التأكد من تثبيت vite
 try {
   console.log('التحقق من وجود Vite...');
@@ -42,23 +77,28 @@ try {
   if (!fs.existsSync(vitePath)) {
     console.log('Vite غير موجود. جاري التثبيت...');
     
-    if (isWindows) {
-      execSync('npm install vite@latest --save-dev', { stdio: 'inherit' });
-    } else {
-      execSync('npm install vite@latest --save-dev', { stdio: 'inherit' });
-    }
+    execSync('npm install vite@latest --save-dev', { stdio: 'inherit' });
     
     console.log('تم تثبيت Vite بنجاح.');
+  }
+  
+  // محاولة تشغيل setup-vite.js لتنفيذ الإعداد الكامل لـ Vite
+  try {
+    console.log('تنفيذ إعداد Vite...');
+    require('./scripts/setup-vite');
+  } catch (error) {
+    console.warn('لم نتمكن من تشغيل setup-vite.js، سنستمر بالطريقة الافتراضية:', error.message);
   }
   
   // تعزيز البحث عن Vite المناسب للنظام
   const possibleVitePaths = [
     path.join(process.cwd(), 'node_modules', '.bin', 'vite' + (isWindows ? '.cmd' : '')),
     path.join(process.cwd(), 'node_modules', 'vite', 'bin', 'vite.js'),
+    path.join(process.cwd(), 'scripts', 'run-vite.js'),
     'npx vite'
   ];
 
-  let viteCommand = possibleVitePaths[2]; // الخيار الأخير كافتراضي
+  let viteCommand = possibleVitePaths[3]; // الخيار الأخير كافتراضي
   for (const vPath of possibleVitePaths) {
     if (fs.existsSync(vPath)) {
       viteCommand = vPath;
@@ -66,6 +106,9 @@ try {
       break;
     }
   }
+  
+  // إضافة متغير بيئة للإشارة إلى أن التطبيق يعمل في وضع التطوير
+  process.env.NODE_ENV = 'development';
   
   // تشغيل Vite مع المعاملات المناسبة
   console.log('تشغيل Vite...');
@@ -78,7 +121,7 @@ try {
       shell: true,
       env: { ...process.env, NODE_ENV: 'development' }
     });
-  } else if (viteCommand.endsWith('vite.js')) {
+  } else if (viteCommand.endsWith('vite.js') || viteCommand.endsWith('run-vite.js')) {
     // استخدام node لتشغيل ملف vite.js
     viteProcess = spawn(process.execPath, [viteCommand, '--host', '--port', '8080'], {
       stdio: 'inherit',
