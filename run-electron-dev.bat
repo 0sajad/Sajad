@@ -8,33 +8,14 @@ if not exist "node_modules" (
   call npm install --no-save
 )
 
-:: التحقق من وجود Vite
-if not exist "node_modules\vite" (
-  echo تثبيت Vite...
-  call npm install vite@latest @vitejs/plugin-react-swc --save-dev --force
-)
-
-:: التحقق من وجود الملفات المطلوبة
-if not exist "scripts" (
-  mkdir scripts
-)
-
-:: تنفيذ سكربت node التشغيل الأساسي
+:: تشغيل سكربت node
 echo تشغيل التطبيق...
 node dev.js
 
-:: إذا فشل التنفيذ، نجرب الطرق البديلة
+:: في حالة الفشل، جرّب تنفيذ vite مباشرة
 if %ERRORLEVEL% NEQ 0 (
-  echo محاولة تنفيذ بديلة...
-  
-  :: محاولة تنفيذ npx vite مباشرة
-  echo تنفيذ Vite عبر npx...
+  echo محاولة تنفيذ Vite مباشرة...
   call npx vite --host --port 8080
-  
-  if %ERRORLEVEL% NEQ 0 (
-    echo محاولة استدعاء vite.js مباشرة...
-    node "node_modules\vite\bin\vite.js" --host --port 8080
-  )
 )
 
 pause

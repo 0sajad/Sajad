@@ -9,14 +9,9 @@ if [ ! -d "node_modules" ]; then
 fi
 
 # تأكد من تثبيت vite
-if ! command -v ./node_modules/.bin/vite &> /dev/null; then
+if [ ! -d "node_modules/vite" ]; then
   echo "تثبيت Vite..."
-  npm install vite@latest --save-dev
-fi
-
-# إنشاء مجلد release إذا لم يكن موجوداً
-if [ ! -d "release" ]; then
-  mkdir -p release
+  npm install vite@latest @vitejs/plugin-react-swc --save-dev --force
 fi
 
 # تشغيل عملية البناء
@@ -24,4 +19,4 @@ echo "جاري بناء التطبيق..."
 npx vite build
 
 echo ""
-echo "تم الانتهاء! يمكنك العثور على ملف التثبيت في مجلد 'release'."
+echo "تم الانتهاء! يمكنك العثور على ملف التثبيت في مجلد 'dist'."
