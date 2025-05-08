@@ -1,25 +1,14 @@
 
 @echo off
-echo جاري تشغيل تطبيق إلكترون في وضع التطوير...
+echo Starting Octa Network Haven in development mode...
 
-:: التحقق من node_modules
-if not exist "node_modules" (
-  echo تثبيت الحزم المطلوبة...
-  call npm install --no-save
-)
-
-:: تشغيل سكربت node
-echo تشغيل التطبيق...
+:: Try to run with node directly
 node start.js
 
-:: في حالة الفشل، جرّب التثبيت المباشر لـ Vite
+:: In case of failure, try with npx vite directly
 if %ERRORLEVEL% NEQ 0 (
-  echo محاولة تثبيت وتشغيل Vite مباشرة...
-  call npm install vite@latest @vitejs/plugin-react-swc lovable-tagger --save-dev --force
-  
-  :: تشغيل vite مباشرة باستخدام npx
-  echo تشغيل vite باستخدام npx...
-  call npx vite --host --port 8080
+  echo Attempting to run with npx vite directly...
+  npx.cmd vite --host --port 8080
 )
 
 pause

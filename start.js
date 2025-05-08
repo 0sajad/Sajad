@@ -1,5 +1,5 @@
 
-#!/usr/bin/env node
+// Archivo de inicio para Octa Network Haven
 const { execSync, spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -10,37 +10,23 @@ console.log('🚀 Starting Octa Network Haven application...');
 if (!fs.existsSync(path.join(process.cwd(), 'node_modules'))) {
   console.log('📦 Installing dependencies...');
   try {
-    execSync('npm install', { stdio: 'inherit' });
+    execSync('npx.cmd --no-install vite --version', { stdio: 'inherit' });
   } catch (error) {
-    console.error('❌ Failed to install dependencies:', error.message);
-    process.exit(1);
+    console.log('Installing vite and dependencies...');
+    try {
+      execSync('npx vite@latest --version', { stdio: 'inherit' });
+    } catch (innerError) {
+      console.error('❌ Failed to check vite version:', innerError.message);
+    }
   }
 }
 
-// Check if vite is installed
-const checkVite = () => {
-  try {
-    const vitePath = path.join(process.cwd(), 'node_modules', 'vite');
-    return fs.existsSync(vitePath);
-  } catch (e) {
-    return false;
-  }
-};
-
-// Install vite if not present
-if (!checkVite()) {
-  console.log('📦 Installing Vite...');
-  try {
-    execSync('npm install vite@latest @vitejs/plugin-react-swc lovable-tagger --save-dev --force', { stdio: 'inherit' });
-  } catch (error) {
-    console.error('❌ Failed to install Vite:', error.message);
-    process.exit(1);
-  }
-}
-
-// Run vite using npx to ensure it's found
+// Run vite directly using npx to ensure it's found
 console.log('🚀 Starting development server...');
-const devProcess = spawn('npx', ['vite', '--host', '--port', '8080'], {
+const isWindows = process.platform === 'win32';
+const npxCommand = isWindows ? 'npx.cmd' : 'npx';
+
+const devProcess = spawn(npxCommand, ['vite', '--host', '--port', '8080'], {
   stdio: 'inherit',
   shell: true,
   env: {
