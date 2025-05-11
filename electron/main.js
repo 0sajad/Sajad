@@ -1,5 +1,5 @@
 
-const { app, BrowserWindow, ipcMain, net } = require('electron');
+const { app, BrowserWindow, ipcMain, net, shell } = require('electron');
 const path = require('path');
 const url = require('url');
 
@@ -7,6 +7,8 @@ const url = require('url');
 let mainWindow;
 
 function createWindow() {
+  console.log('Creating Electron window...');
+  
   // إنشاء نافذة المتصفح
   mainWindow = new BrowserWindow({
     width: 1200,
@@ -16,7 +18,8 @@ function createWindow() {
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js')
     },
-    icon: path.join(__dirname, '../public/favicon.ico')
+    icon: path.join(__dirname, '../public/favicon.ico'),
+    title: 'Octa Network Haven'
   });
 
   // تحديد عنوان URL للنافذة
@@ -26,28 +29,41 @@ function createWindow() {
     slashes: true
   });
   
+  console.log('Loading URL:', startUrl);
   mainWindow.loadURL(startUrl);
 
   // فتح أدوات المطور في وضع التطوير
   if (process.env.NODE_ENV === 'development') {
     mainWindow.webContents.openDevTools();
+    console.log('Developer tools opened');
   }
 
   mainWindow.on('closed', function () {
+    console.log('Window closed');
     mainWindow = null;
+  });
+  
+  // منع فتح الروابط في النافذة نفسها
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url);
+    return { action: 'deny' };
   });
 }
 
 // تهيئة التطبيق عند الاستعداد
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  console.log('Electron app is ready');
+  createWindow();
+  
+  app.on('activate', function () {
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
+});
 
 // الخروج عند إغلاق جميع النوافذ
 app.on('window-all-closed', function () {
+  console.log('All windows closed');
   if (process.platform !== 'darwin') app.quit();
-});
-
-app.on('activate', function () {
-  if (mainWindow === null) createWindow();
 });
 
 // التحقق من اتصال الشبكة
@@ -57,7 +73,7 @@ ipcMain.handle('check-network-connection', async () => {
 
 // فتح رابط خارجي
 ipcMain.on('open-external-link', (event, url) => {
-  require('electron').shell.openExternal(url);
+  shell.openExternal(url);
 });
 
 // إعداد واجهة برمجة التطبيقات المحلية
@@ -76,3 +92,6 @@ ipcMain.handle('get-system-info', () => {
     nodeVersion: process.versions.node
   };
 });
+
+// تسجيل بدء التشغيل
+console.log('Electron main process started');

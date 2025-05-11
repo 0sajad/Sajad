@@ -5,7 +5,10 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 // تعريف واجهة برمجة التطبيقات الآمنة للوصول من المتصفح
-contextBridge.exposeInMainWorld('electronAPI', {
+contextBridge.exposeInMainWorld('electron', {
+  // الإشارة إلى أن التطبيق يعمل في بيئة إلكترون
+  isElectron: true,
+  
   // فحص الاتصال بالشبكة
   checkNetworkConnection: () => ipcRenderer.invoke('check-network-connection'),
   
@@ -21,7 +24,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
 // إضافة مستمع لأحداث التطبيق
 window.addEventListener('DOMContentLoaded', () => {
-  // تهيئة التطبيق عند جاهزية الصفحة
-  console.log('تم تحميل واجهة المستخدم');
+  console.log('Electron preload script loaded');
 });
-
