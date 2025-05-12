@@ -6,6 +6,12 @@ echo Starting Octa Network Haven Desktop Application...
 set ELECTRON=true
 set NODE_ENV=production
 
+:: تحقق مما إذا كان إلكترون مثبت
+if not exist "node_modules\electron" (
+  echo Installing Electron...
+  call npm install electron --save-dev
+)
+
 :: تحقق من وجود مجلد dist
 if not exist "dist" (
   echo Building application first...

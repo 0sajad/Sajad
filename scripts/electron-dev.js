@@ -32,7 +32,7 @@ async function startElectronDev() {
     
     // تشغيل تطبيق Electron
     console.log('Starting Electron...');
-    const electronPath = path.resolve(__dirname, '../node_modules/.bin', process.platform === 'win32' ? 'electron.cmd' : 'electron');
+    const electronPath = path.join(__dirname, '../node_modules/.bin', process.platform === 'win32' ? 'electron.cmd' : 'electron');
     
     const electronProcess = spawn(
       electronPath,

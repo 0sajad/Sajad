@@ -23,33 +23,36 @@ function createWindow() {
     title: 'Octa Network Haven'
   });
 
-  // التحقق من وجود مجلد dist
-  const distPath = path.join(__dirname, '../dist');
-  const distExists = fs.existsSync(distPath);
-  
-  console.log(`Checking for dist folder: ${distPath} - Exists: ${distExists}`);
-
   // تحديد عنوان URL للنافذة
   let startUrl;
   
+  // تحقق من وجود عنوان URL من بيئة التطوير
   if (process.env.ELECTRON_START_URL) {
-    // استخدام خادم التطوير إذا كان متاحًا
     startUrl = process.env.ELECTRON_START_URL;
-    console.log('Development mode: Using Vite dev server');
-  } else if (distExists) {
-    // استخدام ملفات البناء إذا كانت موجودة
-    startUrl = url.format({
-      pathname: path.join(__dirname, '../dist/index.html'),
-      protocol: 'file:',
-      slashes: true
-    });
-    console.log('Production mode: Using built files');
+    console.log('Development mode: Using Vite dev server:', startUrl);
   } else {
-    // محاولة بدء خادم محلي في حالة عدم وجود ملفات البناء
-    console.log('No dist folder found, attempting to use local server');
-    startUrl = 'http://localhost:8080';
+    // التحقق من وجود مجلد dist
+    const distPath = path.join(__dirname, '../dist');
+    const distExists = fs.existsSync(distPath);
+    
+    console.log(`Checking for dist folder: ${distPath} - Exists: ${distExists}`);
+
+    if (distExists) {
+      // استخدام ملفات البناء
+      startUrl = url.format({
+        pathname: path.join(__dirname, '../dist/index.html'),
+        protocol: 'file:',
+        slashes: true
+      });
+      console.log('Production mode: Using built files:', startUrl);
+    } else {
+      // محاولة استخدام خادم محلي
+      startUrl = 'http://localhost:8080';
+      console.log('No dist folder found, trying local server:', startUrl);
+    }
   }
   
+  // تحميل عنوان URL
   console.log('Loading URL:', startUrl);
   mainWindow.loadURL(startUrl);
 

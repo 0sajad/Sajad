@@ -6,22 +6,20 @@ echo Starting Octa Network Haven Desktop Application in Development Mode...
 set ELECTRON=true
 set NODE_ENV=development
 
-:: تثبيت Electron إذا لم يكن موجودًا
+:: تحقق مما إذا كان إلكترون مثبت
 if not exist "node_modules\electron" (
   echo Installing Electron...
-  npm install electron --save-dev
+  call npm install electron electron-builder --save-dev
 )
 
-:: تشغيل سكربت التطوير مباشرة
+:: تحقق من التبعيات الأخرى
+if not exist "node_modules\concurrently" (
+  echo Installing additional dependencies...
+  call npm install concurrently cross-env wait-on --save-dev
+)
+
+:: تشغيل سكربت التطوير
 echo Launching Electron development environment...
-node scripts/electron-dev.js
-
-:: في حالة الفشل، محاولة تشغيل Electron مباشرة
-if %ERRORLEVEL% NEQ 0 (
-  echo Attempting direct Electron launch with Vite server...
-  start /b npx vite --host --port 8080
-  timeout /t 5
-  npx electron electron/main.js
-)
+npx concurrently "npx vite --host --port 8080" "npx wait-on http://localhost:8080 && npx electron electron/main.js"
 
 pause
