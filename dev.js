@@ -29,9 +29,9 @@ function checkPackageExists(packageName) {
 
 // تثبيت الحزم المطلوبة باستخدام npm بدلاً من bun
 function installRequiredPackages() {
-  console.log('تثبيت الحزم المطلوبة...');
+  console.log('تثبيت الحزم المطلوبة باستخدام npm...');
   try {
-    execSync('npm install vite@latest @vitejs/plugin-react-swc lovable-tagger --save-dev', { 
+    execSync('npm install vite@latest @vitejs/plugin-react-swc --save-dev', { 
       stdio: 'inherit',
       shell: true
     });

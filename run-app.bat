@@ -7,18 +7,28 @@ echo 2) للتشغيل كتطبيق سطح مكتب (بعد البناء)
 echo.
 set /p choice="اختر وضع التشغيل (1 أو 2): "
 
-:: تثبيت Electron إذا لم يكن موجودًا
-if not exist "node_modules\electron" (
-  echo تثبيت Electron...
-  call npm install electron@latest --no-save
-)
-
+:: تنفيذ الاختيار
 if "%choice%"=="1" (
   echo تشغيل في وضع التطوير...
-  call run-electron-dev.bat
+  call node dev.js
 ) else if "%choice%"=="2" (
   echo تشغيل كتطبيق سطح مكتب...
-  call start-windows.bat
+  
+  :: التحقق من وجود مجلد dist
+  if not exist "dist" (
+    echo بناء التطبيق أولاً...
+    call npx vite build
+  )
+  
+  :: تحقق مما إذا كان إلكترون مثبت
+  if not exist "node_modules\electron" (
+    echo تثبيت Electron...
+    call npm install electron@latest --no-save
+  )
+  
+  :: تشغيل إلكترون
+  echo تشغيل تطبيق Electron...
+  call npx electron electron/main.js
 ) else (
   echo اختيار غير صالح. يرجى إدخال 1 أو 2.
   pause

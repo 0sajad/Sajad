@@ -63,6 +63,15 @@ function createWindow() {
       console.log('Trying local server as fallback...');
       mainWindow.loadURL('http://localhost:8080').catch(e => {
         console.error('Failed to load local server:', e);
+        
+        // إظهار صفحة خطأ بسيطة
+        mainWindow.loadURL(url.format({
+          pathname: path.join(__dirname, 'error.html'),
+          protocol: 'file:',
+          slashes: true
+        })).catch(() => {
+          mainWindow.webContents.loadURL('data:text/html,<html><body><h1>Failed to load application</h1><p>Please check if the application is built correctly or development server is running.</p></body></html>');
+        });
       });
     }
   });

@@ -6,9 +6,9 @@ echo Starting Octa Network Haven Desktop Application...
 set ELECTRON=true
 set NODE_ENV=production
 
-:: تحقق مما إذا كان إلكترون مثبت
+:: تحقق مما إذا كان إلكترون مثبت وتثبيته باستخدام npm بدلاً من bun
 if not exist "node_modules\electron" (
-  echo Installing Electron...
+  echo Installing Electron using npm...
   call npm install electron@latest --no-save
 )
 
@@ -25,7 +25,7 @@ npx electron electron/main.js
 :: في حالة حدوث خطأ، عرض رسالة مناسبة
 if %ERRORLEVEL% NEQ 0 (
   echo Failed to start Electron application.
-  echo Please ensure Electron is installed by running: npm install electron --save-dev
+  echo Please ensure Electron is installed correctly.
   echo Press any key to exit...
   pause > nul
 )

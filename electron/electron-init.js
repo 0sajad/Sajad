@@ -18,7 +18,7 @@ function checkDependencies() {
       console.log(`✅ إلكترون مثبت (${electronPath})`);
     } catch (err) {
       console.log('⚠️ إلكترون غير مثبت، جاري التثبيت...');
-      const npmCommand = isWindows ? 'npm install --no-save electron@latest' : 'npm install --no-save electron@latest';
+      const npmCommand = 'npm install --no-save electron@latest --no-fund --no-audit';
       execSync(npmCommand, { stdio: 'inherit' });
     }
     
@@ -28,7 +28,7 @@ function checkDependencies() {
       console.log(`✅ إلكترون-بلدر مثبت (${builderPath})`);
     } catch (err) {
       console.log('⚠️ إلكترون-بلدر غير مثبت، جاري التثبيت...');
-      const npmCommand = isWindows ? 'npm install --no-save electron-builder@latest' : 'npm install --no-save electron-builder@latest';
+      const npmCommand = 'npm install --no-save electron-builder@latest --no-fund --no-audit';
       execSync(npmCommand, { stdio: 'inherit' });
     }
     

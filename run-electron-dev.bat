@@ -6,15 +6,15 @@ echo Starting Octa Network Haven Desktop Application in Development Mode...
 set ELECTRON=true
 set NODE_ENV=development
 
-:: تحقق مما إذا كان إلكترون مثبت
+:: تأكد من تثبيت حزم npm بدلاً من bun
 if not exist "node_modules\electron" (
-  echo Installing Electron...
+  echo Installing Electron using npm...
   call npm install electron@latest --no-save
 )
 
 :: تحقق من التبعيات الأخرى
 if not exist "node_modules\concurrently" (
-  echo Installing additional dependencies...
+  echo Installing additional dependencies using npm...
   call npm install concurrently cross-env wait-on --save-dev
 )
 
