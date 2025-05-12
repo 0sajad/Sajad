@@ -9,7 +9,7 @@ set NODE_ENV=production
 :: تحقق مما إذا كان إلكترون مثبت
 if not exist "node_modules\electron" (
   echo Installing Electron...
-  call npm install electron --save-dev
+  call npm install electron@latest --no-save
 )
 
 :: تحقق من وجود مجلد dist

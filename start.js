@@ -10,14 +10,10 @@ console.log('🚀 Starting Octa Network Haven application...');
 if (!fs.existsSync(path.join(process.cwd(), 'node_modules'))) {
   console.log('📦 Installing dependencies...');
   try {
-    execSync('npx.cmd --no-install vite --version', { stdio: 'inherit' });
+    // Use npm instead of bun to avoid git dependency issues
+    execSync('npm install vite@latest @vitejs/plugin-react-swc --save-dev', { stdio: 'inherit' });
   } catch (error) {
-    console.log('Installing vite and dependencies...');
-    try {
-      execSync('npx vite@latest --version', { stdio: 'inherit' });
-    } catch (innerError) {
-      console.error('❌ Failed to check vite version:', innerError.message);
-    }
+    console.error('❌ Failed to install dependencies:', error.message);
   }
 }
 

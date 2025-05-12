@@ -9,7 +9,7 @@ set NODE_ENV=development
 :: تحقق مما إذا كان إلكترون مثبت
 if not exist "node_modules\electron" (
   echo Installing Electron...
-  call npm install electron electron-builder --save-dev
+  call npm install electron@latest --no-save
 )
 
 :: تحقق من التبعيات الأخرى

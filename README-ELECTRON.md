@@ -1,55 +1,60 @@
 
-# Octa Network Haven - Electron App
+# Octa Network Haven - تطبيق سطح المكتب
 
-This application can be run as a desktop application using Electron.
+يمكن تشغيل هذا التطبيق كتطبيق سطح مكتب باستخدام Electron.
 
-## Running on Windows 11
+## متطلبات النظام
+- Node.js (الإصدار 14 أو أحدث)
+- npm (يأتي مع Node.js)
 
-### Prerequisites
-- Node.js (v14 or newer)
-- npm (comes with Node.js)
+## طرق التشغيل
 
-### Installation
-1. Clone or download this repository
-2. Open a command prompt in the project directory
-3. Install dependencies:
-```
-npm install
-```
+### الطريقة السريعة (موصى بها)
+- انقر نقرًا مزدوجًا على ملف `run-app.bat`
+- اختر وضع التشغيل المناسب (وضع التطوير أو وضع سطح المكتب)
 
-### Running the Application in Development Mode
-To run the application in development mode, you can:
-
-1. Use the provided batch file:
+### تشغيل التطبيق في وضع التطوير
 ```
 run-electron-dev.bat
 ```
 
-2. Or run the command directly:
+### تشغيل التطبيق في وضع سطح المكتب
 ```
-node scripts/run-electron.js dev
+start-windows.bat
 ```
 
-### Building the Application
-To build an installer for Windows:
-
-1. Use the provided batch file:
+### إنشاء ملف تثبيت
+لإنشاء ملف تثبيت للبرنامج (.exe):
 ```
 run-electron-build.bat
 ```
 
-2. Or run the command directly:
+## حل المشكلات الشائعة
+
+### إذا واجهتك مشكلات التثبيت مع bun
+استخدم npm بدلاً من bun لتثبيت التبعيات:
 ```
-node scripts/run-electron.js build
+npm install electron@latest electron-builder@latest --save-dev
 ```
 
-The built application will be available in the `release` folder.
+### إذا لم يتم العثور على electron
+```
+npm install electron@latest --no-save
+```
 
-## Troubleshooting
+### إعادة بناء التطبيق
+```
+npx vite build
+```
 
-If you encounter any issues:
-- Make sure you have the latest version of Node.js installed
-- Try running `npm install` again to ensure all dependencies are correctly installed
-- Check the console output for specific error messages
+## على أنظمة Linux/Mac
+استخدم الملفات المشابهة بامتداد .sh:
+```
+chmod +x run-electron-dev.sh
+./run-electron-dev.sh
+```
 
-For additional help, please open an issue in the project repository.
+```
+chmod +x run-electron-build.sh
+./run-electron-build.sh
+```

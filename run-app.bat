@@ -10,7 +10,7 @@ set /p choice="اختر وضع التشغيل (1 أو 2): "
 :: تثبيت Electron إذا لم يكن موجودًا
 if not exist "node_modules\electron" (
   echo تثبيت Electron...
-  call npm install electron --save-dev
+  call npm install electron@latest --no-save
 )
 
 if "%choice%"=="1" (

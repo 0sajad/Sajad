@@ -13,6 +13,9 @@ function checkAndInstallPackages() {
     '@vitejs/plugin-react-swc',
     'electron',
     'electron-builder',
+    'concurrently',
+    'cross-env',
+    'wait-on',
     'react',
     'react-dom'
   ];
@@ -33,7 +36,7 @@ function checkAndInstallPackages() {
   if (missingPackages.length > 0) {
     console.log(`جاري تثبيت المكتبات المفقودة: ${missingPackages.join(', ')}`);
     try {
-      // تعديل أمر التثبيت ليستخدم --save-dev للحزم المتعلقة بالتطوير
+      // استخدام npm بدلاً من bun لتفادي مشاكل التثبيت
       execSync(`npm install --save-dev ${missingPackages.join(' ')}`, { stdio: 'inherit' });
       console.log('✅ تم تثبيت جميع المكتبات بنجاح');
       return true;
@@ -72,14 +75,14 @@ function checkViteInstallation() {
   }
 }
 
-// تصدير الدالتين
-module.exports = {
-  checkViteInstallation,
-  checkAndInstallPackages
-};
-
 // تنفيذ الفحص إذا تم استدعاء هذا الملف مباشرة
 if (require.main === module) {
   checkAndInstallPackages();
   checkViteInstallation();
 }
+
+// تصدير الدالتين للاستخدام في سكربتات أخرى
+module.exports = {
+  checkViteInstallation,
+  checkAndInstallPackages
+};

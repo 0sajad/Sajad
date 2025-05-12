@@ -3,13 +3,19 @@ const { spawn } = require('child_process');
 const { createServer } = require('vite');
 const path = require('path');
 const fs = require('fs');
+const { execSync } = require('child_process');
 
 async function startElectronDev() {
   try {
     // التحقق من وجود Electron
     if (!fs.existsSync(path.resolve(__dirname, '../node_modules/electron'))) {
       console.log('Electron not found, installing...');
-      require('child_process').execSync('npm install electron --save-dev', { stdio: 'inherit' });
+      try {
+        execSync('npm install electron@latest --no-save', { stdio: 'inherit' });
+      } catch (err) {
+        console.error('Failed to install Electron:', err.message);
+        return process.exit(1);
+      }
     }
 
     // تشغيل خادم Vite للتطوير

@@ -14,18 +14,27 @@
 ### الطريقة البديلة 2: تشغيل التطبيق المبني
 انقر نقرًا مزدوجًا على ملف `start-windows.bat` لتشغيل التطبيق كبرنامج سطح مكتب مستقل.
 
+## إنشاء ملف تثبيت للتطبيق
+
+لإنشاء ملف تثبيت للبرنامج (.exe)، انقر نقرًا مزدوجًا على:
+```
+run-electron-build.bat
+```
+
+سيتم إنشاء ملف التثبيت في مجلد `release`.
+
 ## حل المشكلات الشائعة
 
 ### إذا واجهتك مشكلة مع التبعيات
 قم بتشغيل الأمر التالي في سطر الأوامر:
 ```
-npm install electron electron-builder concurrently cross-env wait-on --save-dev
+npm install electron electron-builder concurrently cross-env wait-on vite @vitejs/plugin-react-swc --save-dev
 ```
 
 ### إذا لم يبدأ التطبيق
 1. تأكد من تثبيت Node.js على جهازك
 2. افتح موجه الأوامر وانتقل لمجلد المشروع
-3. نفذ الأمر: `npm install electron --save-dev`
+3. نفذ الأمر: `npm install electron@latest --no-save`
 4. ثم نفذ: `npx electron electron/main.js`
 
 ### لإعادة بناء التطبيق
@@ -34,10 +43,8 @@ npm install electron electron-builder concurrently cross-env wait-on --save-dev
 npx vite build
 ```
 
-### لإنشاء حزمة تثبيت
-لإنشاء ملف تثبيت للبرنامج، استخدم:
+### إذا واجهتك مشكلة مع bun
+استخدم npm بدلاً من bun لتثبيت الحزم المطلوبة:
 ```
-run-electron-build.bat
+npm install electron@latest electron-builder@latest --save-dev
 ```
-
-سيتم إنشاء ملف التثبيت في مجلد `release`.

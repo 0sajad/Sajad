@@ -33,14 +33,15 @@ function createWindow() {
   } else {
     // التحقق من وجود مجلد dist
     const distPath = path.join(__dirname, '../dist');
-    const distExists = fs.existsSync(distPath);
+    const indexPath = path.join(distPath, 'index.html');
+    const distExists = fs.existsSync(distPath) && fs.existsSync(indexPath);
     
     console.log(`Checking for dist folder: ${distPath} - Exists: ${distExists}`);
 
     if (distExists) {
       // استخدام ملفات البناء
       startUrl = url.format({
-        pathname: path.join(__dirname, '../dist/index.html'),
+        pathname: indexPath,
         protocol: 'file:',
         slashes: true
       });
@@ -54,7 +55,17 @@ function createWindow() {
   
   // تحميل عنوان URL
   console.log('Loading URL:', startUrl);
-  mainWindow.loadURL(startUrl);
+  mainWindow.loadURL(startUrl).catch((err) => {
+    console.error('Failed to load URL:', err);
+    
+    // في حالة الفشل، محاولة فتح الخادم المحلي
+    if (startUrl.startsWith('file:')) {
+      console.log('Trying local server as fallback...');
+      mainWindow.loadURL('http://localhost:8080').catch(e => {
+        console.error('Failed to load local server:', e);
+      });
+    }
+  });
 
   // فتح أدوات المطور في وضع التطوير
   if (process.env.NODE_ENV === 'development') {

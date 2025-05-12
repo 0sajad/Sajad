@@ -13,28 +13,29 @@ const isLinux = os.platform() === 'linux';
 function checkDependencies() {
   try {
     // التحقق من تثبيت إلكترون
-    const electronPath = require.resolve('electron');
-    console.log(`✅ إلكترون مثبت (${electronPath})`);
+    try {
+      const electronPath = require.resolve('electron');
+      console.log(`✅ إلكترون مثبت (${electronPath})`);
+    } catch (err) {
+      console.log('⚠️ إلكترون غير مثبت، جاري التثبيت...');
+      const npmCommand = isWindows ? 'npm install --no-save electron@latest' : 'npm install --no-save electron@latest';
+      execSync(npmCommand, { stdio: 'inherit' });
+    }
     
     // التحقق من تثبيت electron-builder
-    const builderPath = require.resolve('electron-builder');
-    console.log(`✅ إلكترون-بلدر مثبت (${builderPath})`);
+    try {
+      const builderPath = require.resolve('electron-builder');
+      console.log(`✅ إلكترون-بلدر مثبت (${builderPath})`);
+    } catch (err) {
+      console.log('⚠️ إلكترون-بلدر غير مثبت، جاري التثبيت...');
+      const npmCommand = isWindows ? 'npm install --no-save electron-builder@latest' : 'npm install --no-save electron-builder@latest';
+      execSync(npmCommand, { stdio: 'inherit' });
+    }
     
     return true;
   } catch (err) {
-    console.error('❌ التبعيات مفقودة:', err.message);
-    console.log('جاري تثبيت التبعيات المطلوبة...');
-    
-    try {
-      const npmCommand = isWindows ? 'npm install --no-save electron electron-builder' : 'npm install --no-save electron electron-builder';
-      console.log(`تنفيذ: ${npmCommand}`);
-      execSync(npmCommand, { stdio: 'inherit' });
-      console.log('✅ تم تثبيت التبعيات بنجاح');
-      return true;
-    } catch (installErr) {
-      console.error('❌ فشل تثبيت التبعيات:', installErr.message);
-      return false;
-    }
+    console.error('❌ فشل تثبيت التبعيات:', err.message);
+    return false;
   }
 }
 
@@ -46,7 +47,7 @@ function verifyProjectStructure() {
   ];
   
   // إنشاء مجلد electron إذا لم يكن موجوداً
-  const electronDir = path.resolve(__dirname, '..');
+  const electronDir = path.resolve(__dirname);
   if (!fs.existsSync(electronDir)) {
     try {
       fs.mkdirSync(electronDir, { recursive: true });
