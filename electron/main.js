@@ -2,6 +2,7 @@
 const { app, BrowserWindow, ipcMain, net, shell } = require('electron');
 const path = require('path');
 const url = require('url');
+const fs = require('fs');
 
 // تخزين الإشارة إلى النافذة النشطة
 let mainWindow;
@@ -22,12 +23,32 @@ function createWindow() {
     title: 'Octa Network Haven'
   });
 
+  // التحقق من وجود مجلد dist
+  const distPath = path.join(__dirname, '../dist');
+  const distExists = fs.existsSync(distPath);
+  
+  console.log(`Checking for dist folder: ${distPath} - Exists: ${distExists}`);
+
   // تحديد عنوان URL للنافذة
-  const startUrl = process.env.ELECTRON_START_URL || url.format({
-    pathname: path.join(__dirname, '../dist/index.html'),
-    protocol: 'file:',
-    slashes: true
-  });
+  let startUrl;
+  
+  if (process.env.ELECTRON_START_URL) {
+    // استخدام خادم التطوير إذا كان متاحًا
+    startUrl = process.env.ELECTRON_START_URL;
+    console.log('Development mode: Using Vite dev server');
+  } else if (distExists) {
+    // استخدام ملفات البناء إذا كانت موجودة
+    startUrl = url.format({
+      pathname: path.join(__dirname, '../dist/index.html'),
+      protocol: 'file:',
+      slashes: true
+    });
+    console.log('Production mode: Using built files');
+  } else {
+    // محاولة بدء خادم محلي في حالة عدم وجود ملفات البناء
+    console.log('No dist folder found, attempting to use local server');
+    startUrl = 'http://localhost:8080';
+  }
   
   console.log('Loading URL:', startUrl);
   mainWindow.loadURL(startUrl);

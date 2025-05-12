@@ -6,19 +6,20 @@ const fs = require('fs');
 
 async function startElectronDev() {
   try {
-    // Check if electron is installed
+    // التحقق من وجود Electron
     if (!fs.existsSync(path.resolve(__dirname, '../node_modules/electron'))) {
       console.log('Electron not found, installing...');
-      require('child_process').execSync('npm install electron --no-save', { stdio: 'inherit' });
+      require('child_process').execSync('npm install electron --save-dev', { stdio: 'inherit' });
     }
 
-    // Start Vite dev server
+    // تشغيل خادم Vite للتطوير
     console.log('Starting Vite development server...');
     const server = await createServer({
       configFile: path.resolve(__dirname, '../vite.config.ts'),
       mode: 'development',
       server: {
         port: 8080,
+        host: '0.0.0.0',
       },
     });
     
@@ -26,11 +27,16 @@ async function startElectronDev() {
     const address = server.resolvedUrls.local[0];
     console.log(`Vite dev server started at ${address}`);
     
-    // Start Electron process
+    // تأخير قصير للتأكد من بدء الخادم
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // تشغيل تطبيق Electron
     console.log('Starting Electron...');
+    const electronPath = path.resolve(__dirname, '../node_modules/.bin', process.platform === 'win32' ? 'electron.cmd' : 'electron');
+    
     const electronProcess = spawn(
-      process.platform === 'win32' ? 'npx.cmd' : 'npx', 
-      ['electron', path.resolve(__dirname, '../electron/main.js')], 
+      electronPath,
+      [path.resolve(__dirname, '../electron/main.js')], 
       {
         env: {
           ...process.env,
@@ -38,7 +44,8 @@ async function startElectronDev() {
           ELECTRON: 'true',
           NODE_ENV: 'development'
         },
-        stdio: 'inherit'
+        stdio: 'inherit',
+        shell: true
       }
     );
     

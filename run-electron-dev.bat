@@ -1,24 +1,26 @@
 
 @echo off
-echo Starting Octa Network Haven Desktop Application...
+echo Starting Octa Network Haven Desktop Application in Development Mode...
 
-:: Set environment variable for Electron
+:: تعيين متغيرات البيئة
 set ELECTRON=true
+set NODE_ENV=development
 
-:: First check for required dependencies
-echo Checking dependencies...
+:: تثبيت Electron إذا لم يكن موجودًا
 if not exist "node_modules\electron" (
   echo Installing Electron...
-  npm install electron --no-save
+  npm install electron --save-dev
 )
 
-:: Try to run with node directly
-echo Launching Electron application...
+:: تشغيل سكربت التطوير مباشرة
+echo Launching Electron development environment...
 node scripts/electron-dev.js
 
-:: In case of failure, try direct approach
+:: في حالة الفشل، محاولة تشغيل Electron مباشرة
 if %ERRORLEVEL% NEQ 0 (
-  echo Attempting direct Electron launch...
+  echo Attempting direct Electron launch with Vite server...
+  start /b npx vite --host --port 8080
+  timeout /t 5
   npx electron electron/main.js
 )
 
