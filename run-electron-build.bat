@@ -4,8 +4,8 @@ echo جاري بناء تطبيق إلكترون...
 
 :: التحقق من node_modules
 if not exist "node_modules" (
-  echo تثبيت الحزم المطلوبة باستخدام npm...
-  call npm install --no-fund --no-audit
+  echo تثبيت الحزم المطلوبة...
+  call npm install --no-save
 )
 
 :: تأكد من تثبيت vite و electron

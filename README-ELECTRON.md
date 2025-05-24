@@ -17,10 +17,6 @@
 ```
 run-electron-dev.bat
 ```
-أو
-```
-node dev.js
-```
 
 ### تشغيل التطبيق في وضع سطح المكتب
 ```
@@ -35,10 +31,10 @@ run-electron-build.bat
 
 ## حل المشكلات الشائعة
 
-### إذا واجهتك مشكلات تثبيت
-استخدم npm لتثبيت التبعيات:
+### إذا واجهتك مشكلات التثبيت مع bun
+استخدم npm بدلاً من bun لتثبيت التبعيات:
 ```
-npm install electron@latest electron-builder@latest vite@latest @vitejs/plugin-react-swc --save-dev
+npm install electron@latest electron-builder@latest --save-dev
 ```
 
 ### إذا لم يتم العثور على electron
@@ -49,11 +45,6 @@ npm install electron@latest --no-save
 ### إعادة بناء التطبيق
 ```
 npx vite build
-```
-
-### تشغيل Electron باستخدام ملفات البناء
-```
-npx electron electron/main.js
 ```
 
 ## على أنظمة Linux/Mac

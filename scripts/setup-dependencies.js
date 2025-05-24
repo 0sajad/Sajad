@@ -37,7 +37,7 @@ function checkAndInstallPackages() {
     console.log(`جاري تثبيت المكتبات المفقودة: ${missingPackages.join(', ')}`);
     try {
       // استخدام npm بدلاً من bun لتفادي مشاكل التثبيت
-      execSync(`npm install --save-dev ${missingPackages.join(' ')} --no-fund --no-audit`, { stdio: 'inherit' });
+      execSync(`npm install --save-dev ${missingPackages.join(' ')}`, { stdio: 'inherit' });
       console.log('✅ تم تثبيت جميع المكتبات بنجاح');
       return true;
     } catch (error) {
@@ -60,7 +60,7 @@ function checkViteInstallation() {
     if (!fs.existsSync(vitePath) || !fs.existsSync(viteBinPath)) {
       console.log('Vite غير مثبت محلياً. جاري التثبيت...');
       try {
-        execSync('npm install vite@latest @vitejs/plugin-react-swc --save-dev --no-fund --no-audit', { stdio: 'inherit' });
+        execSync('npm install vite@latest @vitejs/plugin-react-swc --save-dev', { stdio: 'inherit' });
         console.log('✅ تم تثبيت Vite بنجاح');
         return true;
       } catch (e) {

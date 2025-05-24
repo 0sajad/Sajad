@@ -7,9 +7,9 @@ const { execSync } = require('child_process');
 
 async function startElectronDev() {
   try {
-    // التحقق من وجود Electron وتثبيته باستخدام npm بدلاً من bun
+    // التحقق من وجود Electron
     if (!fs.existsSync(path.resolve(__dirname, '../node_modules/electron'))) {
-      console.log('Electron not found, installing with npm...');
+      console.log('Electron not found, installing...');
       try {
         execSync('npm install electron@latest --no-save', { stdio: 'inherit' });
       } catch (err) {
