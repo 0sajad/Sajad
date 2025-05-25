@@ -1,23 +1,21 @@
 
-import React, { ReactNode } from "react";
-import { ErrorBoundary } from "@/components/ui/error/ErrorBoundary";
+import React from 'react';
+import { Toaster } from 'sonner';
 
 interface LayoutProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+export default function Layout({ children }: LayoutProps) {
   return (
-    <ErrorBoundary>
-      <div className="min-h-screen flex flex-col">
-        {/* Add header, navigation, etc. here if needed */}
-        <main className="flex-grow">
-          {children}
-        </main>
-        {/* Add footer here if needed */}
-      </div>
-    </ErrorBoundary>
+    <div className="min-h-screen bg-background">
+      {children}
+      <Toaster 
+        position="top-right" 
+        richColors 
+        expand={true}
+        closeButton
+      />
+    </div>
   );
-};
-
-export default Layout;
+}

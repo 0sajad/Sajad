@@ -19,12 +19,11 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: process.env.ELECTRON === 'true' ? './' : '/',
+  base: '/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
     emptyOutDir: true,
-    // تحسينات للنشر على GitHub Pages
     rollupOptions: {
       output: {
         manualChunks: {
@@ -37,7 +36,6 @@ export default defineConfig(({ mode }) => ({
       }
     }
   },
-  // إعدادات للعمل مع GitHub Pages
   define: {
     __GITHUB_PAGES__: JSON.stringify(process.env.GITHUB_PAGES === 'true')
   }

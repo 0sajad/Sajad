@@ -1,14 +1,14 @@
+
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./layouts/Layout";
 import SuspenseLoader from "./components/SuspenseLoader";
 import Dashboard from "./pages/Dashboard";
 import { ErrorBoundary } from "./components/ui/error/ErrorBoundary";
-import { useTranslation } from "react-i18next";
-import { useAppState } from "./hooks/state";
 import { ModeProvider } from "./context/ModeContext";
+import "./i18n";
 
-// التحميل الكسول للصفحات لتحسين أداء التطبيق
+// التحميل الكسول للصفحات
 const NetworkScanner = lazy(() => import("./pages/NetworkScanner"));
 const AIAssistant = lazy(() => import("./pages/AIAssistant"));
 const Simulation = lazy(() => import("./pages/Simulation"));
@@ -23,9 +23,6 @@ const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 const RealNetworkMonitor = lazy(() => import("./pages/RealNetworkMonitor"));
 
 const App = () => {
-  const { t } = useTranslation();
-  const { isInitialized, isConnected, isOnline } = useAppState();
-  
   return (
     <ModeProvider>
       <ErrorBoundary>
