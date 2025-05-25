@@ -79,28 +79,30 @@ export function useRealNetworkMonitoring() {
   // مراقبة تغييرات الاتصال
   useEffect(() => {
     const cleanup = setupConnectionMonitoring((status) => {
-      setNetworkState(prev => ({
-        ...prev,
-        isOnline: status.isOnline,
-        connectionType: status.connectionType,
-        lastUpdate: new Date()
-      }));
-      
-      // إشعار المستخدم بتغيير حالة الاتصال
-      if (status.isOnline !== prev.isOnline) {
-        if (status.isOnline) {
-          toast.success('تم استعادة الاتصال بالإنترنت');
-          // قياس السرعة تلقائياً عند الاتصال
-          setTimeout(measureSpeed, 2000);
-        } else {
-          toast.warning('تم قطع الاتصال بالإنترنت');
+      setNetworkState(prev => {
+        // إشعار المستخدم بتغيير حالة الاتصال
+        if (status.isOnline !== prev.isOnline) {
+          if (status.isOnline) {
+            toast.success('تم استعادة الاتصال بالإنترنت');
+            // قياس السرعة تلقائياً عند الاتصال
+            setTimeout(measureSpeed, 2000);
+          } else {
+            toast.warning('تم قطع الاتصال بالإنترنت');
+          }
         }
-      }
-      
-      // إشعار بتغيير نوع الاتصال
-      if (status.connectionType !== prev.connectionType) {
-        toast.info(`تم تغيير نوع الاتصال إلى: ${status.connectionType}`);
-      }
+        
+        // إشعار بتغيير نوع الاتصال
+        if (status.connectionType !== prev.connectionType) {
+          toast.info(`تم تغيير نوع الاتصال إلى: ${status.connectionType}`);
+        }
+
+        return {
+          ...prev,
+          isOnline: status.isOnline,
+          connectionType: status.connectionType,
+          lastUpdate: new Date()
+        };
+      });
     });
     
     // قياس أولي للسرعة

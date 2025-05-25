@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -8,7 +9,7 @@ import { useMode } from "@/context/ModeContext";
 
 export function Header() {
   const { t } = useTranslation();
-  const { isDarkMode, toggleMode } = useMode();
+  const { mode } = useMode();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
