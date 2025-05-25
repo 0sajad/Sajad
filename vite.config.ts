@@ -24,5 +24,21 @@ export default defineConfig(({ mode }) => ({
     outDir: 'dist',
     assetsDir: 'assets',
     emptyOutDir: true,
+    // تحسينات للنشر على GitHub Pages
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          router: ['react-router-dom'],
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
+          charts: ['recharts'],
+          utils: ['date-fns', 'clsx']
+        }
+      }
+    }
+  },
+  // إعدادات للعمل مع GitHub Pages
+  define: {
+    __GITHUB_PAGES__: JSON.stringify(process.env.GITHUB_PAGES === 'true')
   }
 }));

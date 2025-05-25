@@ -1,4 +1,3 @@
-
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./layouts/Layout";
@@ -21,6 +20,7 @@ const Login = lazy(() => import("./pages/auth/Login"));
 const Register = lazy(() => import("./pages/auth/Register"));
 const ForgotPassword = lazy(() => import("./pages/auth/ForgotPassword"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+const RealNetworkMonitor = lazy(() => import("./pages/RealNetworkMonitor"));
 
 const App = () => {
   const { t } = useTranslation();
@@ -35,6 +35,7 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/fiber-optic" element={<NetworkScanner />} />
+                <Route path="/real-monitor" element={<RealNetworkMonitor />} />
                 <Route path="/ai" element={<AIAssistant />} />
                 <Route path="/simulation" element={<Simulation />} />
                 <Route path="/tools" element={<Tools />} />

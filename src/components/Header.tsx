@@ -1,63 +1,76 @@
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { Network } from "lucide-react";
+import { ThemeToggle } from "./ThemeToggle";
+import { MobileMenu } from "./MobileMenu";
+import { useMode } from "@/context/ModeContext";
 
-import React, { useState, useEffect } from "react";
-import { MobileMenu } from "./nav/MobileMenu";
-import { DesktopNav } from "./nav/DesktopNav";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { motion, AnimatePresence } from "framer-motion";
-import { Logo } from "./header/Logo";
-import { HeaderActions } from "./header/HeaderActions";
-
-interface HeaderProps {
-  onLanguageChange?: (language: string) => void;
-}
-
-export function Header({ onLanguageChange }: HeaderProps) {
-  const [isScrolled, setIsScrolled] = useState(false);
+export function Header() {
+  const { t } = useTranslation();
+  const { isDarkMode, toggleMode } = useMode();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const isMobile = useIsMobile();
-  
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-  
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 768 && isMobileMenuOpen) {
-        setIsMobileMenuOpen(false);
-      }
-    };
-    
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [isMobileMenuOpen]);
-  
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
-    <TooltipProvider>
-      <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md transition-all duration-300 ${
-        isScrolled ? "py-1.5 bg-white/90 shadow-sm dark:bg-gray-900/90" : "py-2 bg-transparent"
-      }`}>
-        <div className="container mx-auto px-3 sm:px-4 flex items-center justify-between">
-          <div className="flex items-center gap-4"> {/* تقليل المساحة بين العناصر */}
-            <Logo />
-            <DesktopNav />
+    <header className="bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-100 dark:border-gray-800 dark:bg-gray-900/95 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                <Network className="h-5 w-5 text-white" />
+              </div>
+              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Octa Network Haven
+              </span>
+            </Link>
           </div>
-          
-          <HeaderActions 
-            isMobileMenuOpen={isMobileMenuOpen}
-            setIsMobileMenuOpen={setIsMobileMenuOpen}
-          />
+
+          {/* Navigation */}
+          <nav className="hidden md:flex items-center space-x-8 rtl:space-x-reverse">
+            <Link 
+              to="/" 
+              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            >
+              {t('nav.home', 'الرئيسية')}
+            </Link>
+            <Link 
+              to="/fiber-optic" 
+              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            >
+              {t('nav.fiberOptic', 'الألياف البصرية')}
+            </Link>
+            <Link 
+              to="/real-monitor" 
+              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            >
+              مراقب الشبكة المباشر
+            </Link>
+            <Link 
+              to="/tools" 
+              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            >
+              {t('nav.tools', 'الأدوات')}
+            </Link>
+            <Link 
+              to="/ai" 
+              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            >
+              {t('nav.ai', 'الذكاء الاصطناعي')}
+            </Link>
+          </nav>
+
+          {/* Theme Toggle & Mobile Menu */}
+          <div className="flex items-center space-x-4 rtl:space-x-reverse">
+            <ThemeToggle />
+            <MobileMenu />
+          </div>
         </div>
-        
-        <AnimatePresence>
-          {isMobileMenuOpen && <MobileMenu isOpen={isMobileMenuOpen} />}
-        </AnimatePresence>
-      </header>
-    </TooltipProvider>
+      </div>
+    </header>
   );
 }
