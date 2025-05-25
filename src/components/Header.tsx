@@ -10,11 +10,6 @@ import { useMode } from "@/context/ModeContext";
 export function Header() {
   const { t } = useTranslation();
   const { mode } = useMode();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
 
   return (
     <header className="bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-100 dark:border-gray-800 dark:bg-gray-900/95 sticky top-0 z-50">
