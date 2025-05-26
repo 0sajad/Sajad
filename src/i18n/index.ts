@@ -64,4 +64,5 @@ i18n
     },
   });
 
+export const changeLanguage = (lng: string) => i18n.changeLanguage(lng);
 export default i18n;

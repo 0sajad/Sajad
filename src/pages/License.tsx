@@ -1,202 +1,118 @@
 
-import React, { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import { LicenseSelector } from "@/components/license/LicenseSelector";
-import { ConfigSync } from "@/components/dev/ConfigSync";
-import { SyncGuide } from "@/components/license/SyncGuide";
-import { SyncStatus } from "@/components/license/SyncStatus";
-import { ClientSyncPanel } from "@/components/license/ClientSyncPanel";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useMode } from "@/context/ModeContext";
-import { useToast } from "@/components/ui/use-toast";
-import { useSyncQueue } from "@/hooks/offline/useSyncQueue";
+import React, { useState } from 'react';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
+import { useTheme } from '@/hooks/useTheme';
+import { Shield, CheckCircle, Clock, Users } from 'lucide-react';
 
-const License = () => {
+export default function License() {
   const { t } = useTranslation();
-  const { toast } = useToast();
-  const { mode, setMode, features, isSyncing } = useMode();
-  // إضافة حالة للمزامنة التلقائية
-  const [autoSyncEnabled, setAutoSyncEnabled] = useState<boolean>(() => {
-    return localStorage.getItem("octa-auto-sync") === "true";
-  });
-  const [syncStatus, setSyncStatus] = useState<"offline" | "syncing" | "synced">("offline");
-  const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
-  const { queueLength, syncQueue } = useSyncQueue();
-  
-  // حالة نوع الترخيص
-  const [licenseType, setLicenseType] = useState<"client" | "developer">(mode);
-  // حالة التبويب النشط
-  const [activeTab, setActiveTab] = useState<"sync" | "guide">("sync");
+  const { theme, setTheme } = useTheme();
+  const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(theme === 'dark' ? 'dark' : 'light');
 
-  // تحديث نوع الترخيص عند تغيير وضع التطبيق
-  useEffect(() => {
-    setLicenseType(mode);
-  }, [mode]);
-
-  // معالجة تغيير نوع الترخيص
-  const handleLicenseChange = (value: string) => {
-    setMode(value as "client" | "developer");
-    setLicenseType(value as "client" | "developer");
-  };
-
-  // استعادة آخر وقت مزامنة من التخزين المحلي
-  useEffect(() => {
-    const storedTime = localStorage.getItem("octa-last-sync-time");
-    if (storedTime) {
-      setLastSyncTime(storedTime);
-      setSyncStatus("synced");
-    }
-  }, []);
-
-  // تفعيل المزامنة التلقائية
-  useEffect(() => {
-    if (autoSyncEnabled) {
-      const syncInterval = setInterval(() => {
-        checkForUpdates();
-      }, 5 * 60 * 1000); // كل 5 دقائق
-      
-      return () => clearInterval(syncInterval);
-    }
-  }, [autoSyncEnabled]);
-
-  // تبديل حالة المزامنة التلقائية
-  const toggleAutoSync = () => {
-    const newValue = !autoSyncEnabled;
-    setAutoSyncEnabled(newValue);
-    localStorage.setItem("octa-auto-sync", newValue.toString());
-    
-    toast({
-      title: newValue ? "تم تفعيل المزامنة التلقائية" : "تم تعطيل المزامنة التلقائية",
-      description: newValue ? "سيتم مزامنة الإعدادات تلقائيًا كل 5 دقائق" : "لن يتم مزامنة الإعدادات تلقائيًا",
-    });
-  };
-
-  // التحقق من وجود تحديثات
-  const checkForUpdates = async () => {
-    if (syncStatus === "syncing") return;
-    
-    setSyncStatus("syncing");
-    try {
-      // محاولة الوصول إلى المزامنة عبر JSONBin.io العام
-      const binId = localStorage.getItem("octa-sync-bin-id");
-      if (!binId) {
-        console.log("لا يوجد معرف مخزن للمزامنة");
-        setSyncStatus("offline");
-        return;
-      }
-
-      const response = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error("فشل في الوصول إلى بيانات المزامنة");
-      }
-      
-      const data = await response.json();
-      
-      // التحقق من وجود تحديثات
-      const serverTimestamp = data.metadata?.createdAt || '';
-      const localTimestamp = localStorage.getItem("octa-sync-timestamp") || '';
-      
-      if (serverTimestamp > localTimestamp) {
-        // تطبيق التحديثات إذا كانت جديدة
-        localStorage.setItem("octa-sync-config", JSON.stringify(data.record));
-        localStorage.setItem("octa-sync-timestamp", serverTimestamp);
-        localStorage.setItem("octa-last-sync-time", new Date().toLocaleString());
-        setLastSyncTime(new Date().toLocaleString());
-        
-        // إرسال حدث لتطبيق التكوين
-        document.dispatchEvent(new CustomEvent('configurationUpdate', { 
-          detail: { features: data.record.features }
-        }));
-        
-        toast({
-          title: "تم تحديث التكوين",
-          description: "تم تطبيق أحدث الإعدادات من المزامنة",
-        });
-      }
-      
-      setSyncStatus("synced");
-    } catch (error) {
-      console.error("خطأ في المزامنة:", error);
-      setSyncStatus("offline");
-      
-      // محاولة مزامنة البيانات المخزنة محليًا
-      if (queueLength > 0) {
-        await syncQueue();
-      }
-    }
-  };
-
-  // تنفيذ المزامنة اليدوية
-  const syncNow = async () => {
-    await checkForUpdates();
+  const handleThemeToggle = () => {
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    setCurrentTheme(newTheme);
+    setTheme(newTheme);
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">إدارة الترخيص</h1>
+    <div className="min-h-screen bg-background">
+      <Header />
       
-      <LicenseSelector 
-        value={licenseType} 
-        onChange={handleLicenseChange} 
-      />
-      
-      {/* قسم حالة المزامنة */}
-      <SyncStatus 
-        syncStatus={syncStatus}
-        lastSyncTime={lastSyncTime}
-        autoSyncEnabled={autoSyncEnabled}
-        toggleAutoSync={toggleAutoSync}
-        syncNow={syncNow}
-      />
-      
-      {/* قسم المزامنة عند اختيار وضع المطور */}
-      {licenseType === "developer" && (
-        <div className="mt-8">
-          <Card className="border-indigo-200">
-            <CardHeader className="bg-gradient-to-r from-indigo-50 to-indigo-100">
-              <CardTitle>مزامنة التكوين</CardTitle>
+      <main className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">{t('license.title', 'الترخيص والاشتراك')}</h1>
+          <p className="text-muted-foreground">
+            {t('license.subtitle', 'إدارة ترخيص البرنامج ومعلومات الاشتراك')}
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-green-500" />
+                حالة الترخيص
+              </CardTitle>
               <CardDescription>
-                استخدم هذه الأداة لمشاركة إعدادات وضع المطور مع العملاء على أجهزة بعيدة
+                معلومات الترخيص الحالي
               </CardDescription>
             </CardHeader>
-            <CardContent className="pt-4">
-              <ConfigSync />
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span>النوع</span>
+                <Badge variant="default">مجاني</Badge>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>الحالة</span>
+                <Badge variant="default" className="bg-green-100 text-green-800">
+                  <CheckCircle className="h-3 w-3 mr-1" />
+                  نشط
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>تاريخ الانتهاء</span>
+                <span className="text-sm text-muted-foreground">غير محدود</span>
+              </div>
             </CardContent>
           </Card>
-          
-          {/* إضافة دليل المزامنة المصور */}
-          <SyncGuide />
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5 text-blue-500" />
+                معلومات الاستخدام
+              </CardTitle>
+              <CardDescription>
+                إحصائيات الاستخدام الحالية
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span>المستخدمون النشطون</span>
+                <Badge variant="outline">1</Badge>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>آخر استخدام</span>
+                <span className="text-sm text-muted-foreground">الآن</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>إجمالي الجلسات</span>
+                <span className="text-sm text-muted-foreground">∞</span>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      )}
-      
-      {/* قسم المزامنة عند اختيار وضع العميل */}
-      {licenseType === "client" && (
+
         <div className="mt-8">
-          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "sync" | "guide")}>
-            <TabsList className="mb-4">
-              <TabsTrigger value="sync">إعدادات المزامنة</TabsTrigger>
-              <TabsTrigger value="guide">دليل المزامنة المصور</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="sync">
-              <ClientSyncPanel autoSyncEnabled={autoSyncEnabled} />
-            </TabsContent>
-            
-            <TabsContent value="guide">
-              <SyncGuide />
-            </TabsContent>
-          </Tabs>
+          <Card>
+            <CardHeader>
+              <CardTitle>إعدادات النظام</CardTitle>
+              <CardDescription>
+                تخصيص إعدادات البرنامج
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-medium">الوضع الداكن</h3>
+                  <p className="text-sm text-muted-foreground">تبديل بين الوضع الفاتح والداكن</p>
+                </div>
+                <Button variant="outline" onClick={handleThemeToggle}>
+                  {currentTheme === 'dark' ? 'الوضع الفاتح' : 'الوضع الداكن'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      )}
+      </main>
+      
+      <Footer />
     </div>
   );
-};
-
-export default License;
+}

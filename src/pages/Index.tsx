@@ -1,3 +1,4 @@
+
 import React, { useEffect, lazy, Suspense } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -22,7 +23,7 @@ import { MainContent } from "@/components/sections/MainContent";
 import { A11yWrapper } from "@/components/ui/accessibility/A11yWrapper";
 import { NetworkStatusIndicator } from "@/components/ui/NetworkStatusIndicator";
 import { ArabicTextProvider } from "@/components/text/ArabicTextProvider";
-import { ElectronDetector } from "@/components/ElectronDetector";
+import WebEnvironmentDetector from "@/components/ElectronDetector";
 
 const AIAssistantManager = lazy(() => 
   import("@/components/ai/AIAssistantManager").then(module => ({ default: module.AIAssistantManager }))
@@ -70,7 +71,7 @@ export default function Index() {
     <A11yWrapper>
       <LazyApp>
         <ErrorBoundary>
-          <ElectronDetector />
+          <WebEnvironmentDetector />
           <TooltipProvider>
             <Suspense fallback={null}>
               <AccessibilityOverlay />
