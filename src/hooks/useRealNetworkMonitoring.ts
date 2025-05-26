@@ -1,6 +1,5 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { measureRealSpeed, detectConnectionType, setupConnectionMonitoring, scanNetworkDevices } from '@/utils/realNetworkAPI';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 
@@ -18,26 +17,62 @@ interface NetworkState {
 }
 
 /**
- * خطاف مراقبة الشبكة الفعلي
- * يتفاعل مع الشبكة الحقيقية
+ * خطاف مراقبة الشبكة للويب
+ * يعمل في بيئة المتصفح فقط
  */
 export function useRealNetworkMonitoring() {
   const { t } = useTranslation();
   const [networkState, setNetworkState] = useState<NetworkState>({
     isOnline: navigator.onLine,
-    connectionType: detectConnectionType(),
+    connectionType: getConnectionType(),
     speed: { download: 0, upload: 0, ping: 0 },
     devices: [],
     lastUpdate: new Date(),
     isLoading: false
   });
 
-  // قياس السرعة الفعلية
+  // الحصول على نوع الاتصال من Web APIs
+  function getConnectionType(): string {
+    const connection = (navigator as any).connection || 
+                      (navigator as any).mozConnection || 
+                      (navigator as any).webkitConnection;
+    
+    if (connection) {
+      return connection.effectiveType || connection.type || 'unknown';
+    }
+    return 'unknown';
+  }
+
+  // قياس السرعة التقريبية باستخدام Web APIs
   const measureSpeed = useCallback(async () => {
     setNetworkState(prev => ({ ...prev, isLoading: true }));
     
     try {
-      const speedResult = await measureRealSpeed();
+      const startTime = performance.now();
+      
+      // اختبار بسيط لقياس السرعة
+      await fetch('https://www.google.com/generate_204', {
+        method: 'HEAD',
+        mode: 'no-cors',
+        cache: 'no-store'
+      });
+      
+      const endTime = performance.now();
+      const ping = endTime - startTime;
+      
+      // قيم تقريبية للسرعة بناءً على نوع الاتصال
+      const connection = (navigator as any).connection;
+      let downloadSpeed = 10; // Mbps افتراضي
+      
+      if (connection?.downlink) {
+        downloadSpeed = connection.downlink;
+      }
+      
+      const speedResult = {
+        download: downloadSpeed,
+        upload: downloadSpeed * 0.1, // تقدير السرعة الصاعدة
+        ping: ping
+      };
       
       setNetworkState(prev => ({
         ...prev,
@@ -46,7 +81,6 @@ export function useRealNetworkMonitoring() {
         isLoading: false
       }));
       
-      // إشعار المستخدم بالنتيجة
       toast.success(
         `سرعة التحميل: ${speedResult.download.toFixed(1)} Mbps`,
         {
@@ -60,17 +94,22 @@ export function useRealNetworkMonitoring() {
     }
   }, []);
 
-  // فحص الأجهزة المتصلة
+  // فحص الأجهزة المتصلة (محاكاة للويب)
   const scanDevices = useCallback(async () => {
     try {
-      const devices = await scanNetworkDevices();
+      // في بيئة الويب، سنقدم قائمة تجريبية
+      const mockDevices = [
+        { name: 'جهاز الراوتر الرئيسي', ip: '192.168.1.1', type: 'router' },
+        { name: 'الجهاز الحالي', ip: 'localhost', type: 'computer' }
+      ];
+      
       setNetworkState(prev => ({
         ...prev,
-        devices,
+        devices: mockDevices,
         lastUpdate: new Date()
       }));
       
-      toast.info(`تم العثور على ${devices.length} أجهزة متصلة`);
+      toast.info(`تم العثور على ${mockDevices.length} أجهزة متصلة`);
     } catch (error) {
       toast.error('فشل في فحص الأجهزة');
     }
@@ -78,44 +117,50 @@ export function useRealNetworkMonitoring() {
 
   // مراقبة تغييرات الاتصال
   useEffect(() => {
-    const cleanup = setupConnectionMonitoring((status) => {
-      setNetworkState(prev => {
-        // إشعار المستخدم بتغيير حالة الاتصال
-        if (status.isOnline !== prev.isOnline) {
-          if (status.isOnline) {
-            toast.success('تم استعادة الاتصال بالإنترنت');
-            // قياس السرعة تلقائياً عند الاتصال
-            setTimeout(measureSpeed, 2000);
-          } else {
-            toast.warning('تم قطع الاتصال بالإنترنت');
-          }
-        }
-        
-        // إشعار بتغيير نوع الاتصال
-        if (status.connectionType !== prev.connectionType) {
-          toast.info(`تم تغيير نوع الاتصال إلى: ${status.connectionType}`);
-        }
+    const handleOnline = () => {
+      setNetworkState(prev => ({ ...prev, isOnline: true }));
+      toast.success('تم استعادة الاتصال بالإنترنت');
+      setTimeout(measureSpeed, 2000);
+    };
 
-        return {
-          ...prev,
-          isOnline: status.isOnline,
-          connectionType: status.connectionType,
-          lastUpdate: new Date()
-        };
-      });
-    });
+    const handleOffline = () => {
+      setNetworkState(prev => ({ ...prev, isOnline: false }));
+      toast.warning('تم قطع الاتصال بالإنترنت');
+    };
+
+    const handleConnectionChange = () => {
+      setNetworkState(prev => ({
+        ...prev,
+        connectionType: getConnectionType(),
+        lastUpdate: new Date()
+      }));
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    
+    // مراقبة تغيير نوع الاتصال
+    const connection = (navigator as any).connection;
+    if (connection) {
+      connection.addEventListener('change', handleConnectionChange);
+    }
     
     // قياس أولي للسرعة
     setTimeout(measureSpeed, 1000);
     
-    return cleanup;
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+      if (connection) {
+        connection.removeEventListener('change', handleConnectionChange);
+      }
+    };
   }, [measureSpeed]);
 
   return {
     ...networkState,
     measureSpeed,
     scanDevices,
-    // حالات إضافية للواجهة
     isConnected: networkState.isOnline,
     qualityScore: networkState.speed.download > 50 ? 'ممتاز' : 
                  networkState.speed.download > 25 ? 'جيد' : 

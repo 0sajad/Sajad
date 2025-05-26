@@ -1,15 +1,22 @@
 
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { getWebEnvironmentConfig } from '@/utils/electronDetector';
 
-export function ElectronDetector() {
-  const [isElectron, setIsElectron] = useState<boolean>(false);
+export function WebEnvironmentDetector() {
+  const [platform, setPlatform] = useState<string>('');
   
   useEffect(() => {
-    // التحقق ما إذا كان التطبيق يعمل في بيئة Electron
-    if (typeof window !== 'undefined' && window.electron?.isElectron) {
-      setIsElectron(true);
-      toast.info('تم تشغيل التطبيق كبرنامج سطح المكتب', {
+    const config = getWebEnvironmentConfig();
+    setPlatform(config.platform);
+    
+    // إعلام المستخدم بنوع البيئة
+    if (config.platform === 'github-pages') {
+      toast.info('مرحباً بك في Octa Network - نسخة GitHub Pages', {
+        duration: 3000,
+      });
+    } else {
+      toast.success('مرحباً بك في Octa Network', {
         duration: 3000,
       });
     }
@@ -18,4 +25,4 @@ export function ElectronDetector() {
   return null; // هذا المكون لا يعرض أي محتوى مرئي
 }
 
-export default ElectronDetector;
+export default WebEnvironmentDetector;

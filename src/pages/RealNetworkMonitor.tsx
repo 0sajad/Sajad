@@ -6,8 +6,8 @@ import { Header } from '@/components/Header';
 import { useTranslation } from 'react-i18next';
 
 /**
- * صفحة مراقب الشبكة الحقيقي
- * تعرض معلومات فعلية عن الشبكة
+ * صفحة مراقب الشبكة للويب
+ * تعرض معلومات الشبكة المتاحة في بيئة المتصفح
  */
 export default function RealNetworkMonitor() {
   const { t } = useTranslation();
@@ -20,7 +20,7 @@ export default function RealNetworkMonitor() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">مراقب الشبكة المباشر</h1>
           <p className="text-muted-foreground">
-            مراقبة فعلية لحالة شبكتك وسرعة الإنترنت
+            مراقبة حالة شبكتك وسرعة الإنترنت في الوقت الفعلي
           </p>
         </div>
         

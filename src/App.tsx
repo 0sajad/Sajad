@@ -26,7 +26,7 @@ const App = () => {
   return (
     <ModeProvider>
       <ErrorBoundary>
-        <Router>
+        <Router basename={import.meta.env.BASE_URL}>
           <Layout>
             <Suspense fallback={<SuspenseLoader />}>
               <Routes>

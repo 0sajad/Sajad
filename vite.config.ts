@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: '/',
+  base: './',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
@@ -37,6 +37,6 @@ export default defineConfig(({ mode }) => ({
     }
   },
   define: {
-    __GITHUB_PAGES__: JSON.stringify(process.env.GITHUB_PAGES === 'true')
+    __WEB_VERSION__: JSON.stringify(true)
   }
 }));
