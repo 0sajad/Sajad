@@ -2,10 +2,10 @@
 import React from 'react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { DashboardStats } from '@/components/dashboard/DashboardStats';
-import { QuickActions } from '@/components/dashboard/QuickActions';
-import { RecentActivity } from '@/components/dashboard/RecentActivity';
-import { NetworkOverview } from '@/components/dashboard/NetworkOverview';
+import DashboardStats from '@/components/dashboard/DashboardStats';
+import QuickActions from '@/components/dashboard/QuickActions';
+import RecentActivity from '@/components/dashboard/RecentActivity';
+import NetworkOverview from '@/components/dashboard/NetworkOverview';
 import { useTranslation } from 'react-i18next';
 
 export default function Dashboard() {

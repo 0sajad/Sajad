@@ -167,7 +167,7 @@ export function SecuritySettings() {
                 {t('developer.security.advanced.premium', 'متقدم')}
               </Badge>
               <Switch
-                checked={features.darkWebProtection || false}
+                checked={features.find(f => f.id === 'darkWebProtection')?.enabled || false}
                 onCheckedChange={(checked) => updateFeature('darkWebProtection', checked)}
               />
             </div>
@@ -183,7 +183,7 @@ export function SecuritySettings() {
               </p>
             </div>
             <Switch
-              checked={features.networkIsolation || false}
+              checked={features.find(f => f.id === 'networkIsolation')?.enabled || false}
               onCheckedChange={(checked) => updateFeature('networkIsolation', checked)}
             />
           </div>

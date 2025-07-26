@@ -11,7 +11,7 @@ export {
 
 export { 
   useNetworkStatus,
-} from './state/network-state';
+} from './state/helpers';
 
 export { 
   usePreferences,

@@ -106,7 +106,7 @@ export function NetworkToolsSection() {
                     <CardTitle className="text-lg flex items-center justify-between">
                       <span>أدوات التحليل المتوفرة</span>
                       <Badge variant="outline">
-                        {features?.advancedSecurity ? 'متقدم' : 'أساسي'}
+                        {features?.find(f => f.id === 'advancedSecurity')?.enabled ? 'متقدم' : 'أساسي'}
                       </Badge>
                     </CardTitle>
                   </CardHeader>
@@ -144,7 +144,7 @@ export function NetworkToolsSection() {
                           name="ntopng" 
                           status="غير متصل" 
                           icon={<Network className="w-3.5 h-3.5" />} 
-                          enabled={features?.advancedSecurity || false}
+                          enabled={features?.find(f => f.id === 'advancedSecurity')?.enabled || false}
                         />
                       </TabsContent>
                       
@@ -153,7 +153,7 @@ export function NetworkToolsSection() {
                           name="TensorFlow" 
                           status="متصل" 
                           icon={<BrainCircuit className="w-3.5 h-3.5" />} 
-                          enabled={features?.aiAssistant || false}
+                          enabled={features?.find(f => f.id === 'aiAssistant')?.enabled || false}
                         />
                         <ToolItem 
                           name="Scikit-learn" 
@@ -165,7 +165,7 @@ export function NetworkToolsSection() {
                           name="AWS SageMaker" 
                           status="جاري التحميل" 
                           icon={<Cpu className="w-3.5 h-3.5" />} 
-                          enabled={features?.advancedSecurity || false}
+                          enabled={features?.find(f => f.id === 'advancedSecurity')?.enabled || false}
                         />
                       </TabsContent>
                       
@@ -186,7 +186,7 @@ export function NetworkToolsSection() {
                           name="Apache Kafka" 
                           status="متصل" 
                           icon={<Cpu className="w-3.5 h-3.5" />} 
-                          enabled={features?.dnsOptimization || false}
+                          enabled={features?.find(f => f.id === 'dnsOptimization')?.enabled || false}
                         />
                       </TabsContent>
                     </Tabs>

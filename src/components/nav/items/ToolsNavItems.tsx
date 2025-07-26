@@ -31,15 +31,15 @@ export const ToolsNavItems = ({
       { to: '/fiber-optic', label: t('header.networkScanner'), icon: <Network size={dropdownIconSize} className="mr-2" /> }
     ];
     
-    if (features?.networkMonitoring) {
+    if (features?.find(f => f.id === 'networkMonitoring')?.enabled) {
       items.push({ to: '/tools?tab=monitor', label: t('networkTools.title'), icon: <Network size={dropdownIconSize} className="mr-2" /> });
     }
     
-    if (features?.aiAssistant) {
+    if (features?.find(f => f.id === 'aiAssistant')?.enabled) {
       items.push({ to: '/tools?tab=ai-tools', label: t('aiAssistant.title'), icon: <BrainCircuit size={dropdownIconSize} className="mr-2" /> });
     }
     
-    if (features?.dnsOptimization) {
+    if (features?.find(f => f.id === 'dnsOptimization')?.enabled) {
       items.push({ to: '/tools?tab=dns', label: 'DNS Tools', icon: <Database size={dropdownIconSize} className="mr-2" /> });
     }
     

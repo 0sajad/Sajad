@@ -1,91 +1,114 @@
+import { StateCreator } from 'zustand';
+import { AppState, NetworkState } from './types';
 
-import { atom } from 'jotai';
-
-export interface NetworkDevice {
-  id: string;
-  name: string;
-  ip: string;
-  mac: string;
-  type: 'router' | 'computer' | 'phone' | 'tablet' | 'tv' | 'printer' | 'unknown';
-  status: 'online' | 'offline';
-  lastSeen: Date;
-  manufacturer?: string;
-  signal?: number;
-}
-
-export interface NetworkInfo {
-  ssid: string;
-  bssid: string;
-  frequency: number;
-  signal: number;
-  security: string[];
-  connected: boolean;
-}
-
-export interface NetworkStats {
-  downloadSpeed: number;
-  uploadSpeed: number;
-  ping: number;
-  packetLoss: number;
-  jitter: number;
-}
-
-// حالة الشبكة الأساسية
-export const networkDevicesAtom = atom<NetworkDevice[]>([]);
-export const networkInfoAtom = atom<NetworkInfo | null>(null);
-export const networkStatsAtom = atom<NetworkStats | null>(null);
-export const isOnlineAtom = atom<boolean>(true);
-
-// حالة فحص الشبكة
-export const isScanningAtom = atom<boolean>(false);
-export const scanProgressAtom = atom<number>(0);
-
-// استخدام Web APIs بدلاً من Electron
-export const getNetworkInfoWeb = async (): Promise<NetworkInfo | null> => {
-  try {
-    const connection = (navigator as any).connection || 
-                      (navigator as any).mozConnection || 
-                      (navigator as any).webkitConnection;
+/**
+ * مخزن حالة الشبكة
+ * يحتوي على الوظائف المتعلقة بإدارة حالة الاتصال بالشبكة
+ */
+export const createNetworkSlice: StateCreator<
+  AppState,
+  [],
+  [],
+  NetworkState
+> = (set, get, _store) => ({
+  // حالة الشبكة
+  isConnected: true,
+  isOnline: navigator.onLine,
+  lastCheck: null,
+  networkStatus: {
+    isConnected: true,
+    isOnline: navigator.onLine,
+    lastCheck: null
+  },
+  dataLoading: {
+    isLoading: false,
+    lastUpdated: null,
+    error: null
+  },
+  
+  // وظائف تعديل الحالة
+  checkNetworkStatus: async () => {
+    try {
+      const response = await fetch('https://www.google.com/generate_204', {
+        method: 'HEAD',
+        mode: 'no-cors',
+        cache: 'no-store',
+      });
+      
+      const isOnline = response.type === 'opaque' || response.ok;
+      const now = new Date();
+      
+      set({ 
+        isConnected: true,
+        isOnline,
+        lastCheck: now,
+        networkStatus: {
+          isConnected: true,
+          isOnline,
+          lastCheck: now
+        }
+      });
+      
+      return isOnline;
+    } catch (error) {
+      const now = new Date();
+      
+      set({ 
+        isConnected: false,
+        isOnline: false,
+        lastCheck: now,
+        networkStatus: {
+          isConnected: false,
+          isOnline: false,
+          lastCheck: now
+        }
+      });
+      
+      return false;
+    }
+  },
+  
+  setNetworkStatus: (status) => {
+    const now = new Date();
     
-    if (connection) {
-      return {
-        ssid: 'Unknown',
-        bssid: 'Unknown',
-        frequency: 2400,
-        signal: -50,
-        security: ['WPA2'],
-        connected: navigator.onLine
-      };
-    }
-    return null;
-  } catch (error) {
-    console.error('Error getting network info:', error);
-    return null;
-  }
-};
+    set({
+      isConnected: status.isConnected,
+      isOnline: status.isOnline,
+      lastCheck: now,
+      networkStatus: {
+        ...get().networkStatus,
+        isConnected: status.isConnected,
+        isOnline: status.isOnline,
+        lastCheck: now
+      }
+    });
+  },
+  
+  handleOfflineStatus: () => {
+    const now = new Date();
+    
+    set({
+      isOnline: false,
+      lastCheck: now,
+      networkStatus: {
+        ...get().networkStatus,
+        isOnline: false,
+        lastCheck: now
+      }
+    });
+  },
 
-export const scanNetworkDevicesWeb = async (): Promise<NetworkDevice[]> => {
-  // في بيئة الويب، نعيد أجهزة وهمية للعرض
-  return [
-    {
-      id: '1',
-      name: 'Router',
-      ip: '192.168.1.1',
-      mac: '00:11:22:33:44:55',
-      type: 'router',
-      status: 'online',
-      lastSeen: new Date(),
-      manufacturer: 'Unknown'
-    },
-    {
-      id: '2',
-      name: 'Your Device',
-      ip: '192.168.1.100',
-      mac: '66:77:88:99:AA:BB',
-      type: 'computer',
-      status: 'online',
-      lastSeen: new Date(),
-      manufacturer: 'Unknown'
-    }
-  ];
-};
+  handleOnlineStatus: () => {
+    const now = new Date();
+    
+    set({
+      isOnline: true,
+      lastCheck: now,
+      networkStatus: {
+        ...get().networkStatus,
+        isOnline: true,
+        lastCheck: now
+      }
+    });
+  }
+});

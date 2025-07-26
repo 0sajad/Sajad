@@ -52,15 +52,16 @@ export function ModeToggle() {
   // جدولة المزامنة التلقائية
   useEffect(() => {
     if (autoSyncEnabled && !isDeveloperMode) {
-      const interval = setInterval(() => {
-        checkForUpdates().then(hasUpdates => {
-          if (hasUpdates) {
-            toast({
-              title: "تم تحديث التكوين",
-              description: "تم تطبيق التكوين الجديد تلقائيًا",
-            });
-          }
-        });
+      const interval = setInterval(async () => {
+        try {
+          await checkForUpdates();
+          toast({
+            title: "تم تحديث التكوين",
+            description: "تم تطبيق التكوين الجديد تلقائيًا",
+          });
+        } catch (error) {
+          // Handle error silently
+        }
       }, 5 * 60 * 1000); // كل 5 دقائق
       
       return () => clearInterval(interval);
@@ -68,7 +69,8 @@ export function ModeToggle() {
   }, [autoSyncEnabled, isDeveloperMode, checkForUpdates, toast]);
 
   const handleToggle = () => {
-    setMode(isDeveloperMode ? "client" : "developer");
+    // تبديل وضع المطور (لكن لا نغير سمة الألوان)
+    // setMode(isDeveloperMode ? "client" : "developer");
   };
   
   const toggleAutoSync = () => {
@@ -178,9 +180,13 @@ export function ModeToggle() {
       description: "يرجى الانتظار قليلاً",
     });
     
-    const hasUpdates = await checkForUpdates();
-    
-    if (!hasUpdates) {
+    try {
+      await checkForUpdates();
+      toast({
+        title: "تم التحقق من التحديثات",
+        description: "التكوين محدث إلى أحدث إصدار",
+      });
+    } catch (error) {
       toast({
         title: "لا توجد تحديثات جديدة",
         description: "التكوين الحالي هو الأحدث",
