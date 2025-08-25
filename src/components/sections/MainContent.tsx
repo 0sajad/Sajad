@@ -39,16 +39,18 @@ const SectionLoader = () => (
 );
 
 // مكون خطأ التحميل
-const SectionError = ({ sectionId }: { sectionId: string }) => (
-  <div className="container mx-auto px-4 lg:px-8 py-8">
-    <ErrorMessage
-      title={`خطأ في تحميل القسم`}
-      message={`لم نتمكن من تحميل قسم ${sectionId}`}
-      showRetry
-      showBackHome={false}
-    />
-  </div>
-);
+const SectionError = ({ sectionId }: { sectionId: string }) => {
+  return (
+    <div className="container mx-auto px-4 lg:px-8 py-8">
+      <ErrorMessage
+        title={`خطأ في تحميل القسم`}
+        message={`لم نتمكن من تحميل قسم ${sectionId}`}
+        showRetry
+        showBackHome={false}
+      />
+    </div>
+  );
+};
 
 interface MainContentProps {
   sectionsVisible: Record<string, boolean>;
@@ -70,7 +72,7 @@ export function MainContent({ sectionsVisible, isTransitioning, language, isRTL 
       // تحميل فقط إذا كان القسم مرئيًا
       if (sectionsVisible[sectionId]) {
         return (
-          <ErrorBoundary fallback={<SectionError sectionId={sectionId} />}>
+          <ErrorBoundary fallback={() => <SectionError sectionId={sectionId} />}>
             <Suspense fallback={<SectionLoader />}>
               <Component />
             </Suspense>
@@ -82,7 +84,7 @@ export function MainContent({ sectionsVisible, isTransitioning, language, isRTL 
     
     // التحميل المباشر للمكونات ذات الأولوية أو عندما لا نحتاج للتحميل الكسول
     return (
-      <ErrorBoundary fallback={<SectionError sectionId={sectionId} />}>
+      <ErrorBoundary fallback={() => <SectionError sectionId={sectionId} />}>
         <Suspense fallback={<SectionLoader />}>
           <Component />
         </Suspense>

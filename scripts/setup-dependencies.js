@@ -7,12 +7,10 @@ console.log('التحقق من المكتبات المطلوبة وتثبيته�
 
 // دالة للتحقق من تثبيت الحزم
 function checkAndInstallPackages() {
-  // قائمة بالمكتبات الضرورية
+  // قائمة بالمكتبات الضرورية للويب فقط
   const requiredPackages = [
     'vite',
     '@vitejs/plugin-react-swc',
-    'electron',
-    'electron-builder',
     'concurrently',
     'cross-env',
     'wait-on',

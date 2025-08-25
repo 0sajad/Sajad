@@ -23,6 +23,6 @@ export function useLanguageTransition() {
 
   return {
     isTransitioning,
-    handleLanguageChange
+    changeLanguage: handleLanguageChange
   };
 }
