@@ -3,7 +3,7 @@ import React from "react";
 import { User, Menu, X, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/ModeToggle";
-import { LanguageSwitcher } from "@/components/nav/LanguageSwitcher";
+import { LanguageSwitcher } from "@/components/language/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { 

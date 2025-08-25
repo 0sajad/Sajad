@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { getWebEnvironmentConfig } from '@/utils/electronDetector';
+import { getWebEnvironmentConfig } from '@/utils/environmentDetector';
 
 export function WebEnvironmentDetector() {
   const [platform, setPlatform] = useState<string>('');

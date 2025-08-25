@@ -23,7 +23,7 @@ import { MainContent } from "@/components/sections/MainContent";
 import { A11yWrapper } from "@/components/ui/accessibility/A11yWrapper";
 import { NetworkStatusIndicator } from "@/components/ui/NetworkStatusIndicator";
 import { ArabicTextProvider } from "@/components/text/ArabicTextProvider";
-import WebEnvironmentDetector from "@/components/ElectronDetector";
+import WebEnvironmentDetector from "@/components/WebEnvironmentDetector";
 
 const AIAssistantManager = lazy(() => 
   import("@/components/ai/AIAssistantManager").then(module => ({ default: module.AIAssistantManager }))
